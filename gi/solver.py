@@ -104,11 +104,12 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
 
 class Solver:
     def __init__(self, kappa=3, enum_limit=500, certificates=True, max_enum=100000,
-                 cert_refine=True):
+                 cert_refine=True, seed=True):
         self.kappa = kappa                  # size of the local test sets
         self.enum_limit = enum_limit        # enumerate groups/quotients up to this order
         self.certificates = certificates    # use local certificates in GiantStep
         self.cert_refine = cert_refine      # also refine labels by certificate signatures
+        self.seed = seed                    # seed the memo for off-base one-mode branches
         self.max_enum = max_enum            # refuse to enumerate anything larger
         self.stats = Counter()
         self.memo = {}                      # (G.gens, x) -> generators of Aut_G(x)
@@ -335,13 +336,15 @@ class Solver:
         key = self._proj_key(G, phi)
         supp = self._supp.get(key)
         if supp is None:
-            G0 = PermGroup(n, G.gens, base=[0])
-            imgs = [phi.image_of(h) for h in G0._tail(1).gens]
+            # G is transitive, so its first base point serves as the reference
+            # position: G.T[0] maps it to every position, and the tail of the
+            # chain is its stabilizer. No new stabilizer chain is needed.
+            imgs = [phi.image_of(h) for h in G._tail(1).gens]
             F0 = [a for a in range(q) if all(im[a] == a for im in imgs)]
             supp = ()
             if len(F0) in (1, 2):
                 supp = [None] * n
-                for w, u in G0.T[0].items():
+                for w, u in G.T[0].items():
                     im = phi.image_of(u)
                     supp[w] = tuple(im[a] for a in F0)
             self._supp[key] = supp
@@ -479,6 +482,10 @@ class Solver:
                 if r is None:
                     continue
                 self.stats["branch"] += 1
+                if l:
+                    self.stats["one_offbase"] += 1
+                    if self.seed:
+                        self.seed_label_stabilizer(phi, sym, r[0], known, l, x)
                 a = self.lift_and_continue(G, phi, sym, r[0], r[1], x, y)
                 if a is not None:
                     return Coset(known, a.rep)
@@ -532,13 +539,31 @@ class Solver:
             return None
         return Coset(reduce_gens(n, list(base.gens) + out), sigma)
 
+    def young_group(self, phi, sym, cx):
+        """H = phi^-1(Young subgroup of the partition of cx) when phi(G) = Sym(q),
+        and phi^-1(Young subgroup ∩ Alt(q)) when phi(G) = Alt(q). H depends
+        only on the partition; it is built once per phi, so all branches of a
+        GiantStep get the same group object (and the memo in cont applies)."""
+        q = phi.m
+        X = color_classes(cx)
+        cache = phi.__dict__.setdefault("_young", {})
+        key = tuple(tuple(C) for C in X.values())
+        H = cache.get(key)
+        if H is None:
+            big = [C for C in X.values() if len(C) >= 2]
+            if sym:
+                ygens = [g for C in big for g in sym_gens(q, C)]
+            else:
+                ygens = [g for C in big for g in alt_gens(q, C)]
+                transp = [cycle(q, C[:2]) for C in big]
+                ygens += [mul(transp[0], t) for t in transp[1:]]
+            H = cache[key] = PermGroup(phi.G.n, [phi.lift(h) for h in ygens] + phi.kernel().gens)
+        return H
+
     def lift_and_continue(self, G, phi, sym, cx, cy, x, y):
         """The overcoset E of label maps taking color classes of cx to those of
-        cy, intersected with phi(G), lifted to H tau in G; then Continue under
-        H on (x, y^(tau^-1)). H = phi^-1(Young subgroup of cx) when
-        phi(G) = Sym(q), and phi^-1(Young subgroup  ∩ Alt(q)) when
-        phi(G) = Alt(q). H depends only on cx; it is built once per phi and
-        reused by all branches."""
+        cy, intersected with phi(G), lifted to H tau in G (H = young_group);
+        then Continue under H on (x, y^(tau^-1))."""
         n, q = G.n, phi.m
         X, Y = color_classes(cx), color_classes(cy)
         pi = [0] * q
@@ -546,19 +571,9 @@ class Solver:
             for a, b in zip(cls, Y[c]):
                 pi[a] = b
         pi = tuple(pi)
-        big = [C for C in X.values() if len(C) >= 2]
-        cache = phi.__dict__.setdefault("_young", {})
-        key = tuple(cx)
-        H = cache.get(key)
-        if H is None:
-            if sym:
-                ygens = [g for C in big for g in sym_gens(q, C)]
-            else:
-                ygens = [g for C in big for g in alt_gens(q, C)]
-                transp = [cycle(q, C[:2]) for C in big]
-                ygens += [mul(transp[0], t) for t in transp[1:]]
-            H = cache[key] = PermGroup(n, [phi.lift(h) for h in ygens] + phi.kernel().gens)
+        H = self.young_group(phi, sym, cx)
         if not sym and parity(pi):
+            big = [C for C in X.values() if len(C) >= 2]
             if not big:
                 return None
             pi = mul(cycle(q, big[0][:2]), pi)
@@ -567,6 +582,21 @@ class Solver:
         if a is None:
             return None
         return Coset(a.gens, mul(a.rep, tau))
+
+    def seed_label_stabilizer(self, phi, sym, ax, known, l, x):
+        """For the branch of x-label l (ax = the refined coloring of x with l
+        individualized), Aut_H(x) = Stab_<known>(l) for H = young_group(ax):
+        an element of Aut_G(x) = <known> preserves ax iff it fixes l, because
+        the refinement is invariant and {l} is a class of ax. Record it in the
+        memo, so that the branch runs in one-mode too."""
+        n, q = phi.G.n, phi.m
+        H = self.young_group(phi, sym, ax)
+        key = (tuple(H.gens), tuple(x))
+        if key in self.memo:
+            return
+        C = PermGroup(n + q, [a + tuple(n + v for v in phi.image_of(a)) for a in known],
+                      base=[n + l])
+        self.memo[key] = reduce_gens(n, [s[:n] for s in C._tail(1).gens])
 
     # -- local certificates (Algorithm 3) -------------------------------------
     def certificates_of(self, G, phi, x):
