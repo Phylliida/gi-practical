@@ -5,9 +5,41 @@ Everything here is deterministic. These are the "basic operations" the paper
 treats as polynomial-time (Section 3: orbits, fixing points, images, lifting).
 """
 import math
+from collections import OrderedDict
 from operator import itemgetter
 
 from .perm import identity, mul, inv
+
+_IDENTITY = {}
+
+
+def _identity(n):
+    t = _IDENTITY.get(n)
+    if t is None:
+        t = _IDENTITY[n] = identity(n)
+    return t
+
+
+# Finished chains, keyed by (n, gens, prescribed base). The construction is
+# deterministic, so a hit gives exactly the chain a new construction would
+# build. The recursion builds the same groups over and over (e.g. the same
+# preimage in many branches), so this saves most of the Schreier-Sims work.
+# Transversal dicts and tuples are never mutated after creation, so they are
+# shared; the lists are copied. Bounded by the number of stored transversal
+# entries times the degree (LRU eviction).
+CHAIN_CACHE_LIMIT = 1 << 24
+_CHAINS = OrderedDict()
+_chains_size = 0
+
+
+class _Chain:
+    __slots__ = ("key", "gens", "base", "S", "T", "Ti", "par", "order", "size", "elements")
+
+
+def clear_chain_cache():
+    global _chains_size
+    _CHAINS.clear()
+    _chains_size = 0
 
 
 class PermGroup:
@@ -32,12 +64,26 @@ class PermGroup:
 
     def __init__(self, n, gens=(), base=(), order=None):
         self.n = n
-        self.idn = identity(n)
+        self.idn = _identity(n)
+        self._target = order
+        self._snap = None
+        if not isinstance(gens, (list, tuple)):
+            gens = list(gens)
+        key = None
+        if gens:
+            key = (n, tuple(gens), tuple(base))
+            snap = _CHAINS.get(key)
+            if snap is not None:
+                _CHAINS.move_to_end(key)
+                self._load(snap)
+                if order is not None and self._order != order:
+                    raise ValueError("PermGroup: the given order is wrong")
+                self._done = order is not None
+                return
         self.gens = []
         self.base, self.S, self.T, self.Ti = [], [], [], []
         self._par, self._ok = [], []    # BFS tree edges; verified Schreier pairs
         self._order = 1                 # product of the orbit lengths
-        self._target = order
         self._done = order == 1
         for b in base:
             self._push_base(b)
@@ -45,6 +91,35 @@ class PermGroup:
             if self._done:              # complete: every further generator is redundant
                 break
             self.add(g)
+        if key is not None:
+            self._store(key)
+
+    def _load(self, c):
+        self.gens = list(c.gens)
+        self.base = list(c.base)
+        self.S = [list(s) for s in c.S]
+        self.T, self.Ti, self._par = list(c.T), list(c.Ti), list(c.par)
+        self._ok = [{} for _ in c.base]
+        self._order = c.order
+        self._snap = c
+
+    def _store(self, key):
+        global _chains_size
+        size = self.n * (2 * sum(len(t) for t in self.T) + len(self.gens) + 1)
+        if size > CHAIN_CACHE_LIMIT // 8:
+            return
+        c = _Chain()
+        c.key = key
+        c.gens, c.base = tuple(self.gens), tuple(self.base)
+        c.S = tuple(tuple(s) for s in self.S)
+        c.T, c.Ti, c.par = tuple(self.T), tuple(self.Ti), tuple(self._par)
+        c.order, c.size, c.elements = self._order, size, None
+        _CHAINS[key] = c
+        _chains_size += size
+        while _chains_size > CHAIN_CACHE_LIMIT:
+            _, old = _CHAINS.popitem(last=False)
+            _chains_size -= old.size
+        self._snap = c
 
     # -- Schreier-Sims -----------------------------------------------------
     def _push_base(self, b):
@@ -57,17 +132,18 @@ class PermGroup:
 
     def _orbit(self, l):
         """Recompute the BFS orbit and transversal of level l, reusing the old
-        transversal elements whose tree path is unchanged."""
-        b, S, idn = self.base[l], self.S[l], self.idn
+        transversal elements whose tree path is unchanged. The tree edge of q
+        is stored as si * n + p (q = S[l][si][p])."""
+        b, S, idn, n = self.base[l], self.S[l], self.idn, self.n
         oT, oTi, opar = self.T[l], self.Ti[l], self._par[l]
         T, Ti, par, queue = {b: idn}, {b: idn}, {}, [b]
         for p in queue:
             u = T[p]
             same = oT.get(p) is u
-            for si, s in enumerate(S):
+            e = p
+            for s in S:
                 q = s[p]
                 if q not in T:
-                    e = (p, si)
                     if same and opar.get(q) == e:
                         T[q] = oT[q]
                         Ti[q] = oTi[q]
@@ -77,8 +153,18 @@ class PermGroup:
                         Ti[q] = inv(v)
                     par[q] = e
                     queue.append(q)
+                e += n
         self._order = self._order // len(oT) * len(T)
         self.T[l], self.Ti[l], self._par[l] = T, Ti, par
+
+    def _extend(self, g, lo, hi):
+        """Append g to S[lo..hi]; g fixes base[lo..hi-1] and moves base[hi].
+        A trivial orbit stays trivial under a generator fixing its point."""
+        S, T = self.S, self.T
+        for l in range(lo, hi + 1):
+            S[l].append(g)
+            if l == hi or len(T[l]) > 1:
+                self._orbit(l)
 
     def _check_done(self):
         t = self._target
@@ -110,31 +196,39 @@ class PermGroup:
         if j == len(self.base) and r == self.idn:
             return False
         self.gens.append(g)
+        self._snap = None
         base = self.base
         k = 0
         while k < len(base) and g[base[k]] == base[k]:
             k += 1
         if k == len(base):
             self._push_base(self._moved_point(g))
-        for l in range(k + 1):
-            self.S[l].append(g)
-            self._orbit(l)
+        self._extend(g, 0, k)
         if not self._check_done():
             self._schreier(k)
         return True
 
     def _schreier(self, i):
-        idn, base = self.idn, self.base
+        """Make levels i, i-1, ..., 0 complete (levels > i are complete).
+        Every s in S[i] that fixes base[i] is also in S[i+1] (generators are
+        appended to a range of levels ending at a level whose point they move),
+        so its Schreier generator at the base point lies in <S[i+1]>."""
+        idn, base, n = self.idn, self.base, self.n
         while i >= 0:
+            T = self.T[i]
+            if len(T) == 1:             # all Schreier generators are in S[i+1]
+                i -= 1
+                continue
             restart = False
-            T, Ti, par, ok = self.T[i], self.Ti[i], self._par[i], self._ok[i]
-            S = list(self.S[i])
-            for p in list(T):
-                u = T[p]
-                for si, s in enumerate(S):
+            Ti, par, ok, S, b = self.Ti[i], self._par[i], self._ok[i], self.S[i], base[i]
+            for p, u in list(T.items()):
+                e = p - n
+                for s in S:
+                    e += n                      # e = si * n + p
                     q = s[p]
-                    e = (p, si)
                     if par.get(q) == e:         # tree edge: trivial Schreier generator
+                        continue
+                    if q == b and p == b:       # s fixes b, so s is in S[i+1]
                         continue
                     v = Ti[q]
                     m = ok.get(e)
@@ -148,9 +242,7 @@ class PermGroup:
                     if j < len(base) or r != idn:
                         if j == len(base):
                             self._push_base(self._moved_point(r))
-                        for l in range(i + 1, j + 1):
-                            self.S[l].append(r)
-                            self._orbit(l)
+                        self._extend(r, i + 1, j)
                         if self._check_done():
                             return
                         i = j
@@ -202,6 +294,18 @@ class PermGroup:
     def elements(self):
         """All elements (only for small groups), in the order of
         product(T[0], ..., T[k-1]); the element is u_{k-1} ... u_0."""
+        global _chains_size
+        c = self._snap
+        if c is not None and self._order * self.n <= CHAIN_CACHE_LIMIT // 64:
+            if c.elements is None:
+                c.elements = tuple(self._elements())
+                if _CHAINS.get(c.key) is c:     # (still cached)
+                    c.size += self._order * self.n
+                    _chains_size += self._order * self.n
+            return iter(c.elements)
+        return self._elements()
+
+    def _elements(self):
         levels = [list(t.values()) for t in self.T if len(t) > 1]
         k = len(levels)
         acc = [self.idn] * (k + 1)      # acc[l+1] = u_l ... u_0
@@ -392,50 +496,91 @@ class RestrictionHom(ActionHom):
 
 
 # -- blocks ------------------------------------------------------------------
-def minimal_block(n, gens, a, b):
-    """Atkinson's algorithm: labels of the finest invariant partition joining a, b."""
+def minimal_block(n, gens, a, b, limit=None):
+    """Atkinson's algorithm: labels of the finest invariant partition joining
+    a, b (each point is labeled by the least point of its class). With
+    `limit`, returns None as soon as the class of a has at least `limit` points."""
+    if a > b:
+        a, b = b, a
     parent = list(range(n))
-
-    def find(v):
-        root = v
-        while parent[root] != root:
-            root = parent[root]
-        while parent[v] != root:
-            parent[v], v = root, parent[v]
-        return root
-
-    queue = []
-
-    def union(u, v):
-        ru, rv = find(u), find(v)
-        if ru != rv:
-            if ru > rv:
-                ru, rv = rv, ru
-            parent[rv] = ru
-            queue.append((ru, rv))
-
-    union(a, b)
-    i = 0
-    while i < len(queue):
-        u, v = queue[i]
-        i += 1
+    size = [1] * n
+    parent[b] = a
+    size[a] = 2
+    if limit is not None and 2 >= limit:
+        return None
+    queue = [(a, b)]
+    for u, v in queue:                  # the list grows while it is scanned
         for g in gens:
-            union(g[u], g[v])
-    return [find(v) for v in range(n)]
+            x, y = g[u], g[v]
+            while parent[x] != x:       # parent[x] <= x: roots are class minima
+                parent[x] = x = parent[parent[x]]
+            while parent[y] != y:
+                parent[y] = y = parent[parent[y]]
+            if x != y:
+                if x > y:
+                    x, y = y, x
+                parent[y] = x
+                size[x] += size[y]
+                if limit is not None and x == a and size[a] >= limit:
+                    return None
+                queue.append((x, y))
+    lab = parent
+    for v in range(n):                  # parent[v] < v is already final
+        lab[v] = lab[lab[v]]
+    return lab
 
 
-def minimal_block_labels(n, gens):
+def minimal_block_labels(n, gens, reps=None):
     """For a transitive group: labels of a minimal nontrivial block system,
-    or None if the group is primitive."""
+    or None if the group is primitive. It is the system of the first b
+    (in increasing order) whose block B(0, b) is smallest.
+
+    `reps`, if given, lists the least point of every orbit of the stabilizer of
+    0 except {0}, increasing: B(0, b) is the same for all b in such an orbit,
+    so it suffices to try these points. Blocks that cannot beat the best one
+    found so far are abandoned early. The result is the same."""
     best, best_size = None, n
-    for b in range(1, n):
-        lab = minimal_block(n, gens, 0, b)
+    cand = range(1, n) if reps is None else reps
+    for b in cand:
+        # a nontrivial block has at most n/2 points
+        lab = minimal_block(n, gens, 0, b, limit=min(best_size, n // 2 + 1))
+        if lab is None:
+            continue
         size = lab.count(lab[0])
         if size < best_size:
             best, best_size = lab, size
             if size == 2:
                 break
     return best if best_size < n else None
+
+
+def stabilizer_orbit_reps(G, p=0):
+    """For transitive G: the least point of each orbit of the stabilizer G_p
+    other than {p}, in increasing order. G_p is conjugate to the stabilizer
+    G_b of the first base point b, which the chain already provides."""
+    n = G.n
+    if not G.base or p not in G.T[0]:
+        return None
+    u = G.T[0][p]                       # base[0]^u = p, so G_p = u^-1 G_b u
+    S1 = G.S[1] if len(G.base) > 1 else []
+    seen = [False] * n
+    reps = []
+    for x in range(n):
+        if seen[x]:
+            continue
+        seen[x] = True
+        orb = [x]
+        for y in orb:
+            for s in S1:
+                z = s[y]
+                if not seen[z]:
+                    seen[z] = True
+                    orb.append(z)
+        m = min(u[y] for y in orb)
+        if m != p:
+            reps.append(m)
+    reps.sort()
+    return reps
 
 
 def top_block_system(G):
@@ -445,14 +590,19 @@ def top_block_system(G):
     n = G.n
     blocks = [[p] for p in range(n)]
     changed = False
+    first = True
     while len(blocks) > 2:
         d = len(blocks)
-        where = [0] * n
-        for i, B in enumerate(blocks):
-            for p in B:
-                where[p] = i
-        bg = [tuple(where[g[B[0]]] for B in blocks) for g in G.gens]
-        lab = minimal_block_labels(d, bg)
+        if first:                       # the point action itself
+            lab = minimal_block_labels(d, G.gens, stabilizer_orbit_reps(G))
+            first = False
+        else:
+            where = [0] * n
+            for i, B in enumerate(blocks):
+                for p in B:
+                    where[p] = i
+            bg = [tuple(where[g[B[0]]] for B in blocks) for g in G.gens]
+            lab = minimal_block_labels(d, bg)
         if lab is None:
             break
         merged = {}
@@ -461,6 +611,44 @@ def top_block_system(G):
         blocks = sorted((sorted(B) for B in merged.values()), key=lambda B: B[0])
         changed = True
     return blocks if changed else None
+
+
+def label_support(G, phi, p=0):
+    """For transitive G and phi: G -> Sym(m): the labels F fixed by phi(G_p),
+    in increasing order, and supp[w] = tuple(phi(u)[a] for a in F) for any u in G
+    with p^u = w (it does not depend on u).
+
+    a is in F exactly when the G-orbit of (p, a) on (point, label) pairs has
+    one label per point; that orbit is then {(w, supp_a[w])}. So no
+    stabilizer chain is needed."""
+    n, q = G.n, phi.m
+    pairs = [(g, phi.image_of(g)) for g in G.gens]
+    F, cols = [], []
+    for a in range(q):
+        lab = [None] * n
+        lab[p] = a
+        queue = [p]
+        ok = True
+        for w in queue:
+            c = lab[w]
+            for g, im in pairs:
+                w2, c2 = g[w], im[c]
+                l2 = lab[w2]
+                if l2 is None:
+                    lab[w2] = c2
+                    queue.append(w2)
+                elif l2 != c2:
+                    ok = False
+                    break
+            if not ok:
+                break
+        if ok:
+            F.append(a)
+            cols.append(lab)
+    if not cols:
+        return F, [()] * n
+    supp = [None if c[0] is None else c for c in zip(*cols)]
+    return F, supp
 
 
 # -- the Johnson action on 2-sets ---------------------------------------------

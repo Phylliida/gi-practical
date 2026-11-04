@@ -32,7 +32,8 @@ import math
 from collections import Counter, namedtuple
 
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens
-from .group import PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system, johnson_labels
+from .group import (PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system,
+                    johnson_labels, label_support, clear_chain_cache)
 
 Coset = namedtuple("Coset", "gens rep")
 
@@ -101,6 +102,7 @@ class Solver:
         self.certificates = certificates    # use local certificates in GiantStep
         self.max_enum = max_enum            # refuse to enumerate anything larger
         self.stats = Counter()
+        clear_chain_cache()                 # (a cache only: results do not depend on it)
 
     # -- Solve: restrict to the positions that still need checking -----------
     def solve(self, G, D, x, y):
@@ -239,15 +241,9 @@ class Solver:
         Returns (cx, cy, px, py), or None when supports are not 1 or 2 labels.
         G must be transitive."""
         n, q = G.n, phi.m
-        G0 = PermGroup(n, G.gens, base=[0], order=G.order())
-        imgs = [phi.image_of(h) for h in G0._tail(1).gens]
-        F0 = [a for a in range(q) if all(im[a] == a for im in imgs)]
+        F0, supp = label_support(G, phi)
         if len(F0) not in (1, 2):
             return None
-        supp = [None] * n
-        for w, u in G0.T[0].items():
-            im = phi.image_of(u)
-            supp[w] = tuple(im[a] for a in F0)
         out = []
         for z in (x, y):
             fib = {}
