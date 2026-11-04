@@ -113,6 +113,8 @@ def instances(seed=0):
         out.append((name, tier, A, shuffled(A, rng), True, aut))
 
     def noniso(name, tier, G, H):
+        # every non-isomorphism label is verified independently
+        assert not nx.is_isomorphic(G, H), name
         out.append((name, tier, adj(G), shuffled(adj(H), rng), False, None))
 
     # tiny: n <= 8
@@ -133,7 +135,7 @@ def instances(seed=0):
     iso("rand12", "small", nx.gnp_random_graph(12, 0.5, seed=4))
     iso("3reg12", "small", nx.random_regular_graph(3, 12, seed=5))
     noniso("3reg12-pair", "small", nx.random_regular_graph(3, 12, seed=5),
-           nx.random_regular_graph(3, 12, seed=6))
+           nx.random_regular_graph(3, 12, seed=7))
     # medium: n <= 20
     iso("rook4", "medium", rook(4), 1152)
     iso("Shrikhande", "medium", shrikhande(), 192)
