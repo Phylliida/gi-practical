@@ -5,6 +5,7 @@ product mul(p, q) means "first p, then q".  A coloring x is a tuple of colors
 indexed by points; relabeling by g gives x^g with x^g[g[i]] = x[i].  So g is an
 isomorphism from x to y exactly when act(x, g) == y.
 """
+from operator import itemgetter
 
 
 def identity(n):
@@ -13,7 +14,9 @@ def identity(n):
 
 def mul(p, q):
     """p then q."""
-    return tuple(map(q.__getitem__, p))
+    if len(p) > 1:
+        return itemgetter(*p)(q)        # much faster than a map or a comprehension
+    return tuple(q[i] for i in p)
 
 
 def inv(p):

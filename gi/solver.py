@@ -32,7 +32,7 @@ import math
 from collections import Counter, namedtuple
 
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens
-from .group import PermGroup, ActionHom, reduce_gens, top_block_system, johnson_labels
+from .group import PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system, johnson_labels
 
 Coset = namedtuple("Coset", "gens rep")
 
@@ -119,8 +119,7 @@ class Solver:
             return Coset(list(G.gens), G.idn)
         if len(D) == n:
             return self.cont(G, tuple(x), tuple(y))
-        idx = {d: i for i, d in enumerate(D)}
-        rho = ActionHom(G, len(D), lambda g: tuple(idx[g[d]] for d in D))
+        rho = RestrictionHom(G, D)
         a = self.cont(rho.image_group(), xs, ys)
         if a is None:
             return None
@@ -180,7 +179,7 @@ class Solver:
         if d >= 5 and order in (math.factorial(d), math.factorial(d) // 2):
             self.stats["giant_natural"] += 1
             if phi is None:
-                phi = ActionHom(G, n, lambda g: g)
+                phi = ActionHom(G, n, None)      # identity
             return self.giant(G, phi, x, y)
         if order <= self.enum_limit or d < 5:
             return self.enum_cosets(G, phi, x, y)
@@ -219,7 +218,7 @@ class Solver:
         (at most two cosets) and run GiantStep in each coset."""
         n, q = G.n, phi.m
         if phi.image_order() == math.factorial(q):
-            alt = PermGroup(n, [phi.lift(h) for h in alt_gens(q, range(q))] + phi.kernel().gens)
+            alt = phi.preimage(alt_gens(q, range(q)), math.factorial(q) // 2)
             transitive = len(alt.orbits()) == 1
             psi = ActionHom(alt, q, phi.image_of) if transitive else None
             answers = []
@@ -240,7 +239,7 @@ class Solver:
         Returns (cx, cy, px, py), or None when supports are not 1 or 2 labels.
         G must be transitive."""
         n, q = G.n, phi.m
-        G0 = PermGroup(n, G.gens, base=[0])
+        G0 = PermGroup(n, G.gens, base=[0], order=G.order())
         imgs = [phi.image_of(h) for h in G0._tail(1).gens]
         F0 = [a for a in range(q) if all(im[a] == a for im in imgs)]
         if len(F0) not in (1, 2):
@@ -326,7 +325,7 @@ class Solver:
             if not transp:
                 return None
             pi = mul(transp[0], pi)
-        H = PermGroup(n, [phi.lift(h) for h in ygens] + phi.kernel().gens)
+        H = phi.preimage(ygens)
         tau = phi.lift(pi)
         a = self.solve(H, range(n), x, act(y, inv(tau)))
         if a is None:
@@ -366,8 +365,7 @@ class Solver:
             return PermGroup(k, [phiT(g) for g in H.gens]).order() == alt_order
 
         alt_order = math.factorial(k) // 2
-        A = PermGroup(n, [phi.lift(h) for h in alt_gens(q, T) + alt_gens(q, rest)]
-                      + phi.kernel().gens)
+        A = phi.preimage(alt_gens(q, T) + alt_gens(q, rest))
         W, sig = set(), []
         while True:
             img = PermGroup(k, [phiT(g) for g in A.gens])
