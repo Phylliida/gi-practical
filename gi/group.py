@@ -67,6 +67,7 @@ class PermGroup:
         self.idn = _identity(n)
         self._target = order
         self._snap = None
+        self._elems = None              # all elements, once listed (small groups)
         if not isinstance(gens, (list, tuple)):
             gens = list(gens)
         key = None
@@ -196,7 +197,7 @@ class PermGroup:
         if j == len(self.base) and r == self.idn:
             return False
         self.gens.append(g)
-        self._snap = None
+        self._snap = self._elems = None
         base = self.base
         k = 0
         while k < len(base) and g[base[k]] == base[k]:
@@ -295,15 +296,22 @@ class PermGroup:
         """All elements (only for small groups), in the order of
         product(T[0], ..., T[k-1]); the element is u_{k-1} ... u_0."""
         global _chains_size
+        if self._elems is not None:
+            return iter(self._elems)
+        order = self.order()
+        if order * self.n > CHAIN_CACHE_LIMIT // 64:
+            return self._elements()
         c = self._snap
-        if c is not None and self._order * self.n <= CHAIN_CACHE_LIMIT // 64:
+        if c is not None:
             if c.elements is None:
                 c.elements = tuple(self._elements())
                 if _CHAINS.get(c.key) is c:     # (still cached)
-                    c.size += self._order * self.n
-                    _chains_size += self._order * self.n
-            return iter(c.elements)
-        return self._elements()
+                    c.size += order * self.n
+                    _chains_size += order * self.n
+            self._elems = c.elements
+        else:
+            self._elems = tuple(self._elements())
+        return iter(self._elems)
 
     def _elements(self):
         levels = [list(t.values()) for t in self.T if len(t) > 1]

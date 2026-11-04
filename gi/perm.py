@@ -40,7 +40,16 @@ def act(x, g):
 
 def maps(g, x, y):
     """Whether x^g == y."""
-    return all(y[g[i]] == c for i, c in enumerate(x))
+    # Most non-isomorphisms are rejected within the first points; once those
+    # agree, a full comparison in C is faster than a Python loop.
+    if len(x) > 4:
+        if y[g[0]] != x[0] or y[g[1]] != x[1] or y[g[2]] != x[2] or y[g[3]] != x[3]:
+            return False
+        return itemgetter(*g)(y) == tuple(x)
+    for i, c in enumerate(x):
+        if y[g[i]] != c:
+            return False
+    return True
 
 
 def parity(p):
