@@ -1,4 +1,64 @@
-# Overnight campaign: improving n^{O(log d)} (started 2026-11-04)
+# Overnight campaign: improving n^{O(log d)} (2026-11-04 → 2026-11-05)
+
+## Morning summary
+
+**Bottom line.** No polynomial or FPT algorithm for degree-d graph isomorphism; that is still a recognized
+open problem. The night produced:
+1. a candidate unconditional new theorem (canonization), survived one red-team, write-up in progress;
+2. a practical win over nauty and Traces on the family designed to beat them;
+3. a precise map of why n^{log d} is hard to beat.
+
+**1. Candidate new result, unconditional: canonical forms for graphs of maximum degree d in
+n^{O((log d)^c)}.**
+* Grohe–Neuen–Schweitzer (GNS) gave *isomorphism* in n^{polylog d}. *Canonization* in n^{polylog d} is
+  listed as open by Schweitzer–Wiebking (2019), by Wiebking (2020), and in Wiebking's 2021 thesis
+  (Question 9.6).
+* The fix replaces the one pair-dependent step in GNS (an aggregation case) by a "canonical subcoset"
+  device: move a tuple to a reference tuple chosen from the group alone, then canonize under its
+  stabilizer. Credit for the device goes to Wiebking's thesis, Lemma 5.34, which uses it for another
+  purpose.
+* Status: derived in w4-gnscanon.md; no break in 7 attacks in redteam-w4-gnscanon.md. A paper-style
+  write-up is in progress (canonization-bounded-degree.md). The remaining written gaps are the
+  running-time section and the canonical Luks reduction (classical: Babai–Luks 1983).
+* **Next step: a human expert (Wiebking, Neuen or Schweitzer) should look at it before any claim.**
+
+**2. Conditional on the HJ preprint: degree-d GI in n^{O(log d)}** (verify-theorem-R.md and
+redteam-theorem-R.md, from yesterday).
+* Tonight showed the exponent is tight for HJ's algorithm itself (w1-fpt.md, red-teamed): an explicit
+  primitive group (F_2^d ⋊ S_{d+1}) wr C_m forces N^{log d − O(1)} branches. So beating it needs a
+  different algorithm, not a better analysis.
+* HJ (with or without the corrected dispatcher) also needs N^{log d} on the synchronised affine tower
+  G_{r,L}, which is FPT by another method (w1-structure.md).
+
+**3. Where the hardness lives.** The problem reduces, step by step, to one clean core:
+* TreeCI, coset intersection for groups acting on bounded-degree trees (w2-coset.md);
+* whose graph-side form is **tanglegram isomorphism**: two rooted trees of out-degree ≤ b sharing one
+  leaf set (w4-t2.md). FPT for tanglegrams is *necessary* for FPT degree-d GI.
+* Tanglegrams defeat Weisfeiler–Leman in dimension Ω(n), already at b=2 (CFI embeds), so any FPT
+  algorithm must be group-theoretic.
+* Tanglegram isomorphism is polynomial if either tree has out-degree ≤ 4 (Luks 1993). Hard instances
+  need deep Sym(≥5) towers in both trees (w6-tanglegram.md).
+* Along the way several "new" algorithms turned out to be known (Theorem P = Babai–Codenotti–Qiao 2012),
+  which the red-teams caught.
+
+**4. Practical: we beat nauty and Traces on Neuen–Schweitzer multipedes** (w1-scale.md).
+* New: an elementary-abelian layer solver over F_2 inside the Luks bounded-degree pipeline.
+* At n=2464, dense nauty, sparse nauty and Traces all time out (>600s); ours gives a fully verified
+  answer in 1.4s.
+* Growth: ours ~n^1.17, nauty exponential. Answers are proved by NS Lemma 2.3, not taken from a solver.
+* We still lose to Traces on CFI over random cubics and Miyazaki graphs, and to sparse nauty below
+  n≈1000.
+
+**Suggested next steps.**
+1. Finish the canonization write-up and send it to an expert.
+2. Build the HJ Lean repo when the machine is free; it machine-checks HJ's σ-budget, the main risk
+   under result 2.
+3. The best theory lead: extend the Babai–Codenotti–Qiao DP from product actions to generalized wreath
+   products over posets, which would cover all "coordinate" tanglegrams.
+
+---
+
+## Full log
 
 Goal set by the user: push the conditional n^{O(log d)} bound for graph isomorphism of maximum degree d
 (Theorem R*, see verify-theorem-R.md and redteam-theorem-R.md) further, ideally toward polynomial,
