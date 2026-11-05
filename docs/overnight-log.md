@@ -355,3 +355,15 @@ are red-teams, a LaTeX paper, and final integration.
   architecture [SKETCH].
 * HJ Thm A.9 re-derived except the CFSG primitive-valuation lemma. A weak σ ≤ C log d log N via GNS 3.13
   gives n^{O(log² d)} conditional on HJ §§4–7 but not on that lemma [SKETCH].
+
+### HJ Lean formalization BUILT (2026-11-05 13:25)
+* Toolchain v4.30.0-rc2 via nixpkgs elan. mathlib cache download 76s; `lake build` exited 0 after 44m30s.
+  Disk used ~14 GB.
+* `#print axioms main_theorem`: exactly propext, Classical.choice, Quot.sound plus the 10 declared
+  literature axioms (chiefSeriesAlgo, gmpOutBound, gmpTransitiveNonabelian, marotiPrimitive,
+  quotientCentralizer, simpleValuationDegree, sixTransitiveContainsAlt, sylowAlgo, sylowConjugate,
+  transitiveAffected). No sorryAx, no ofReduceBool.
+* Dependency cone of main_theorem (115,555 constants) contains GI.Paper.thm_hereditary_budget (HJ Thm A.9).
+  So HJ's σ-budget, the #1 residual risk under the conditional n^{O(log d)}, is machine-checked as part of
+  HJ's theorem, modulo the 10 axioms. The new Λ-accounting itself is still pen-and-paper.
+* Comparator (fresh-kernel replay + statement match) is being built and run.
