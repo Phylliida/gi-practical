@@ -6,6 +6,8 @@ solvers, with answers known by construction, measured against nauty and Traces.
         --timeout 300 --label ns
     $PY bench/irhard.py table --label ns
     $PY bench/irhard.py fit --label ns
+    nice $PY bench/irhard.py audit --size 112          # one ns size end to end (see docs)
+    nice $PY bench/irhard.py nodes --sizes 16,32,48 --algs As,At,Ad --timeout 200
 
 Families (size parameter k in brackets). All multipede families start from
 Neuen and Schweitzer's rigid base construction (ESA 2017, "Benchmark graphs
@@ -86,7 +88,21 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 sys.setrecursionlimit(100000)
 
 from gi import graph_iso, Solver
-from gi.bounded import bounded_iso_lists
+try:
+    from gi.bounded import bounded_iso_lists
+except ImportError:                     # an older gi (for before/after timings)
+    from gi.bounded import bounded_iso
+
+    def bounded_iso_lists(nx, ny, solver=None, **kw):
+        n = len(nx)
+        mats = []
+        for nb in (nx, ny):
+            A = [[0] * n for _ in range(n)]
+            for u in range(n):
+                for v in nb[u]:
+                    A[u][v] = 1
+            mats.append(A)
+        return bounded_iso(mats[0], mats[1], solver=solver, **kw)
 
 DREADNAUT = os.environ.get("DREADNAUT") or shutil.which("dreadnaut") or next(
     (p for p in ("/nix/store/4kd2j9xhcgz2p6msmflmr81pqms9cy05-nauty-2.9.1/bin/dreadnaut",)
@@ -376,7 +392,105 @@ def fam_cfix(b, rng):
                  claim=False, aut=None, cert="cfi")]
 
 
-FAMILIES = {"ns": fam_ns, "nsr": fam_nsr, "nss": fam_nss, "nst": fam_nst, "cfix": fam_cfix}
+# --- Miyazaki graphs (bliss benchmark files) -----------------------------------------
+MZ_DIR = os.environ.get("MZ_DIR", "/tmp/claude-1000/-home-bepis-math/"
+                        "117a2777-2472-4276-845a-e0dfeb712755/scratchpad/w1-scale-src")
+
+
+def read_dimacs(path):
+    """Neighbour lists of a DIMACS 'p edge' file (vertices 1..n)."""
+    nbr = None
+    with open(path) as fh:
+        for line in fh:
+            t = line.split()
+            if not t:
+                continue
+            if t[0] == "p":
+                nbr = [[] for _ in range(int(t[2]))]
+            elif t[0] == "e":
+                u, v = int(t[1]) - 1, int(t[2]) - 1
+                if u != v and v not in nbr[u]:
+                    nbr[u].append(v)
+                    nbr[v].append(u)
+    return [sorted(r) for r in nbr]
+
+
+def twist_pair(nbr, a, b, c, d):
+    """Replace the edges a-c, b-d by a-d, b-c (a CFI twist of one base edge)."""
+    out = [list(r) for r in nbr]
+    for u, v in ((a, c), (b, d)):
+        assert v in out[u], "the edge to twist is missing"
+        out[u].remove(v)
+        out[v].remove(u)
+    for u, v in ((a, d), (b, c)):
+        out[u].append(v)
+        out[v].append(u)
+    return [sorted(r) for r in out]
+
+
+def mz_family(sub):
+    """Miyazaki graphs from the bliss benchmark set (users.aalto.fi/~tjunttil/
+    bliss/benchmarks/, files unpacked under MZ_DIR/bliss-<sub>/x/<sub>/):
+    the relabeled graph (isomorphic), and the graph with the first
+    inter-gadget edge pair (vertices 5,6 to 15,16) twisted (answer and |Aut|
+    from nauty; Traces solves these instantly)."""
+    def f(k, rng):
+        X = read_dimacs(os.path.join(MZ_DIR, f"bliss-{sub}", "x", sub, f"{sub}-{k}"))
+        out = [dict(name=f"{sub}-{k}", X=X, Y=relabeled(X, rng), claim=True, aut=None,
+                    cert="relabel")]
+        try:
+            T = twist_pair(X, 4, 5, 14, 15)
+            out.append(dict(name=f"{sub}-{k}-twist", X=X, Y=relabeled(T, rng), claim=None,
+                            aut=None, cert="nauty"))
+        except AssertionError:
+            pass
+        return out
+    return f
+
+
+def miyazaki_edges(k):
+    """Edges (1-based) of Miyazaki's graph mz-k as in the bliss benchmark set:
+    2k blocks of 10 vertices, each an odd CFI (Fuerer) gadget with outer
+    pairs (1,2), (3,4), (5,6) and middles 7..10; blocks 2i-1, 2i joined by
+    the pair (5,6) (a single base edge), blocks 2i, 2i+1 by the pairs (1,2)
+    and (3,4) (a double base edge), and the pairs (1,2), (3,4) of the first
+    and last block joined to each other (a loop). For k <= 50 this is
+    exactly the edge set of the bliss file mz-k (checked by tests/test_irhard.py
+    when the files are present)."""
+    nb = 2 * k
+    gad = [(1, 8), (1, 9), (2, 7), (2, 10), (3, 8), (3, 10), (4, 7), (4, 9), (5, 9), (5, 10),
+           (6, 7), (6, 8)]
+    E = []
+    for i in range(nb):
+        o = 10 * i
+        E += [(o + a, o + b) for a, b in gad]
+    o = 10 * (nb - 1)
+    E += [(1, 3), (2, 4), (o + 1, o + 3), (o + 2, o + 4)]
+    for i in range(0, nb, 2):
+        o = 10 * i
+        E += [(o + 5, o + 15), (o + 6, o + 16)]
+    for i in range(1, nb - 1, 2):
+        o = 10 * i
+        E += [(o + a, o + 10 + a) for a in (1, 2, 3, 4)]
+    return E
+
+
+def fam_mzgen(k, rng):
+    """Generated Miyazaki graphs (any k): relabeled copy (isomorphic) and the
+    first single base edge twisted (answer from nauty)."""
+    nbr = [[] for _ in range(20 * k)]
+    for u, v in miyazaki_edges(k):
+        nbr[u - 1].append(v - 1)
+        nbr[v - 1].append(u - 1)
+    X = [sorted(r) for r in nbr]
+    return [dict(name=f"mz{k}", X=X, Y=relabeled(X, rng), claim=True, aut=None, cert="relabel"),
+            dict(name=f"mz{k}-twist", X=X, Y=relabeled(twist_pair(X, 4, 5, 14, 15), rng),
+                 claim=None, aut=None, cert="nauty")]
+
+
+FAMILIES = {"ns": fam_ns, "nsr": fam_nsr, "nss": fam_nss, "nst": fam_nst, "cfix": fam_cfix,
+            "mz": mz_family("mz"), "mzaug": mz_family("mz-aug"), "mzaug2": mz_family("mz-aug2"),
+            "mzgen": fam_mzgen}
 
 
 # --- dreadnaut -------------------------------------------------------------------------
@@ -507,6 +621,7 @@ def cmd_run(args):
                         f"irhard-{args.label}.json")
     rows = json.load(open(path))["rows"] if os.path.exists(path) and args.append else []
     bad = 0
+    dead = set()                                # (mode, kind) that timed out at a smaller size
     for size in [int(s) for s in args.sizes.split(",")]:
         rng = random.Random(7919 * size + args.seed)
         t0 = time.perf_counter()
@@ -522,8 +637,14 @@ def cmd_run(args):
                        cert=I["cert"], gen_time=round(tgen, 2))
             # nauty first, so that its answer and |Aut| check ours where the
             # construction does not give them
+            kind = I["name"].split("-")[-1] if "-" in I["name"] else "iso"
             for mode in sorted(modes, key=lambda m: not m.startswith("dn")):
+                if (mode, kind) in dead:
+                    row[mode] = dict(status="skipped", time=args.timeout)
+                    continue
                 r = row[mode] = run_mode(I, mode, args.timeout)
+                if r["status"] == "timeout" and not args.no_skip:
+                    dead.add((mode, kind))
                 if mode.startswith("dn") and r["status"] == "ok":
                     if I["expect"] is None:        # the answer comes from nauty
                         I["expect"] = r["same"]
@@ -570,7 +691,7 @@ def cmd_table(args):
         v = r.get(m)
         if v is None:
             return "-"
-        if v["status"] == "timeout":
+        if v["status"] in ("timeout", "skipped"):
             return f">{v['time']:.0f}"
         return f"{v['time']:.3g}" if v["status"] == "ok" else v["status"]
 
@@ -618,23 +739,97 @@ def cmd_fit(args):
             for m, (ap2, bp2, ae2, be2) in fits.items():
                 if m == "new":
                     continue
-                # new (polynomial) against m (polynomial and exponential)
-                xp = (ap - ap2) / (bp2 - bp) if bp2 != bp else float("nan")
-                lo, hi = 1.0, 1e7          # solve ap + bp ln n = ae2 + be2 n by bisection
-                g = lambda n: ap + bp * math.log(n) - ae2 - be2 * n
-                xe = float("nan")
-                if g(lo) * g(hi) < 0 or (g(50) > 0 and be2 > 0):
-                    lo = 50.0
-                    while g(hi) > 0 and hi < 1e9:
-                        hi *= 2
-                    if g(lo) > 0 > g(hi):
-                        for _ in range(100):
-                            mid = (lo + hi) / 2
-                            lo, hi = (mid, hi) if g(mid) > 0 else (lo, mid)
-                        xe = lo
-                print(f"   crossover new vs {m}: polynomial fits n = "
-                      f"{math.exp(xp) if xp == xp else float('nan'):.0f}, "
-                      f"new-poly vs {m}-exp n = {xe:.0f}")
+                # the smallest n >= 50 beyond which the fitted curve of `new` stays
+                # below m's, for m's polynomial and its exponential fit
+                def cross(f):
+                    last = None
+                    for n in range(50, 20001):
+                        if ap + bp * math.log(n) < f(n):
+                            if last is None:
+                                last = n
+                        else:
+                            last = None
+                    return last
+                xp = cross(lambda n: ap2 + bp2 * math.log(n))
+                xe = cross(lambda n: ae2 + be2 * n)
+                print(f"   new below {m} for all n >= {xp} (polynomial fits), "
+                      f">= {xe} (new polynomial vs {m} exponential); None = not below n=20000")
+
+
+def cmd_audit(args):
+    """End-to-end audit of the ns instances of one size (as `run --seed S`
+    builds them): the lemma's conditions, our answer verified, and the
+    dreadnaut input read back by dreadnaut ('t') with the same edge set."""
+    from collections import Counter
+    k = args.size
+    insts = FAMILIES["ns"](k, random.Random(7919 * k + args.seed))
+    rng2 = random.Random(7919 * k + args.seed)
+    for _ in range(50):                 # the same base as ns_instances drew
+        rows, nw = ns_base(k, rng2)
+        bad = check_ns_lemma(rows, nw)
+        if not bad:
+            break
+    print(f"base B: |V|={len(rows)} |W|={nw} rank(A)={len(echelon([sum(1 << w for w in r) for r in rows]))};"
+          f" lemma conditions (1)-(4): {'all hold' if not bad else bad}")
+    assert multipede(rows, nw, [0] * len(rows)) == insts[0]["X"]
+    for I in insts:
+        X, Y = I["X"], I["Y"]
+        n, E = len(X), sum(map(len, X)) // 2
+        print(f"{I['name']}: n={n} edges={E} degrees={dict(Counter(map(len, X)))} "
+              f"answer by the lemma: {'isomorphic' if I['claim'] else 'not isomorphic'}, |Aut|=1")
+        S = Solver(cameron_no_enum=True, certificates=False)
+        t0 = time.perf_counter()
+        res = bounded_iso_lists(X, Y, solver=S)
+        dt = time.perf_counter() - t0
+        I["expect"] = I["claim"]
+        err = check(I, res)
+        print(f"  ours: {dt:.3f}s, {'isomorphic' if res else 'not isomorphic'}; check: "
+              f"{err or 'decision, sigma on every edge, generators and |<gens>| = 1 verified'}"
+              + (f" ({len(res[1])} generators)" if res else ""))
+        p = subprocess.run(["nice", "-n", "19", DREADNAUT], input=f"$=0 l=0\n{_dre_graph(X)}\nt\nq\n",
+                           capture_output=True, text=True, timeout=120)
+        got, cur = set(), None
+        for line in p.stdout.splitlines():
+            m = re.match(r"\s*(\d+)\s*:(.*)", line)
+            if m:
+                cur, rest = int(m.group(1)), m.group(2)
+            elif cur is not None:
+                rest = line
+            else:
+                continue
+            got.update((cur, int(t)) for t in rest.replace(";", " ").split())
+        want = {(u, v) for u in range(n) for v in X[u]}
+        print(f"  dreadnaut reads the graph we pass it: edge set identical = {got == want}")
+
+
+def cmd_nodes(args):
+    """dreadnaut on X of ns_k (seed 0) per mode: cpu time, search-tree nodes,
+    depth (maxlev) and grpsize, one JSON line each; a mode is dropped after
+    its first timeout."""
+    dead = set()
+    for k in [int(x) for x in args.sizes.split(",")]:
+        X = FAMILIES[args.family](k, random.Random(7919 * k + args.seed))[0]["X"]
+        for alg in args.algs.split(","):
+            if alg in dead:
+                continue
+            script = f"$=0 {alg} -a -m c\n{_dre_graph(X)}\nx\nq\n"
+            try:
+                p = subprocess.run(["nice", "-n", "19", DREADNAUT], input=script,
+                                   capture_output=True, text=True, timeout=args.timeout)
+            except subprocess.TimeoutExpired:
+                print(json.dumps(dict(k=k, n=len(X), alg=alg, status="timeout",
+                                      limit=args.timeout)), flush=True)
+                dead.add(alg)
+                continue
+            o = p.stdout
+
+            def g(pat):
+                m = re.search(pat, o)
+                return m.group(1) if m else None
+            print(json.dumps(dict(k=k, n=len(X), alg=alg, status="ok",
+                                  cpu=float(g(r"cpu time = ([0-9.]+)")),
+                                  nodes=int(g(r"(\d+) nodes?")), maxlev=g(r"maxlev=(\d+)"),
+                                  grpsize=g(r"grpsize=([0-9.e+]+)"))), flush=True)
 
 
 def main():
@@ -649,14 +844,26 @@ def main():
     r.add_argument("--only", default="")
     r.add_argument("--seed", type=int, default=0)
     r.add_argument("--append", action="store_true")
+    r.add_argument("--no-skip", action="store_true",
+                   help="keep running a mode at larger sizes after it timed out")
     t = sub.add_parser("table")
     t.add_argument("--label", required=True)
     f = sub.add_parser("fit")
     f.add_argument("--label", required=True)
     f.add_argument("--min-n", type=int, default=0)
     f.add_argument("--floor", type=float, default=0.01)
+    a = sub.add_parser("audit")
+    a.add_argument("--size", type=int, required=True)
+    a.add_argument("--seed", type=int, default=0)
+    nd = sub.add_parser("nodes")
+    nd.add_argument("--family", default="ns", choices=sorted(FAMILIES))
+    nd.add_argument("--sizes", required=True)
+    nd.add_argument("--algs", default="As,At,Ad")
+    nd.add_argument("--timeout", type=float, default=200)
+    nd.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
-    {"run": cmd_run, "table": cmd_table, "fit": cmd_fit}[args.cmd](args)
+    {"run": cmd_run, "table": cmd_table, "fit": cmd_fit, "audit": cmd_audit,
+     "nodes": cmd_nodes}[args.cmd](args)
 
 
 if __name__ == "__main__":

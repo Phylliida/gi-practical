@@ -230,7 +230,12 @@ def class_plan(g, col, u0, u1):
     class minimizing (a twin block of >= 3 vertices?, a twin block of 2
     with a nonempty up-set?, number of twin pairs, - placed vertices at
     distance 2, color): twin pairs with an empty up-set add a direct Z_2
-    factor, which keeps G_r elementary abelian (see _Chain.layer2_ea)."""
+    factor, which keeps G_r elementary abelian (see _Chain.layer2_ea).
+
+    Returns None (use BFS layers) as soon as the next layer would hold a
+    twin block of >= 3 vertices: then the colors are too coarse for this
+    order to help (e.g. hypercubes, where class layers make big symmetric
+    groups that BFS layers avoid). This also depends only on X."""
     nbr = g.nbr
     n = g.n
     members = {}
@@ -275,6 +280,8 @@ def class_plan(g, col, u0, u1):
             det = set()
         else:
             layer = [min(pending, key=status.__getitem__)]
+            if status[layer[0]][1]:     # a twin block of >= 3: BFS layers instead
+                return None
         plan.append(layer)
         for c in layer:
             pending.discard(c)
@@ -857,7 +864,9 @@ class _Connected:
 
     def invariants(self):
         """For each oriented edge (u, v): the colors of u and v and the
-        multiset of (d(u, w), d(v, w), color of w) over all vertices w. The
+        multiset of (d(u, w), d(v, w), color of w) over all vertices w (with
+        more than 4 colors, of (d(u, w), d(v, w)) only: still an invariant,
+        and far cheaper; the chains then test a few more roots). The
         distances come from bit-parallel balls (ball_{t+1}(v) = the union of
         ball_t over v and its neighbours, as int bitmasks), so the cost is
         about diameter * |E| big-int operations instead of n BFS runs."""
@@ -890,8 +899,8 @@ class _Connected:
                     if 0 <= j < D:
                         x = su & spheres[j][v]
                         if x:
-                            if len(cmasks) == 1:
-                                items.append((i, j, cmasks[0][0], x.bit_count()))
+                            if len(cmasks) == 1 or len(cmasks) > 4:
+                                items.append((i, j, -1, x.bit_count()))
                             else:
                                 for c, m in cmasks:
                                     k = (x & m).bit_count()

@@ -1,0 +1,13 @@
+base: |V|=448 |W|=336; lemma conditions (1)-(4): all hold
+rank A = 336 (= |W| means odd)
+
+ns112: n=2464 edges=5376 degrees={8: 672, 3: 1792} claim=True
+ours: 1.382s, answer isomorphic
+  sigma maps all 10752 oriented edges of X onto edges of Y (bijection, equal edge counts)
+  returned automorphism generators: 0 -> |Aut| = 1 = lemma's |Aut|
+  dreadnaut read+typed X in 0.01s; edge set identical to ours: True (10752 oriented edges)
+
+ns112-twist: n=2464 edges=5376 degrees={8: 672, 3: 1792} claim=False
+ours: 1.389s, answer not isomorphic
+  lemma: parity difference e_v is outside col(A) -> not isomorphic; ours agrees
+  dreadnaut read+typed X in 0.01s; edge set identical to ours: True (10752 oriented edges)

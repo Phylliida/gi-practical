@@ -1,0 +1,876 @@
+{
+ "label": "w1-ns",
+ "timeout": 600.0,
+ "rows": [
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "gen_time": 0.03,
+   "dnd": {
+    "status": "ok",
+    "time": 0.19,
+    "wall": 0.19,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.027,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "wall": 0.016,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.126,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 152,
+     "luks_ea_layers": 56,
+     "luks_layers_max": 28,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 60,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 3,
+     "luks_group_max_log2_order": 3,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "gen_time": 0.03,
+   "dnd": {
+    "status": "ok",
+    "time": 0.19,
+    "wall": 0.191,
+    "aut": 1.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.04,
+    "wall": 0.049,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.013,
+    "aut": 1.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.165,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 196,
+     "luks_ea_layers": 99,
+     "luks_layers_max": 28,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 60,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 3,
+     "luks_group_max_log2_order": 3,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "gen_time": 0.06,
+   "dnd": {
+    "status": "ok",
+    "time": 2.83,
+    "wall": 2.857,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.12,
+    "wall": 0.122,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.05,
+    "wall": 0.053,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.305,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 280,
+     "luks_ea_layers": 127,
+     "luks_layers_max": 45,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 96,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 5,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "gen_time": 0.06,
+   "dnd": {
+    "status": "ok",
+    "time": 2.87,
+    "wall": 2.892,
+    "aut": 1.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.12,
+    "wall": 0.125,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.05,
+    "wall": 0.053,
+    "aut": 1.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.318,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 311,
+     "luks_ea_layers": 156,
+     "luks_layers_max": 45,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 96,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 5,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns48",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "gen_time": 0.13,
+   "dnd": {
+    "status": "ok",
+    "time": 14.74,
+    "wall": 14.855,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.41,
+    "wall": 0.427,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 1.89,
+    "wall": 1.924,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.425,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 386,
+     "luks_ea_layers": 134,
+     "luks_layers_max": 67,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 156,
+     "luks_phase2_max_degree": 20,
+     "luks_phase2_max_log2_order": 7,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 11
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns48-twist",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "gen_time": 0.13,
+   "dnd": {
+    "status": "ok",
+    "time": 17.3,
+    "wall": 17.429,
+    "aut": 1.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.38,
+    "wall": 0.398,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 1.86,
+    "wall": 1.89,
+    "aut": 1.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.53,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 512,
+     "luks_ea_layers": 257,
+     "luks_layers_max": 67,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 156,
+     "luks_phase2_max_degree": 20,
+     "luks_phase2_max_log2_order": 7,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 11
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "gen_time": 0.2,
+   "dnd": {
+    "status": "ok",
+    "time": 204.32,
+    "wall": 205.766,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 4.78,
+    "wall": 4.824,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 600.23
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.57,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 476,
+     "luks_ea_layers": 168,
+     "luks_layers_max": 84,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 168,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "gen_time": 0.2,
+   "dnd": {
+    "status": "ok",
+    "time": 222.93,
+    "wall": 224.461,
+    "aut": 1.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 5.74,
+    "wall": 5.783,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 600.28
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.701,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 619,
+     "luks_ea_layers": 309,
+     "luks_layers_max": 84,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 168,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns80",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "gen_time": 0.33,
+   "dnd": {
+    "status": "timeout",
+    "time": 600.1
+   },
+   "dns": {
+    "status": "ok",
+    "time": 7.51,
+    "wall": 7.612,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.644,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 538,
+     "luks_ea_layers": 113,
+     "luks_layers_max": 113,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 212,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns80-twist",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "gen_time": 0.33,
+   "dnd": {
+    "status": "timeout",
+    "time": 600.02
+   },
+   "dns": {
+    "status": "ok",
+    "time": 6.94,
+    "wall": 6.989,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.892,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 848,
+     "luks_ea_layers": 422,
+     "luks_layers_max": 113,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 212,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns96",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "gen_time": 0.5,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 67.79,
+    "wall": 68.23,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.023,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 768,
+     "luks_ea_layers": 335,
+     "luks_layers_max": 114,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 272,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns96-twist",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "gen_time": 0.5,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 68.69,
+    "wall": 69.135,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.129,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 873,
+     "luks_ea_layers": 435,
+     "luks_layers_max": 114,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 272,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns112",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "gen_time": 0.75,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "timeout",
+    "time": 600.1
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.412,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 1132,
+     "luks_ea_layers": 573,
+     "luks_layers_max": 148,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 284,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 15,
+     "luks_group_max_log2_order": 15,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns112-twist",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "gen_time": 0.75,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "timeout",
+    "time": 600.01
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.404,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 1128,
+     "luks_ea_layers": 568,
+     "luks_layers_max": 148,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 284,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 15,
+     "luks_group_max_log2_order": 15,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns128",
+   "family": "ns",
+   "size": 128,
+   "n": 2816,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6144,
+   "cert": "lemma",
+   "gen_time": 1.05,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.508,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 950,
+     "luks_ea_layers": 413,
+     "luks_layers_max": 140,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 380,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 20,
+     "luks_group_max_log2_order": 20,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns128-twist",
+   "family": "ns",
+   "size": 128,
+   "n": 2816,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6144,
+   "cert": "lemma",
+   "gen_time": 1.05,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.698,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 1082,
+     "luks_ea_layers": 543,
+     "luks_layers_max": 140,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 380,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 20,
+     "luks_group_max_log2_order": 20,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns144",
+   "family": "ns",
+   "size": 144,
+   "n": 3168,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6912,
+   "cert": "lemma",
+   "gen_time": 1.46,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.607,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 1000,
+     "luks_ea_layers": 340,
+     "luks_layers_max": 170,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 416,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 21,
+     "luks_group_max_log2_order": 21,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns144-twist",
+   "family": "ns",
+   "size": 144,
+   "n": 3168,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6912,
+   "cert": "lemma",
+   "gen_time": 1.46,
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 2.107,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 1329,
+     "luks_ea_layers": 666,
+     "luks_layers_max": 170,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 416,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 21,
+     "luks_group_max_log2_order": 21,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  }
+ ]
+}
