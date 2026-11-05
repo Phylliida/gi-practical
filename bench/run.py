@@ -73,10 +73,21 @@ def check(X, Y, res, expect_iso, expect_aut):
     return True, f"|Aut|={order}"
 
 
+def selected(name, only):
+    """Whether --only selects the instance `name`. `only` lists names separated
+    by "|" or by commas; a name containing commas matches when it occurs as
+    whole comma-separated tokens ("J(7,3),Q6" selects J(7,3) and Q6)."""
+    if not only:
+        return True
+    return any(name == item or f",{name}," in f",{item}," for item in only.split("|"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tiers", default="tiny,small")
-    ap.add_argument("--only", default="", help="comma-separated instance names")
+    ap.add_argument("--only", default="",
+                    help='instance names separated by "|" (or by commas, the old form); '
+                         'names may contain commas, e.g. "J(7,3)|PG(2,3)" or "J(7,3),Q6"')
     ap.add_argument("--timeout", type=float, default=60)
     ap.add_argument("--label", default="run")
     ap.add_argument("--solver-args", default="{}", help="JSON kwargs for Solver")
@@ -84,13 +95,13 @@ def main():
                     help='JSON kwargs for graph_iso (front end), e.g. {"ir": 0}')
     args = ap.parse_args()
     tiers = set(args.tiers.split(","))
-    only = set(filter(None, args.only.split(",")))
+    only = args.only
     kwargs = json.loads(args.solver_args)
     gkwargs = json.loads(args.graph_args)
     signal.signal(signal.SIGALRM, _alarm)
     rows = []
     for name, tier, X, Y, expect_iso, expect_aut in instances(tiers=tiers):
-        if tier not in tiers or (only and name not in only):
+        if tier not in tiers or not selected(name, only):
             continue
         S = Solver(**kwargs)
         t0 = time.time()
@@ -113,6 +124,8 @@ def main():
         rows.append(dict(name=name, tier=tier, n=len(X), status=status, time=round(dt, 3),
                          note=note, stats=dict(S.stats)))
         print(f"{name:22s} {tier:7s} n={len(X):3d} {status:11s} {dt:8.2f}s  {note}", flush=True)
+    if only and not rows:
+        print(f"--only {only!r} matched no instance of tiers {sorted(tiers)}")
     solved = [r for r in rows if r["status"] == "ok"]
     wrong = [r for r in rows if r["status"] == "WRONG"]
     print(f"\n{args.label}: solved {len(solved)}/{len(rows)}, wrong {len(wrong)}, "
