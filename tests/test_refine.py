@@ -372,3 +372,47 @@ def test_1wl_equivalent_cfi_k3():
     assert wl1(PX, PY) is not None
     assert refine_graphs(X, Z, method="2wl") is None
     check_pair(X, Z, [dict(refine="1wl"), dict(refine="1wl", ir=2, ir_min=4), dict()], rng)
+
+
+def test_individualization_pruning():
+    """Graph-level individualization with orbit pruning (one-mode: the y-side
+    vertex is fixed, the x-side vertex runs over orbits of the known Aut(x)).
+    Symmetric graphs against slightly perturbed or relabeled copies, checked
+    against brute force; the pruning must actually skip branches."""
+    rng = random.Random(17)
+    c4 = cycle(4)
+    q3 = [[int((i ^ j) in (1, 2, 4)) for j in range(8)] for i in range(8)]
+    bases = [disjoint(c4, c4), q3, cycle(8), disjoint(cycle(3), cycle(5)),
+             disjoint(disjoint(cycle(3), cycle(3)), [[0, 1], [1, 0]])]
+    pruned = 0
+    for A in bases:
+        n = len(A)
+        aut = len(brute(A, A))
+        for trial in range(4):
+            s = list(range(n))
+            rng.shuffle(s)
+            B = relabel(A, s)
+            if trial % 2:               # move one edge: usually not isomorphic
+                i, j = rng.sample(range(n), 2)
+                k, l = rng.sample(range(n), 2)
+                if B[i][j] != B[k][l]:
+                    B[i][j], B[j][i], B[k][l], B[l][k] = B[k][l], B[l][k], B[i][j], B[j][i]
+            iso = bool(brute(A, B)) if trial % 2 else True
+            for kw in (dict(ir=3, ir_min=2), dict(ir=1, ir_min=2), dict(ir=3, ir_min=3)):
+                S = Solver(certificates=False)
+                res = graph_iso(A, B, solver=S, **kw)
+                pruned += S.stats["ir_pruned"]
+                assert (res is not None) == iso
+                if res is not None:
+                    sigma, gens = res
+                    assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+                    assert all(A[g[i]][g[j]] == A[i][j] for g in gens
+                               for i in range(n) for j in range(n))
+                    assert PermGroup(n, gens).order() == aut
+    assert pruned > 0
+    # CFI(K4) and its twist (2-WL equivalent): all individualization depths agree
+    X, Z = cfi(K4, 4), cfi(K4, 4, twist=True)
+    S = Solver(certificates=False)
+    assert graph_iso(X, relabel(Z, list(range(len(Z)))[::-1]), solver=S, ir=3, ir_min=2) is None
+    assert S.stats["ir_pruned"] > 0
+    assert check_pair(X, Z, [dict(ir=1, ir_min=2), dict(ir=2, ir_min=4), dict(ir=0)], rng) == 192
