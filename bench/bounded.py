@@ -396,6 +396,35 @@ def cmd_table(args):
               f" | {st.get('alt_section_max', 0)} | {st.get('enum_quotient_max_order', 0)} |")
 
 
+def cmd_fit(args):
+    """Least-squares slopes of log(time) against log(n) (polynomial exponent)
+    and against log(n) * log(log(n)) per mode and kind of instance (iso /
+    non-iso), over the instances that finished."""
+    rows = []
+    for lab in args.label.split(","):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results",
+                            f"bounded-{lab}.json")
+        rows += json.load(open(path))["rows"]
+    rows = [r for r in rows if r["n"] >= args.min_n]
+
+    def slope(xs, ys):
+        mx, my = sum(xs) / len(xs), sum(ys) / len(ys)
+        sxx = sum((x - mx) ** 2 for x in xs)
+        return sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sxx if sxx else float("nan")
+
+    for kind in (True, False):
+        for m in ("new", "new0", "newh", "newh0", "default", "nauty"):
+            pts = [(r["n"], r[m]["time"]) for r in rows
+                   if r["iso"] == kind and m in r and r[m]["status"] == "ok" and r[m]["time"] > 0]
+            if len(pts) < 3:
+                continue
+            ln = [math.log(n) for n, _ in pts]
+            lt = [math.log(t) for _, t in pts]
+            print(f"iso={kind!s:5s} {m:8s} n={pts[0][0]}..{pts[-1][0]} ({len(pts)} pts): "
+                  f"t ~ n^{slope(ln, lt):.2f}; "
+                  f"t ~ exp({slope([x * math.log(x) for x in ln], lt):.3f} log n loglog n)")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -409,8 +438,11 @@ def main():
     r.add_argument("--append", action="store_true")
     t = sub.add_parser("table")
     t.add_argument("--label", required=True)
+    f = sub.add_parser("fit")
+    f.add_argument("--label", required=True)
+    f.add_argument("--min-n", type=int, default=0)
     args = ap.parse_args()
-    {"run": cmd_run, "table": cmd_table}[args.cmd](args)
+    {"run": cmd_run, "table": cmd_table, "fit": cmd_fit}[args.cmd](args)
 
 
 if __name__ == "__main__":

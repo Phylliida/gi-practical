@@ -1,0 +1,1002 @@
+{
+ "label": "r4-cfi3",
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "CFI(3reg4)",
+   "family": "cfi3",
+   "size": 4,
+   "n": 40,
+   "iso": true,
+   "aut": 192.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.011,
+    "note": "",
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 25,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 18,
+     "luks_phase2_max_degree": 11,
+     "luks_phase2_max_log2_order": 6,
+     "luks_group_max_log2_order": 6,
+     "luks_twin_max": 2,
+     "enumerate": 6,
+     "solve": 30,
+     "cont": 20
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.124,
+    "note": "",
+    "stats": {
+     "enumerate": 28,
+     "solve": 90,
+     "cont": 90
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0004
+   }
+  },
+  {
+   "name": "CFI(3reg4)-twist",
+   "family": "cfi3",
+   "size": 4,
+   "n": 40,
+   "iso": false,
+   "aut": 192.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.011,
+    "note": "",
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 25,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 18,
+     "luks_phase2_max_degree": 11,
+     "luks_phase2_max_log2_order": 6,
+     "luks_group_max_log2_order": 6,
+     "luks_twin_max": 2,
+     "enumerate": 5,
+     "solve": 29,
+     "cont": 19
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.064,
+    "note": "",
+    "stats": {
+     "enumerate": 19,
+     "solve": 75,
+     "cont": 75
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0004
+   }
+  },
+  {
+   "name": "CFI(3reg6)",
+   "family": "cfi3",
+   "size": 6,
+   "n": 60,
+   "iso": true,
+   "aut": 192.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.035,
+    "note": "",
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 25,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 16,
+     "luks_phase2_max_degree": 112,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 2,
+     "enum_quotient": 7,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 15,
+     "enum_cosets": 7,
+     "solve": 62,
+     "cont": 51
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.441,
+    "note": "",
+    "stats": {
+     "enumerate": 71,
+     "solve": 168,
+     "cont": 168
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0007
+   }
+  },
+  {
+   "name": "CFI(3reg6)-twist",
+   "family": "cfi3",
+   "size": 6,
+   "n": 60,
+   "iso": false,
+   "aut": 192.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.037,
+    "note": "",
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 25,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 16,
+     "luks_phase2_max_degree": 112,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 2,
+     "enum_quotient": 8,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 17,
+     "enum_cosets": 8,
+     "solve": 63,
+     "cont": 52
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.193,
+    "note": "",
+    "stats": {
+     "enumerate": 61,
+     "solve": 152,
+     "cont": 152
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0007
+   }
+  },
+  {
+   "name": "CFI(3reg8)",
+   "family": "cfi3",
+   "size": 8,
+   "n": 80,
+   "iso": true,
+   "aut": 128.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.031,
+    "note": "",
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 40,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 28,
+     "luks_phase2_max_degree": 24,
+     "luks_phase2_max_log2_order": 6,
+     "luks_group_max_log2_order": 6,
+     "luks_twin_max": 2,
+     "enumerate": 13,
+     "solve": 45,
+     "cont": 25
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.449,
+    "note": "",
+    "stats": {
+     "enumerate": 86,
+     "solve": 187,
+     "cont": 187
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0017
+   }
+  },
+  {
+   "name": "CFI(3reg8)-twist",
+   "family": "cfi3",
+   "size": 8,
+   "n": 80,
+   "iso": false,
+   "aut": 128.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.03,
+    "note": "",
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 40,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 28,
+     "luks_phase2_max_degree": 24,
+     "luks_phase2_max_log2_order": 6,
+     "luks_group_max_log2_order": 6,
+     "luks_twin_max": 2,
+     "enumerate": 12,
+     "solve": 45,
+     "cont": 25
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.293,
+    "note": "",
+    "stats": {
+     "enumerate": 84,
+     "solve": 187,
+     "cont": 187
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0017
+   }
+  },
+  {
+   "name": "CFI(3reg10)",
+   "family": "cfi3",
+   "size": 10,
+   "n": 100,
+   "iso": true,
+   "aut": 256.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.061,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 33,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 16,
+     "luks_phase2_max_degree": 96,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 2,
+     "enum_quotient": 6,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 19,
+     "enum_cosets": 6,
+     "solve": 67,
+     "cont": 45
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 1.103,
+    "note": "",
+    "stats": {
+     "enumerate": 141,
+     "solve": 297,
+     "cont": 297
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.003
+   }
+  },
+  {
+   "name": "CFI(3reg10)-twist",
+   "family": "cfi3",
+   "size": 10,
+   "n": 100,
+   "iso": false,
+   "aut": 256.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.06,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 33,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 16,
+     "luks_phase2_max_degree": 96,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 2,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 16,
+     "enum_cosets": 4,
+     "solve": 61,
+     "cont": 39
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.676,
+    "note": "",
+    "stats": {
+     "enumerate": 140,
+     "solve": 297,
+     "cont": 297
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.003
+   }
+  },
+  {
+   "name": "CFI(3reg14)",
+   "family": "cfi3",
+   "size": 14,
+   "n": 140,
+   "iso": true,
+   "aut": 512.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.119,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 30,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 144,
+     "luks_phase2_max_degree": 52,
+     "luks_phase2_max_log2_order": 17,
+     "luks_group_max_log2_order": 17,
+     "luks_twin_max": 2,
+     "enum_quotient": 9,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 16,
+     "enum_cosets": 9,
+     "solve": 81,
+     "cont": 55
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 1.815,
+    "note": "",
+    "stats": {
+     "enumerate": 216,
+     "solve": 420,
+     "cont": 420
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0079
+   }
+  },
+  {
+   "name": "CFI(3reg14)-twist",
+   "family": "cfi3",
+   "size": 14,
+   "n": 140,
+   "iso": false,
+   "aut": 512.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.118,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 30,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 144,
+     "luks_phase2_max_degree": 52,
+     "luks_phase2_max_log2_order": 17,
+     "luks_group_max_log2_order": 17,
+     "luks_twin_max": 2,
+     "enum_quotient": 9,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 16,
+     "enum_cosets": 9,
+     "solve": 79,
+     "cont": 54
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 1.237,
+    "note": "",
+    "stats": {
+     "enumerate": 200,
+     "solve": 420,
+     "cont": 420
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0084
+   }
+  },
+  {
+   "name": "CFI(3reg20)",
+   "family": "cfi3",
+   "size": 20,
+   "n": 200,
+   "iso": true,
+   "aut": 2048.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.222,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 39,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 80,
+     "luks_phase2_max_degree": 138,
+     "luks_phase2_max_log2_order": 20,
+     "luks_group_max_log2_order": 20,
+     "luks_twin_max": 2,
+     "enum_quotient": 12,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 25,
+     "enum_cosets": 12,
+     "solve": 130,
+     "cont": 87
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 7.252,
+    "note": "",
+    "stats": {
+     "enumerate": 111,
+     "solve": 541,
+     "cont": 332
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0345
+   }
+  },
+  {
+   "name": "CFI(3reg20)-twist",
+   "family": "cfi3",
+   "size": 20,
+   "n": 200,
+   "iso": false,
+   "aut": 2048.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.222,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 39,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 80,
+     "luks_phase2_max_degree": 138,
+     "luks_phase2_max_log2_order": 20,
+     "luks_group_max_log2_order": 20,
+     "luks_twin_max": 2,
+     "enum_quotient": 12,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 24,
+     "enum_cosets": 12,
+     "solve": 126,
+     "cont": 85
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 1.205,
+    "note": "",
+    "stats": {
+     "enumerate": 110,
+     "solve": 236,
+     "cont": 179
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0364
+   }
+  },
+  {
+   "name": "CFI(3reg24)",
+   "family": "cfi3",
+   "size": 24,
+   "n": 240,
+   "iso": true,
+   "aut": 32768.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.313,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 57,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 124,
+     "luks_phase2_max_degree": 94,
+     "luks_phase2_max_log2_order": 18,
+     "luks_group_max_log2_order": 18,
+     "luks_twin_max": 2,
+     "enum_quotient": 7,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 18,
+     "enum_cosets": 7,
+     "solve": 114,
+     "cont": 62
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 6.882,
+    "note": "",
+    "stats": {
+     "enumerate": 219,
+     "solve": 933,
+     "cont": 755
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0477
+   }
+  },
+  {
+   "name": "CFI(3reg24)-twist",
+   "family": "cfi3",
+   "size": 24,
+   "n": 240,
+   "iso": false,
+   "aut": 32768.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.28,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 57,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 124,
+     "luks_phase2_max_degree": 94,
+     "luks_phase2_max_log2_order": 18,
+     "luks_group_max_log2_order": 18,
+     "luks_twin_max": 2,
+     "enum_quotient": 8,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 19,
+     "enum_cosets": 8,
+     "solve": 116,
+     "cont": 64
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 4.879,
+    "note": "",
+    "stats": {
+     "enumerate": 222,
+     "solve": 944,
+     "cont": 761
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0478
+   }
+  },
+  {
+   "name": "CFI(3reg30)",
+   "family": "cfi3",
+   "size": 30,
+   "n": 300,
+   "iso": true,
+   "aut": 65536.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.501,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 48,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 66,
+     "luks_phase2_max_degree": 194,
+     "luks_phase2_max_log2_order": 25,
+     "luks_group_max_log2_order": 29,
+     "luks_twin_max": 2,
+     "enum_quotient": 19,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 27,
+     "enum_cosets": 19,
+     "solve": 181,
+     "cont": 112
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 7.494,
+    "note": "",
+    "stats": {
+     "enumerate": 169,
+     "solve": 999,
+     "cont": 594
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.1731
+   }
+  },
+  {
+   "name": "CFI(3reg30)-twist",
+   "family": "cfi3",
+   "size": 30,
+   "n": 300,
+   "iso": false,
+   "aut": 65536.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.454,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 48,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 66,
+     "luks_phase2_max_degree": 194,
+     "luks_phase2_max_log2_order": 25,
+     "luks_group_max_log2_order": 29,
+     "luks_twin_max": 2,
+     "enum_quotient": 19,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 29,
+     "enum_cosets": 19,
+     "solve": 186,
+     "cont": 117
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 3.84,
+    "note": "",
+    "stats": {
+     "enumerate": 168,
+     "solve": 548,
+     "cont": 368
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.1203
+   }
+  },
+  {
+   "name": "CFI(3reg40)",
+   "family": "cfi3",
+   "size": 40,
+   "n": 400,
+   "iso": true,
+   "aut": 2097152.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.881,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 51,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 132,
+     "luks_phase2_max_degree": 118,
+     "luks_phase2_max_log2_order": 32,
+     "luks_group_max_log2_order": 34,
+     "luks_twin_max": 2,
+     "enum_quotient": 14,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 34,
+     "enum_cosets": 14,
+     "solve": 207,
+     "cont": 136
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 16.276,
+    "note": "",
+    "stats": {
+     "enumerate": 224,
+     "solve": 1513,
+     "cont": 881
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.5088
+   }
+  },
+  {
+   "name": "CFI(3reg40)-twist",
+   "family": "cfi3",
+   "size": 40,
+   "n": 400,
+   "iso": false,
+   "aut": 2097152.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.913,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 51,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 132,
+     "luks_phase2_max_degree": 118,
+     "luks_phase2_max_log2_order": 32,
+     "luks_group_max_log2_order": 34,
+     "luks_twin_max": 2,
+     "enum_quotient": 14,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 37,
+     "enum_cosets": 14,
+     "solve": 207,
+     "cont": 138
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 8.467,
+    "note": "",
+    "stats": {
+     "enumerate": 223,
+     "solve": 968,
+     "cont": 608
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.3492
+   }
+  },
+  {
+   "name": "CFI(3reg60)",
+   "family": "cfi3",
+   "size": 60,
+   "n": 600,
+   "iso": true,
+   "aut": 4294967296.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 3.177,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 60,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 266,
+     "luks_phase2_max_degree": 326,
+     "luks_phase2_max_log2_order": 53,
+     "luks_group_max_log2_order": 59,
+     "luks_twin_max": 2,
+     "enum_quotient": 33,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 57,
+     "enum_cosets": 33,
+     "solve": 381,
+     "cont": 253
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 123.102,
+    "note": "",
+    "stats": {
+     "enumerate": 542,
+     "solve": 3514,
+     "cont": 2478
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 1.3044
+   }
+  },
+  {
+   "name": "CFI(3reg60)-twist",
+   "family": "cfi3",
+   "size": 60,
+   "n": 600,
+   "iso": false,
+   "aut": 4294967296.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 2.772,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 60,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 266,
+     "luks_phase2_max_degree": 326,
+     "luks_phase2_max_log2_order": 53,
+     "luks_group_max_log2_order": 59,
+     "luks_twin_max": 2,
+     "enum_quotient": 33,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 60,
+     "enum_cosets": 33,
+     "solve": 375,
+     "cont": 251
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 88.803,
+    "note": "",
+    "stats": {
+     "enumerate": 534,
+     "solve": 3565,
+     "cont": 2498
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 1.3364
+   }
+  },
+  {
+   "name": "CFI(3reg80)",
+   "family": "cfi3",
+   "size": 80,
+   "n": 800,
+   "iso": true,
+   "aut": 2199023255552.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 10.69,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 60,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 288,
+     "luks_phase2_max_degree": 970,
+     "luks_phase2_max_log2_order": 78,
+     "luks_group_max_log2_order": 79,
+     "luks_twin_max": 2,
+     "enum_quotient": 36,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 67,
+     "enum_cosets": 36,
+     "solve": 508,
+     "cont": 347
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 136.13,
+    "note": "",
+    "stats": {
+     "enumerate": 454,
+     "solve": 3611,
+     "cont": 2060
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 4.0694
+   }
+  },
+  {
+   "name": "CFI(3reg80)-twist",
+   "family": "cfi3",
+   "size": 80,
+   "n": 800,
+   "iso": false,
+   "aut": 2199023255552.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 10.814,
+    "note": "",
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 60,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 288,
+     "luks_phase2_max_degree": 970,
+     "luks_phase2_max_log2_order": 78,
+     "luks_group_max_log2_order": 79,
+     "luks_twin_max": 2,
+     "enum_quotient": 35,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 66,
+     "enum_cosets": 35,
+     "solve": 533,
+     "cont": 361
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 68.512,
+    "note": "",
+    "stats": {
+     "enumerate": 453,
+     "solve": 2496,
+     "cont": 1502
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 4.3996
+   }
+  }
+ ]
+}
