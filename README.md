@@ -14,8 +14,10 @@ if res is not None:
     sigma, aut_gens = res        # isomorphism X -> Y and generators of Aut(X)
 ```
 
-`Solver(kappa=3, enum_limit=500, certificates=True, max_enum=100000, cert_refine=True)`; `solver.stats` counts the
-recursive operations of the last run.
+`Solver(kappa=3, enum_limit=500, certificates=True, max_enum=100000, cert_refine=True, young=True,
+young_min=5, young_wl=1, young_pick="small", giant_wl=2)`; `solver.stats` counts the recursive
+operations of the last run. The `young*` options control the Young-label step and `giant_wl` the
+giant step's pair refinement (see "Aggregation over the whole instance" below).
 
 `graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True, ir=3,
 ir_min=6)`: adjacency entries may be edge colors, graphs may be directed and have loops. The
@@ -48,7 +50,8 @@ keyword arguments control the front end (below); `ir=0` hands every stage to the
 | Primitive-quotient dispatcher: enumerate small quotients | `Solver.transitive`, `enum_cosets` |
 | Giant on blocks, Johnson action → labels | `Solver.transitive`, `group.johnson_labels` |
 | Giant step on Sym(q) directly (Young subgroups of Sym(q)); parity-restricted path for Alt(q) | `Solver.giant`, `lift_and_continue` |
-| One-/two-label support map of the positions (Cor. "physical support thresholds") | `Solver.label_projection` |
+| One-/two-label support map of the positions (Cor. "physical support thresholds") | `Solver.label_projection`, `Solver.young_root` |
+| Aggregation into a coherent configuration on the labels (stable pair refinement) | `Solver.young_step`, `wl2_joint`, `Solver.label_refine` |
 | Alg. 3 `LocalCertificate` with windows, affected and visible orbits | `Solver.local_certificate` |
 | `CheckNewWindow`: cosets of ker φ_T, then solve on the window | `Solver.check_new_window` |
 | Large-symmetry branch (full certificates map onto Alt(q)) | `Solver.giant_step` |
@@ -72,13 +75,54 @@ keyword arguments control the front end (below); `ir=0` hands every stage to the
   only for x (that is all the large-symmetry branch and pruning need), and are cached.
   `cert_refine=True` also refines labels by certificate signatures of x and y.
 
+## Aggregation over the whole instance (exact; `Solver.young_step`)
+
+The orbit chain solves one orbit at a time, so a giant step only sees the colors on its own orbit:
+after a label is individualized, the information in the other orbits (on a graph stage: the rows
+of the individualized vertex, the cross blocks) never reaches the labels. The Young-label step
+runs in `_cont` on intransitive groups, before the orbit chain:
+
+* **Labels** (`young_root`, once per root group G0): the G0-orbits O with |O| >= 3 on which G0
+  acts as the full product of the Sym(O) (checked by the order of the restriction; orbits are
+  taken greedily, smallest first). On a graph stage these are the diagonal positions, so the
+  labels are the vertex classes. The support of a position is the set of labels fixed by its
+  stabilizer, as in `label_projection`, computed from Schreier generators on a transversal.
+  It depends on G0 alone and is G0-equivariant, so it is valid in every subgroup.
+* **Refinement** (`young_refine`). Each label gets the colors (G0-orbit, x[w]) of the positions w
+  with support (a,), and each pair gets those with support (a, b). The class index goes on the
+  diagonal. x and y are refined jointly with content-based names, by 1-WL with pair colors
+  (`young_wl=1`) or by 2-WL, the coherent closure (`young_wl=2`). Every g in Iso_H(x, y) maps the
+  x coloring onto the y coloring.
+* **Continue.** If the label partition splits, LiftAndContinue runs under
+  H' = psi0^-1(Young(refined)). The class-matching map lies in Young(partition) = psi0(H), so
+  tau is in H. If x is H-invariant, the answer is H or empty. Otherwise one label of the smallest
+  class of size >= `young_min` whose positions still carry information is individualized, with
+  the same pruning, memo and one-mode as the giant step (`branch_labels`). The step falls back to
+  the orbit chain when no such class exists (for example, on the 2- and 4-point classes of CFI
+  graphs).
+* **Economy** (all exact). Young preimages are cached per partition, so branches share their
+  group and the memo applies. Each branch's stable refinement is handed to its child, with the
+  labels of y renamed by phi(tau). The child's own refinement would give the same partition,
+  because its initial coloring lies between the branch's marked coloring and that stable
+  coloring. Branch refinements restart from the node's stable coloring plus the mark.
+  Generators are reduced through a faithful label action.
+
+`young_wl=1` is the default. On isomorphic instances it gives the same branch counts as 2-WL, at
+3-5x less solver time. 2-WL refutes the non-isomorphic Chang and Latin-square pairs with 0
+branches (1-WL needs 38 and 138). The transitive giant step also refines two-label pair
+colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
+
 ## What is simplified (exactness is kept, running time is not)
 
-1. **Aggregation.** The paper compares ordered test tuples in lockstep, applies Babai's Design
-   Lemma and coherent configurations, and stops Split-or-Johnson at the *first rectangle*,
-   solving that bipartite graph exactly. Here, the certificate signatures and the colors pulled
-   back through the support map are refined on the labels with WL-style refinement. Labels are
-   then individualized one at a time. Branching is over all images of the individualized label.
+1. **Aggregation.** The paper compares ordered test tuples in lockstep and applies Babai's Design
+   Lemma. It stops Split-or-Johnson at the *first rectangle* and solves that bipartite graph
+   exactly. Here the colors pulled back through the support map, over the whole instance (above),
+   and the certificate signatures are refined on the labels with WL-style refinement. Labels are
+   then individualized one at a time, branching over all images of the individualized label. The
+   first rectangle is not implemented. After the Young step, branching is no longer the
+   bottleneck (7-39 branches on the large tier with `ir=0`), and a rectangle such as points x
+   lines of PG(2, 5) minus a point keeps most of the symmetry, so solving it needs the same
+   individualizations.
 2. **No row/column step** (Alg. 4) and no phase, hierarchy-cap or hereditary-budget bookkeeping.
    The bookkeeping only matters for the running-time proof.
 3. **Product actions and Johnson actions on k-sets with k ≥ 3** are handled by enumerating the
