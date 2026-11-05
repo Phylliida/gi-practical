@@ -1,0 +1,16 @@
+C6                     tiny    n=  6 ok              0.30s  |Aut|=12
+K4                     tiny    n=  4 ok              0.00s  |Aut|=24
+Q3                     tiny    n=  8 ok             12.33s  |Aut|=48
+rand8                  tiny    n=  8 ok             12.12s  |Aut|=2
+C8-vs-2C4              tiny    n=  8 ok             12.39s  
+rand8-pair             tiny    n=  8 ok             12.12s  
+Petersen               small   n= 10 timeout        60.00s  
+C12                    small   n= 12 timeout        60.00s  
+K44                    small   n=  8 ok             14.25s  |Aut|=1152
+T5                     small   n= 10 timeout        60.00s  
+Paley13                small   n= 13 timeout        60.00s  
+rand12                 small   n= 12 timeout        60.00s  
+3reg12                 small   n= 12 timeout        60.00s  
+3reg12-pair            small   n= 12 timeout        60.00s  
+
+baseline-cert3: solved 7/14, wrong 0, time on solved 63.5s

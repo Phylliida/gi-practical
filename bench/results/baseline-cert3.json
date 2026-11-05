@@ -1,0 +1,238 @@
+{
+ "label": "baseline-cert3",
+ "solver_args": {},
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "C6",
+   "tier": "tiny",
+   "n": 6,
+   "status": "ok",
+   "time": 0.302,
+   "note": "|Aut|=12",
+   "stats": {
+    "solve": 279,
+    "cont": 254,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "certificate": 80,
+    "enumerate": 252,
+    "branch": 12
+   }
+  },
+  {
+   "name": "K4",
+   "tier": "tiny",
+   "n": 4,
+   "status": "ok",
+   "time": 0.001,
+   "note": "|Aut|=24",
+   "stats": {
+    "solve": 1,
+    "cont": 1,
+    "enumerate": 1
+   }
+  },
+  {
+   "name": "Q3",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 12.328,
+   "note": "|Aut|=48",
+   "stats": {
+    "solve": 787,
+    "cont": 786,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "certificate": 224,
+    "enumerate": 784,
+    "branch": 16
+   }
+  },
+  {
+   "name": "rand8",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 12.121,
+   "note": "|Aut|=2",
+   "stats": {
+    "solve": 677,
+    "cont": 676,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "certificate": 224,
+    "enumerate": 674
+   }
+  },
+  {
+   "name": "C8-vs-2C4",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 12.392,
+   "note": "",
+   "stats": {
+    "solve": 674,
+    "cont": 674,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "certificate": 224,
+    "enumerate": 672
+   }
+  },
+  {
+   "name": "rand8-pair",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 12.119,
+   "note": "",
+   "stats": {
+    "solve": 680,
+    "cont": 680,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "certificate": 224,
+    "enumerate": 678
+   }
+  },
+  {
+   "name": "Petersen",
+   "tier": "small",
+   "n": 10,
+   "status": "timeout",
+   "time": 60.001,
+   "note": "",
+   "stats": {
+    "solve": 26919,
+    "cont": 21188,
+    "giant_johnson": 1,
+    "giant_step": 165,
+    "certificate": 8761,
+    "giant_natural": 164,
+    "enumerate": 20782
+   }
+  },
+  {
+   "name": "C12",
+   "tier": "small",
+   "n": 12,
+   "status": "timeout",
+   "time": 60.002,
+   "note": "",
+   "stats": {
+    "solve": 10292,
+    "cont": 3865,
+    "giant_johnson": 1,
+    "giant_step": 40,
+    "certificate": 3349,
+    "giant_natural": 39,
+    "enumerate": 3713
+   }
+  },
+  {
+   "name": "K44",
+   "tier": "small",
+   "n": 8,
+   "status": "ok",
+   "time": 14.246,
+   "note": "|Aut|=1152",
+   "stats": {
+    "solve": 691,
+    "cont": 690,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "certificate": 224,
+    "enumerate": 688,
+    "branch": 16
+   }
+  },
+  {
+   "name": "T5",
+   "tier": "small",
+   "n": 10,
+   "status": "timeout",
+   "time": 60.002,
+   "note": "",
+   "stats": {
+    "solve": 26045,
+    "cont": 20027,
+    "giant_johnson": 1,
+    "giant_step": 162,
+    "certificate": 8475,
+    "giant_natural": 161,
+    "enumerate": 19619
+   }
+  },
+  {
+   "name": "Paley13",
+   "tier": "small",
+   "n": 13,
+   "status": "timeout",
+   "time": 60.004,
+   "note": "",
+   "stats": {
+    "solve": 5171,
+    "cont": 4281,
+    "giant_johnson": 1,
+    "giant_step": 18,
+    "certificate": 1698,
+    "giant_natural": 13,
+    "enumerate": 4233
+   }
+  },
+  {
+   "name": "rand12",
+   "tier": "small",
+   "n": 12,
+   "status": "timeout",
+   "time": 60.001,
+   "note": "",
+   "stats": {
+    "solve": 8940,
+    "cont": 6974,
+    "giant_johnson": 1,
+    "giant_step": 33,
+    "certificate": 2921,
+    "giant_natural": 27,
+    "enumerate": 6860
+   }
+  },
+  {
+   "name": "3reg12",
+   "tier": "small",
+   "n": 12,
+   "status": "timeout",
+   "time": 60.001,
+   "note": "",
+   "stats": {
+    "solve": 13427,
+    "cont": 9705,
+    "giant_johnson": 1,
+    "giant_step": 64,
+    "certificate": 4404,
+    "giant_natural": 43,
+    "enumerate": 9585
+   }
+  },
+  {
+   "name": "3reg12-pair",
+   "tier": "small",
+   "n": 12,
+   "status": "timeout",
+   "time": 60.002,
+   "note": "",
+   "stats": {
+    "solve": 13044,
+    "cont": 9448,
+    "giant_johnson": 1,
+    "giant_step": 61,
+    "certificate": 4280,
+    "giant_natural": 41,
+    "enumerate": 9333
+   }
+  }
+ ]
+}

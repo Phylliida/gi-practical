@@ -1,0 +1,430 @@
+{
+ "label": "baseline-nocert",
+ "solver_args": {
+  "certificates": false
+ },
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "C6",
+   "tier": "tiny",
+   "n": 6,
+   "status": "ok",
+   "time": 0.044,
+   "note": "|Aut|=12",
+   "stats": {
+    "solve": 15,
+    "cont": 14,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "branch": 12,
+    "enumerate": 12
+   }
+  },
+  {
+   "name": "K4",
+   "tier": "tiny",
+   "n": 4,
+   "status": "ok",
+   "time": 0.001,
+   "note": "|Aut|=24",
+   "stats": {
+    "solve": 1,
+    "cont": 1,
+    "enumerate": 1
+   }
+  },
+  {
+   "name": "Q3",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 0.308,
+   "note": "|Aut|=48",
+   "stats": {
+    "solve": 19,
+    "cont": 18,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "branch": 16,
+    "enumerate": 16
+   }
+  },
+  {
+   "name": "rand8",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 0.263,
+   "note": "|Aut|=2",
+   "stats": {
+    "solve": 5,
+    "cont": 4,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "enumerate": 2
+   }
+  },
+  {
+   "name": "C8-vs-2C4",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 0.267,
+   "note": "",
+   "stats": {
+    "solve": 2,
+    "cont": 2,
+    "giant_johnson": 1,
+    "giant_step": 2
+   }
+  },
+  {
+   "name": "rand8-pair",
+   "tier": "tiny",
+   "n": 8,
+   "status": "ok",
+   "time": 0.268,
+   "note": "",
+   "stats": {
+    "solve": 2,
+    "cont": 2,
+    "giant_johnson": 1,
+    "giant_step": 2
+   }
+  },
+  {
+   "name": "Petersen",
+   "tier": "small",
+   "n": 10,
+   "status": "ok",
+   "time": 6.304,
+   "note": "|Aut|=120",
+   "stats": {
+    "solve": 303,
+    "cont": 302,
+    "giant_johnson": 21,
+    "giant_step": 42,
+    "branch": 260,
+    "enumerate": 260
+   }
+  },
+  {
+   "name": "C12",
+   "tier": "small",
+   "n": 12,
+   "status": "ok",
+   "time": 5.382,
+   "note": "|Aut|=24",
+   "stats": {
+    "solve": 27,
+    "cont": 26,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "branch": 24,
+    "enumerate": 24
+   }
+  },
+  {
+   "name": "K44",
+   "tier": "small",
+   "n": 8,
+   "status": "ok",
+   "time": 0.469,
+   "note": "|Aut|=1152",
+   "stats": {
+    "solve": 19,
+    "cont": 18,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "branch": 16,
+    "enumerate": 16
+   }
+  },
+  {
+   "name": "T5",
+   "tier": "small",
+   "n": 10,
+   "status": "ok",
+   "time": 6.363,
+   "note": "|Aut|=120",
+   "stats": {
+    "solve": 303,
+    "cont": 302,
+    "giant_johnson": 21,
+    "giant_step": 42,
+    "branch": 260,
+    "enumerate": 260
+   }
+  },
+  {
+   "name": "Paley13",
+   "tier": "small",
+   "n": 13,
+   "status": "ok",
+   "time": 94.276,
+   "note": "|Aut|=78",
+   "stats": {
+    "solve": 1784,
+    "cont": 1783,
+    "giant_johnson": 1,
+    "giant_step": 366,
+    "branch": 338,
+    "giant_natural": 338,
+    "enumerate": 793
+   }
+  },
+  {
+   "name": "rand12",
+   "tier": "small",
+   "n": 12,
+   "status": "ok",
+   "time": 5.238,
+   "note": "|Aut|=1",
+   "stats": {
+    "solve": 4,
+    "cont": 3,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "enumerate": 1
+   }
+  },
+  {
+   "name": "3reg12",
+   "tier": "small",
+   "n": 12,
+   "status": "ok",
+   "time": 5.33,
+   "note": "|Aut|=2",
+   "stats": {
+    "solve": 5,
+    "cont": 4,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "branch": 2,
+    "enumerate": 2
+   }
+  },
+  {
+   "name": "3reg12-pair",
+   "tier": "small",
+   "n": 12,
+   "status": "WRONG",
+   "time": 5.273,
+   "note": "wrong iso decision",
+   "stats": {
+    "solve": 5,
+    "cont": 4,
+    "giant_johnson": 1,
+    "giant_step": 2,
+    "branch": 2,
+    "enumerate": 2
+   }
+  },
+  {
+   "name": "rook4",
+   "tier": "medium",
+   "n": 16,
+   "status": "timeout",
+   "time": 120.008,
+   "note": "",
+   "stats": {
+    "solve": 474,
+    "cont": 474,
+    "giant_johnson": 6,
+    "giant_step": 11,
+    "branch": 96,
+    "enumerate": 450,
+    "enum_cosets": 5
+   }
+  },
+  {
+   "name": "Shrikhande",
+   "tier": "medium",
+   "n": 16,
+   "status": "timeout",
+   "time": 120.007,
+   "note": "",
+   "stats": {
+    "solve": 136,
+    "cont": 135,
+    "giant_johnson": 7,
+    "giant_step": 25,
+    "branch": 115,
+    "enumerate": 108,
+    "giant_natural": 6
+   }
+  },
+  {
+   "name": "rook4-vs-Shrikhande",
+   "tier": "medium",
+   "n": 16,
+   "status": "timeout",
+   "time": 120.009,
+   "note": "",
+   "stats": {
+    "solve": 68,
+    "cont": 67,
+    "giant_johnson": 9,
+    "giant_step": 17,
+    "branch": 57,
+    "enumerate": 48
+   }
+  },
+  {
+   "name": "Q4",
+   "tier": "medium",
+   "n": 16,
+   "status": "timeout",
+   "time": 120.005,
+   "note": "",
+   "stats": {
+    "solve": 860,
+    "cont": 849,
+    "giant_johnson": 1,
+    "giant_step": 127,
+    "branch": 658,
+    "giant_natural": 117,
+    "enumerate": 603
+   }
+  },
+  {
+   "name": "Paley17",
+   "tier": "medium",
+   "n": 17,
+   "status": "timeout",
+   "time": 120.006,
+   "note": "",
+   "stats": {
+    "solve": 294,
+    "cont": 293,
+    "giant_johnson": 1,
+    "giant_step": 67,
+    "branch": 178,
+    "giant_natural": 49,
+    "enumerate": 192
+   }
+  },
+  {
+   "name": "T6",
+   "tier": "medium",
+   "n": 15,
+   "status": "timeout",
+   "time": 120.004,
+   "note": "",
+   "stats": {
+    "solve": 6709,
+    "cont": 6708,
+    "giant_johnson": 10,
+    "giant_step": 75,
+    "branch": 441,
+    "enumerate": 6096,
+    "giant_natural": 56,
+    "enum_cosets": 240
+   }
+  },
+  {
+   "name": "rand20",
+   "tier": "medium",
+   "n": 20,
+   "status": "timeout",
+   "time": 120.018,
+   "note": "",
+   "stats": {
+    "solve": 2,
+    "cont": 2
+   }
+  },
+  {
+   "name": "3reg20",
+   "tier": "medium",
+   "n": 20,
+   "status": "timeout",
+   "time": 120.013,
+   "note": "",
+   "stats": {
+    "solve": 2,
+    "cont": 2,
+    "giant_johnson": 1
+   }
+  },
+  {
+   "name": "Kneser(6,2)",
+   "tier": "medium",
+   "n": 15,
+   "status": "timeout",
+   "time": 120.004,
+   "note": "",
+   "stats": {
+    "solve": 9218,
+    "cont": 9217,
+    "giant_johnson": 13,
+    "giant_step": 102,
+    "branch": 600,
+    "enumerate": 8376,
+    "giant_natural": 77,
+    "enum_cosets": 330
+   }
+  },
+  {
+   "name": "T8",
+   "tier": "hard",
+   "n": 28,
+   "status": "timeout",
+   "time": 120.046,
+   "note": "",
+   "stats": {
+    "solve": 2,
+    "cont": 1
+   }
+  },
+  {
+   "name": "Paley29",
+   "tier": "hard",
+   "n": 29,
+   "status": "timeout",
+   "time": 120.057,
+   "note": "",
+   "stats": {
+    "solve": 2,
+    "cont": 1
+   }
+  },
+  {
+   "name": "J(7,3)",
+   "tier": "hard",
+   "n": 35,
+   "status": "timeout",
+   "time": 120.021,
+   "note": "",
+   "stats": {}
+  },
+  {
+   "name": "CFI(K4)",
+   "tier": "hard",
+   "n": 40,
+   "status": "timeout",
+   "time": 120.025,
+   "note": "",
+   "stats": {}
+  },
+  {
+   "name": "CFI(K4)-twist",
+   "tier": "hard",
+   "n": 40,
+   "status": "timeout",
+   "time": 120.025,
+   "note": "",
+   "stats": {}
+  },
+  {
+   "name": "rand40",
+   "tier": "hard",
+   "n": 40,
+   "status": "timeout",
+   "time": 120.024,
+   "note": "",
+   "stats": {}
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+C6                     tiny    n=  6 ok              0.04s  |Aut|=12
+K4                     tiny    n=  4 ok              0.00s  |Aut|=24
+Q3                     tiny    n=  8 ok              0.31s  |Aut|=48
+rand8                  tiny    n=  8 ok              0.26s  |Aut|=2
+C8-vs-2C4              tiny    n=  8 ok              0.27s  
+rand8-pair             tiny    n=  8 ok              0.27s  
+Petersen               small   n= 10 ok              6.30s  |Aut|=120
+C12                    small   n= 12 ok              5.38s  |Aut|=24
+K44                    small   n=  8 ok              0.47s  |Aut|=1152
+T5                     small   n= 10 ok              6.36s  |Aut|=120
+Paley13                small   n= 13 ok             94.28s  |Aut|=78
+rand12                 small   n= 12 ok              5.24s  |Aut|=1
+3reg12                 small   n= 12 ok              5.33s  |Aut|=2
+3reg12-pair            small   n= 12 WRONG           5.27s  wrong iso decision
+rook4                  medium  n= 16 timeout       120.01s  
+Shrikhande             medium  n= 16 timeout       120.01s  
+rook4-vs-Shrikhande    medium  n= 16 timeout       120.01s  
+Q4                     medium  n= 16 timeout       120.01s  
+Paley17                medium  n= 17 timeout       120.01s  
+T6                     medium  n= 15 timeout       120.00s  
+rand20                 medium  n= 20 timeout       120.02s  
+3reg20                 medium  n= 20 timeout       120.01s  
+Kneser(6,2)            medium  n= 15 timeout       120.00s  
+T8                     hard    n= 28 timeout       120.05s  
+Paley29                hard    n= 29 timeout       120.06s  
+J(7,3)                 hard    n= 35 timeout       120.02s  
+CFI(K4)                hard    n= 40 timeout       120.02s  
+CFI(K4)-twist          hard    n= 40 timeout       120.03s  
+rand40                 hard    n= 40 timeout       120.02s  
+
+baseline-nocert: solved 13/29, wrong 1, time on solved 124.5s
