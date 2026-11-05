@@ -383,3 +383,19 @@ are red-teams, a LaTeX paper, and final integration.
   Lokshtanov–Pilipczuk–Pilipczuk–Saurabh STOC'22 (f(H)·n^{O(1)}); neither reaches n^{polylog h}.
 * Novelty: no prior canonization found, but Neuen's 2026 survey says canonization "is possible for many
   of the algorithms", so experts may call these results expected.
+
+### w9-redteam-gnsexp (done, commit a40134e; docs/redteam-w8-gnsexp.md)
+* No break.
+  - Lemma A (CFSG-free, Bochert): true for every m ≥ 6; fails only at PSL(2,5)/PGL(2,5) on 6 points.
+    GNS uses it only for k' ≥ 91.
+  - k' ≤ 3k/4 holds in every branch, given the Lemma 7.2 fix.
+* The gain is narrower than the summary said. "c = 4 for all d" was already known (survey Thm 4.16). Lemma A
+  helps only when log n > log² d. Signed statement: degree-d GI in n^{O(log³ d)}·2^{O(log⁶ d)}, which is
+  n^{O(log³ d)} for d ≤ 2^{(log n)^{1/3}} and n^{O(log⁴ d)} for all d.
+* Prior art: Pago arXiv:2302.05426 (Lemma G_groupInduction, proof credited to Wiebking) is the same
+  induction; cite it and present Lemma A as a variant. Seven memo edits are required.
+* The black box (Babai on d^{O(log d)} points) now dominates for large d.
+
+## Wave 10
+* w9-canontool and w9-paper (running).
+* w10-blackbox: reduce the GNS black-box cost; make c = 10/3 rigorous; aim for c = 3 for all d.
