@@ -40,15 +40,20 @@ is G itself. Every step is exact, so the answer is exact, and refinement
 between stages carries what one stage learned to the whole graph.
 
 Individualization (ir > 0). A stage on a Sym factor of size >= ir_min may be
-replaced by branching on the image of one vertex v of P (graph-level
-individualization-refinement), up to ir levels deep:
-Iso_G(x, y) = U_w Iso_{G_v}(x, y^(t_w^-1)) t_w over w in P, with t_w the
-transposition (v w). Automorphisms use orbit pruning: Aut_{G_v}(x) plus one
-element taking v to each point of its orbit. Bounded depth costs at most a
-factor n^ir, so with constant (or O(log n)) depth the n^O(log n) bound of the
-recursion is kept.
+replaced by branching on one vertex v of P (graph-level
+individualization-refinement): Iso_G(x, y) = U_w Iso_{G_v}(x, y^(t_w^-1)) t_w
+over w in P, with t_w the transposition (v w). Automorphisms use orbit
+pruning: Aut_{G_v}(x) plus one element taking v to each point of its orbit.
+Searches for a single isomorphism branch on the preimage of v instead, one
+branch per orbit of the automorphisms already known (see individualize).
+Policy decides when: always for the first ir levels, then up to
+ir_max = O(log n) levels only when the recursion does not finish the stage
+within a budget of a few refinement times. Depth O(log n) costs at most a
+factor n^O(log n), so the n^O(log n) bound of the recursion is kept.
 """
-from math import factorial, prod
+import time
+from math import factorial, prod, ceil, log2
+from operator import itemgetter
 
 from .perm import sym_gens, identity, mul, cycle
 from .group import PermGroup, reduce_gens
@@ -97,18 +102,28 @@ def classes_of(c, among=None):
 
 def pull_back(P, pi):
     """The pair coloring P^(pi^-1): entry (i, j) is P[pi i][pi j]."""
-    n = len(P)
-    return [[P[pi[i]][pi[j]] for j in range(n)] for i in range(n)]
+    if len(P) < 2:
+        return [list(row) for row in P]
+    g = itemgetter(*pi)
+    return [list(g(P[p])) for p in pi]
 
 
-def solve_on(solver, n, vgens, D, x, y):
+def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None):
     """Iso_K(x|D, y|D) for K = <vgens> (vertex permutations) acting on pairs.
     D: a K-invariant list of pairs (i, j); every vertex moved by K must occur as
     a first coordinate in D (then K acts faithfully on D). The group is built
-    directly on D. Returns a Coset of vertex permutations, or None."""
+    directly on D. Optional: vbase, a base of K on the vertices (each (b, b)
+    must be in D), and the exact order of K; they only speed up the
+    construction (Schreier-Sims then sifts through the diagonal base points and
+    stops at the known order). Returns a Coset of vertex permutations, or None."""
     idx = {p: k for k, p in enumerate(D)}
     m = len(D)
-    K = PermGroup(m, [tuple(idx[(g[i], g[j])] for i, j in D) for g in vgens])
+    pgens = [tuple(idx[(g[i], g[j])] for i, j in D) for g in vgens]
+    if vbase is not None:
+        base = [idx[(b, b)] for b in vbase]
+        K = PermGroup(m, pgens, base=base, order=order, ambient_base=base)
+    else:
+        K = PermGroup(m, pgens)
     a = solver.solve(K, range(m), tuple(x[i][j] for i, j in D), tuple(y[i][j] for i, j in D))
     if a is None:
         return None
@@ -125,14 +140,80 @@ def solve_on(solver, n, vgens, D, x, y):
     return Coset([back(h) for h in a.gens], back(a.rep))
 
 
+# Stages with more positions than this are solved in chunks of whole orbits.
+CHUNK = 2000
+
+
+def solve_stage(solver, n, parts, D, x, y):
+    """Iso_K(x|D, y|D) for K = the product of the parts, as solve_on, but a large
+    D is cut into chunks of K-orbits that are solved one after the other (the
+    orbit-chain rule, as in Solver.cont):
+
+        Iso_K(x|D1+D2, y|D1+D2) = Iso_K1(x|D2, y^(r1^-1)|D2) r1,
+        where Iso_K(x|D1, y|D1) = K1 r1,
+
+    for K-invariant D1, D2 (D2 is then K1-invariant). Every chunk also holds the
+    diagonal positions of all vertices of the parts, so the current group acts
+    faithfully on it. An orbit on which x is constant and y has the same
+    constant value is skipped: every element of K maps x to y there, and that
+    stays true after y moves by elements of K. The recursion then works with
+    permutations of a chunk instead of all of D, which is much cheaper when D
+    is large (e.g. the cross block of two big solved factors)."""
+    vgens = factor_gens(n, parts)
+    if len(D) <= CHUNK:
+        return solve_on(solver, n, vgens, D, x, y, *factor_base_order(n, parts))
+    verts = sorted({i for i, _ in D})
+    diag = [(v, v) for v in verts]
+    dset = set(diag)
+    seen, orbits = set(dset), []
+    for p in D:
+        if p in seen:
+            continue
+        seen.add(p)
+        orb = [p]
+        for i, j in orb:
+            for g in vgens:
+                q = (g[i], g[j])
+                if q not in seen:
+                    seen.add(q)
+                    orb.append(q)
+        c = x[p[0]][p[1]]
+        if all(x[i][j] == c and y[i][j] == c for i, j in orb):
+            continue
+        orbits.append(orb)
+    if len(orbits) <= 1 and sum(map(len, orbits)) + len(diag) >= len(D):
+        return solve_on(solver, n, vgens, D, x, y, *factor_base_order(n, parts))
+    orbits.sort(key=lambda o: (len(o), o[0]))
+    chunks, cur = [], []
+    for o in orbits:
+        if cur and len(cur) + len(o) > CHUNK:
+            chunks.append(cur)
+            cur = []
+        cur += o
+    chunks.append(cur)
+    solver.stats["stage_chunks"] += len(chunks)
+    gens, vbase, order = vgens, *factor_base_order(n, parts)
+    rep = identity(n)
+    for chunk in chunks:
+        a = solve_on(solver, n, gens, sorted(diag + chunk), x, y, vbase, order)
+        if a is None:
+            return None
+        y = pull_back(y, a.rep)
+        rep = mul(a.rep, rep)
+        gens = list(a.gens)
+        H = PermGroup(n, gens)
+        vbase, order = H.short_base(), H.order()
+    return Coset(gens, rep)
+
+
 def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True,
-              ir=3, ir_min=6):
+              ir=3, ir_min=6, ir_max="auto", ir_budget=2.0):
     """X, Y: adjacency matrices (lists of rows; directed graphs, loops and edge
     colors allowed). vcolors_x/vcolors_y: optional vertex colors.
     refine: "2wl" (default), "1wl" or "none" (the front end's refinement).
     staged: use the staged orbit chain with refinement between stages.
-    ir, ir_min: graph-level individualization depth and minimum class size
-    (see the module docstring); ir=0 hands every stage to the recursion.
+    ir, ir_min, ir_max, ir_budget: the individualization policy (see Policy
+    and the module docstring); ir=0 hands every stage to the recursion.
     Returns None if not isomorphic, else (sigma, aut_gens): sigma[i] is the
     image of vertex i (an isomorphism X -> Y) and aut_gens generate Aut(X)."""
     n = len(X)
@@ -141,19 +222,112 @@ def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", s
     if n == 0:
         return (), []
     solver = solver or Solver()
-    r = refine_graphs(X, Y, vcolors_x, vcolors_y, refine)
+    pol = Policy(n, ir, ir_min, ir_max, ir_budget)
+    r = pol.refine(lambda: refine_graphs(X, Y, vcolors_x, vcolors_y, refine))
     if r is None:
         solver.stats["refine_reject"] += 1
         return None
     PX, PY = r
     if staged and refine not in (None, "none"):
-        ans = staged_iso(solver, n, PX, PY, refine, ir=ir, ir_min=ir_min)
+        ans = staged_iso(solver, n, PX, PY, refine, pol=pol)
     else:
         ans = direct_iso(solver, n, PX, PY)
     if ans is None:
         return None
     gens = [g for g in dict.fromkeys(ans.gens) if g != identity(n)]
     return ans.rep, gens
+
+
+class OverBudget(Exception):
+    """A budgeted call of the recursion ran out of time (its work is discarded)."""
+
+
+class Policy:
+    """When a stage on a Sym factor P (|P| >= ir_min, induced coloring not
+    uniform) is replaced by graph-level individualization.
+
+      * depth < ir: always (bounded depth, as before);
+      * ir <= depth < ir_max: the recursion gets the stage first, with a time
+        budget of ir_budget times the mean duration of a refinement of this
+        graph (one individualization branch costs at least one refinement).
+        If it finishes, its exact answer is used; if not, its work is
+        discarded and the stage is individualized;
+      * depth >= ir_max: never.
+
+    A budgeted call can only be stopped between two recursive calls, so it may
+    overrun its budget by one step of the group engine, and building the
+    stage's group on the |P|^2 positions (before the recursion starts) cannot
+    be stopped at all; Schreier-Sims for Sym(P) costs about |P|^3 sifts, while
+    a refinement costs about n^3 steps. So a trial is only made when
+    100 (|P|/n)^3 <= ir_budget (|P| <= 0.27 n for the default); larger
+    factors are individualized at once. Stages at the same depth on factors
+    of the same size tend to behave alike (they are often siblings in the
+    individualization tree), so once a call for (depth, |P|) has run out of
+    time, later stages with the same (depth, |P|) are individualized without
+    a trial.
+
+    Exactness never depends on the policy: both choices compute
+    Iso_G(x, y) exactly, an aborted call leaves only exact results behind
+    (the solver memoizes a group only when its computation finished), and the
+    choice only affects which generators are returned. ir_max="auto" is
+    max(ir, ceil(log2 n)): individualization depth O(log n) multiplies the
+    running time by at most n^O(log n), so the n^O(log n) bound is kept.
+    ir_budget=None disables the budgeted levels (ir_max = ir); ir_budget=0
+    always individualizes up to ir_max (the recursion is stopped at once)."""
+
+    def __init__(self, n, ir=3, ir_min=6, ir_max="auto", ir_budget=2.0):
+        self.ir, self.ir_min, self.budget = ir, ir_min, ir_budget
+        if ir <= 0 or ir_budget is None:
+            ir_max = max(ir, 0)
+        elif ir_max == "auto":
+            ir_max = max(ir, ceil(log2(max(n, 2))))
+        self.ir_max = ir_max
+        self.n = n
+        self.t_ref, self.n_ref = 0.0, 0
+        self.aborted = set()            # (depth, |P|) whose budgeted call ran out of time
+
+    def refine(self, f):
+        """f() (a refinement), timed for the budget."""
+        t0 = time.perf_counter()
+        r = f()
+        self.t_ref += time.perf_counter() - t0
+        self.n_ref += 1
+        return r
+
+    def individualize_now(self, depth, P):
+        """True: individualize; False: recursion; None: recursion on a budget."""
+        if depth >= self.ir_max or len(P) < self.ir_min:
+            return False
+        if depth < self.ir or (depth, len(P)) in self.aborted:
+            return True
+        return None if 100 * (len(P) / self.n) ** 3 <= self.budget else True
+
+    def trial(self, solver, f):
+        """f() with every call of solver.solve / solver.cont checking a deadline;
+        raises OverBudget when it passes. (The hooks are instance attributes,
+        removed afterwards; solver.py is unchanged.)"""
+        seconds = self.budget * self.t_ref / max(1, self.n_ref)
+        deadline = time.perf_counter() + seconds
+        d = solver.__dict__
+        saved = {k: d[k] for k in ("solve", "cont") if k in d}
+
+        def hook(inner):
+            def h(*a):
+                if time.perf_counter() > deadline:
+                    raise OverBudget
+                return inner(*a)
+            return h
+
+        for k in ("solve", "cont"):
+            d[k] = hook(getattr(solver, k))
+        try:
+            return f()
+        finally:
+            for k in ("solve", "cont"):
+                if k in saved:
+                    d[k] = saved[k]
+                else:
+                    d.pop(k, None)
 
 
 def align(n, x, y, classes):
@@ -235,22 +409,97 @@ def factor_gens(n, factors):
     return [g for P, gens in factors for g in (sym_gens(n, P) if gens is None else gens)]
 
 
+def factor_base_order(n, factors):
+    """A base (on the vertices) and the order of G = prod of the factors."""
+    base, order = [], 1
+    for P, gens in factors:
+        if gens is None:
+            base += sorted(P)[:-1]
+            order *= factorial(len(P))
+        elif gens:
+            H = PermGroup(n, gens)
+            base += H.short_base()
+            order *= H.order()
+    return base, order
+
+
 def clean(x, y, A, B, gens):
     """Whether x == y on A x B and every generator (vertex permutations
-    fixing A and B setwise) preserves x there."""
+    fixing A and B setwise) preserves x there. (Rows are compared as tuples.)"""
+    if not A or not B:
+        return True
+    gB = itemgetter(*B)
     for i in A:
-        xi, yi = x[i], y[i]
-        for j in B:
-            if xi[j] != yi[j] or any(x[g[i]][g[j]] != xi[j] for g in gens):
+        if gB(x[i]) != gB(y[i]):
+            return False
+    for g in gens:
+        gBg = itemgetter(*[g[j] for j in B])
+        for i in A:
+            if gBg(x[g[i]]) != gB(x[i]):
                 return False
     return True
 
 
 def sym_clean(x, y, A, B):
     """clean() for a group containing Sym(A) x Sym(B) (A, B disjoint or equal):
-    x == y on A x B and x uniform on its off-diagonal part."""
+    x == y on A x B off the diagonal, and x uniform on its off-diagonal part."""
+    if not A or not B:
+        return True
+    gB = itemgetter(*B)
+    if A is not B and set(A).isdisjoint(B):
+        cols = set()
+        for i in A:
+            t = gB(x[i])
+            if t != gB(y[i]):
+                return False
+            cols.update(t if len(B) > 1 else (t,))
+            if len(cols) > 1:
+                return False
+        return True
+    if A is B or A == B:
+        # fast path: whole rows (the diagonal entry occurring once in its row)
+        cols = set()
+        for i in A:
+            t = gB(x[i])
+            d = x[i][i]
+            if t != gB(y[i]) or t.count(d) != 1:
+                break
+            off = set(t)                # the off-diagonal values of row i
+            off.discard(d)
+            cols |= off
+            if len(cols) > 1:
+                return False
+        else:
+            return True
     cols = {x[i][j] for i in A for j in B if i != j}
     return len(cols) <= 1 and all(x[i][j] == y[i][j] for i in A for j in B if i != j)
+
+
+def factor_orbit_labels(n, factors):
+    """orbit_labels for G = prod of the factors: each vertex labeled by the
+    least vertex of its G-orbit (orbits of a factor lie inside its set P)."""
+    lab = list(range(n))
+    for P, gens in factors:
+        if gens is None:
+            m = min(P)
+            for v in P:
+                lab[v] = m
+        elif gens:
+            seen = set()
+            for v in sorted(P):
+                if v in seen:
+                    continue
+                seen.add(v)
+                orb = [v]               # v is the least point of its orbit
+                for a in orb:
+                    for g in gens:
+                        b = g[a]
+                        if b not in seen:
+                            seen.add(b)
+                            orb.append(b)
+                for b in orb:
+                    lab[b] = v
+    return lab
 
 
 def new_factors(n, gens, P):
@@ -288,28 +537,32 @@ def new_factors(n, gens, P):
 
 
 def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
-               ir=0, ir_min=6, need_all=True, fresh=True):
+               pol=None, depth=0, need_all=True, fresh=True, known=None):
     """Iso_G(x, y) as a Coset of vertex permutations, for G the direct product
     of the factors (P, gens): gens=None stands for Sym(P), otherwise <gens> is
     supported on P. The factors' vertex sets are disjoint; the other vertices
     (fixed) are fixed by G. factors=None: G = Sym(n).
 
-    ir > 0 enables graph-level individualization for up to ir levels: a stage
-    on a Sym factor of size >= ir_min is replaced by branching on the image of
-    one of its vertices (with orbit pruning for the automorphisms).
+    pol (a Policy; None: no individualization) decides when a stage on a Sym
+    factor is replaced by branching on one of its vertices (with orbit pruning
+    for the automorphisms); depth is the number of vertices individualized
+    so far.
     need_all=False asks only for one isomorphism (the generators may then be
-    incomplete)."""
+    incomplete); `known` may then list automorphisms of x in G, which prune
+    the individualization branches. They stay automorphisms in every later
+    group of the loop, since each stage replaces G by a subgroup containing
+    Aut_G(x), and refinement keeps them (x is refined, never relabeled)."""
     rho = identity(n)
+    pol = pol or Policy(n, ir=0)
     factors = [(list(range(n)), None)] if factors is None else list(factors)
     fixed = list(fixed)
     while True:
         # 1. refine with the G-orbits as extra vertex labels
         if not fresh:
-            lab = orbit_labels(n, [g for P, gens in factors if gens for g in gens],
-                               [P for P, gens in factors if gens is None])
+            lab = factor_orbit_labels(n, factors)
             if labels_add_information(x, y, lab):
                 solver.stats["refine"] += 1
-                r = refine_pairs(x, y, lab, lab, method)
+                r = pol.refine(lambda: refine_pairs(x, y, lab, lab, method))
                 if r is None:
                     solver.stats["refine_reject"] += 1
                     return None
@@ -334,12 +587,23 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
         if stage == "fail":
             return None
         kind, parts, D = stage
-        if ir > 0 and kind == "self" and parts[0][1] is None and len(parts[0][0]) >= ir_min:
+        now = kind == "self" and parts[0][1] is None and pol.individualize_now(depth, parts[0][0])
+        a = OverBudget
+        if now is None:
+            solver.stats["stage"] += 1
+            try:
+                a = pol.trial(solver, lambda: solve_stage(solver, n, parts, D, x, y))
+                solver.stats["trial_done"] += 1
+            except OverBudget:
+                solver.stats["trial_abort"] += 1
+                pol.aborted.add((depth, len(parts[0][0])))
+        if now or (now is None and a is OverBudget):
             a = individualize(solver, n, x, y, method, factors, fixed, parts[0][0],
-                              ir - 1, ir_min, need_all)
+                              pol, depth + 1, need_all, known)
             return None if a is None else Coset(a.gens, mul(a.rep, rho))
-        solver.stats["stage"] += 1
-        a = solve_on(solver, n, factor_gens(n, parts), D, x, y)
+        if a is OverBudget:
+            solver.stats["stage"] += 1
+            a = solve_stage(solver, n, parts, D, x, y)
         if a is None:
             return None
         y = pull_back(y, a.rep)
@@ -352,47 +616,88 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
     return Coset(factor_gens(n, factors), rho)
 
 
-def individualize(solver, n, x, y, method, factors, fixed, C, ir, ir_min, need_all):
-    """Iso_G(x, y) by branching on the image w of v = C[0], where Sym(C) is a
-    factor of G: Iso_G(x, y) = U_w Iso_{G_v}(x, y^(t_w^-1)) t_w with t_w the
-    transposition (v w). For the automorphisms, Aut_G(x) is generated by
-    Aut_{G_v}(x) and one element taking v to each point of its orbit; points
-    already in the orbit of the generators found so far are skipped."""
+def individualize(solver, n, x, y, method, factors, fixed, C, pol, depth, need_all, known=None):
+    """Iso_G(x, y) by branching on the vertex v = C[0], where Sym(C) is a
+    factor of G. With t_u the transposition (v u) and G_v the stabilizer of v,
+    there are two exhaustive ways to split Iso_G(x, y):
+
+      by the image w of v:     Iso_G(x, y) = U_w Iso_{G_v}(x, y^(t_w^-1)) t_w,
+      by the preimage u of v:  Iso_G(x, y) = U_u t_u Iso_{G_v}(x^(t_u), y).
+
+    Full mode (need_all). Aut_G(x) is generated by A_v = Aut_{G_v}(x) (the
+    branch w = v of x against x) and one element taking v to each point of its
+    orbit; points already in the orbit of the generators found so far are
+    skipped, and each remaining point u is tested by a search for ONE element
+    of Iso_{G_v}(x, x^(t_u^-1)), knowing its automorphism group A_v. Then ONE
+    isomorphism x -> y is searched with Aut_G(x) known.
+
+    One-mode (need_all=False; `known` generates a group K of automorphisms of
+    x in G). The pieces of the second split satisfy a P(u) = P(u^(a^-1)) ...
+    precisely, for a in K, a P(u) is contained in P(a^-1(u)), where P(u) =
+    {g in Iso : g(u) = v}. So P(u) is empty for all u in one K-orbit or for
+    none, and one u per K-orbit on C suffices. The branch of u searches
+    Iso_{G_v}(x^(t_u), y), whose known automorphisms are t_u Stab_K(u) t_u
+    (they fix v and preserve x^(t_u)). With K = Aut_G(x) this costs one branch
+    per orbit of Aut_G(x) on C instead of one per point; for non-isomorphic
+    pairs, where every branch fails, that is the whole cost of the search."""
     v = C[0]
     sub = [f for f in factors if f[0] is not C] + ([(C[1:], None)] if len(C) > 2 else [])
     subfix = fixed + [v] + ([C[1]] if len(C) == 2 else [])
+    idn = identity(n)
 
-    def branch(yy, w, all_):
-        t = cycle(n, [v, w]) if w != v else identity(n)
+    def t(u):
+        return cycle(n, [v, u]) if u != v else idn
+
+    def search(xx, yy, all_, kn):
         solver.stats["ir_branch"] += 1
-        a = staged_iso(solver, n, x, pull_back(yy, t), method, sub, subfix,
-                       ir, ir_min, all_, fresh=False)
-        return None if a is None else Coset(a.gens, mul(a.rep, t))
+        return staged_iso(solver, n, xx, yy, method, sub, subfix, pol, depth, all_,
+                          fresh=False, known=kn)
+
+    def one(yy, kn):
+        """One element of Iso_G(x, yy), given generators kn of automorphisms of x in G."""
+        if kn is None:
+            for w in C:
+                a = search(x, pull_back(yy, t(w)), False, None)
+                if a is not None:
+                    return mul(a.rep, t(w))
+            return None
+        orbit = orbit_labels(n, kn, [])
+        seen, reps = set(), []
+        for u in C:                     # one u per orbit, v = C[0] first
+            if orbit[u] not in seen:
+                seen.add(orbit[u])
+                reps.append(u)
+        solver.stats["ir_pruned"] += len(C) - len(reps)
+        K = PermGroup(n, kn) if kn else None
+        for u in reps:
+            tu = t(u)
+            ku = K.stabilizer(u).gens if K is not None else []
+            a = search(x if u == v else pull_back(x, tu), yy, False,
+                       [mul(mul(tu, k), tu) for k in ku])
+            if a is not None:
+                return mul(tu, a.rep)
+        return None
 
     if not need_all:
-        for w in C:
-            a = branch(y, w, False)
-            if a is not None:
-                return a
-        return None
-    a = branch(x, v, True)
-    gens = list(a.gens) + [a.rep]
+        r = one(y, known)
+        return None if r is None else Coset([], r)
+    a = search(x, x, True, None)
+    av = list(a.gens) + ([a.rep] if a.rep != idn else [])
+    gens = list(av)
     for u in C[1:]:
         orbit = orbit_labels(n, gens, [])
         if orbit[u] == orbit[v]:
+            solver.stats["ir_pruned"] += 1
             continue
-        b = branch(x, u, False)
+        tu = t(u)
+        b = search(x, pull_back(x, tu), False, av)
         if b is not None:
-            gens.append(b.rep)
+            gens.append(mul(b.rep, tu))
     if x == y:
-        sigma = identity(n)
+        sigma = idn
     else:
-        for w in C:
-            b = branch(y, w, False)
-            if b is not None:
-                sigma = b.rep
-                break
-        else:
+        sigma = one(y, gens)
+        if sigma is None:
             return None
     return Coset(reduce_gens(n, gens), sigma)
 

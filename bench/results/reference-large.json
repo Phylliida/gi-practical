@@ -1,0 +1,277 @@
+{
+ "label": "reference-large",
+ "timeout": 180.0,
+ "pynauty": "2.8.8.1",
+ "rows": [
+  {
+   "name": "CFI(3reg8)",
+   "tier": "large",
+   "n": 80,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.006
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0008,
+    "note": ""
+   }
+  },
+  {
+   "name": "CFI(3reg8)-twist",
+   "tier": "large",
+   "n": 80,
+   "expect_iso": false,
+   "vf2": {
+    "status": "ok",
+    "time": 41.605
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0007,
+    "note": ""
+   }
+  },
+  {
+   "name": "PG(2,3)",
+   "tier": "large",
+   "n": 26,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.001
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "PG(2,5)",
+   "tier": "large",
+   "n": 62,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.015
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0003,
+    "note": ""
+   }
+  },
+  {
+   "name": "Paley37",
+   "tier": "large",
+   "n": 37,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.005
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "Paley61",
+   "tier": "large",
+   "n": 61,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.009
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "J(8,3)",
+   "tier": "large",
+   "n": 56,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.02
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0003,
+    "note": ""
+   }
+  },
+  {
+   "name": "J(8,4)",
+   "tier": "large",
+   "n": 70,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.007
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0003,
+    "note": ""
+   }
+  },
+  {
+   "name": "Kneser(8,3)",
+   "tier": "large",
+   "n": 56,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.006
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0002,
+    "note": ""
+   }
+  },
+  {
+   "name": "rook6",
+   "tier": "large",
+   "n": 36,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.002
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0002,
+    "note": ""
+   }
+  },
+  {
+   "name": "Q6",
+   "tier": "large",
+   "n": 64,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.007
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0003,
+    "note": ""
+   }
+  },
+  {
+   "name": "T10",
+   "tier": "large",
+   "n": 45,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.003
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0002,
+    "note": ""
+   }
+  },
+  {
+   "name": "Chang1",
+   "tier": "large",
+   "n": 28,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.023
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "T8-vs-Chang1",
+   "tier": "large",
+   "n": 28,
+   "expect_iso": false,
+   "vf2": {
+    "status": "ok",
+    "time": 2.88
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "Chang1-vs-Chang3",
+   "tier": "large",
+   "n": 28,
+   "expect_iso": false,
+   "vf2": {
+    "status": "ok",
+    "time": 2.415
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "Latin(Z8)-vs-Latin(Z2xZ4)",
+   "tier": "large",
+   "n": 64,
+   "expect_iso": false,
+   "vf2": {
+    "status": "ok",
+    "time": 110.682
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0003,
+    "note": ""
+   }
+  },
+  {
+   "name": "rand70",
+   "tier": "large",
+   "n": 70,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.011
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0001,
+    "note": ""
+   }
+  },
+  {
+   "name": "3reg70",
+   "tier": "large",
+   "n": 70,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.261
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0029,
+    "note": ""
+   }
+  }
+ ]
+}

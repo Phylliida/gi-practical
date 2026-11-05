@@ -14,7 +14,7 @@ sys.setrecursionlimit(100000)
 
 from gi import graph_iso, Solver
 from gi.group import PermGroup
-from gi.refine import refine_graphs, initial_pair_colors, wl1, wl2
+from gi.refine import refine_graphs, initial_pair_colors, wl1, wl2, wl2_reference
 
 METHODS = ["none", "1wl", "2wl"]
 # front-end modes: refinement method plus graph_iso keyword arguments
@@ -129,6 +129,47 @@ def test_refinement_is_invariant(method):
                 for j in range(n):
                     key = (P[i][j], i == j)
                     assert f.setdefault(key, M[i][j]) == M[i][j]
+
+
+def partition(P):
+    n = len(P)
+    cls = {}
+    for i in range(n):
+        for j in range(n):
+            cls.setdefault(P[i][j], []).append((i, j))
+    return sorted(cls.values())
+
+
+def test_packed_wl2_matches_definition():
+    """wl2 (packed bilinear signatures) computes the same partitions and the
+    same rejections as 2-WL with literal multiset signatures, on undirected,
+    directed, edge-colored and looped graphs, isomorphic or not."""
+    rng = random.Random(21)
+    for _ in range(80):
+        n = rng.randint(1, 13)
+        directed = rng.random() < 0.4
+        values = (1,) if rng.random() < 0.5 else (1, 2, 3)
+        A = rand_matrix(n, rng, rng.choice([0.2, 0.4, 0.6]), values, directed, rng.random() < 0.2)
+        if rng.random() < 0.5:
+            s = list(range(n))
+            rng.shuffle(s)
+            B = relabel(A, s)
+        else:
+            B = rand_matrix(n, rng, 0.4, values, directed, rng.random() < 0.2)
+        PX, PY = initial_pair_colors(A, B)
+        fast, ref = wl2(PX, PY), wl2_reference(PX, PY)
+        assert (fast is None) == (ref is None)
+        if fast is not None:
+            assert partition(fast[0]) == partition(ref[0])
+            assert partition(fast[1]) == partition(ref[1])
+    # strongly regular and CFI graphs, where many rounds are needed
+    for X, Z in ((rook4(), shrikhande()), (cfi(K4, 4), cfi(K4, 4, twist=True)),
+                 (cfi(K3, 3), cfi(K3, 3, twist=True))):
+        PX, PY = initial_pair_colors(X, Z)
+        fast, ref = wl2(PX, PY), wl2_reference(PX, PY)
+        assert (fast is None) == (ref is None)
+        if fast is not None:
+            assert partition(fast[0]) == partition(ref[0])
 
 
 def test_wl_separates_and_rejects():
@@ -331,3 +372,128 @@ def test_1wl_equivalent_cfi_k3():
     assert wl1(PX, PY) is not None
     assert refine_graphs(X, Z, method="2wl") is None
     check_pair(X, Z, [dict(refine="1wl"), dict(refine="1wl", ir=2, ir_min=4), dict()], rng)
+
+
+def test_individualization_pruning():
+    """Graph-level individualization with orbit pruning (one-mode: the y-side
+    vertex is fixed, the x-side vertex runs over orbits of the known Aut(x)).
+    Symmetric graphs against slightly perturbed or relabeled copies, checked
+    against brute force; the pruning must actually skip branches."""
+    rng = random.Random(17)
+    c4 = cycle(4)
+    q3 = [[int((i ^ j) in (1, 2, 4)) for j in range(8)] for i in range(8)]
+    bases = [disjoint(c4, c4), q3, cycle(8), disjoint(cycle(3), cycle(5)),
+             disjoint(disjoint(cycle(3), cycle(3)), [[0, 1], [1, 0]])]
+    pruned = 0
+    for A in bases:
+        n = len(A)
+        aut = len(brute(A, A))
+        for trial in range(4):
+            s = list(range(n))
+            rng.shuffle(s)
+            B = relabel(A, s)
+            if trial % 2:               # move one edge: usually not isomorphic
+                i, j = rng.sample(range(n), 2)
+                k, l = rng.sample(range(n), 2)
+                if B[i][j] != B[k][l]:
+                    B[i][j], B[j][i], B[k][l], B[l][k] = B[k][l], B[l][k], B[i][j], B[j][i]
+            iso = bool(brute(A, B)) if trial % 2 else True
+            for kw in (dict(ir=3, ir_min=2), dict(ir=1, ir_min=2), dict(ir=3, ir_min=3)):
+                S = Solver(certificates=False)
+                res = graph_iso(A, B, solver=S, **kw)
+                pruned += S.stats["ir_pruned"]
+                assert (res is not None) == iso
+                if res is not None:
+                    sigma, gens = res
+                    assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+                    assert all(A[g[i]][g[j]] == A[i][j] for g in gens
+                               for i in range(n) for j in range(n))
+                    assert PermGroup(n, gens).order() == aut
+    assert pruned > 0
+    # CFI(K4) and its twist (2-WL equivalent): all individualization depths agree
+    X, Z = cfi(K4, 4), cfi(K4, 4, twist=True)
+    S = Solver(certificates=False)
+    assert graph_iso(X, relabel(Z, list(range(len(Z)))[::-1]), solver=S, ir=3, ir_min=2) is None
+    assert S.stats["ir_pruned"] > 0
+    assert check_pair(X, Z, [dict(ir=1, ir_min=2), dict(ir=2, ir_min=4), dict(ir=0)], rng) == 192
+
+
+def test_policy_budgeted_levels(monkeypatch):
+    """The individualization policy: levels below ir always individualize;
+    levels in [ir, ir_max) give the recursion a time budget first. ir_budget=0
+    individualizes up to ir_max without trials, ir_budget=None turns the
+    budgeted levels off, a huge budget lets every trial finish, and trials
+    that always time out (simulated) fall back to individualization. Every
+    setting is exact, and an aborted call leaves the solver unpatched."""
+    import gi.graph
+    from gi.graph import Policy, OverBudget
+    rng = random.Random(23)
+    q3 = [[int((i ^ j) in (1, 2, 4)) for j in range(8)] for i in range(8)]
+    settings = [dict(ir=1, ir_min=2, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=None),
+                dict(ir=1, ir_min=2, ir_max=4, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=1e9),
+                "timeout"]
+    real_trial = Policy.trial
+
+    def always_late(self, solver, f):
+        return real_trial(self, solver, lambda: (_ for _ in ()).throw(OverBudget()))
+
+    aborted = done = 0
+    for A, order in ((petersen(), 120), (q3, 48), (rook4(), 1152)):
+        n = len(A)
+        s = list(range(n))
+        rng.shuffle(s)
+        B = relabel(A, s)
+        for kw in settings:
+            if kw == "timeout":
+                monkeypatch.setattr(Policy, "trial", always_late)
+                kw = dict(ir=1, ir_min=2, ir_budget=1e9)
+            else:
+                monkeypatch.setattr(Policy, "trial", real_trial)
+            S = Solver(certificates=False)
+            sigma, gens = graph_iso(A, B, solver=S, **kw)
+            assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+            assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
+            assert PermGroup(n, gens).order() == order
+            assert "cont" not in S.__dict__ and "solve" not in S.__dict__
+            aborted += S.stats["trial_abort"]
+            done += S.stats["trial_done"]
+    assert aborted > 0 and done > 0
+    monkeypatch.setattr(Policy, "trial", real_trial)
+    # non-isomorphic pairs under every setting
+    X, Z = rook4(), shrikhande()
+    for kw in settings[:-1]:
+        assert graph_iso(X, relabel(Z, list(range(16))[::-1]), solver=Solver(certificates=False),
+                         **kw) is None
+    # a budget of 0 stops the recursion at its first call
+    pol = Policy(16, ir=1, ir_budget=0)
+    pol.refine(lambda: None)
+    S = Solver(certificates=False)
+    G = PermGroup(4, [(1, 0, 2, 3), (1, 2, 3, 0)])
+    with pytest.raises(OverBudget):
+        pol.trial(S, lambda: S.solve(G, range(4), (0, 0, 1, 1), (1, 1, 0, 0)))
+    assert "cont" not in S.__dict__ and "solve" not in S.__dict__
+    assert Policy(100, ir=3).ir_max == 7 and Policy(100, ir=0).ir_max == 0
+    assert Policy(100, ir=3, ir_budget=None).ir_max == 3
+
+
+def test_chunked_stages(monkeypatch):
+    """Stages solved in chunks of orbits (forced by a tiny CHUNK) give the same
+    exact answers: random graphs against brute force, CFI(K4) and its twist,
+    rook4 vs Shrikhande."""
+    import gi.graph
+    monkeypatch.setattr(gi.graph, "CHUNK", 6)
+    rng = random.Random(29)
+    for _ in range(25):
+        n = rng.randint(2, 7)
+        A = rand_matrix(n, rng, rng.choice([0.3, 0.5]), (1, 2), rng.random() < 0.3)
+        s = list(range(n))
+        rng.shuffle(s)
+        B = relabel(A, s) if rng.random() < 0.6 else rand_matrix(n, rng, 0.4, (1, 2))
+        for kw in (dict(ir=0), dict()):
+            S = Solver(certificates=False)
+            check_answer(A, B, graph_iso(A, B, solver=S, **kw))
+    S = Solver(certificates=False)
+    graph_iso(cfi(K4, 4), cfi(K4, 4), solver=S, ir=0)
+    assert S.stats["stage_chunks"] > 0
+    assert check_pair(cfi(K4, 4), cfi(K4, 4, twist=True), [dict(ir=0), dict()], rng) == 192
+    assert check_pair(rook4(), shrikhande(), [dict(ir=0), dict()], rng) == 1152
