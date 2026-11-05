@@ -1,0 +1,646 @@
+{
+ "label": "r4-reg6",
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "6reg30",
+   "family": "reg6",
+   "size": 30,
+   "n": 30,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.01,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 6,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 12,
+     "luks_phase2_max_degree": 46,
+     "luks_phase2_max_log2_order": 9,
+     "luks_twin_max": 4,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 28,
+     "enum_cosets": 2,
+     "solve": 35,
+     "cont": 35
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.01,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 6,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 12,
+     "luks_phase2_max_degree": 46,
+     "luks_phase2_max_log2_order": 9,
+     "luks_twin_max": 4,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 28,
+     "enum_cosets": 2,
+     "solve": 35,
+     "cont": 35
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.004,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0004
+   }
+  },
+  {
+   "name": "6reg30-other",
+   "family": "reg6",
+   "size": 30,
+   "n": 30,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.008,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 3,
+     "luks_phase1_max_degree": 12,
+     "luks_phase2_max_degree": 46,
+     "luks_phase2_max_log2_order": 9,
+     "luks_twin_max": 4,
+     "enum_quotient": 1,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 15,
+     "enum_cosets": 1,
+     "solve": 19,
+     "cont": 19
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.008,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 3,
+     "luks_phase1_max_degree": 12,
+     "luks_phase2_max_degree": 46,
+     "luks_phase2_max_log2_order": 9,
+     "luks_twin_max": 4,
+     "enum_quotient": 1,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 15,
+     "enum_cosets": 1,
+     "solve": 19,
+     "cont": 19
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.002,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0004
+   }
+  },
+  {
+   "name": "6reg60",
+   "family": "reg6",
+   "size": 60,
+   "n": 60,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.035,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 6,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 27,
+     "luks_phase2_max_degree": 174,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 4,
+     "luks_twin_max": 4,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 36,
+     "enum_cosets": 4,
+     "solve": 52,
+     "cont": 52
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.034,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 6,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 27,
+     "luks_phase2_max_degree": 174,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 4,
+     "luks_twin_max": 4,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 36,
+     "enum_cosets": 4,
+     "solve": 52,
+     "cont": 52
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.015,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0016
+   }
+  },
+  {
+   "name": "6reg60-other",
+   "family": "reg6",
+   "size": 60,
+   "n": 60,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.053,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 3,
+     "luks_phase1_max_degree": 27,
+     "luks_phase2_max_degree": 174,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 4,
+     "luks_twin_max": 4,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 22,
+     "enum_cosets": 2,
+     "solve": 32,
+     "cont": 32
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.03,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 3,
+     "luks_phase1_max_degree": 27,
+     "luks_phase2_max_degree": 174,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 4,
+     "luks_twin_max": 4,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 22,
+     "enum_cosets": 2,
+     "solve": 32,
+     "cont": 32
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.007,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0017
+   }
+  },
+  {
+   "name": "6reg100",
+   "family": "reg6",
+   "size": 100,
+   "n": 100,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.084,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 65,
+     "luks_phase2_max_degree": 200,
+     "luks_phase2_max_log2_order": 22,
+     "luks_group_max_log2_order": 14,
+     "luks_twin_max": 5,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 19,
+     "enum_cosets": 2,
+     "solve": 38,
+     "cont": 38
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.083,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 65,
+     "luks_phase2_max_degree": 200,
+     "luks_phase2_max_log2_order": 22,
+     "luks_group_max_log2_order": 14,
+     "luks_twin_max": 5,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 19,
+     "enum_cosets": 2,
+     "solve": 38,
+     "cont": 38
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.04,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0059
+   }
+  },
+  {
+   "name": "6reg100-other",
+   "family": "reg6",
+   "size": 100,
+   "n": 100,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.077,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 65,
+     "luks_phase2_max_degree": 200,
+     "luks_phase2_max_log2_order": 22,
+     "luks_group_max_log2_order": 14,
+     "luks_twin_max": 5,
+     "enum_quotient": 1,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 12,
+     "enum_cosets": 1,
+     "solve": 21,
+     "cont": 21
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.102,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 65,
+     "luks_phase2_max_degree": 200,
+     "luks_phase2_max_log2_order": 22,
+     "luks_group_max_log2_order": 14,
+     "luks_twin_max": 5,
+     "enum_quotient": 1,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 12,
+     "enum_cosets": 1,
+     "solve": 21,
+     "cont": 21
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.019,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.006
+   }
+  },
+  {
+   "name": "6reg150",
+   "family": "reg6",
+   "size": 150,
+   "n": 150,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.344,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 84,
+     "luks_phase2_max_degree": 538,
+     "luks_phase2_max_log2_order": 49,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5,
+     "alt_section_max": 5,
+     "enum_quotient": 6,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "cameron_skip_enum": 2,
+     "cameron_small_johnson": 2,
+     "cameron_small_giant": 3,
+     "dispatch_cameron_small": 1,
+     "giant_step": 5,
+     "branch": 4,
+     "enumerate": 36,
+     "enum_cosets": 6,
+     "product_refine": 2,
+     "solve": 119,
+     "cont": 102
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.361,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 84,
+     "luks_phase2_max_degree": 538,
+     "luks_phase2_max_log2_order": 49,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5,
+     "alt_section_max": 5,
+     "enum_quotient": 6,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "cameron_small_giant": 3,
+     "giant_step": 3,
+     "enumerate": 35,
+     "enum_cosets": 6,
+     "product_refine": 2,
+     "solve": 115,
+     "cont": 98
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.095,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0172
+   }
+  },
+  {
+   "name": "6reg150-other",
+   "family": "reg6",
+   "size": 150,
+   "n": 150,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.342,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 84,
+     "luks_phase2_max_degree": 538,
+     "luks_phase2_max_log2_order": 49,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5,
+     "alt_section_max": 5,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "cameron_skip_enum": 1,
+     "cameron_small_johnson": 1,
+     "cameron_small_giant": 2,
+     "dispatch_cameron_small": 1,
+     "giant_step": 3,
+     "branch": 3,
+     "enumerate": 25,
+     "enum_cosets": 4,
+     "product_refine": 1,
+     "solve": 79,
+     "cont": 66
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.344,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 84,
+     "luks_phase2_max_degree": 538,
+     "luks_phase2_max_log2_order": 49,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5,
+     "alt_section_max": 5,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "cameron_small_giant": 2,
+     "giant_step": 2,
+     "enumerate": 24,
+     "enum_cosets": 4,
+     "product_refine": 1,
+     "solve": 76,
+     "cont": 63
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.043,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0172
+   }
+  },
+  {
+   "name": "6reg200",
+   "family": "reg6",
+   "size": 200,
+   "n": 200,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.874,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 103,
+     "luks_phase2_max_degree": 712,
+     "luks_phase2_max_log2_order": 45,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 38,
+     "enum_cosets": 4,
+     "solve": 94,
+     "cont": 92
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.881,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 103,
+     "luks_phase2_max_degree": 712,
+     "luks_phase2_max_log2_order": 45,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 38,
+     "enum_cosets": 4,
+     "solve": 94,
+     "cont": 92
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.16,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0379
+   }
+  },
+  {
+   "name": "6reg200-other",
+   "family": "reg6",
+   "size": 200,
+   "n": 200,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.816,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 103,
+     "luks_phase2_max_degree": 712,
+     "luks_phase2_max_log2_order": 45,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 21,
+     "enum_cosets": 2,
+     "solve": 51,
+     "cont": 50
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.84,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 103,
+     "luks_phase2_max_degree": 712,
+     "luks_phase2_max_log2_order": 45,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 21,
+     "enum_cosets": 2,
+     "solve": 51,
+     "cont": 50
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.075,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0379
+   }
+  }
+ ]
+}

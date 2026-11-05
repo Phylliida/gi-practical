@@ -1,0 +1,411 @@
+{
+ "label": "r4-reg4",
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "4reg50",
+   "family": "reg4",
+   "size": 50,
+   "n": 50,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.018,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 8,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 24,
+     "luks_phase2_max_degree": 84,
+     "luks_phase2_max_log2_order": 13,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 3,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 11,
+     "enum_cosets": 2,
+     "solve": 18,
+     "cont": 18
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.011,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0013
+   }
+  },
+  {
+   "name": "4reg50-other",
+   "family": "reg4",
+   "size": 50,
+   "n": 50,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.015,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 4,
+     "luks_phase1_max_degree": 24,
+     "luks_phase2_max_degree": 84,
+     "luks_phase2_max_log2_order": 13,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 3,
+     "enum_quotient": 1,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 7,
+     "enum_cosets": 1,
+     "solve": 10,
+     "cont": 10
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.005,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0012
+   }
+  },
+  {
+   "name": "4reg100",
+   "family": "reg4",
+   "size": 100,
+   "n": 100,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.062,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 12,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 236,
+     "luks_phase2_max_degree": 72,
+     "luks_phase2_max_log2_order": 16,
+     "luks_group_max_log2_order": 16,
+     "luks_twin_max": 3,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 16,
+     "enum_cosets": 2,
+     "solve": 38,
+     "cont": 31
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.064,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0073
+   }
+  },
+  {
+   "name": "4reg100-other",
+   "family": "reg4",
+   "size": 100,
+   "n": 100,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.057,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 6,
+     "luks_phase1_max_degree": 236,
+     "luks_phase2_max_degree": 72,
+     "luks_phase2_max_log2_order": 16,
+     "luks_group_max_log2_order": 16,
+     "luks_twin_max": 3,
+     "enum_quotient": 1,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 9,
+     "enum_cosets": 1,
+     "solve": 21,
+     "cont": 17
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.019,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0073
+   }
+  },
+  {
+   "name": "4reg200",
+   "family": "reg4",
+   "size": 200,
+   "n": 200,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.32,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 12,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 75,
+     "luks_phase2_max_degree": 233,
+     "luks_phase2_max_log2_order": 30,
+     "luks_group_max_log2_order": 11,
+     "luks_twin_max": 3,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 38,
+     "enum_cosets": 4,
+     "solve": 101,
+     "cont": 92
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.162,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0468
+   }
+  },
+  {
+   "name": "4reg200-other",
+   "family": "reg4",
+   "size": 200,
+   "n": 200,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.273,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 6,
+     "luks_phase1_max_degree": 75,
+     "luks_phase2_max_degree": 233,
+     "luks_phase2_max_log2_order": 30,
+     "luks_group_max_log2_order": 11,
+     "luks_twin_max": 3,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 22,
+     "enum_cosets": 2,
+     "solve": 54,
+     "cont": 49
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.075,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0474
+   }
+  },
+  {
+   "name": "4reg300",
+   "family": "reg4",
+   "size": 300,
+   "n": 300,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 1.077,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 12,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 169,
+     "luks_phase2_max_degree": 381,
+     "luks_phase2_max_log2_order": 47,
+     "luks_group_max_log2_order": 21,
+     "luks_twin_max": 3,
+     "enum_quotient": 8,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 63,
+     "enum_cosets": 8,
+     "solve": 207,
+     "cont": 169
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.402,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.146
+   }
+  },
+  {
+   "name": "4reg300-other",
+   "family": "reg4",
+   "size": 300,
+   "n": 300,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 1.025,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 6,
+     "luks_phase1_max_degree": 169,
+     "luks_phase2_max_degree": 381,
+     "luks_phase2_max_log2_order": 47,
+     "luks_group_max_log2_order": 21,
+     "luks_twin_max": 3,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 34,
+     "enum_cosets": 4,
+     "solve": 111,
+     "cont": 91
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.177,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.1488
+   }
+  },
+  {
+   "name": "4reg400",
+   "family": "reg4",
+   "size": 400,
+   "n": 400,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 5.205,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 14,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 187,
+     "luks_phase2_max_degree": 554,
+     "luks_phase2_max_log2_order": 68,
+     "luks_group_max_log2_order": 24,
+     "luks_twin_max": 3,
+     "enum_quotient": 20,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 77,
+     "enum_cosets": 20,
+     "solve": 435,
+     "cont": 332
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.838,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.3466
+   }
+  },
+  {
+   "name": "4reg400-other",
+   "family": "reg4",
+   "size": 400,
+   "n": 400,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 2.961,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 7,
+     "luks_phase1_max_degree": 187,
+     "luks_phase2_max_degree": 554,
+     "luks_phase2_max_log2_order": 68,
+     "luks_group_max_log2_order": 24,
+     "luks_twin_max": 3,
+     "enum_quotient": 10,
+     "enum_quotient_max_order": 6,
+     "enum_quotient_max_degree": 3,
+     "enumerate": 36,
+     "enum_cosets": 10,
+     "solve": 236,
+     "cont": 180
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.341,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.3468
+   }
+  }
+ ]
+}

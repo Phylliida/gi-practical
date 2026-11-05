@@ -1,0 +1,431 @@
+{
+ "label": "r4-cube",
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "Q3",
+   "family": "cube",
+   "size": 3,
+   "n": 8,
+   "iso": true,
+   "aut": 48.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.002,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 8,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 2,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 2,
+     "luks_group_max_log2_order": 1,
+     "luks_twin_max": 2,
+     "enumerate": 2,
+     "solve": 12,
+     "cont": 8
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.002,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 8,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 2,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 2,
+     "luks_group_max_log2_order": 1,
+     "luks_twin_max": 2,
+     "enumerate": 2,
+     "solve": 12,
+     "cont": 8
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.003,
+    "note": "",
+    "stats": {
+     "enumerate": 2,
+     "solve": 3,
+     "cont": 3
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0001
+   }
+  },
+  {
+   "name": "Q4",
+   "family": "cube",
+   "size": 4,
+   "n": 16,
+   "iso": true,
+   "aut": 384.0,
+   "maxdeg": 4,
+   "new": {
+    "status": "ok",
+    "time": 0.004,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 12,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 15,
+     "luks_phase2_max_log2_order": 5,
+     "luks_group_max_log2_order": 3,
+     "luks_twin_max": 3,
+     "enumerate": 4,
+     "solve": 20,
+     "cont": 12
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.003,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 12,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 15,
+     "luks_phase2_max_log2_order": 5,
+     "luks_group_max_log2_order": 3,
+     "luks_twin_max": 3,
+     "enumerate": 4,
+     "solve": 20,
+     "cont": 12
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.015,
+    "note": "",
+    "stats": {
+     "enumerate": 6,
+     "solve": 20,
+     "cont": 20
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0001
+   }
+  },
+  {
+   "name": "Q5",
+   "family": "cube",
+   "size": 5,
+   "n": 32,
+   "iso": true,
+   "aut": 3840.0,
+   "maxdeg": 5,
+   "new": {
+    "status": "ok",
+    "time": 0.011,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 16,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 12,
+     "luks_phase2_max_degree": 24,
+     "luks_phase2_max_log2_order": 9,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 4,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 8,
+     "enum_cosets": 2,
+     "solve": 38,
+     "cont": 24
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.011,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 16,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 12,
+     "luks_phase2_max_degree": 24,
+     "luks_phase2_max_log2_order": 9,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 4,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "enumerate": 8,
+     "enum_cosets": 2,
+     "solve": 38,
+     "cont": 24
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.056,
+    "note": "",
+    "stats": {
+     "enumerate": 11,
+     "solve": 42,
+     "cont": 42
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0003
+   }
+  },
+  {
+   "name": "Q6",
+   "family": "cube",
+   "size": 6,
+   "n": 64,
+   "iso": true,
+   "aut": 46080.0,
+   "maxdeg": 6,
+   "new": {
+    "status": "ok",
+    "time": 0.033,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 20,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 20,
+     "luks_phase2_max_degree": 35,
+     "luks_phase2_max_log2_order": 14,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 5,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "cameron_skip_enum": 5,
+     "branch": 3,
+     "enumerate": 7,
+     "enum_cosets": 2,
+     "young_ind": 2,
+     "solve": 57,
+     "cont": 35
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.034,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 20,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 20,
+     "luks_phase2_max_degree": 35,
+     "luks_phase2_max_log2_order": 14,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 5,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "branch": 3,
+     "enumerate": 10,
+     "enum_cosets": 2,
+     "young_ind": 2,
+     "solve": 49,
+     "cont": 33
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.323,
+    "note": "",
+    "stats": {
+     "branch": 5,
+     "enumerate": 41,
+     "young_ind": 2,
+     "solve": 130,
+     "cont": 130
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0007
+   }
+  },
+  {
+   "name": "Q7",
+   "family": "cube",
+   "size": 7,
+   "n": 128,
+   "iso": true,
+   "aut": 645120.0,
+   "maxdeg": 7,
+   "new": {
+    "status": "ok",
+    "time": 0.113,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 24,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 40,
+     "luks_phase2_max_degree": 60,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 9,
+     "luks_twin_max": 6,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "branch": 6,
+     "enumerate": 7,
+     "enum_cosets": 2,
+     "young_ind": 4,
+     "solve": 72,
+     "cont": 43
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.112,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 24,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 40,
+     "luks_phase2_max_degree": 60,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 9,
+     "luks_twin_max": 6,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "branch": 6,
+     "enumerate": 7,
+     "enum_cosets": 2,
+     "young_ind": 4,
+     "solve": 72,
+     "cont": 43
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 1.411,
+    "note": "",
+    "stats": {
+     "enum_quotient": 46,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "branch": 24,
+     "enumerate": 146,
+     "enum_cosets": 46,
+     "young_ind": 16,
+     "solve": 457,
+     "cont": 457
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0023
+   }
+  },
+  {
+   "name": "Q8",
+   "family": "cube",
+   "size": 8,
+   "n": 256,
+   "iso": true,
+   "aut": 10321920.0,
+   "maxdeg": 8,
+   "new": {
+    "status": "ok",
+    "time": 0.454,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 28,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 70,
+     "luks_phase2_max_degree": 105,
+     "luks_phase2_max_log2_order": 25,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 7,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "branch": 9,
+     "enumerate": 7,
+     "enum_cosets": 2,
+     "young_ind": 6,
+     "solve": 87,
+     "cont": 51
+    }
+   },
+   "new0": {
+    "status": "ok",
+    "time": 0.41,
+    "note": "",
+    "stats": {
+     "luks_runs": 4,
+     "luks_steps": 28,
+     "luks_aut_tests": 2,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 70,
+     "luks_phase2_max_degree": 105,
+     "luks_phase2_max_log2_order": 25,
+     "luks_group_max_log2_order": 12,
+     "luks_twin_max": 7,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 24,
+     "enum_quotient_max_degree": 4,
+     "branch": 9,
+     "enumerate": 7,
+     "enum_cosets": 2,
+     "young_ind": 6,
+     "solve": 87,
+     "cont": 51
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 7.04,
+    "note": "",
+    "stats": {
+     "enum_quotient": 65,
+     "enum_quotient_max_order": 120,
+     "enum_quotient_max_degree": 10,
+     "branch": 166,
+     "enumerate": 273,
+     "enum_cosets": 65,
+     "young_ind": 100,
+     "solve": 931,
+     "cont": 931
+    }
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.009
+   }
+  }
+ ]
+}

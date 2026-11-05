@@ -1,0 +1,468 @@
+{
+ "label": "r4-reg3",
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "3reg50",
+   "family": "reg3",
+   "size": 50,
+   "n": 50,
+   "iso": true,
+   "aut": 2.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.011,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 14,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 11,
+     "luks_phase2_max_degree": 25,
+     "luks_phase2_max_log2_order": 4,
+     "luks_group_max_log2_order": 2,
+     "luks_twin_max": 2,
+     "enumerate": 14,
+     "solve": 20,
+     "cont": 20
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.023,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0015
+   }
+  },
+  {
+   "name": "3reg50-other",
+   "family": "reg3",
+   "size": 50,
+   "n": 50,
+   "iso": false,
+   "aut": 2.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.009,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 7,
+     "luks_phase1_max_degree": 11,
+     "luks_phase2_max_degree": 25,
+     "luks_phase2_max_log2_order": 4,
+     "luks_group_max_log2_order": 2,
+     "luks_twin_max": 2,
+     "enumerate": 10,
+     "solve": 10,
+     "cont": 10
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.005,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0014
+   }
+  },
+  {
+   "name": "3reg100",
+   "family": "reg3",
+   "size": 100,
+   "n": 100,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.043,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 18,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 33,
+     "luks_phase2_max_degree": 40,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 8,
+     "luks_twin_max": 2,
+     "enumerate": 19,
+     "solve": 34,
+     "cont": 30
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.064,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0084
+   }
+  },
+  {
+   "name": "3reg100-other",
+   "family": "reg3",
+   "size": 100,
+   "n": 100,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.039,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 9,
+     "luks_phase1_max_degree": 33,
+     "luks_phase2_max_degree": 40,
+     "luks_phase2_max_log2_order": 12,
+     "luks_group_max_log2_order": 8,
+     "luks_twin_max": 2,
+     "enumerate": 12,
+     "solve": 17,
+     "cont": 15
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.019,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0084
+   }
+  },
+  {
+   "name": "3reg200",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.174,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 16,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 55,
+     "luks_phase2_max_degree": 115,
+     "luks_phase2_max_log2_order": 23,
+     "luks_group_max_log2_order": 8,
+     "luks_twin_max": 2,
+     "enumerate": 33,
+     "solve": 68,
+     "cont": 60
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.163,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0544
+   }
+  },
+  {
+   "name": "3reg200-other",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.19,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 8,
+     "luks_phase1_max_degree": 55,
+     "luks_phase2_max_degree": 115,
+     "luks_phase2_max_log2_order": 23,
+     "luks_group_max_log2_order": 8,
+     "luks_twin_max": 2,
+     "enumerate": 18,
+     "solve": 34,
+     "cont": 30
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.078,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.0542
+   }
+  },
+  {
+   "name": "3reg300",
+   "family": "reg3",
+   "size": 300,
+   "n": 300,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.389,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 18,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 120,
+     "luks_phase2_max_degree": 384,
+     "luks_phase2_max_log2_order": 30,
+     "luks_group_max_log2_order": 14,
+     "luks_twin_max": 2,
+     "enum_quotient": 12,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 32,
+     "enum_cosets": 12,
+     "solve": 141,
+     "cont": 108
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.444,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.1717
+   }
+  },
+  {
+   "name": "3reg300-other",
+   "family": "reg3",
+   "size": 300,
+   "n": 300,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.374,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 9,
+     "luks_phase1_max_degree": 120,
+     "luks_phase2_max_degree": 384,
+     "luks_phase2_max_log2_order": 30,
+     "luks_group_max_log2_order": 14,
+     "luks_twin_max": 2,
+     "enum_quotient": 7,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 15,
+     "enum_cosets": 7,
+     "solve": 80,
+     "cont": 61
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.186,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.1732
+   }
+  },
+  {
+   "name": "3reg400",
+   "family": "reg3",
+   "size": 400,
+   "n": 400,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.858,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 20,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 182,
+     "luks_phase2_max_degree": 162,
+     "luks_phase2_max_log2_order": 35,
+     "luks_group_max_log2_order": 18,
+     "luks_twin_max": 2,
+     "enum_quotient": 4,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 53,
+     "enum_cosets": 4,
+     "solve": 234,
+     "cont": 173
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.802,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.4029
+   }
+  },
+  {
+   "name": "3reg400-other",
+   "family": "reg3",
+   "size": 400,
+   "n": 400,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 0.799,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 10,
+     "luks_phase1_max_degree": 182,
+     "luks_phase2_max_degree": 162,
+     "luks_phase2_max_log2_order": 35,
+     "luks_group_max_log2_order": 18,
+     "luks_twin_max": 2,
+     "enum_quotient": 2,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 26,
+     "enum_cosets": 2,
+     "solve": 121,
+     "cont": 89
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.343,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 0.4002
+   }
+  },
+  {
+   "name": "3reg600",
+   "family": "reg3",
+   "size": 600,
+   "n": 600,
+   "iso": true,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 1.942,
+    "note": "",
+    "stats": {
+     "luks_runs": 2,
+     "luks_steps": 24,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 151,
+     "luks_phase2_max_degree": 289,
+     "luks_phase2_max_log2_order": 39,
+     "luks_group_max_log2_order": 21,
+     "luks_twin_max": 2,
+     "enum_quotient": 6,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 71,
+     "enum_cosets": 6,
+     "solve": 377,
+     "cont": 291
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 2.031,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 1.4073
+   }
+  },
+  {
+   "name": "3reg600-other",
+   "family": "reg3",
+   "size": 600,
+   "n": 600,
+   "iso": false,
+   "aut": 1.0,
+   "maxdeg": 3,
+   "new": {
+    "status": "ok",
+    "time": 1.842,
+    "note": "",
+    "stats": {
+     "luks_runs": 1,
+     "luks_steps": 12,
+     "luks_phase1_max_degree": 151,
+     "luks_phase2_max_degree": 289,
+     "luks_phase2_max_log2_order": 39,
+     "luks_group_max_log2_order": 21,
+     "luks_twin_max": 2,
+     "enum_quotient": 3,
+     "enum_quotient_max_order": 2,
+     "enum_quotient_max_degree": 2,
+     "enumerate": 32,
+     "enum_cosets": 3,
+     "solve": 198,
+     "cont": 151
+    }
+   },
+   "default": {
+    "status": "ok",
+    "time": 0.815,
+    "note": "",
+    "stats": {}
+   },
+   "nauty": {
+    "status": "ok",
+    "time": 1.4027
+   }
+  }
+ ]
+}
