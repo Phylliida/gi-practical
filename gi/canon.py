@@ -245,7 +245,7 @@ def _as_ea(G, n):
     return None
 
 
-def canon_group(G, n, pos, pidx, x, image, stats):
+def canon_group(G, n, pos, pidx, x, image, stats, tag=""):
     """Canonize the string x on the positions pos (ordered; pidx: position ->
     index) under the action of G (an EA2 or PermGroup on range(n)), where
     image(g, p) is the image of position p under g. Returns (a, U): a in G
@@ -262,10 +262,10 @@ def canon_group(G, n, pos, pidx, x, image, stats):
         return None, G
     E = _as_ea(G, n)
     if E is not None:
-        stats["canon_ea"] += 1
+        stats["canon_ea" + tag] += 1
         c, N = EAAction(len(E.gens), acts, len(pos)).canon(x)
         return (E.elem(c) if c else None), EA2(n, [E.elem(v) for v in N])
-    stats["canon_perm"] += 1
+    stats["canon_perm" + tag] += 1
     phi = ActionHom(G, len(pos), lambda g: tuple([pidx[image(g, p)] for p in pos]))
     P = phi.image_group()
     _, lamP, autsP = perm_canon(P, x, stats)
@@ -392,7 +392,7 @@ class RootedCanon:
         for S, v in vt.items():
             x[pidx[S]] = code[v]
         st["canon_phase1_max_degree"] = max(st["canon_phase1_max_degree"], len(pos))
-        a1, U1 = canon_group(A, b, pos, pidx, x, _set_image, st)
+        a1, U1 = canon_group(A, b, pos, pidx, x, _set_image, st, "_p1")
         if not isinstance(U1, EA2):
             U1 = _as_ea(U1, b) or U1
         lab1 = list(lab) if a1 is None else [a1[i] for i in lab]
@@ -465,7 +465,7 @@ class RootedCanon:
         pidx2 = {e: i for i, e in enumerate(pl)}
         x2 = [1 if e in E2 else 0 for e in pl]
         st["canon_phase2_max_degree"] = max(st["canon_phase2_max_degree"], len(pl))
-        h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st)
+        h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2")
         if h0 is not None:
             labfull = [h0[l] for l in labfull]
         return labfull, A2
