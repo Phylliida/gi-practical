@@ -91,3 +91,22 @@ claimed results get an independent red-team pass.
   GI. [SPECULATION] degree-d GI is strictly easier than TreeCI.
 * Leads: FPT for T^2 (full-group case first); lower bound for coset-splitting on the iterated diagonal;
   implement Theorem P in gi-practical; red-team Theorem P.
+
+### w3-canon (done, commit 5c35d29; docs/w3-canon.md)
+* Babai's canonization obstacle was the certificate relational structure, whose colours are consistent only
+  per (x, y) pair. His repair uses t ≥ max(9, 2 log2 n) and does not transfer to HJ's constant κ. In the
+  regime d ≤ N^α only HJ's ordered comparisons hit it. The row machinery (genuinely non-canonical) does
+  not run there.
+* "Canonical-colour trick": replace each comparison by the canonical form of the marked window under the
+  pointwise stabiliser of a fixed reference tuple (right descent). Same colour classes, ~q^κ chains.
+* [CONDITIONAL on HJ, assembly SKETCH] Theorem C: canonical forms for Γ̂_d-strings in
+  exp(O(log N·log d))·exp(polylog d); degree-d graphs in n^{O(log d)}·exp(polylog d). The literature
+  (Schweitzer–Wiebking 2019, Wiebking 2020) lists n^{polylog d} canonization as open.
+* Lemma N (canonical forms descend to normal subgroups), Theorem E-canon, Theorem P-canon (via Wiebking).
+  Theorem H: the frontier hybrid, f(d)·poly(N)·s_bad^{O(log d)}, never worse than R*. The residual is TreeCI
+  (TreeCan in canonical mode).
+* Lead 1 (unconditional!): the canonical-colour trick applied to Grohe–Neuen–Schweitzer (certificates of
+  size O(log d)) may give the first n^{polylog d} canonization for degree-d graphs.
+
+## Wave 4
+* w4-gnscanon: develop lead 1 rigorously (unconditional n^{polylog d} canonization?).
