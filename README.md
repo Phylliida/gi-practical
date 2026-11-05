@@ -163,7 +163,10 @@ runs in `_cont` on intransitive groups, before the orbit chain:
 `young_wl=1` is the default. On isomorphic instances it gives the same branch counts as 2-WL, at
 3-5x less solver time. 2-WL refutes the non-isomorphic Chang and Latin-square pairs with 0
 branches (1-WL needs 38 and 138). The transitive giant step also refines two-label pair
-colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
+colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph). The 1-WL label
+refinement (`refine_labels`) encodes each label's pair multiset as a sorted tuple of integers
+`code(p[a][b], p[b][a]) * K + c[b]` (one code table for both instances), built with C-level
+map/sort; the partitions are those of the literal multisets.
 
 ## What is simplified (exactness is kept, running time is not)
 
@@ -225,8 +228,11 @@ colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
    random tables, computed for a whole row as one big-integer sum over packed rows. Any fixed
    function of the multiset is a canonical refinement, so exactness does not depend on the
    tables (a coincidence would only coarsen a round; `wl2_reference` keeps the definition and a
-   test checks equal partitions). Hashed 1-WL rounds (O(n^2) each) run first; when they make
-   the vertex colors discrete, no 2-WL round is needed. Each graph is refined on its own and cached (the same side
+   test checks equal partitions). Hashed 1-WL rounds (O(n^2) each) run before every 2-WL round
+   (folded into the pairs); once they make the vertex colors discrete, no further 2-WL round is
+   needed. Each step is implied by 2-WL, so the stable partition is unchanged; on random
+   3-regular graphs 1-WL is stuck at first but splits the vertices after one 2-WL round
+   (3reg200: 1 round instead of 4). Each graph is refined on its own and cached (the same side
    recurs across individualization branches); the shared naming is replaced by a direct check
    that the input color is one function of the refined color on both sides.
 6. **Chunked stages.** A stage with more than `CHUNK` (2000) positions is solved in chunks of

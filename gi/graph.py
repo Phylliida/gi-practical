@@ -141,7 +141,7 @@ def sym_product_group(n, classes, D):
             t = tcache[key] = tuple(p)
         return t
 
-    # per class: [(transposition, cycle or None)] for each start index
+    # per class C: for each start index i, the strong generators of Sym(C[i:])
     pairs = {}
     for C in classes:
         k = len(C)
