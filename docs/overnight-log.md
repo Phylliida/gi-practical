@@ -138,3 +138,24 @@ claimed results get an independent red-team pass.
 ## Wave 5
 * w5-redteam-gnscanon: adversarial check, especially the coset-vs-group issue in canonization recursions
   and the prior-art check against Wiebking's thesis.
+
+### w5-redteam-gnscanon (done, commits b380cb0, 8b1a839; docs/redteam-w4-gnscanon.md)
+* No breaks across 7 attacks.
+  - Coset vs group: sound. Children keep the subgroup fixed and move the input, so the reference tuple
+    depends on the subgroup only. Naive variants fail, with explicit S4 counterexamples; the memo uses
+    neither.
+  - Colour classes exact.
+  - All 17 arbitrary choice points in GNS covered.
+  - Running time carries over (the only automorphism pruning, in find-symmetry, is reproduced).
+* Gaps (low):
+  - the blank symbol must lie outside the alphabet;
+  - Step 4 (running time) and Corollary B's canonical Luks reduction (Babai–Luks 1983 /
+    Fürer–Schnyder–Specker 1983) need full write-ups.
+* Prior art: Wiebking's 2021 thesis (read; doi 10.18154/RWTH-2021-06242) states the problem as open
+  (Question 9.6), but its Lemma 5.34 already uses the core device (a single canonical test set) for
+  another purpose. The trick must be credited to Wiebking; the main result appears new.
+  - The agent passed the RWTH JS bot wall by sending the APP_INIT=1 cookie for the open-access PDF.
+* Strongest signed statement: given GNS's lemmas, Babai's canonical form theorem and canonical generating
+  sets, canonical labellings for Γ̂_d-strings in n^{O((log d)^c)}; graphs of maximum degree d likewise
+  once the canonical Luks reduction is written out. Before any public claim: contact Wiebking / Neuen /
+  Schweitzer and check the SICOMP 2023 GNS text.
