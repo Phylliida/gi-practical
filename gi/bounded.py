@@ -89,6 +89,7 @@ from itertools import combinations
 from .perm import mul, identity, sym_gens
 from .group import PermGroup, ActionHom
 from .solver import Solver
+from .ea2 import EA2, EAAction, is_ea2
 
 
 class NotSimple(ValueError):
@@ -173,43 +174,187 @@ def _induced(g, part):
 
 
 # -- the layered structure from an oriented edge ---------------------------------
-class _Rooted:
-    """BFS layers of a connected graph from the oriented edge (u0, u1).
-    Vertices are renumbered by layers: order[i] is the vertex of index i,
-    start[r] the first index of layer r (start[-1] = n). up[i] is the set of
-    indices of the neighbours of index i in the previous layer, adj[i] the set
-    of all neighbour indices, col[i] the color. The attachment classes of
-    layer r + 1 (index sets up[t] -> sorted members) are cached per r."""
-    __slots__ = ("order", "start", "up", "adj", "col", "_att", "_inner")
+def rooted_colors(g, u0, u1, names):
+    """1-WL colors of g with u0 and u1 individualized, named canonically:
+    names is a dict shared by all rooted graphs compared with each other, and a
+    color is the index of its signature (old color, sorted neighbour colors)
+    in it. Iterated until the number of classes stops growing. Every
+    isomorphism (X, (u0, u1)) -> (Z, (u0', u1')) maps the colors of X onto
+    those of Z (induction on the rounds: the names are one function of the
+    signature, and isomorphic graphs stop after the same round), so these
+    colors can be added to the rooted graphs without changing their rooted
+    isomorphisms. They are in general finer than distances from the root
+    (1-WL computes those)."""
+    nbr = g.nbr
 
-    def __init__(self, g, u0, u1):
+    def name(sig):
+        c = names.get(sig)
+        if c is None:
+            c = names[sig] = len(names)
+        return c
+
+    col = [name((-1, c)) for c in g.col]
+    col[u0] = name((-2, g.col[u0]))
+    col[u1] = name((-3, g.col[u1]))
+    k = len(set(col))
+    while True:
+        col = [name((col[v], tuple(sorted([col[w] for w in nbr[v]])))) for v in range(g.n)]
+        k2 = len(set(col))
+        if k2 == k:
+            return col
+        k = k2
+
+
+class _Seed:
+    """A rooted graph before layering: g, the root edge (u0, u1) and the
+    vertex colors used (rooted 1-WL colors or g's own); layered versions
+    are cached per layer plan."""
+    __slots__ = ("g", "u0", "u1", "col", "layered")
+
+    def __init__(self, g, u0, u1, col):
+        self.g, self.u0, self.u1, self.col = g, u0, u1, col
+        self.layered = {}
+
+
+def class_plan(g, col, u0, u1):
+    """A layer plan: a list of layers after L_0 = (u0, u1), each a list of
+    color names whose classes form the layer. It depends only on the colored
+    graph and the root (all ties are broken by color names), so any rooted
+    isomorphism respecting the colors maps the layers of one graph onto the
+    same-named layers of the other.
+
+    Greedy: with P the vertices placed so far, a pending class is
+    "determined" if its vertices have pairwise distinct up-sets N(v) & P;
+    all determined classes form the next layer (they add no symmetry: a
+    vertex is fixed by its up-set). Otherwise the next layer is the single
+    class minimizing (a twin block of >= 3 vertices?, a twin block of 2
+    with a nonempty up-set?, number of twin pairs, - placed vertices at
+    distance 2, color): twin pairs with an empty up-set add a direct Z_2
+    factor, which keeps G_r elementary abelian (see _Chain.layer2_ea)."""
+    nbr = g.nbr
+    n = g.n
+    members = {}
+    for v in range(n):
+        members.setdefault(col[v], []).append(v)
+    done = [False] * n
+    dn = [0] * n                        # placed neighbours
+    for u in (u0, u1):
+        done[u] = True
+    for u in (u0, u1):
+        for w in nbr[u]:
+            dn[w] += 1
+    pending = set(members) - {col[u0], col[u1]}
+    status, det = {}, set()
+    dirty = set(pending)
+    plan = []
+    while pending:
+        for c in dirty:
+            if c not in pending:
+                continue
+            ms = members[c]
+            if len(ms) == 1:
+                st = (0,)
+            else:
+                ups = Counter(frozenset(w for w in nbr[v] if done[w]) for v in ms)
+                big = max(ups.values())
+                if big == 1:
+                    st = (0,)
+                else:
+                    risk = any(k >= 2 and S for S, k in ups.items())
+                    pairs = sum(k for k in ups.values() if k >= 2)
+                    near = sum(dn[w] for v in ms for w in nbr[v])
+                    st = (1, big >= 3, risk, pairs, -near, c)
+            status[c] = st
+            if st[0] == 0:
+                det.add(c)
+            else:
+                det.discard(c)
+        dirty = set()
+        if det:
+            layer = sorted(det)
+            det = set()
+        else:
+            layer = [min(pending, key=status.__getitem__)]
+        plan.append(layer)
+        for c in layer:
+            pending.discard(c)
+            for v in members[c]:
+                done[v] = True
+        for c in layer:
+            for v in members[c]:
+                for w in nbr[v]:
+                    dn[w] += 1
+                    dirty.add(col[w])
+                    for x in nbr[w]:
+                        dirty.add(col[x])
+    return plan
+
+
+class _Rooted:
+    """The layers of a connected graph from the oriented edge (u0, u1):
+    L_0 = (u0, u1), then either the BFS layers (plan None) or the color
+    classes of a class_plan. Vertices are renumbered by layers: order[i] is
+    the vertex of index i, start[r] the first index of layer r (start[-1] =
+    n). up[i] is the set of indices of the neighbours of index i in earlier
+    layers (for BFS layers: the previous one), adj[i] the set of all
+    neighbour indices, col[i] the color. The attachment classes of layer
+    r + 1 (index sets up[t] -> sorted members) are cached per r. ok is False
+    if the graph does not fit the plan (then it is not isomorphic to the
+    graph the plan was made for)."""
+    __slots__ = ("order", "start", "up", "adj", "col", "ok", "_att", "_inner")
+
+    def __init__(self, g, u0, u1, col=None, plan=None):
         n = g.n
-        dist = [-1] * n
-        dist[u0] = dist[u1] = 0
+        if col is None:
+            col = g.col
+        self.ok = True
+        lay = [-1] * n
+        lay[u0] = lay[u1] = 0
         order = [u0, u1]
         start = [0, 2]
-        cur = order[:]
-        while True:
-            nxt = []
-            for v in cur:
-                for w in g.nbr[v]:
-                    if dist[w] < 0:
-                        dist[w] = dist[v] + 1
-                        nxt.append(w)
-            if not nxt:
-                break
-            order.extend(nxt)
-            start.append(len(order))
-            cur = nxt
-        if len(order) != n:
-            raise ValueError("graph is not connected")
+        if plan is None:
+            cur = order[:]
+            while True:
+                nxt = []
+                for v in cur:
+                    for w in g.nbr[v]:
+                        if lay[w] < 0:
+                            lay[w] = lay[v] + 1
+                            nxt.append(w)
+                if not nxt:
+                    break
+                order.extend(nxt)
+                start.append(len(order))
+                cur = nxt
+            if len(order) != n:
+                raise ValueError("graph is not connected")
+        else:
+            where = {}
+            for r, cs in enumerate(plan):
+                for c in cs:
+                    where[c] = r
+            byr = [[] for _ in plan]
+            for v in range(n):
+                if v == u0 or v == u1:
+                    continue
+                r = where.get(col[v])
+                if r is None:
+                    self.ok = False
+                    return
+                byr[r].append(v)
+            for r, vs in enumerate(byr):
+                vs.sort(key=lambda v: (col[v], v))
+                for v in vs:
+                    lay[v] = r + 1
+                order.extend(vs)
+                start.append(len(order))
         pos = [0] * n
         for i, v in enumerate(order):
             pos[v] = i
         self.order, self.start = order, start
         self.adj = [frozenset(pos[w] for w in g.nbr[v]) for v in order]
-        self.col = [g.col[v] for v in order]
-        self.up = [frozenset(pos[w] for w in g.nbr[v] if dist[w] == dist[v] - 1) for v in order]
+        self.col = [col[v] for v in order]
+        self.up = [frozenset(pos[w] for w in g.nbr[v] if lay[w] < lay[v]) for v in order]
         self._att = {}
         self._inner = {}
 
@@ -242,15 +387,27 @@ class _Layer:
                  "Gpp", "rho", "gens2", "order2", "H2", "x2", "pairs", "pidx", "kernel_ext")
 
 
+class _LayerEA:
+    """The X-side data of one step on the elementary abelian path."""
+    __slots__ = ("r", "b", "c", "A", "aidx", "T", "slot", "S", "sidx", "xS", "act1", "Gpp", "nG",
+                 "hgens", "Hfull", "act2", "pairs", "x2")
+
+
+_FALLBACK = object()
+
+
 class _Chain:
     """The groups G_r = Aut_f(X_r) of one rooted graph X (built lazily, as far
     as some target got) and the isomorphism cosets towards targets."""
 
-    def __init__(self, X, solver):
-        self.X, self.solver = X, solver
-        self.G = [PermGroup(2)]         # G[r] = G_r on range(start[r + 1])
+    def __init__(self, X, solver, ea=True, plan=None):
+        self.X, self.solver, self.ea, self.plan = X, solver, ea, plan
+        # G[r] = G_r on range(start[r + 1]): an EA2 (elementary abelian, by a
+        # basis) while that holds and ea is on, else a PermGroup
+        self.G = [EA2(2, []) if ea else PermGroup(2)]
         self.L = []                     # L[r] = _Layer of step r
         self.codes = {(): 0}            # color multisets of twin classes -> ints
+        self.hist = None                # color histogram of X
 
     def steps(self):
         return len(self.X.start) - 2
@@ -261,6 +418,15 @@ class _Chain:
             c = self.codes[t] = len(self.codes)
         return c
 
+    def target(self, seed):
+        """The seed layered by this chain's plan (cached on the seed)."""
+        key = id(self.plan)
+        Z = seed.layered.get(key)
+        if Z is None or Z[0] is not self.plan:
+            Z = seed.layered[key] = (self.plan, _Rooted(seed.g, seed.u0, seed.u1, seed.col,
+                                                        self.plan))
+        return Z[1]
+
     def run(self, Z):
         """sigma (index map X -> Z, an isomorphism of the rooted graphs) or
         None. Every step is exact, so None means no isomorphism maps the root
@@ -268,7 +434,11 @@ class _Chain:
         X = self.X
         st = self.solver.stats
         st["luks_runs"] += 1
-        if Z.start != X.start or Z.col[0] != X.col[0] or Z.col[1] != X.col[1]:
+        if not Z.ok or Z.start != X.start or Z.col[0] != X.col[0] or Z.col[1] != X.col[1]:
+            return None
+        if self.hist is None:
+            self.hist = Counter(X.col)
+        if Counter(Z.col) != self.hist:
             return None
         sigma = (0, 1)
         for r in range(self.steps()):
@@ -390,6 +560,186 @@ class _Chain:
         st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], M)
 
     def step(self, r, Z, sigma):
+        if isinstance(self.G[r], EA2):
+            out = self.step_ea(r, Z, sigma)
+            if out is not _FALLBACK:
+                return out
+            # H of this layer is not elementary abelian: permutation groups from here
+            self.solver.stats["luks_ea_fallback"] += 1
+            G = self.G[r]
+            assert len(self.L) == r + 1 and len(self.G) == r + 1
+            self.L.pop()
+            self.G[r] = PermGroup(G.n, G.gens, order=G.order())
+        return self._step_perm(r, Z, sigma)
+
+    # -- the elementary abelian path (no Schreier-Sims) ------------------------------
+    def layer1_ea(self, r):
+        """Phase-1 data of step r when G_r is an EA2: the same positions and
+        string as layer1, and the action of G_r's basis on the positions."""
+        if len(self.L) > r:
+            return self.L[r]
+        X, st = self.X, self.solver.stats
+        G = self.G[r]
+        L = _LayerEA()
+        L.r, L.Gpp = r, None
+        L.b, L.c = X.start[r + 1], X.start[r + 2]
+        att = X.attachments(r)
+        L.A = list(att)
+        L.aidx = {S: s for s, S in enumerate(L.A)}
+        L.T = att
+        L.slot = {}
+        for s, S in enumerate(L.A):
+            for k, t in enumerate(att[S]):
+                L.slot[t] = (s, k)
+        S_list = list(L.A)
+        sidx = dict(L.aidx)
+        for S in S_list:
+            for g in G.gens:
+                S2 = frozenset(g[i] for i in S)
+                if S2 not in sidx:
+                    sidx[S2] = len(S_list)
+                    S_list.append(S2)
+        L.S, L.sidx = S_list, sidx
+        xS = [0] * len(S_list)
+        for s, S in enumerate(L.A):
+            xS[s] = self.code(tuple(X.col[t] for t in att[S]))
+        L.xS = tuple(xS)
+        L.act1 = EAAction(len(G.gens), [tuple(sidx[frozenset(g[i] for i in S)] for S in S_list)
+                                        for g in G.gens], len(S_list))
+        st["luks_phase1_max_degree"] = max(st["luks_phase1_max_degree"], len(S_list))
+        self.L.append(L)
+        return L
+
+    def layer2_ea(self, L, Gpp):
+        """Phase-2 data from G'' (an EA2 on X_r): H = rho(G'') x| prod Sym(twin
+        class & color) is elementary abelian iff every color block of a twin
+        class has <= 2 members and G'' fixes each twin class holding a block
+        of 2 (then H = G''+ x Z_2^t, with g+ = (g, h_g), h_g mapping the k-th
+        member of T_S to the k-th of T_(S^g)). Returns False otherwise."""
+        X, st = self.X, self.solver.stats
+        b, c = L.b, L.c
+        nV = c - b
+        A, aidx, T, slot, col = L.A, L.aidx, L.T, L.slot, X.col
+        rho, hs = [], []
+        for g in Gpp.gens:
+            p = tuple(aidx[frozenset(g[i] for i in S)] for S in A)
+            rho.append(p)
+            hs.append(tuple(T[A[p[slot[t][0]]]][slot[t][1]] - b for t in range(b, c)))
+        swaps = []
+        for s, S in enumerate(A):
+            ts = T[S]
+            i = 0
+            while i < len(ts):
+                j = i
+                while j < len(ts) and col[ts[j]] == col[ts[i]]:
+                    j += 1
+                if j - i >= 3:
+                    return False
+                if j - i == 2:
+                    if any(p[s] != s for p in rho):
+                        return False
+                    sw = list(range(nV))
+                    sw[ts[i] - b], sw[ts[i + 1] - b] = ts[i + 1] - b, ts[i] - b
+                    swaps.append(tuple(sw))
+                i = j
+        st["luks_twin_max"] = max([st["luks_twin_max"]] + [len(ts) for ts in T.values()])
+        L.Gpp, L.nG = Gpp, len(Gpp.gens)
+        L.hgens = hs + swaps            # H's basis acting on layer r + 1
+        idb = tuple(range(b))
+        L.Hfull = EA2(c, [g + tuple(b + v for v in h) for g, h in zip(Gpp.gens, hs)]
+                      + [idb + tuple(b + v for v in sw) for sw in swaps])
+        st["luks_phase2_max_log2_order"] = max(st["luks_phase2_max_log2_order"],
+                                               len(L.hgens))
+        L.act2 = None
+        if not X.inner_edges(L.r):
+            return True
+        pairs, pidx = [], {}
+        for t in range(b, c):
+            for u in X.adj[t]:
+                if t < u < c:
+                    pidx[(t - b, u - b)] = len(pairs)
+                    pairs.append((t - b, u - b))
+        ne = len(pairs)
+        for p, q in pairs:
+            for h in L.hgens:
+                hp, hq = h[p], h[q]
+                pq = (hp, hq) if hp < hq else (hq, hp)
+                if pq not in pidx:
+                    pidx[pq] = len(pairs)
+                    pairs.append(pq)
+        act = []
+        for h in L.hgens:
+            img = []
+            for p, q in pairs:
+                hp, hq = h[p], h[q]
+                img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
+            act.append(tuple(img))
+        L.pairs, L.act2 = pairs, EAAction(len(L.hgens), act, len(pairs))
+        L.x2 = tuple([1] * ne + [0] * (len(pairs) - ne))
+        st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], len(pairs))
+        return True
+
+    def step_ea(self, r, Z, sigma):
+        X = self.X
+        L = self.layer1_ea(r)
+        b, c = L.b, L.c
+        sinv = [0] * b
+        for i, j in enumerate(sigma):
+            sinv[j] = i
+        attZ = Z.attachments(r)
+        yS = [0] * len(L.S)
+        for SZ, ts in attZ.items():
+            s = L.sidx.get(frozenset(sinv[j] for j in SZ))
+            if s is None:
+                return None
+            yS[s] = self.code(tuple(Z.col[t] for t in ts))
+        sol = L.act1.iso(L.xS, yS)
+        if sol is None:
+            return None
+        a0, N = sol
+        G = self.G[r]
+        if L.Gpp is None:
+            if not self.layer2_ea(L, EA2(b, [G.elem(v) for v in N])):
+                return _FALLBACK
+        if a0:
+            sigma = mul(G.elem(a0), sigma)
+        psi = [0] * (c - b)
+        for Sx, ts in L.T.items():
+            tz = attZ.get(frozenset(sigma[i] for i in Sx))
+            if tz is None or len(tz) != len(ts):
+                raise AssertionError("phase 1 left twin classes unmatched")
+            for t, u in zip(ts, tz):
+                psi[t - b] = u
+        if L.act2 is None:
+            if Z.inner_edges(r):
+                return None
+            if len(self.G) == r + 1:
+                self._push_group(L.Hfull)
+            return tuple(sigma) + tuple(psi)
+        y2 = []
+        for p, q in L.pairs:
+            y2.append(1 if psi[q] in Z.adj[psi[p]] else 0)
+        if sum(y2) != Z.inner_edges(r):
+            return None
+        sol = L.act2.iso(L.x2, y2)
+        if sol is None:
+            return None
+        a2, N2 = sol
+        if len(self.G) == r + 1:
+            H = L.Hfull
+            self._push_group(EA2(c, [H.elem(v) for v in N2]))
+        if not a2:
+            return tuple(sigma) + tuple(psi)
+        h = L.Hfull.elem(a2)            # (g0 on X_r, h0 on layer r + 1)
+        return tuple(mul(h[:b], sigma)) + tuple(psi[h[t] - b] for t in range(b, c))
+
+    def _push_group(self, G1):
+        self.G.append(G1)
+        st = self.solver.stats
+        st["luks_ea_layers"] += 1
+        st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"], len(G1.gens))
+
+    def _step_perm(self, r, Z, sigma):
         X, S = self.X, self.solver
         L = self.layer1(r)
         b, c = L.b, L.c
@@ -453,6 +803,8 @@ class _Chain:
             h0, auts = res.rep, res.gens
         if len(self.G) == r + 1:
             G1 = PermGroup(c, [self.extend(L, h) for h in auts] + L.kernel_ext)
+            if self.ea and is_ea2(G1.gens, c):    # (G1.gens is irredundant: a basis)
+                G1 = EA2(c, G1.gens)
             self.G.append(G1)
             st = S.stats
             st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"],
@@ -488,8 +840,12 @@ class _Connected:
     """A connected graph with its oriented-edge invariants; with aut=True also
     Aut(X), the orbits of Aut(X) on oriented edges and the chains used."""
 
-    def __init__(self, g, solver, aut=True, root="class"):
-        self.g, self.solver, self.root = g, solver, root
+    def __init__(self, g, solver, aut=True, root="class", names=None, rooted_wl=True, ea=True,
+                 layers="class"):
+        self.g, self.solver, self.root, self.ea = g, solver, root, ea
+        self.layers = layers if rooted_wl else "bfs"
+        self.names = {} if names is None else names
+        self.rooted_wl = rooted_wl
         n = g.n
         self.edges = [(u, v) for u in range(n) for v in g.nbr[u]]
         self.eidx = {e: i for i, e in enumerate(self.edges)}
@@ -500,35 +856,64 @@ class _Connected:
             self.compute_aut()
 
     def invariants(self):
+        """For each oriented edge (u, v): the colors of u and v and the
+        multiset of (d(u, w), d(v, w), color of w) over all vertices w. The
+        distances come from bit-parallel balls (ball_{t+1}(v) = the union of
+        ball_t over v and its neighbours, as int bitmasks), so the cost is
+        about diameter * |E| big-int operations instead of n BFS runs."""
         g = self.g
-        n = g.n
-        dist = []
-        for s in range(n):
-            d = [-1] * n
-            d[s] = 0
-            q = [s]
-            for v in q:
-                for w in g.nbr[v]:
-                    if d[w] < 0:
-                        d[w] = d[v] + 1
-                        q.append(w)
-            dist.append(d)
-        K = n + 1
-        C = 1 + max(g.col, default=0)
+        n, nbr, col = g.n, g.nbr, g.col
+        cur = [1 << v for v in range(n)]
+        spheres = [cur]
+        while True:
+            nxt = []
+            for v in range(n):
+                b = cur[v]
+                for w in nbr[v]:
+                    b |= cur[w]
+                nxt.append(b)
+            if nxt == cur:
+                break
+            spheres.append([b ^ a for a, b in zip(cur, nxt)])
+            cur = nxt
+        D = len(spheres)
+        masks = {}
+        for v in range(n):
+            masks[col[v]] = masks.get(col[v], 0) | (1 << v)
+        cmasks = sorted(masks.items())
         out = []
         for u, v in self.edges:
-            du, dv = dist[u], dist[v]
-            cnt = Counter((du[w] * K + dv[w]) * C + g.col[w] for w in range(n))
-            out.append((g.col[u], g.col[v], tuple(sorted(cnt.items()))))
+            items = []
+            for i in range(D):
+                su = spheres[i][u]
+                for j in (i - 1, i, i + 1):
+                    if 0 <= j < D:
+                        x = su & spheres[j][v]
+                        if x:
+                            if len(cmasks) == 1:
+                                items.append((i, j, cmasks[0][0], x.bit_count()))
+                            else:
+                                for c, m in cmasks:
+                                    k = (x & m).bit_count()
+                                    if k:
+                                        items.append((i, j, c, k))
+            out.append((col[u], col[v], tuple(items)))
         return out
 
     def rooted(self, f):
-        return _Rooted(self.g, *self.edges[f])
+        u0, u1 = self.edges[f]
+        col = rooted_colors(self.g, u0, u1, self.names) if self.rooted_wl else self.g.col
+        return _Seed(self.g, u0, u1, col)
 
     def chain(self, f):
         c = self.chains.get(f)
         if c is None:
-            c = self.chains[f] = _Chain(self.rooted(f), self.solver)
+            sd = self.rooted(f)
+            plan = class_plan(sd.g, sd.col, sd.u0, sd.u1) if self.layers == "class" else None
+            c = self.chains[f] = _Chain(_Rooted(sd.g, sd.u0, sd.u1, sd.col, plan), self.solver,
+                                        self.ea, plan)
+            self.solver.stats["luks_layers_max"] = max(self.solver.stats["luks_layers_max"],
+                                                       c.steps())
         return c
 
     def vertex_map(self, X, Z, sigma):
@@ -576,7 +961,7 @@ class _Connected:
             if rf == find(f0) or any(find(e) == rf for e in failed):
                 continue
             self.solver.stats["luks_aut_tests"] += 1
-            Z = self.rooted(f)
+            Z = ch.target(self.rooted(f))
             s = ch.run(Z)
             if s is None:
                 failed.append(f)
@@ -595,7 +980,7 @@ class _Connected:
             return None
         inv0 = self.invs[self.f0]
         e1 = next(i for i, v in enumerate(other.invs) if v == inv0)
-        Z = other.rooted(e1)
+        seed = other.rooted(e1)
         reps, seen = [self.f0], {self.find(self.f0)}
         for f in range(len(self.edges)):
             if self.invs[f] == inv0 and self.find(f) not in seen:
@@ -604,6 +989,7 @@ class _Connected:
         for f in reps:
             self.solver.stats["luks_iso_tests"] += 1
             ch = self.chain(f)
+            Z = ch.target(seed)
             s = ch.run(Z)
             if s is not None:
                 return self.vertex_map(ch.X, Z, s)
@@ -617,7 +1003,8 @@ def _invert(p):
     return r
 
 
-def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, root="class"):
+def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, root="class",
+                rooted_wl=True, ea=True, layers="class"):
     """X, Y: adjacency matrices of undirected loopless graphs (any degree; the
     groups have composition factors in Sym(d - 1) for maximum degree d).
     Returns None if not isomorphic, else (sigma, aut_gens): sigma[i] is the
@@ -627,14 +1014,46 @@ def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, 
     (luks_*). root: how the root edge f0 of each component is chosen,
     "class" (smallest invariant class, the fewest tests) or "degree" (an edge
     of maximum degree sum, which makes large twin classes appear early); it
-    only changes the running time and which generators are returned."""
-    n = len(X)
-    if len(Y) != n:
+    only changes the running time and which generators are returned.
+    rooted_wl: each rooted graph gets the 1-WL colors with its root edge
+    individualized (rooted_colors; exact, and it splits twin classes that
+    plain layering keeps together, e.g. on multipedes). ea: while G_r is
+    elementary abelian (and the layer's phase-2 group too), the layer is
+    solved by linear algebra over F_2 (gi/ea2.py) instead of Solver.solve;
+    exact either way. layers: "class" (with rooted_wl) layers each rooted
+    graph by color classes in the order of class_plan, "bfs" by distance
+    from the root edge (Luks's original order)."""
+    if len(Y) != len(X):
+        return None
+    return bounded_iso_lists(_neighbours(X), _neighbours(Y), solver, vcolors_x, vcolors_y,
+                             refine, root, rooted_wl, ea, layers)
+
+
+def _check_lists(nbr):
+    n = len(nbr)
+    sets = [set(r) for r in nbr]
+    for i, r in enumerate(nbr):
+        if len(sets[i]) != len(r) or any(not 0 <= j < n for j in r):
+            raise NotSimple("neighbour lists must hold distinct vertices")
+        if i in sets[i]:
+            raise NotSimple("loops are not supported")
+        if any(i not in sets[j] for j in r):
+            raise NotSimple("directed graphs are not supported")
+    return [sorted(r) for r in nbr]
+
+
+def bounded_iso_lists(nx, ny, solver=None, vcolors_x=None, vcolors_y=None, refine=True,
+                      root="class", rooted_wl=True, ea=True, layers="class"):
+    """bounded_iso for graphs given by neighbour lists (nx[v]: the neighbours
+    of v; symmetric, no loops or repeats), without O(n^2) matrices. Same
+    arguments and return value as bounded_iso."""
+    n = len(nx)
+    if len(ny) != n:
         return None
     if n == 0:
         return (), []
     solver = solver or Solver(cameron_no_enum=True)
-    nx, ny = _neighbours(X), _neighbours(Y)
+    nx, ny = _check_lists(nx), _check_lists(ny)
     cx, cy = _joint_names(vcolors_x or [0] * n, vcolors_y or [0] * n)
     if refine:
         r = refine_1wl(nx, ny, cx, cy)
@@ -666,7 +1085,8 @@ def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, 
                     C[1].append((part, t))
                     break
         else:
-            rep = _Connected(sub, solver, root=root) if len(part) > 1 else _Single(sub)
+            rep = (_Connected(sub, solver, root=root, rooted_wl=rooted_wl, ea=ea, layers=layers)
+                   if len(part) > 1 else _Single(sub))
             classes.append([rep, [(part, tuple(range(len(part))))], k])
     matches = [[] for _ in classes]
     for part in py:
@@ -719,4 +1139,5 @@ def _component_iso(rep, sub, solver):
     color multiset), or None."""
     if isinstance(rep, _Single):
         return (0,) if rep.g.col == sub.col else None
-    return rep.iso(_Connected(sub, solver, aut=False))
+    return rep.iso(_Connected(sub, solver, aut=False, names=rep.names, rooted_wl=rep.rooted_wl,
+                              ea=rep.ea, layers=rep.layers))

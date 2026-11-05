@@ -143,9 +143,14 @@ def test_random_regular(d, sizes):
             B = shuffled(A, rng)
             C = random_regular(d, n, rng)
             for S in solvers():
-                check(A, B, bounded_iso(A, B, solver=S))
-                check(A, C, bounded_iso(A, C, solver=S))
+                # BFS layers (Luks's order): twin classes have <= d - 1 members
+                check(A, B, bounded_iso(A, B, solver=S, layers="bfs"))
+                check(A, C, bounded_iso(A, C, solver=S, layers="bfs"))
                 assert 1 <= S.stats["luks_twin_max"] <= d - 1
+            for kw in (dict(), dict(rooted_wl=False, ea=False), dict(ea=False)):
+                S = Solver(cameron_no_enum=True, certificates=False)
+                check(A, B, bounded_iso(A, B, solver=S, **kw))
+                check(A, C, bounded_iso(A, C, solver=S, **kw))
 
 
 def test_trees():
@@ -321,7 +326,9 @@ def test_cameron_in_pipeline():
         ref = graph_iso(A, B, solver=Solver(certificates=False))
         for flag in (False, True):
             S = Solver(cameron_no_enum=flag, certificates=False)
-            res = bounded_iso(A, B, solver=S, root="degree")
+            # Luks's original layering (BFS, no rooted refinement, no EA path),
+            # where the Sym(5) twin classes reach the dispatcher
+            res = bounded_iso(A, B, solver=S, root="degree", rooted_wl=False, ea=False)
             assert (res is None) == (ref is None)
             if res is not None:
                 sigma, gens = res
