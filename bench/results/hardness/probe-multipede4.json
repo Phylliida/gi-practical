@@ -1,0 +1,397 @@
+{
+ "label": "probe-multipede4",
+ "rows": [
+  {
+   "family": "multipede4",
+   "size": 12,
+   "name": "multipede4-12",
+   "n": 136,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 1.014,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 67,
+    "solve": 73,
+    "cont": 73,
+    "enumerate": 73,
+    "stage_chunks": 9,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 12,
+   "name": "multipede4-12",
+   "n": 136,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.283,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 67,
+    "solve": 73,
+    "cont": 73,
+    "enumerate": 73,
+    "stage_chunks": 9,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 12,
+   "name": "multipede4-12",
+   "n": 136,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.00499,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 12,
+   "name": "multipede4-12-non",
+   "n": 136,
+   "kind": "non",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.414,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 12,
+   "name": "multipede4-12-non",
+   "n": 136,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.033,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 12,
+   "name": "multipede4-12-non",
+   "n": 136,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.00466,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 16,
+   "name": "multipede4-16",
+   "n": 176,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 2.47,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 87,
+    "solve": 99,
+    "cont": 99,
+    "enumerate": 99,
+    "stage_chunks": 16,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 16,
+   "name": "multipede4-16",
+   "n": 176,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.51,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 87,
+    "solve": 99,
+    "cont": 99,
+    "enumerate": 99,
+    "stage_chunks": 16,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 16,
+   "name": "multipede4-16",
+   "n": 176,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.0057,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 16,
+   "name": "multipede4-16-non",
+   "n": 176,
+   "kind": "non",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.994,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 16,
+   "name": "multipede4-16-non",
+   "n": 176,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.073,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 16,
+   "name": "multipede4-16-non",
+   "n": 176,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.00572,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 20,
+   "name": "multipede4-20",
+   "n": 216,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 3.28,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 107,
+    "solve": 125,
+    "cont": 125,
+    "enumerate": 125,
+    "stage_chunks": 23,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 20,
+   "name": "multipede4-20",
+   "n": 216,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.476,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 107,
+    "solve": 125,
+    "cont": 125,
+    "enumerate": 125,
+    "stage_chunks": 23,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 20,
+   "name": "multipede4-20",
+   "n": 216,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.00909,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 20,
+   "name": "multipede4-20-non",
+   "n": 216,
+   "kind": "non",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 1.451,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 20,
+   "name": "multipede4-20-non",
+   "n": 216,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.056,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 20,
+   "name": "multipede4-20-non",
+   "n": 216,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.00905,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 24,
+   "name": "multipede4-24",
+   "n": 264,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 6.811,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 131,
+    "solve": 160,
+    "cont": 160,
+    "enumerate": 160,
+    "stage_chunks": 36,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 24,
+   "name": "multipede4-24",
+   "n": 264,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.778,
+   "note": "|Aut|=2",
+   "stats": {
+    "stage": 131,
+    "solve": 160,
+    "cont": 160,
+    "enumerate": 160,
+    "stage_chunks": 36,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 24,
+   "name": "multipede4-24",
+   "n": 264,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.01294,
+   "stats": {}
+  },
+  {
+   "family": "multipede4",
+   "size": 24,
+   "name": "multipede4-24-non",
+   "n": 264,
+   "kind": "non",
+   "mode": "full",
+   "aut": 2,
+   "status": "ok",
+   "time": 3.1,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 24,
+   "name": "multipede4-24-non",
+   "n": 264,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.085,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "multipede4",
+   "size": 24,
+   "name": "multipede4-24-non",
+   "n": 264,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 2,
+   "status": "ok",
+   "time": 0.01297,
+   "stats": {}
+  }
+ ]
+}

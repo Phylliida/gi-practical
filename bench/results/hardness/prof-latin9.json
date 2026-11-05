@@ -1,0 +1,34 @@
+{
+ "label": "prof-latin9",
+ "rows": [
+  {
+   "family": "latin_group",
+   "size": 9,
+   "name": "Latin(Z9)",
+   "n": 81,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 2916,
+   "status": "ok",
+   "time": 77.031,
+   "note": "|Aut|=2916",
+   "stats": {
+    "stage": 1,
+    "solve": 629,
+    "cont": 459,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 4,
+    "label_depth": 2,
+    "bl_calls_d1": 1,
+    "try_young": 8,
+    "branch": 7,
+    "bl_calls_d2": 3,
+    "enumerate": 49,
+    "memo_hit": 391,
+    "pruned": 143,
+    "ir_depth": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,413 @@
+{
+ "label": "probe-cayley2",
+ "rows": [
+  {
+   "family": "cayley2",
+   "size": 5,
+   "name": "Cay(Z2^5)",
+   "n": 32,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 512,
+   "status": "ok",
+   "time": 0.05,
+   "note": "|Aut|=512",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 6,
+    "refine": 6,
+    "stage": 60,
+    "solve": 60,
+    "cont": 60,
+    "enumerate": 20,
+    "memo_hit": 50,
+    "ir_pruned": 58,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 5,
+   "name": "Cay(Z2^5)",
+   "n": 32,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 512,
+   "status": "ok",
+   "time": 1.814,
+   "note": "|Aut|=512",
+   "stats": {
+    "stage": 1,
+    "solve": 414,
+    "cont": 244,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 1,
+    "label_depth": 1,
+    "bl_calls_d1": 1,
+    "try_young": 4,
+    "branch": 4,
+    "enum_cosets": 5,
+    "enumerate": 42,
+    "memo_hit": 199,
+    "pruned": 41,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 5,
+   "name": "Cay(Z2^5)",
+   "n": 32,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 512,
+   "status": "ok",
+   "time": 0.00033,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 5,
+   "name": "Cay(Z2^5)-pair",
+   "n": 32,
+   "kind": "non",
+   "mode": "full",
+   "aut": 512,
+   "status": "ok",
+   "time": 0.004,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 5,
+   "name": "Cay(Z2^5)-pair",
+   "n": 32,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 512,
+   "status": "ok",
+   "time": 0.001,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 5,
+   "name": "Cay(Z2^5)-pair",
+   "n": 32,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 512,
+   "status": "ok",
+   "time": 0.00035,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 6,
+   "name": "Cay(Z2^6)",
+   "n": 64,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 64,
+   "status": "ok",
+   "time": 0.092,
+   "note": "|Aut|=64",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 8,
+    "refine": 8,
+    "ir_pruned": 120,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 6,
+   "name": "Cay(Z2^6)",
+   "n": 64,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 64,
+   "status": "ok",
+   "time": 1.951,
+   "note": "|Aut|=64",
+   "stats": {
+    "stage": 1,
+    "solve": 9,
+    "cont": 9,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 1,
+    "label_depth": 1,
+    "bl_calls_d1": 1,
+    "try_young": 7,
+    "branch": 7,
+    "enumerate": 1,
+    "memo_hit": 7,
+    "pruned": 57,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 6,
+   "name": "Cay(Z2^6)",
+   "n": 64,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 64,
+   "status": "ok",
+   "time": 0.00089,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 6,
+   "name": "Cay(Z2^6)-pair",
+   "n": 64,
+   "kind": "non",
+   "mode": "full",
+   "aut": 64,
+   "status": "ok",
+   "time": 0.027,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 6,
+   "name": "Cay(Z2^6)-pair",
+   "n": 64,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 64,
+   "status": "ok",
+   "time": 0.002,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 6,
+   "name": "Cay(Z2^6)-pair",
+   "n": 64,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 64,
+   "status": "ok",
+   "time": 0.00083,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 7,
+   "name": "Cay(Z2^7)",
+   "n": 128,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 128,
+   "status": "ok",
+   "time": 0.409,
+   "note": "|Aut|=128",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 9,
+    "refine": 9,
+    "ir_pruned": 247,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 7,
+   "name": "Cay(Z2^7)",
+   "n": 128,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 128,
+   "status": "ok",
+   "time": 30.223,
+   "note": "|Aut|=128",
+   "stats": {
+    "stage": 1,
+    "solve": 10,
+    "cont": 10,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 1,
+    "label_depth": 1,
+    "bl_calls_d1": 1,
+    "try_young": 8,
+    "branch": 8,
+    "enumerate": 1,
+    "memo_hit": 8,
+    "pruned": 120,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 7,
+   "name": "Cay(Z2^7)",
+   "n": 128,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 128,
+   "status": "ok",
+   "time": 0.00258,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 7,
+   "name": "Cay(Z2^7)-pair",
+   "n": 128,
+   "kind": "non",
+   "mode": "full",
+   "aut": 128,
+   "status": "ok",
+   "time": 0.087,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 7,
+   "name": "Cay(Z2^7)-pair",
+   "n": 128,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 128,
+   "status": "ok",
+   "time": 0.01,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 7,
+   "name": "Cay(Z2^7)-pair",
+   "n": 128,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 128,
+   "status": "ok",
+   "time": 0.00264,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 8,
+   "name": "Cay(Z2^8)",
+   "n": 256,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 256,
+   "status": "ok",
+   "time": 2.982,
+   "note": "|Aut|=256",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 10,
+    "refine": 10,
+    "ir_pruned": 502,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 8,
+   "name": "Cay(Z2^8)",
+   "n": 256,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 256,
+   "status": "timeout",
+   "time": 311.512,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1,
+    "cont": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 8,
+   "name": "Cay(Z2^8)",
+   "n": 256,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 256,
+   "status": "ok",
+   "time": 0.00896,
+   "stats": {}
+  },
+  {
+   "family": "cayley2",
+   "size": 8,
+   "name": "Cay(Z2^8)-pair",
+   "n": 256,
+   "kind": "non",
+   "mode": "full",
+   "aut": 256,
+   "status": "ok",
+   "time": 0.477,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 8,
+   "name": "Cay(Z2^8)-pair",
+   "n": 256,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 256,
+   "status": "ok",
+   "time": 0.042,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "cayley2",
+   "size": 8,
+   "name": "Cay(Z2^8)-pair",
+   "n": 256,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 256,
+   "status": "ok",
+   "time": 0.00941,
+   "stats": {}
+  }
+ ]
+}
