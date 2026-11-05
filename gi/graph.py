@@ -56,7 +56,7 @@ from math import factorial, prod, ceil, log2
 from operator import itemgetter
 
 from .perm import sym_gens, identity, mul, cycle
-from .group import PermGroup, reduce_gens
+from .group import PermGroup, LazyTransversal, reduce_gens, _identity
 from .solver import Solver, Coset
 from .refine import refine_graphs, refine_pairs
 
@@ -79,18 +79,99 @@ def vertex_perm(n, g):
 
 
 def sym_on_pairs(n):
-    # (only the identity fixes every diagonal position)
-    return PermGroup(n * n, [on_pairs(n, g) for g in sym_gens(n, range(n))],
-                     order=factorial(n), ambient_base=[i * (n + 1) for i in range(n)])
+    return product_sym_on_pairs(n, [list(range(n))])
 
 
 def product_sym_on_pairs(n, classes):
-    """The direct product of Sym(C) over the vertex classes C, acting on pairs.
-    The base is the diagonal pairs of all but the last point of each class."""
-    gens = [on_pairs(n, g) for C in classes for g in sym_gens(n, C)]
-    base = [v * n + v for C in classes for v in sorted(C)[:-1]]
-    return PermGroup(n * n, gens, base=base, order=prod(factorial(len(C)) for C in classes),
-                     ambient_base=[v * (n + 1) for v in range(n)])
+    """The direct product of Sym(C) over the vertex classes C, acting on all
+    pairs (pair (i, j) is position i * n + j)."""
+    return sym_product_group(n, classes, [(i, j) for i in range(n) for j in range(n)])
+
+
+def sym_product_group(n, classes, D):
+    """K = the direct product of Sym(C) over the vertex classes C (disjoint),
+    acting on the list D of pairs (position k is the pair D[k]). D must be
+    K-invariant and hold (v, v) for every vertex v of a class with >= 2 points.
+    The base and strong generating set are written down (PermGroup.from_bsgs;
+    Schreier-Sims for Sym(62) on its 3844 pairs took seconds and could not be
+    interrupted):
+
+      * base: (v, v) for the vertices of the classes with >= 3 points in
+        increasing order, then those of the 2-point classes. (The labels of
+        Solver.young_root on a stage are the diagonal of the classes with >= 3
+        points, so they are a base prefix and its restriction map reuses this
+        chain.) Levels at the last point of a class are trivial;
+      * level of v (class C): the stabilizer of the earlier base points is the
+        product of Sym(C' minus the earlier points) over the classes C', and
+        the orbit of (v, v) is {(w, w) : w in C, w >= v}. T maps (w, w) to the
+        transposition (v w) acting on D, an involution (so Ti = T), computed
+        on first use (only the positions with a coordinate in {v, w} move);
+      * strong generators of that level: for every class C', with c the
+        points of C' that are not yet in the base (in order), the
+        transposition (c[0] c[1]) and the cycle (c[0] ... c[-1]) (sym_gens
+        order). Generators that fix (v, v) are those of the other classes,
+        which the next level keeps. The cycles are built backwards with one
+        product each: cycle(c[i:]) = cycle(c[i+1:]) then (c[i] c[i+1]).
+
+    So every level's transversal acts as transpositions on the base points
+    (transpositions=len(base)), which group.young_preimage uses."""
+    idx = {p: k for k, p in enumerate(D)}
+    N = len(D)
+    idn = _identity(N)
+    classes = [sorted(C) for C in classes if len(C) >= 2]
+    classes.sort(key=lambda C: (len(C) < 3, C[0]))
+    inc = {v: [] for C in classes for v in C}
+    for k, (i, j) in enumerate(D):
+        if i in inc:
+            inc[i].append(k)
+        if j in inc and j != i:
+            inc[j].append(k)
+    tcache = {}
+
+    def transposition(a, b):
+        key = (a, b) if a < b else (b, a)
+        t = tcache.get(key)
+        if t is None:
+            p = list(idn)
+            for k in inc[a] + inc[b]:
+                i, j = D[k]
+                i = b if i == a else a if i == b else i
+                j = b if j == a else a if j == b else j
+                p[k] = idx[(i, j)]
+            t = tcache[key] = tuple(p)
+        return t
+
+    # per class: [(transposition, cycle or None)] for each start index
+    pairs = {}
+    for C in classes:
+        k = len(C)
+        out = [None] * (k - 1)
+        cyc = None
+        for i in range(k - 2, -1, -1):
+            t = transposition(C[i], C[i + 1])
+            cyc = t if cyc is None else mul(cyc, t)
+            out[i] = [t] if i == k - 2 else [t, cyc]
+        pairs[C[0]] = out
+    big = sorted(v for C in classes if len(C) >= 3 for v in C)
+    small = sorted(v for C in classes if len(C) == 2 for v in C)
+    order_v = big + small
+    cls_of = {v: C for C in classes for v in C}
+    start = {C[0]: 0 for C in classes}  # points of each class already in the base
+    base, S, T = [], [], []
+    for v in order_v:
+        C = cls_of[v]
+        i = start[C[0]]
+        S.append([g for C2 in classes if start[C2[0]] < len(C2) - 1
+                  for g in pairs[C2[0]][start[C2[0]]]])
+        rest = C[i:]
+        base.append(idx[(v, v)])
+        T.append(LazyTransversal([idx[(w, w)] for w in rest],
+                                 lambda p, v=v: transposition(v, D[p][0]), idn))
+        start[C[0]] = i + 1
+    gens = S[0] if S else []
+    short = [idx[(v, v)] for C in classes for v in C[:-1]]
+    return PermGroup.from_bsgs(N, gens, base, S, T, ambient_base=short,
+                               transpositions=len(base))
 
 
 def classes_of(c, among=None):
@@ -108,22 +189,28 @@ def pull_back(P, pi):
     return [list(g(P[p])) for p in pi]
 
 
-def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None):
+def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None, classes=None):
     """Iso_K(x|D, y|D) for K = <vgens> (vertex permutations) acting on pairs.
     D: a K-invariant list of pairs (i, j); every vertex moved by K must occur as
     a first coordinate in D (then K acts faithfully on D). The group is built
-    directly on D. Optional: vbase, a base of K on the vertices (each (b, b)
-    must be in D), and the exact order of K; they only speed up the
-    construction (Schreier-Sims then sifts through the diagonal base points and
-    stops at the known order). Returns a Coset of vertex permutations, or None."""
-    idx = {p: k for k, p in enumerate(D)}
+    directly on D. classes: if given, K is the product of Sym(C) over these
+    vertex classes (vgens is then ignored), and its chain is written down
+    (sym_product_group). Otherwise Schreier-Sims, with the optional vbase (a
+    base of K on the vertices; each (b, b) must be in D) and the exact order
+    of K, which only speed it up (it sifts through the diagonal base points
+    and stops at the known order). Returns a Coset of vertex permutations, or
+    None."""
     m = len(D)
-    pgens = [tuple(idx[(g[i], g[j])] for i, j in D) for g in vgens]
-    if vbase is not None:
-        base = [idx[(b, b)] for b in vbase]
-        K = PermGroup(m, pgens, base=base, order=order, ambient_base=base)
+    if classes is not None:
+        K = sym_product_group(n, classes, D)
     else:
-        K = PermGroup(m, pgens)
+        idx = {p: k for k, p in enumerate(D)}
+        pgens = [tuple(idx[(g[i], g[j])] for i, j in D) for g in vgens]
+        if vbase is not None:
+            base = [idx[(b, b)] for b in vbase]
+            K = PermGroup(m, pgens, base=base, order=order, ambient_base=base)
+        else:
+            K = PermGroup(m, pgens)
     a = solver.solve(K, range(m), tuple(x[i][j] for i, j in D), tuple(y[i][j] for i, j in D))
     if a is None:
         return None
@@ -160,7 +247,11 @@ def solve_stage(solver, n, parts, D, x, y):
     permutations of a chunk instead of all of D, which is much cheaper when D
     is large (e.g. the cross block of two big solved factors)."""
     vgens = factor_gens(n, parts)
+    # a product of symmetric groups gets its chain written down
+    classes = [P for P, _ in parts] if all(g is None for _, g in parts) else None
     if len(D) <= CHUNK:
+        if classes is not None:
+            return solve_on(solver, n, vgens, D, x, y, classes=classes)
         return solve_on(solver, n, vgens, D, x, y, *factor_base_order(n, parts))
     verts = sorted({i for i, _ in D})
     diag = [(v, v) for v in verts]
@@ -182,6 +273,8 @@ def solve_stage(solver, n, parts, D, x, y):
             continue
         orbits.append(orb)
     if len(orbits) <= 1 and sum(map(len, orbits)) + len(diag) >= len(D):
+        if classes is not None:
+            return solve_on(solver, n, vgens, D, x, y, classes=classes)
         return solve_on(solver, n, vgens, D, x, y, *factor_base_order(n, parts))
     orbits.sort(key=lambda o: (len(o), o[0]))
     chunks, cur = [], []
@@ -195,7 +288,8 @@ def solve_stage(solver, n, parts, D, x, y):
     gens, vbase, order = vgens, *factor_base_order(n, parts)
     rep = identity(n)
     for chunk in chunks:
-        a = solve_on(solver, n, gens, sorted(diag + chunk), x, y, vbase, order)
+        a = solve_on(solver, n, gens, sorted(diag + chunk), x, y, vbase, order, classes)
+        classes = None                  # (the next chunk's group is the answer's)
         if a is None:
             return None
         y = pull_back(y, a.rep)

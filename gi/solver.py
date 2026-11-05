@@ -54,7 +54,7 @@ from operator import add
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens, sym_gens
 from .group import (PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system,
                     johnson_structure, product_action, giant_labels, label_support,
-                    johnson_embedding, hamming_embedding, clear_chain_cache)
+                    johnson_embedding, hamming_embedding, clear_chain_cache, young_preimage)
 
 Coset = namedtuple("Coset", "gens rep")
 
@@ -878,15 +878,22 @@ class Solver:
             if root is None:
                 H = cache[key] = phi.preimage(ygens)
             else:                           # a Young node: psi0^-1(Young(partition))
-                # The label positions of the classes (all but one point each)
-                # make a short base prefix with small orbits; the result is the
-                # same group as phi.preimage(ygens).
-                K = phi.kernel()
-                order = math.prod(math.factorial(len(C)) for C in big) * K.order()
-                base = [root.gamma[a] for C in big for a in C[:-1]]
-                H = cache[key] = PermGroup(phi.G.n, [phi.lift(h) for h in ygens] + K.gens,
-                                           base=base, order=order,
-                                           ambient_base=phi.G.short_base())
+                # When psi0's chain has transposition transversals on the
+                # labels (a graph stage group, see graph.sym_product_group),
+                # the chain of H is written down (group.young_preimage).
+                # Otherwise Schreier-Sims: the label positions of the classes
+                # (all but one point each) make a short base prefix with small
+                # orbits. Either way H = phi.preimage(ygens).
+                H = young_preimage(phi, big) if sym else None
+                if H is None:
+                    K = phi.kernel()
+                    order = math.prod(math.factorial(len(C)) for C in big) * K.order()
+                    base = [root.gamma[a] for C in big for a in C[:-1]]
+                    H = PermGroup(phi.G.n, [phi.lift(h) for h in ygens] + K.gens,
+                                  base=base, order=order, ambient_base=phi.G.short_base())
+                else:
+                    self.stats["young_explicit"] += 1
+                cache[key] = H
                 self._ynodes.setdefault(tuple(H.gens), (root, key))
         return H
 

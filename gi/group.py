@@ -46,6 +46,52 @@ def clear_chain_cache():
     _chains_size = 0
 
 
+class LazyTransversal:
+    """A read-only transversal {orbit point: element} for an explicitly given
+    chain (PermGroup.from_bsgs): the element of a point is made by make(p) on
+    first use and then kept. pts lists the orbit, base point first (its
+    element is the identity). Supports what the chain code uses of a dict:
+    get, [], in, len, iteration, keys, values, items."""
+    __slots__ = ("_pts", "_make", "_got")
+
+    def __init__(self, pts, make, idn):
+        self._pts = dict.fromkeys(pts)
+        self._make = make
+        self._got = {pts[0]: idn}
+
+    def get(self, p, default=None):
+        u = self._got.get(p)
+        if u is None:
+            if p not in self._pts:
+                return default
+            u = self._got[p] = self._make(p)
+        return u
+
+    def __getitem__(self, p):
+        u = self.get(p)
+        if u is None:
+            raise KeyError(p)
+        return u
+
+    def __contains__(self, p):
+        return p in self._pts
+
+    def __len__(self):
+        return len(self._pts)
+
+    def __iter__(self):
+        return iter(self._pts)
+
+    def keys(self):
+        return self._pts.keys()
+
+    def values(self):
+        return [self[p] for p in self._pts]
+
+    def items(self):
+        return [(p, self[p]) for p in self._pts]
+
+
 class PermGroup:
     """A permutation group on range(n) with a base and strong generating set,
     built by the deterministic incremental Schreier-Sims algorithm.
@@ -120,6 +166,54 @@ class PermGroup:
             self.add(g)
         if key is not None:
             self._store(key)
+
+    # Chains from from_bsgs are explicit; levels 0..k-1 of a chain with
+    # _transp = k have transposition transversals (see from_bsgs).
+    _explicit = False
+    _transp = 0
+
+    @classmethod
+    def from_bsgs(cls, n, gens, base, S, T, Ti=None, ambient_base=None, transpositions=0):
+        """A group given by an explicit base and strong generating set, built
+        without Schreier-Sims. With G = <gens> and G^(l) the pointwise
+        stabilizer of base[:l], the caller guarantees for every level l:
+
+          * S[l] generates G^(l) (S[0] generates G), and every s in S[l] that
+            fixes base[l] is also in S[l+1] (the convention of _schreier);
+          * T[l] maps every point p of the orbit of base[l] under G^(l) to an
+            element u of G^(l) with base[l]^u = p, the identity for p =
+            base[l] (a dict or a LazyTransversal); Ti[l][p] = u^-1 (Ti=None:
+            every u is an involution, and Ti = T).
+
+        Then this is a complete chain: the order is the product of the orbit
+        lengths, and sift/contains/lift work as for a built chain.
+        transpositions=k declares that for l < k every u = T[l][p] permutes
+        the base points as the transposition (base[l] p) does (young_preimage
+        relies on it). The chain is not put into the chain cache, where a hit
+        must equal the Schreier-Sims result. tests/test_group.py checks the
+        explicit constructions against built chains."""
+        G = cls.__new__(cls)
+        G.n = n
+        G.idn = _identity(n)
+        G._amb = list(ambient_base) if ambient_base and n > 1 else None
+        G._snap = G._elems = G._isodata = G._orbs = G._plans = None
+        G._cow = False
+        G.gens = list(gens)
+        G.base = list(base)
+        G.S = [list(s) for s in S]
+        G.T = list(T)
+        G.Ti = list(T) if Ti is None else list(Ti)
+        G._par = [{} for _ in G.base]
+        G._ok = [{} for _ in G.base]
+        G._ginv = {}
+        G._order = math.prod(len(t) for t in G.T)
+        G._ord_T = G.T
+        G._nt, G._nt_T = [l for l, t in enumerate(G.T) if len(t) > 1], G.T
+        G._target = G._order            # complete: adding an element outside raises
+        G._done = True
+        G._explicit = True
+        G._transp = transpositions
+        return G
 
     def _load(self, c):
         self.gens = list(c.gens)
@@ -713,7 +807,12 @@ class RestrictionHom(ActionHom):
         self._image = None
         self._kernel = None
         self._levels = None
-        self.C = PermGroup(n, G.gens, base=D, order=G.order(), ambient_base=G.short_base())
+        if G._explicit and G.base[:m] == D:
+            # an explicit chain (from_bsgs) with D as its base prefix is reused
+            # (a built chain is not: C must stay the one Schreier-Sims gives)
+            self.C = G
+        else:
+            self.C = PermGroup(n, G.gens, base=D, order=G.order(), ambient_base=G.short_base())
 
     def image_order(self):
         return math.prod(len(self.C.T[l]) for l in range(self.m))
@@ -743,6 +842,78 @@ class RestrictionHom(ActionHom):
         if self._kernel is None:
             self._kernel = self.C._tail(self.m)
         return self._kernel
+
+
+def young_preimage(psi, classes):
+    """H = psi^-1(Young(classes)) with an explicit chain (no Schreier-Sims), or
+    None when psi's chain does not allow it.
+
+    psi: a RestrictionHom G -> Sym(m) onto labels D = psi.D whose chain C has
+    transposition transversals on its first m levels (C._transp >= m, e.g. a
+    chain from from_bsgs that psi reuses). classes: disjoint lists of labels
+    (the classes with >= 2 labels of a partition). For labels a < b of one
+    class Y, u(a, b) = C.T[a][D[b]] lies in G and acts as the transposition
+    (a b) on the labels. It exists for all such a < b when D[Y[0]]'s orbit
+    at level Y[0] holds all of D[Y] (checked, else None): then psi(G)
+    contains the transpositions (Y[0] b), hence Sym(Y), and the stabilizer
+    G^(a) of D[:a] maps onto the stabilizer of the labels < a in psi(G),
+    which contains Sym(Y[i:]) for a = Y[i].
+
+    Chain of H: base D[a] for a in each class but its last label, then the
+    base of K = ker psi (the tail of C). The level of a = Y[i] (class Y) has
+    the orbit {D[b] : b in Y[i:]} with the elements u(a, b) (a view of C.T[a],
+    nothing is copied), and strong generators u(Y[i], Y[i+1]) and a lift of
+    the cycle (Y[i] ... Y[-1]), then the same two for every later class, then
+    K's generators. These elements lie in H (psi of each is in Young(classes)
+    and K <= H), fix the earlier base points, and generate the stabilizers:
+    the stabilizer of the first labels of H's base is psi^-1 of the Young
+    group of the remaining labels, i.e. <lifts of its generators> K. The
+    cycle lifts are built backwards with one product each:
+    cycle(Y[i:]) = cycle(Y[i+1:]) then (Y[i] Y[i+1])."""
+    C, D, m = psi.C, psi.D, psi.m
+    if C._transp < m:
+        return None
+    K = psi.kernel()
+    order = K.order()
+    idn = C.idn
+    levels = []                         # (label, orbit labels, [u, cycle]) per level
+    per_class = []
+    for Y in classes:
+        Y = sorted(Y)
+        k = len(Y)
+        if k < 2:
+            continue
+        if any(D[b] not in C.T[Y[0]] for b in Y):
+            return None
+        u = [C.T[Y[i]][D[Y[i + 1]]] for i in range(k - 1)]
+        lv = []
+        cyc = u[k - 2]                  # cycle(Y[k-2:]) is the transposition
+        for i in range(k - 2, -1, -1):
+            if i < k - 2:
+                cyc = mul(cyc, u[i])    # cycle(Y[i:]) = cycle(Y[i+1:]) then (Y[i] Y[i+1])
+            lv.append((Y[i], Y[i:], [u[i]] if i == k - 2 else [u[i], cyc]))
+        lv.reverse()
+        levels.append(lv)
+        per_class.append(lv[0][2])
+        order *= math.factorial(k)
+    base, S, T, Ti = [], [], [], []
+    for c, lv in enumerate(levels):
+        later = [g for gs in per_class[c + 1:] for g in gs] + list(K.gens)
+        for a, orb, own in lv:
+            pts = [D[b] for b in orb]
+            base.append(D[a])
+            S.append(own + later)
+            T.append(LazyTransversal(pts, C.T[a].__getitem__, idn))
+            Ti.append(LazyTransversal(pts, C.Ti[a].__getitem__, idn))
+    base += K.base
+    S += K.S
+    T += K.T
+    Ti += K.Ti
+    gens = S[0] if S else []
+    H = PermGroup.from_bsgs(C.n, gens, base, S, T, Ti, ambient_base=C.short_base())
+    if H.order() != order:              # (cannot happen for a valid input)
+        raise ValueError("young_preimage: wrong order")
+    return H
 
 
 # -- blocks ------------------------------------------------------------------
