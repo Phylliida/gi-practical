@@ -80,10 +80,13 @@ def main():
     ap.add_argument("--timeout", type=float, default=60)
     ap.add_argument("--label", default="run")
     ap.add_argument("--solver-args", default="{}", help="JSON kwargs for Solver")
+    ap.add_argument("--graph-args", default="{}",
+                    help='JSON kwargs for graph_iso (front end), e.g. {"ir": 0}')
     args = ap.parse_args()
     tiers = set(args.tiers.split(","))
     only = set(filter(None, args.only.split(",")))
     kwargs = json.loads(args.solver_args)
+    gkwargs = json.loads(args.graph_args)
     signal.signal(signal.SIGALRM, _alarm)
     rows = []
     for name, tier, X, Y, expect_iso, expect_aut in instances():
@@ -94,7 +97,7 @@ def main():
         status, note = "ok", ""
         signal.setitimer(signal.ITIMER_REAL, args.timeout)
         try:
-            res = graph_iso(X, Y, solver=S)
+            res = graph_iso(X, Y, solver=S, **gkwargs)
             signal.setitimer(signal.ITIMER_REAL, 0)
             ok, note = check(X, Y, res, expect_iso, expect_aut)
             status = "ok" if ok else "WRONG"
@@ -116,7 +119,8 @@ def main():
           f"time on solved {sum(r['time'] for r in solved):.1f}s")
     os.makedirs(os.path.join(os.path.dirname(__file__), "results"), exist_ok=True)
     with open(os.path.join(os.path.dirname(__file__), "results", f"{args.label}.json"), "w") as f:
-        json.dump(dict(label=args.label, solver_args=kwargs, timeout=args.timeout, rows=rows), f, indent=1)
+        json.dump(dict(label=args.label, solver_args=kwargs, graph_args=gkwargs, timeout=args.timeout,
+                       rows=rows), f, indent=1)
     sys.exit(1 if wrong else 0)
 
 

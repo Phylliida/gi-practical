@@ -177,11 +177,12 @@ def test_string_iso_pairs(alt, cfg):
 
 
 def test_pruning_happens():
-    """Petersen (|Aut| = 120): the baseline explored 260 branches."""
+    """Petersen (|Aut| = 120): the baseline explored 260 branches. The front end
+    is bypassed (Sym(n) on raw pairs) so that the recursion does the work."""
     S = Solver(certificates=False, enum_limit=1)
     A = petersen()
     B = shuffled(A, 1)
-    check_answer(A, B, graph_iso(A, B, solver=S), 120, True)
+    check_answer(A, B, graph_iso(A, B, solver=S, refine="none", staged=False, ir=0), 120, True)
     assert S.stats["pruned"] > 0
     assert S.stats["branch"] <= 20
 
