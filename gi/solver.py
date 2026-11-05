@@ -48,6 +48,7 @@ Every simplification keeps the answer exact; only the running time changes.
 """
 import itertools
 import math
+from itertools import chain
 from collections import Counter, OrderedDict, namedtuple
 from operator import add
 
@@ -92,11 +93,31 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
         where roles[i] is an invariant of T[i] inside the certificate of T;
       * optional pair colorings px, py (q x q matrices of ints).
     Colors are renamed by one shared, content-based rule, so the result is
-    isomorphism-invariant (any isomorphism maps the x-coloring to the y-coloring)."""
+    isomorphism-invariant (any isomorphism maps the x-coloring to the y-coloring).
+
+    The pair part of a label's signature, the multiset of (p[a][b], p[b][a],
+    c[b]) over b != a, is encoded as the sorted tuple of the integers
+    code(p[a][b], p[b][a]) * K + c[b], with one code table for both instances
+    and K above every color (a bijective encoding, built with C-level map and
+    sort). The term b = a gets the code -1, so it adds -K + c[a], which the
+    signature holds already. The partitions are those of the literal
+    multisets; only the names differ."""
     cx, cy = list(cx), list(cy)
+    rows = None
+    if px is not None and all(type(v) is int and v >= 0 for v in chain(cx, cy)):
+        K = max(2 * q, 1 + max(chain(cx, cy), default=0))   # (later names are < 2q)
+        code, rows = {}, []
+        for p in (px, py):
+            cols = list(zip(*p))
+            R = []
+            for a in range(q):
+                r = [code.setdefault(t, len(code)) * K for t in zip(p[a], cols[a])]
+                r[a] = -K
+                R.append(r)
+            rows.append(R)
     while True:
         new = []
-        for h, c, p in ((hx, cx, px), (hy, cy, py)):
+        for side, (h, c, p) in enumerate(((hx, cx, px), (hy, cy, py))):
             ms = [[] for _ in range(q)]
             for T, (sig, roles) in h.items():
                 cols = [c[t] for t in T]
@@ -104,6 +125,8 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
                     ms[t].append((sig, roles[i], tuple(sorted(cols[:i] + cols[i + 1:]))))
             if p is None:
                 nb = [()] * q
+            elif rows is not None:
+                nb = [tuple(sorted(map(add, r, c))) for r in rows[side]]
             else:
                 nb = [tuple(sorted((p[a][b], p[b][a], c[b]) for b in range(q) if b != a))
                       for a in range(q)]
