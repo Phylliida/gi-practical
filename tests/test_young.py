@@ -18,13 +18,13 @@ from gi.group import PermGroup
 from gi.perm import act, maps, sym_gens, mul, inv
 from gi.solver import wl2_joint
 
-CONFIGS = [dict(certificates=False, enum_limit=1, young_min=3),
+CONFIGS = [dict(certificates=False, enum_limit=1, young_min=3, young_wl=2),
            dict(certificates=False, enum_limit=1, young_min=3, young_wl=1),
-           dict(certificates=True, enum_limit=1, kappa=3, young_min=3),
-           dict(certificates=False, enum_limit=1, young_min=5),
-           dict(certificates=False, enum_limit=1, young=False),
+           dict(certificates=True, enum_limit=1, kappa=3, young_min=3, young_wl=2),
+           dict(certificates=False, enum_limit=1, young_min=5, young_pick="large"),
+           dict(certificates=False, enum_limit=1, young=False, giant_wl=1),
            dict(certificates=False)]
-IDS = ["wl2-min3", "wl1-min3", "cert3-min3", "wl2-min5", "noyoung", "default"]
+IDS = ["wl2-min3", "wl1-min3", "cert3-wl2-min3", "min5-large", "noyoung-gwl1", "default"]
 
 
 def check_string(G, x, y, ans):
@@ -233,3 +233,79 @@ def test_graphs_recursion_only(cfg):
             assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
             assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
             assert PermGroup(n, gens).order() == len(auts)
+
+
+def _srg_cases():
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bench"))
+    import networkx as nx
+    from bench.families import adj, paley, rook, shrikhande, triangular, kneser, shuffled
+    rng = random.Random(4)
+    cases = []
+    for name, G, aut in [("Petersen", nx.petersen_graph(), 120), ("Paley13", paley(13), 78),
+                         ("rook4", rook(4), 1152), ("Shrikhande", shrikhande(), 192),
+                         ("T6", triangular(6), 720), ("Kneser(6,2)", kneser(6, 2), 720),
+                         ("K44", nx.complete_bipartite_graph(4, 4), 1152),
+                         ("Q4", nx.hypercube_graph(4), 384)]:
+        A = adj(G)
+        cases.append((name, A, shuffled(A, rng), True, aut))
+    cases.append(("rook4-vs-Shrikhande", adj(rook(4)), shuffled(adj(shrikhande()), rng),
+                  False, None))
+    return cases
+
+
+@pytest.mark.parametrize("cfg", CONFIGS[:4], ids=IDS[:4])
+def test_srg_recursion_only(cfg):
+    """Strongly regular and other symmetric graphs with ir=0 (Young step
+    with individualization, one-mode and pruning), against known |Aut|."""
+    for name, A, B, iso, aut in _srg_cases():
+        S = Solver(**cfg)
+        res = graph_iso(A, B, solver=S, ir=0)
+        n = len(A)
+        assert (res is not None) == iso, name
+        if res is None:
+            continue
+        sigma, gens = res
+        assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n)), name
+        assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
+        assert PermGroup(n, gens).order() == aut, name
+        if cfg.get("young", True):
+            assert S.stats["young_ind"] > 0 or S.stats["young_split"] > 0, name
+
+
+def _pairs_from_edges(v, edges, diag=None):
+    E = set()
+    for a, b in edges:
+        E.add((a, b))
+        E.add((b, a))
+    diag = diag or {}
+    return tuple(3 + diag.get(i, 0) if i == j else int((i, j) in E)
+                 for i in range(v) for j in range(v))
+
+
+@pytest.mark.parametrize("cfg", CONFIGS, ids=IDS)
+def test_young_symmetric_brute(cfg):
+    """Symmetric colorings (uniform under refinement, so labels must be
+    individualized: pruning, the memo and one-mode run), against brute force:
+    C6 vs C6 / 2C3 under Sym(6); a 3x4 biregular cross block under
+    Sym(3) x Sym(4); K33 vs prism under Sym(6); Petersen-like C5 + pendant
+    structure under Sym(5) x Sym(2)."""
+    rng = random.Random(2)
+    c6 = [(i, (i + 1) % 6) for i in range(6)]
+    c33 = [(0, 1), (1, 2), (2, 0), (3, 4), (4, 5), (5, 3)]
+    k33 = [(i, j) for i in range(3) for j in range(3, 6)]
+    prism = c33 + [(0, 3), (1, 4), (2, 5)]
+    cross = [(a, 3 + b) for a in range(3) for b in range(4) if (a + b) % 3 != 0]
+    c5p = [(i, (i + 1) % 5) for i in range(5)] + [(0, 5), (2, 6)]
+    cases = [([list(range(6))], 6, c6, c6), ([list(range(6))], 6, c6, c33),
+             ([list(range(6))], 6, k33, k33), ([list(range(6))], 6, k33, prism),
+             ([[0, 1, 2], [3, 4, 5, 6]], 7, cross, cross),
+             ([[0, 1, 2, 3, 4], [5, 6]], 7, c5p, c5p)]
+    for classes, v, ex, ey in cases:
+        G = on_pairs_group(classes, range(v))
+        x = _pairs_from_edges(v, ex)
+        y0 = _pairs_from_edges(v, ey)
+        for _ in range(2):
+            g = rng.choice(list(G.elements()))
+            y = act(y0, g)
+            check_string(G, x, y, Solver(**cfg).solve(G, range(G.n), x, y))
+        check_string(G, x, x, Solver(**cfg).solve(G, range(G.n), x, x))

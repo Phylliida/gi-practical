@@ -110,19 +110,29 @@ def _rank2(sx, sy):
     return [rank[s] for s in sx], [rank[s] for s in sy]
 
 
-def wl2_joint(PX, PY):
+def wl2_joint(PX, PY, ranked=False):
     """Joint 2-dimensional WL (the coherent closure) of two m x m colorings,
     given as flat lists of sortable values (entry a*m+b is the pair (a, b)).
     The new color of (a, b) is (old color, multiset of (C(a, c), C(c, b))),
     named by rank in the union of both instances' signatures. (The same rule
     as refine.wl2, copied so that the front end can change independently.)
-    Returns the stable flat int colorings, or None if the histograms differ."""
-    fx, fy = _rank2(PX, PY)
-    if Counter(fx) != Counter(fy):
+    A pair whose color class is a single pair (in both instances: the
+    histograms agree) cannot split, so its multiset is not computed; the
+    partitions are the same. Stops early once the diagonal is discrete (the
+    label partition cannot change any more). ranked=True: PX, PY are already
+    jointly named ints. Returns the flat int colorings, or None if the
+    histograms differ."""
+    fx, fy = (PX, PY) if ranked else _rank2(PX, PY)
+    cnt = Counter(fx)
+    if cnt != Counter(fy):
         return None
     m = math.isqrt(len(fx))
-    k = len(set(fx))
+    k = len(cnt)
+    kd = len(set(fx[::m + 1]))
     while True:
+        if kd == m:
+            return fx, fy
+        single = {c for c, v in cnt.items() if v == 1}
         sigs = []
         for P in (fx, fy):
             K = 1 + max(P)
@@ -130,18 +140,24 @@ def wl2_joint(PX, PY):
             cols = [P[b::m] for b in range(m)]
             s = []
             for a in range(m):
-                ra = [c * K for c in rows[a]]
                 Pa = rows[a]
+                ra = [c * K for c in Pa]
                 for b in range(m):
-                    s.append((Pa[b], tuple(sorted(map(add, ra, cols[b])))))
+                    c = Pa[b]
+                    if c in single:
+                        s.append((c, ()))
+                    else:
+                        s.append((c, tuple(sorted(map(add, ra, cols[b])))))
             sigs.append(s)
         fx, fy = _rank2(sigs[0], sigs[1])
-        if Counter(fx) != Counter(fy):
+        cnt = Counter(fx)
+        if cnt != Counter(fy):
             return None
-        k2 = len(set(fx))
+        k2 = len(cnt)
         if k2 == k:
             return fx, fy
         k = k2
+        kd = len(set(fx[::m + 1]))
 
 
 class YoungRoot:
@@ -158,8 +174,8 @@ _FALLBACK = object()
 
 class Solver:
     def __init__(self, kappa=3, enum_limit=500, certificates=True, max_enum=100000,
-                 cert_refine=True, seed=True, young=True, young_min=5, young_wl=2,
-                 giant_wl=2):
+                 cert_refine=True, seed=True, young=True, young_min=5, young_wl=1,
+                 giant_wl=2, young_pick="small"):
         self.kappa = kappa                  # size of the local test sets
         self.enum_limit = enum_limit        # enumerate groups/quotients up to this order
         self.certificates = certificates    # use local certificates in GiantStep
@@ -170,6 +186,7 @@ class Solver:
         self.young_min = young_min          # individualize Young classes of this size
         self.young_wl = young_wl            # label refinement there: 2 = 2-WL, 1 = 1-WL
         self.giant_wl = giant_wl            # GiantStep pair colors: 2 = also 2-WL, 1 = 1-WL
+        self.young_pick = young_pick        # class to individualize: "small" or "large"
         self.stats = Counter()
         clear_chain_cache()                 # (a cache only: results do not depend on it)
         self.memo = {}                      # (G.gens, x) -> generators of Aut_G(x)
@@ -178,6 +195,7 @@ class Solver:
         self._yroots = {}                   # G.gens -> YoungRoot or None
         self._ynodes = {}                   # H.gens -> (YoungRoot, partition of the labels)
         self._ypull = {}                    # (root, coloring) -> pulled-back label colors
+        self._ystate = {}                   # (H.gens, x, y) -> stable Young refinement
 
     # -- Solve: restrict to the positions that still need checking -----------
     def solve(self, G, D, x, y):
@@ -597,7 +615,7 @@ class Solver:
                     self.stats["one_offbase"] += 1
                     if self.seed:
                         self.seed_label_stabilizer(phi, sym, r[0], known, l, x)
-                a = self.lift_and_continue(G, phi, sym, r[0], r[1], x, y)
+                a = self.lift_and_continue(G, phi, sym, r[0], r[1], x, y, _stash(r, False))
                 if a is not None:
                     return Coset(known, a.rep)
             return None
@@ -628,14 +646,14 @@ class Solver:
             r = refined(l0, g, y)
             if r is None:
                 continue
-            ax, ay = r
+            ax, ay = r[0], r[1]
             self.stats["branch"] += 1
             if base is None:
-                base = self.lift_and_continue(G, phi, sym, ax, ax, x, x)
+                base = self.lift_and_continue(G, phi, sym, ax, ax, x, x, _stash(r, True))
             if x == y and ax == ay:
                 a = base
             else:
-                a = self.lift_and_continue(G, phi, sym, ax, ay, x, y)
+                a = self.lift_and_continue(G, phi, sym, ax, ay, x, y, _stash(r, False))
             if a is None:
                 continue
             if sigma is None:
@@ -702,10 +720,13 @@ class Solver:
                 self._ynodes.setdefault(tuple(H.gens), (root, key))
         return H
 
-    def lift_and_continue(self, G, phi, sym, cx, cy, x, y):
+    def lift_and_continue(self, G, phi, sym, cx, cy, x, y, stash=None):
         """The overcoset E of label maps taking color classes of cx to those of
         cy, intersected with phi(G), lifted to H tau in G (H = young_group);
-        then Continue under H on (x, y^(tau^-1))."""
+        then Continue under H on (x, y^(tau^-1)). stash(pi), if given, is the
+        stable Young refinement state of the continuation (pi = phi(tau));
+        it is recorded for (H, x, y^(tau^-1)) so that young_step need not
+        recompute it."""
         n, q = G.n, phi.m
         X, Y = color_classes(cx), color_classes(cy)
         pi = [0] * q
@@ -720,7 +741,12 @@ class Solver:
                 return None
             pi = mul(cycle(q, big[0][:2]), pi)
         tau = phi.lift(pi)
-        a = self.solve(H, range(n), x, act(y, inv(tau)))
+        yt = act(y, inv(tau))
+        if stash is not None:
+            if len(self._ystate) > 64:
+                self._ystate.clear()
+            self._ystate[(tuple(H.gens), tuple(x), yt)] = stash(pi)
+        a = self.solve(H, range(n), x, yt)
         if a is None:
             return None
         return Coset(a.gens, mul(a.rep, tau))
@@ -831,23 +857,23 @@ class Solver:
         psi._yroot = R
         return R
 
-    def young_refine(self, R, cls, x, y, mx=None, my=None):
+    def young_refine(self, R, cls, x, y):
         """Jointly refine the labels of R: the initial color of a label is its
-        class index cls[a] (a mark if it is mx in x or my in y) and the colors
-        (orbit, x[w]) of the positions with support (a,); a pair (a, b) gets
-        those with support (a, b). 2-WL (young_wl=2) or 1-WL with pair colors
-        (young_wl=1) follows. For g in Iso_H(x, y), H <= R.G preserving the
-        classes, psi(g) maps the x-coloring onto the y-coloring (the support
-        map is equivariant, orbits are invariant), so it maps the refined
-        colors onto each other too. Returns (dx, dy) or None."""
+        class index cls[a] and the colors (orbit, x[w]) of the positions with
+        support (a,); a pair (a, b) gets those with support (a, b). 2-WL
+        (young_wl=2) or 1-WL with pair colors (young_wl=1) follows. For g in
+        Iso_H(x, y), H <= R.G preserving the classes, psi(g) maps the
+        x-coloring onto the y-coloring (the support map is equivariant, orbits
+        are invariant), so it maps the refined colors onto each other too.
+        Returns (dx, dy, state) or None; `state` restarts the refinement with
+        one label individualized on each side (young_marked)."""
         m = R.m
         init = []
-        for z, mk in ((x, mx), (y, my)):
+        for z in (x, y):
             un, off = self.young_pullback(R, z)
-            diag = [(0, cls[a], a == mk, un[a]) for a in range(m)]
-            init.append((diag, off))
-        none = (2,)
+            init.append(([(0, cls[a], un[a]) for a in range(m)], off))
         if self.young_wl == 2:
+            none = (2,)
             flat = []
             for diag, off in init:
                 f = [none] * (m * m)
@@ -860,7 +886,7 @@ class Solver:
             if r is None:
                 return None
             fx, fy = r
-            return fx[::m + 1], fy[::m + 1]
+            return fx[::m + 1], fy[::m + 1], (fx, fy)
         (dgx, ofx), (dgy, ofy) = init
         cx, cy = _rank2(dgx, dgy)
         vals = {v: i for i, v in enumerate(sorted(set(ofx.values()) | set(ofy.values())))}
@@ -873,7 +899,70 @@ class Solver:
         if Counter(cx) != Counter(cy):
             return None
         dx, dy = refine_labels(m, {}, {}, cx, cy, px, py)
-        return (dx, dy) if Counter(dx) == Counter(dy) else None
+        if Counter(dx) != Counter(dy):
+            return None
+        return dx, dy, (dx, dy, px, py)
+
+    def young_marked(self, m, state, l, g):
+        """The refinement of young_refine with label l individualized in x and
+        g in y, restarted from its stable coloring `state` (jointly named).
+        Starting from (stable coloring + mark) instead of (initial coloring +
+        mark) gives the same stable partition, because the stable refinement
+        is monotone and idempotent; either way it is joint and invariant."""
+        if self.young_wl == 2:
+            # 1-WL first (cheap): if it already makes the labels discrete, 2-WL
+            # cannot refine the partition. Otherwise its label colors go on the
+            # diagonal and 2-WL runs; the stable partition is the same as
+            # 2-WL's from the marked coloring (1-WL steps are implied by 2-WL).
+            fx, fy = state
+            cx, cy = [2 * c for c in fx[::m + 1]], [2 * c for c in fy[::m + 1]]
+            cx[l] += 1
+            cy[g] += 1
+            px = [fx[a * m:(a + 1) * m] for a in range(m)]
+            py = [fy[a * m:(a + 1) * m] for a in range(m)]
+            ax, ay = refine_labels(m, {}, {}, cx, cy, px, py)
+            if Counter(ax) != Counter(ay):
+                return None
+            top = 2 * max(max(fx), max(fy)) + 2
+            fx = [2 * c for c in fx]
+            fy = [2 * c for c in fy]
+            for a in range(m):
+                fx[a * (m + 1)] = top + 2 * ax[a] + 1
+                fy[a * (m + 1)] = top + 2 * ay[a] + 1
+            if len(set(ax)) == m:
+                return ax, ay, (fx, fy)
+            r = wl2_joint(fx, fy, ranked=True)
+            if r is None:
+                return None
+            return r[0][::m + 1], r[1][::m + 1], r
+        dx, dy, px, py = state
+        ix = [2 * c for c in dx]
+        iy = [2 * c for c in dy]
+        ix[l] += 1
+        iy[g] += 1
+        ax, ay = refine_labels(m, {}, {}, ix, iy, px, py)
+        if Counter(ax) != Counter(ay):
+            return None
+        return ax, ay, (ax, ay, px, py)
+
+    def young_child_state(self, m, info, pi, both_x):
+        """The stable state (dx, dy, state) of young_refine for the
+        continuation of a branch: labels of y are renamed by pi (y^(tau^-1) at
+        label a is y at pi(a)); both_x: the x-vs-x branch. The child's initial
+        coloring lies between the branch's marked coloring and its stable
+        refinement, so its stable partition is this one."""
+        if self.young_wl == 2:
+            fx, fy = info
+            if both_x:
+                fy = fx
+            fy = [fy[pi[a] * m + pi[b]] for a in range(m) for b in range(m)]
+            return fx[::m + 1], fy[::m + 1], (fx, fy)
+        ax, ay, px, py = info
+        if both_x:
+            ay, py = ax, px
+        ay = [ay[pi[a]] for a in range(m)]
+        py = [[py[pi[a]][pi[b]] for b in range(m)] for a in range(m)]
+        return ax, ay, (ax, ay, px, py)
 
     def young_pullback(self, R, z):
         """The colors of z pulled back to the labels of R: per label, the sorted
@@ -915,11 +1004,13 @@ class Solver:
         for i, C in enumerate(part):
             for a in C:
                 cls[a] = i
-        self.stats["young_refine"] += 1
-        r = self.young_refine(R, cls, x, y)
+        r = self._ystate.pop((tuple(G.gens), x, y), None)
         if r is None:
-            return None
-        dx, dy = r
+            self.stats["young_refine"] += 1
+            r = self.young_refine(R, cls, x, y)
+            if r is None:
+                return None
+        dx, dy, state = r
         if len(set(dx)) > len(part):
             self.stats["young_split"] += 1
             return self.lift_and_continue(R.G, R.psi, True, dx, dy, x, y)
@@ -941,11 +1032,24 @@ class Solver:
         big = [C for i, C in enumerate(part) if len(C) >= self.young_min and i in involved]
         if not big:
             return _FALLBACK
-        C = list(min(big, key=lambda C: (len(C), C[0])))
+        if self.young_pick == "large":
+            C = list(min(big, key=lambda C: (-len(C), C[0])))
+        else:
+            C = list(min(big, key=lambda C: (len(C), C[0])))
         self.stats["young_ind"] += 1
 
         def refined(l, g, z):
-            return self.young_refine(R, cls, x, z, l, g)
+            st = state
+            if z is not y:              # (branch_labels only refines against y)
+                rz = self.young_refine(R, cls, x, z)
+                if rz is None:
+                    return None
+                st = rz[2]
+            r = self.young_marked(m, st, l, g)
+            if r is None:
+                return None
+            ax, ay, info = r
+            return ax, ay, (lambda pi, both_x: self.young_child_state(m, info, pi, both_x))
 
         return self.branch_labels(R.G, R.psi, True, C, C, refined, x, y, known)
 
@@ -1025,6 +1129,14 @@ class Solver:
         with the automorphism pruning of coset_union."""
         psi = ActionHom(A, k, phiT)
         return PermGroup(A.n, self.coset_union(psi, V, x, x).gens, ambient_base=A.short_base())
+
+
+def _stash(r, both_x):
+    """The state builder of a refined branch (see young_step), if any."""
+    if len(r) < 3:
+        return None
+    f = r[2]
+    return lambda pi: f(pi, both_x)
 
 
 def _label_orbits(q, perms):
