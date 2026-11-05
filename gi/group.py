@@ -8,7 +8,7 @@ import math
 from collections import OrderedDict
 from operator import itemgetter
 
-from .perm import identity, mul, inv
+from .perm import identity, mul, inv, maps
 
 _IDENTITY = {}
 
@@ -68,6 +68,10 @@ class PermGroup:
         self._target = order
         self._snap = None
         self._elems = None              # all elements, once listed (small groups)
+        self._isodata = None
+        self._orbs = None               # all orbits, once computed
+        self._cow = False
+        self._plans = None              # sift plans by start level
         if not isinstance(gens, (list, tuple)):
             gens = list(gens)
         key = None
@@ -98,7 +102,8 @@ class PermGroup:
     def _load(self, c):
         self.gens = list(c.gens)
         self.base = list(c.base)
-        self.S = [list(s) for s in c.S]
+        self.S = list(c.S)              # tuples, copied to lists before any change
+        self._cow = True
         self.T, self.Ti, self._par = list(c.T), list(c.Ti), list(c.par)
         self._ok = [{} for _ in c.base]
         self._order = c.order
@@ -124,6 +129,7 @@ class PermGroup:
 
     # -- Schreier-Sims -----------------------------------------------------
     def _push_base(self, b):
+        self._plans = None
         self.base.append(b)
         self.S.append([])
         self.T.append({b: self.idn})
@@ -155,6 +161,8 @@ class PermGroup:
                     par[q] = e
                     queue.append(q)
                 e += n
+        if len(oT) == 1 and len(T) > 1:
+            self._plans = None
         self._order = self._order // len(oT) * len(T)
         self.T[l], self.Ti[l], self._par[l] = T, Ti, par
 
@@ -177,16 +185,51 @@ class PermGroup:
         return self._done
 
     def sift(self, g, start=0):
-        base, Tis = self.base, self.Ti
-        for l in range(start, len(base)):
-            b = base[l]
-            p = g[b]
-            if p != b:                  # (Ti[l][b] is the identity)
-                t = Tis[l].get(p)
-                if t is None:
-                    return g, l
-                g = itemgetter(*g)(t)   # mul(g, t)
-        return g, len(base)
+        """Sift g through the levels from `start`: (residue, level where it
+        stopped, or len(base))."""
+        plans = self._plans
+        if plans is None or plans[0] is not self.T or plans[1] != len(self.base):
+            plans = self._plans = (self.T, len(self.base), {})
+        plan = plans[2].get(start)
+        if plan is None:
+            plan = plans[2][start] = self._make_plan(start)
+        Tis = self.Ti
+        for l, b, get, fix in plan:
+            if get is None:
+                p = g[b]
+                if p != b:              # (Ti[l][b] is the identity)
+                    t = Tis[l].get(p)
+                    if t is None:
+                        return g, l
+                    g = itemgetter(*g)(t)   # mul(g, t)
+            elif get(g) != fix:         # a run of trivial levels: g must fix their points
+                base = self.base
+                while g[base[l]] == base[l]:
+                    l += 1
+                return g, l
+        return g, len(self.base)
+
+    def _make_plan(self, start):
+        """The levels from `start` as steps (l, base point, None, None) for
+        nontrivial levels and (l, None, getter, points) for runs of at least
+        two trivial levels, which are checked at once."""
+        plan, base, T = [], self.base, self.T
+        l, L = start, len(base)
+        while l < L:
+            if len(T[l]) > 1:
+                plan.append((l, base[l], None, None))
+                l += 1
+                continue
+            r = l
+            while r < L and len(T[r]) == 1:
+                r += 1
+            if r - l >= 2:
+                fix = tuple(base[l:r])
+                plan.append((l, None, itemgetter(*fix), fix))
+            else:
+                plan.append((l, base[l], None, None))
+            l = r
+        return plan
 
     def _moved_point(self, g):
         return next(i for i in range(self.n) if g[i] != i)
@@ -197,7 +240,10 @@ class PermGroup:
         if j == len(self.base) and r == self.idn:
             return False
         self.gens.append(g)
-        self._snap = self._elems = None
+        self._snap = self._elems = self._isodata = self._orbs = None
+        if self._cow:
+            self.S = [list(x) for x in self.S]
+            self._cow = False
         base = self.base
         k = 0
         while k < len(base) and g[base[k]] == base[k]:
@@ -274,23 +320,32 @@ class PermGroup:
     def orbits(self, points=None):
         """Orbits of the group, as sorted lists, containing the given points
         (all points by default), ordered by their least element."""
-        pts = range(self.n) if points is None else points
-        done, out = set(), []
         gens = self.gens
-        for p in pts:
-            if p in done:
-                continue
-            orb, queue = {p}, [p]
-            for a in queue:
-                for g in gens:
-                    b = g[a]
-                    if b not in orb:
-                        orb.add(b)
-                        queue.append(b)
-            done |= orb
-            out.append(sorted(orb))
-        out.sort(key=lambda o: o[0])
-        return out
+        c = self._orbs
+        if c is not None and c[0] is gens and c[1] == len(gens):
+            allo = c[2]
+        else:
+            n = self.n
+            seen = [False] * n
+            allo = []
+            for p in range(n):
+                if seen[p]:
+                    continue
+                seen[p] = True
+                orb = [p]
+                for a in orb:
+                    for g in gens:
+                        b = g[a]
+                        if not seen[b]:
+                            seen[b] = True
+                            orb.append(b)
+                orb.sort()
+                allo.append(orb)
+            self._orbs = (gens, len(gens), allo)
+        if points is None:
+            return [list(o) for o in allo]
+        pts = set(points)
+        return [list(o) for o in allo if not pts.isdisjoint(o)]
 
     def elements(self):
         """All elements (only for small groups), in the order of
@@ -334,6 +389,43 @@ class PermGroup:
             if l < 0:
                 return
 
+    def isomorphisms(self, x, y):
+        """[g for g in self.elements() if maps(g, x, y)], by a depth-first search
+        over the same product with pruning: after the factors of the first j
+        nontrivial levels are chosen (prefix v), the rest of the product fixes
+        every point p fixed by that level's group, so x[p] == y[v[p]] is needed."""
+        lv = self._isodata
+        if lv is None:
+            lv = self._isodata = self._iso_levels()
+        levels, newfix = lv
+        k = len(levels)
+        out = []
+
+        def rec(j, v):
+            for p in newfix[j]:
+                if x[p] != y[v[p]]:
+                    return
+            if j == k:
+                if maps(v, x, y):
+                    out.append(v)
+                return
+            for u in levels[j]:
+                rec(j + 1, mul(u, v))
+
+        rec(0, self.idn)
+        return out
+
+    def _iso_levels(self):
+        levels, newfix, fixed = [], [], set()
+        for t, S in zip(self.T, self.S):
+            if len(t) > 1:
+                fx = [p for p in range(self.n) if p not in fixed and all(s[p] == p for s in S)]
+                fixed.update(fx)
+                newfix.append(fx)
+                levels.append(list(t.values()))
+        newfix.append([p for p in range(self.n) if p not in fixed][:8])   # (then a full check)
+        return levels, newfix
+
     def _tail(self, m):
         """The stabilizer of base[:m], reusing this chain."""
         H = PermGroup(self.n)
@@ -361,7 +453,8 @@ class PermGroup:
 
 def reduce_gens(n, gens):
     """An irredundant generating list for <gens>."""
-    gens = [g for g in dict.fromkeys(gens) if any(i != j for i, j in enumerate(g))]
+    idn = _identity(n)
+    gens = [g for g in dict.fromkeys(gens) if g != idn]
     if len(gens) <= 4:
         return gens
     return PermGroup(n, gens).gens
@@ -386,6 +479,7 @@ class ActionHom:
         self.G, self.m, self.image_of = G, m, image
         self._image = None
         self._kernel = None
+        self._levels = None             # the nontrivial image levels of C
         self.C = None
         if image is not _ident:
             n = G.n
@@ -411,9 +505,13 @@ class ActionHom:
             return p
         n, m, C = self.G.n, self.m, self.C
         T, Ti = C.T, C.Ti
+        if self._levels is None:
+            self._levels = [l for l in range(m) if len(T[l]) > 1]
         g = tuple(n + v for v in p)     # the image coordinates of the combined element
         acc = None
-        for l in range(m):
+        # Trivial levels contribute nothing; p is in the image iff the residue
+        # is trivial after the nontrivial ones.
+        for l in self._levels:
             pt = g[l]
             if pt == n + l:             # T[l][base point] is the identity
                 continue
@@ -422,6 +520,8 @@ class ActionHom:
                 raise ValueError("not in the image")
             acc = u[:n] if acc is None else mul(u[:n], acc)
             g = mul(g, Ti[l][pt])
+        if g != tuple(range(n, n + m)):
+            raise ValueError("not in the image")
         return identity(n) if acc is None else acc
 
     def kernel(self):
@@ -476,6 +576,7 @@ class RestrictionHom(ActionHom):
             self.image_of = lambda g: tuple(pos[g[d]] for d in D)
         self._image = None
         self._kernel = None
+        self._levels = None
         self.C = PermGroup(n, G.gens, base=D, order=G.order())
 
     def image_order(self):
@@ -484,9 +585,12 @@ class RestrictionHom(ActionHom):
     def lift(self, p):
         n, m, C, D = self.G.n, self.m, self.C, self.D
         T, Ti = C.T, C.Ti
+        if self._levels is None:
+            self._levels = [l for l in range(m) if len(T[l]) > 1]
+            self._Dt = tuple(D)
         g = tuple(D[v] for v in p)      # g[i]: current image of D[i]
         acc = None
-        for l in range(m):
+        for l in self._levels:          # (as in ActionHom.lift)
             pt = g[l]
             if pt == D[l]:
                 continue
@@ -495,6 +599,8 @@ class RestrictionHom(ActionHom):
                 raise ValueError("not in the image")
             acc = u if acc is None else mul(u, acc)
             g = mul(g, Ti[l][pt])
+        if g != self._Dt:
+            raise ValueError("not in the image")
         return identity(n) if acc is None else acc
 
     def kernel(self):
@@ -685,9 +791,12 @@ def johnson_labels(P):
             return None
         stars = set()
         for b in range(d):
-            for c in nbr[b]:
-                common = nbr[b] & nbr[c]
-                stars.add(frozenset([b, c] + [v for v in common if nbr[v] & common]))
+            nb = nbr[b]
+            for c in nb:
+                if c < b and b in nbr[c]:   # (done as the edge (c, b): symmetric in b, c)
+                    continue
+                common = nb & nbr[c]
+                stars.add(frozenset([b, c] + [v for v in common if not nbr[v].isdisjoint(common)]))
         stars = sorted((s for s in stars if len(s) == m - 1), key=sorted)
         if len(stars) != m:
             continue
@@ -697,10 +806,32 @@ def johnson_labels(P):
                 count[p] += 1
         if any(c != 2 for c in count):
             continue
-        star_id = {s: i for i, s in enumerate(stars)}
-
-        def f(g, stars=stars, star_id=star_id):
-            return tuple(star_id[frozenset(g[p] for p in s)] for s in stars)
-
-        return m, f
+        return m, _star_action(d, stars)
     return None
+
+
+def _star_action(d, stars):
+    """g -> the permutation of the stars induced by g (g maps stars to stars).
+    Every point lies in exactly two stars, so the image of a star is usually
+    the common star of the images of two of its points; otherwise (or if that
+    is ambiguous) the image set is looked up."""
+    star_id = {s: i for i, s in enumerate(stars)}
+    of = [[] for _ in range(d)]
+    for i, s in enumerate(stars):
+        for p in s:
+            of[p].append(i)
+    of = [tuple(x) for x in of]
+    reps = [tuple(sorted(s)[:2]) for s in stars]
+
+    def f(g):
+        out = []
+        for i, (p1, p2) in enumerate(reps):
+            a0, a1 = of[g[p1]]
+            b = of[g[p2]]
+            if (a0 in b) != (a1 in b):
+                out.append(a0 if a0 in b else a1)
+            else:
+                out.append(star_id[frozenset(g[p] for p in stars[i])])
+        return tuple(out)
+
+    return f

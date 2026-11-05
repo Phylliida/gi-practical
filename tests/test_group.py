@@ -183,3 +183,53 @@ def test_blocks_and_support():
             im = f(u)
             supp[w] = tuple(im[a] for a in F0)
         assert gg.label_support(G, phi) == (F0, supp)
+
+
+def test_isomorphisms():
+    rng = random.Random(3)
+    for n, gens in GROUPS:
+        G = gg.PermGroup(n, gens)
+        if G.order() > 3000:
+            continue
+        for _ in range(4):
+            x = tuple(rng.randrange(2) for _ in range(n))
+            g = rng.choice(list(G.elements()))
+            y = ref.act(x, g) if rng.random() < 0.7 else tuple(rng.randrange(2) for _ in range(n))
+            assert G.isomorphisms(x, y) == [h for h in G.elements() if ref.maps(h, x, y)]
+            K = G.stabilizer(n - 1)
+            assert K.isomorphisms(x, y) == [h for h in K.elements() if ref.maps(h, x, y)]
+
+
+def test_johnson_labels():
+    import itertools
+    rng = random.Random(5)
+    for m in (5, 6, 7):
+        pairs = list(itertools.combinations(range(m), 2))
+        relabel = list(range(len(pairs)))
+        rng.shuffle(relabel)
+        idx = {pr: relabel[i] for i, pr in enumerate(pairs)}
+
+        def on_pairs(s):
+            p = [0] * len(pairs)
+            for pr in pairs:
+                a, b = sorted((s[pr[0]], s[pr[1]]))
+                p[idx[pr]] = idx[(a, b)]
+            return tuple(p)
+
+        for alt in (False, True):
+            gens = []
+            for _ in range(3):
+                s = rand_perm(m, rng)
+                if alt and ref.parity(s):
+                    s = mul(s, ref.cycle(m, [0, 1]))
+                gens.append(on_pairs(s))
+            R = ref.PermGroup(len(pairs), gens)
+            G = gg.PermGroup(len(pairs), gens)
+            jr, jg = ref.johnson_labels(R), gg.johnson_labels(G)
+            assert (jr is None) == (jg is None)
+            if jr is None:
+                continue
+            assert jr[0] == jg[0]
+            els = list(R.elements())
+            for g in rng.sample(els, min(200, len(els))):
+                assert jr[1](g) == jg[1](g)

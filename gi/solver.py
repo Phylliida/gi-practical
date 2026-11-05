@@ -157,7 +157,7 @@ class Solver:
 
     def enumerate(self, G, x, y):
         self.stats["enumerate"] += 1
-        isos = [g for g in G.elements() if maps(g, x, y)]
+        isos = G.isomorphisms(x, y)      # = [g for g in G.elements() if maps(g, x, y)]
         if not isos:
             return None
         r0i = inv(isos[0])
