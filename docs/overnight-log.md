@@ -49,3 +49,13 @@ claimed results get an independent red-team pass.
 * w2-redteam-fpt: adversarial check of w1-fpt.
 * w2-coset: the core problem both theory agents isolated (coset intersection / string isomorphism for
   coupled tree groups; Example X; T_{b,h}^L).
+
+### w2-redteam-fpt (done, commit 120400c; docs/redteam-w1-fpt.md)
+* No breaks; low-severity gaps with one-line fixes. The barrier is confirmed:
+  - primitive, with irreducibility of the even-weight module checked;
+  - HJ enumerates it at the root (order test first, both in the paper and in the Lean dispatch);
+  - no giant quotient, since A_D sits in the point stabilizer.
+* Prop 3.3 (FPT for that family) is an instance of Schweitzer–Wiebking (STOC'19). Theorem E holds (the
+  max index over blocks is the right quantity) and is plausibly new but elementary. Prop 4.2 holds after
+  running the DP on the given tree.
+* Verdict: the barrier is the solid HJ-specific contribution; correct, not deep.
