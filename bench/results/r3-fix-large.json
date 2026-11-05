@@ -1,0 +1,362 @@
+{
+ "label": "r3-fix-large",
+ "solver_args": {
+  "certificates": false,
+  "young_pick": "large"
+ },
+ "graph_args": {},
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "CFI(3reg8)",
+   "tier": "large",
+   "n": 80,
+   "status": "ok",
+   "time": 0.695,
+   "note": "|Aut|=512",
+   "stats": {
+    "ir_branch": 11,
+    "refine": 11,
+    "stage": 275,
+    "solve": 275,
+    "cont": 275,
+    "enumerate": 118,
+    "memo_hit": 231,
+    "ir_pruned": 53
+   }
+  },
+  {
+   "name": "CFI(3reg8)-twist",
+   "tier": "large",
+   "n": 80,
+   "status": "ok",
+   "time": 0.379,
+   "note": "",
+   "stats": {
+    "ir_branch": 11,
+    "refine": 11,
+    "stage": 275,
+    "solve": 275,
+    "cont": 275,
+    "enumerate": 121,
+    "memo_hit": 231,
+    "ir_pruned": 53
+   }
+  },
+  {
+   "name": "PG(2,3)",
+   "tier": "large",
+   "n": 26,
+   "status": "ok",
+   "time": 0.074,
+   "note": "|Aut|=11232",
+   "stats": {
+    "ir_branch": 17,
+    "refine": 17,
+    "stage": 42,
+    "solve": 49,
+    "cont": 49,
+    "young_root": 1,
+    "young_refine": 5,
+    "young_ind": 5,
+    "branch": 7,
+    "enumerate": 18,
+    "memo_hit": 42,
+    "pruned": 23,
+    "trial_done": 7,
+    "ir_pruned": 119
+   }
+  },
+  {
+   "name": "PG(2,5)",
+   "tier": "large",
+   "n": 62,
+   "status": "ok",
+   "time": 0.473,
+   "note": "|Aut|=744000",
+   "stats": {
+    "ir_branch": 26,
+    "refine": 26,
+    "stage": 16,
+    "solve": 16,
+    "cont": 16,
+    "enumerate": 7,
+    "memo_hit": 14,
+    "ir_pruned": 478
+   }
+  },
+  {
+   "name": "Paley37",
+   "tier": "large",
+   "n": 37,
+   "status": "ok",
+   "time": 0.041,
+   "note": "|Aut|=666",
+   "stats": {
+    "ir_branch": 9,
+    "refine": 9,
+    "ir_pruned": 119
+   }
+  },
+  {
+   "name": "Paley61",
+   "tier": "large",
+   "n": 61,
+   "status": "ok",
+   "time": 0.106,
+   "note": "|Aut|=1830",
+   "stats": {
+    "ir_branch": 8,
+    "refine": 8,
+    "ir_pruned": 204
+   }
+  },
+  {
+   "name": "J(8,3)",
+   "tier": "large",
+   "n": 56,
+   "status": "ok",
+   "time": 0.236,
+   "note": "|Aut|=40320",
+   "stats": {
+    "ir_branch": 13,
+    "refine": 13,
+    "stage": 102,
+    "solve": 118,
+    "cont": 118,
+    "young_root": 1,
+    "young_refine": 8,
+    "young_ind": 8,
+    "branch": 16,
+    "enumerate": 32,
+    "memo_hit": 97,
+    "pruned": 32,
+    "trial_done": 24,
+    "ir_pruned": 153
+   }
+  },
+  {
+   "name": "J(8,4)",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.415,
+   "note": "|Aut|=80640",
+   "stats": {
+    "ir_branch": 13,
+    "refine": 13,
+    "stage": 126,
+    "solve": 156,
+    "cont": 156,
+    "young_root": 1,
+    "young_refine": 18,
+    "young_ind": 18,
+    "branch": 30,
+    "enumerate": 42,
+    "memo_hit": 129,
+    "pruned": 78,
+    "trial_done": 36,
+    "ir_pruned": 199
+   }
+  },
+  {
+   "name": "Kneser(8,3)",
+   "tier": "large",
+   "n": 56,
+   "status": "ok",
+   "time": 0.234,
+   "note": "|Aut|=40320",
+   "stats": {
+    "ir_branch": 13,
+    "refine": 13,
+    "stage": 102,
+    "solve": 118,
+    "cont": 118,
+    "young_root": 1,
+    "young_refine": 8,
+    "young_ind": 8,
+    "branch": 16,
+    "enumerate": 31,
+    "memo_hit": 97,
+    "pruned": 32,
+    "trial_done": 24,
+    "ir_pruned": 153
+   }
+  },
+  {
+   "name": "rook6",
+   "tier": "large",
+   "n": 36,
+   "status": "ok",
+   "time": 0.123,
+   "note": "|Aut|=1036800",
+   "stats": {
+    "ir_branch": 24,
+    "refine": 24,
+    "stage": 72,
+    "solve": 77,
+    "cont": 77,
+    "young_root": 1,
+    "young_refine": 3,
+    "young_ind": 3,
+    "branch": 5,
+    "enumerate": 13,
+    "memo_hit": 68,
+    "pruned": 13,
+    "trial_done": 9,
+    "ir_pruned": 262
+   }
+  },
+  {
+   "name": "Q6",
+   "tier": "large",
+   "n": 64,
+   "status": "ok",
+   "time": 0.312,
+   "note": "|Aut|=46080",
+   "stats": {
+    "ir_branch": 12,
+    "refine": 12,
+    "stage": 125,
+    "solve": 130,
+    "cont": 130,
+    "enumerate": 43,
+    "young_root": 1,
+    "young_refine": 2,
+    "young_ind": 2,
+    "branch": 5,
+    "memo_hit": 104,
+    "pruned": 11,
+    "trial_done": 5,
+    "ir_pruned": 185
+   }
+  },
+  {
+   "name": "T10",
+   "tier": "large",
+   "n": 45,
+   "status": "ok",
+   "time": 0.248,
+   "note": "|Aut|=3628800",
+   "stats": {
+    "ir_branch": 14,
+    "refine": 14,
+    "stage": 54,
+    "solve": 148,
+    "cont": 146,
+    "young_root": 5,
+    "young_refine": 12,
+    "young_ind": 14,
+    "branch": 23,
+    "enum_cosets": 11,
+    "enumerate": 46,
+    "memo_hit": 113,
+    "pruned": 298,
+    "trial_done": 12,
+    "giant_natural": 3,
+    "giant_step": 3,
+    "ir_pruned": 229
+   }
+  },
+  {
+   "name": "Chang1",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.163,
+   "note": "|Aut|=384",
+   "stats": {
+    "ir_branch": 34,
+    "refine": 34,
+    "stage": 56,
+    "solve": 56,
+    "cont": 56,
+    "enumerate": 18,
+    "memo_hit": 40,
+    "ir_pruned": 54,
+    "refine_reject": 25
+   }
+  },
+  {
+   "name": "T8-vs-Chang1",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.05,
+   "note": "",
+   "stats": {
+    "ir_branch": 12,
+    "refine": 12,
+    "stage": 40,
+    "solve": 43,
+    "cont": 43,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 1,
+    "branch": 3,
+    "enumerate": 8,
+    "memo_hit": 34,
+    "pruned": 3,
+    "trial_done": 5,
+    "ir_pruned": 108,
+    "refine_reject": 1
+   }
+  },
+  {
+   "name": "Chang1-vs-Chang3",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.036,
+   "note": "",
+   "stats": {
+    "ir_branch": 33,
+    "refine": 33,
+    "stage": 50,
+    "solve": 50,
+    "cont": 50,
+    "enumerate": 12,
+    "memo_hit": 40,
+    "ir_pruned": 47,
+    "refine_reject": 26
+   }
+  },
+  {
+   "name": "Latin(Z8)-vs-Latin(Z2xZ4)",
+   "tier": "large",
+   "n": 64,
+   "status": "ok",
+   "time": 0.276,
+   "note": "",
+   "stats": {
+    "ir_branch": 7,
+    "refine": 7,
+    "stage": 116,
+    "solve": 116,
+    "cont": 116,
+    "enumerate": 59,
+    "memo_hit": 87,
+    "ir_pruned": 133,
+    "refine_reject": 1
+   }
+  },
+  {
+   "name": "rand70",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.012,
+   "note": "|Aut|=1",
+   "stats": {}
+  },
+  {
+   "name": "3reg70",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.06,
+   "note": "|Aut|=1",
+   "stats": {}
+  }
+ ]
+}

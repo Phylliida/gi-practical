@@ -1,0 +1,907 @@
+{
+ "label": "probe-bilinear",
+ "rows": [
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    3,
+    2
+   ],
+   "name": "Bil(p3,a3,c2)",
+   "n": 31,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 432,
+   "status": "ok",
+   "time": 0.044,
+   "note": "|Aut|=432",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 13,
+    "refine": 13,
+    "ir_ind_d2": 3,
+    "ir_ind_d3": 4,
+    "ir_pruned": 53,
+    "ir_depth": 3
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    3,
+    2
+   ],
+   "name": "Bil(p3,a3,c2)",
+   "n": 31,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 432,
+   "status": "ok",
+   "time": 0.534,
+   "note": "|Aut|=432",
+   "stats": {
+    "stage": 4,
+    "solve": 2791,
+    "cont": 2766,
+    "young_root": 2,
+    "young_refine": 2,
+    "young_ind": 42,
+    "label_depth": 5,
+    "bl_calls_d1": 2,
+    "try_young": 110,
+    "branch": 110,
+    "bl_calls_d2": 6,
+    "bl_calls_d3": 9,
+    "enumerate": 1156,
+    "memo_hit": 2648,
+    "pruned": 930,
+    "enum_cosets": 463,
+    "bl_calls_d4": 9,
+    "bl_calls_d5": 16,
+    "one_offbase": 55,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    3,
+    2
+   ],
+   "name": "Bil(p3,a3,c2)",
+   "n": 31,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 432,
+   "status": "ok",
+   "time": 0.00029,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    3,
+    2
+   ],
+   "name": "Bil(p3,a3,c2)-pair",
+   "n": 31,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 432,
+   "status": "ok",
+   "time": 0.021,
+   "note": "|Aut|=432",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 13,
+    "refine": 13,
+    "ir_ind_d2": 3,
+    "ir_ind_d3": 4,
+    "ir_pruned": 53,
+    "ir_depth": 3
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    3,
+    2
+   ],
+   "name": "Bil(p3,a3,c2)-pair",
+   "n": 31,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 432,
+   "status": "ok",
+   "time": 0.267,
+   "note": "|Aut|=432",
+   "stats": {
+    "stage": 4,
+    "solve": 935,
+    "cont": 910,
+    "young_root": 2,
+    "young_refine": 2,
+    "young_ind": 34,
+    "label_depth": 5,
+    "bl_calls_d1": 2,
+    "try_young": 66,
+    "branch": 66,
+    "bl_calls_d2": 6,
+    "bl_calls_d3": 9,
+    "enumerate": 341,
+    "memo_hit": 839,
+    "pruned": 532,
+    "enum_cosets": 140,
+    "bl_calls_d4": 7,
+    "bl_calls_d5": 10,
+    "one_offbase": 19,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    3,
+    2
+   ],
+   "name": "Bil(p3,a3,c2)-pair",
+   "n": 31,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 432,
+   "status": "ok",
+   "time": 0.00029,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    2
+   ],
+   "name": "Bil(p2,a4,c2)",
+   "n": 54,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.23,
+   "note": "|Aut|=96",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 10,
+    "refine": 10,
+    "stage": 130,
+    "solve": 130,
+    "cont": 130,
+    "enumerate": 64,
+    "ir_ind_d2": 4,
+    "memo_hit": 107,
+    "ir_pruned": 34,
+    "ir_depth": 2
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    2
+   ],
+   "name": "Bil(p2,a4,c2)",
+   "n": 54,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.259,
+   "note": "|Aut|=96",
+   "stats": {
+    "stage": 9,
+    "solve": 136,
+    "cont": 128,
+    "young_root": 3,
+    "young_refine": 4,
+    "young_ind": 10,
+    "label_depth": 2,
+    "bl_calls_d1": 4,
+    "try_young": 17,
+    "branch": 17,
+    "enumerate": 53,
+    "memo_hit": 82,
+    "pruned": 120,
+    "bl_calls_d2": 6,
+    "enum_cosets": 13,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    2
+   ],
+   "name": "Bil(p2,a4,c2)",
+   "n": 54,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.0005,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    2
+   ],
+   "name": "Bil(p2,a4,c2)-pair",
+   "n": 54,
+   "kind": "non",
+   "mode": "full",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.015,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    2
+   ],
+   "name": "Bil(p2,a4,c2)-pair",
+   "n": 54,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.002,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    2
+   ],
+   "name": "Bil(p2,a4,c2)-pair",
+   "n": 54,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.00056,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    3
+   ],
+   "name": "Bil(p2,a4,c3)",
+   "n": 65,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 32,
+   "status": "ok",
+   "time": 0.176,
+   "note": "|Aut|=32",
+   "stats": {
+    "stage": 85,
+    "solve": 85,
+    "cont": 85,
+    "enumerate": 65,
+    "ir_ind_d1": 1,
+    "ir_branch": 3,
+    "refine": 3,
+    "memo_hit": 52,
+    "ir_pruned": 13,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    3
+   ],
+   "name": "Bil(p2,a4,c3)",
+   "n": 65,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 32,
+   "status": "ok",
+   "time": 0.182,
+   "note": "|Aut|=32",
+   "stats": {
+    "stage": 21,
+    "solve": 55,
+    "cont": 52,
+    "enumerate": 36,
+    "young_root": 2,
+    "young_refine": 2,
+    "young_ind": 2,
+    "label_depth": 1,
+    "bl_calls_d1": 2,
+    "try_young": 7,
+    "branch": 7,
+    "memo_hit": 13,
+    "pruned": 17,
+    "enum_cosets": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    3
+   ],
+   "name": "Bil(p2,a4,c3)",
+   "n": 65,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 32,
+   "status": "ok",
+   "time": 0.00062,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    3
+   ],
+   "name": "Bil(p2,a4,c3)-pair",
+   "n": 65,
+   "kind": "non",
+   "mode": "full",
+   "aut": 32,
+   "status": "ok",
+   "time": 0.024,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    3
+   ],
+   "name": "Bil(p2,a4,c3)-pair",
+   "n": 65,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 32,
+   "status": "ok",
+   "time": 0.003,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    4,
+    3
+   ],
+   "name": "Bil(p2,a4,c3)-pair",
+   "n": 65,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 32,
+   "status": "ok",
+   "time": 0.00066,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    2
+   ],
+   "name": "Bil(p3,a4,c2)",
+   "n": 175,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 2304,
+   "status": "ok",
+   "time": 4.545,
+   "note": "|Aut|=2304",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 15,
+    "refine": 15,
+    "ir_ind_d2": 3,
+    "ir_ind_d3": 5,
+    "stage": 343,
+    "solve": 517,
+    "cont": 517,
+    "young_root": 1,
+    "young_refine": 100,
+    "young_ind": 100,
+    "label_depth": 1,
+    "bl_calls_d1": 100,
+    "try_young": 132,
+    "branch": 132,
+    "enumerate": 194,
+    "memo_hit": 446,
+    "pruned": 468,
+    "trial_done": 112,
+    "stage_chunks": 56,
+    "ir_pruned": 55,
+    "ir_depth": 3
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    2
+   ],
+   "name": "Bil(p3,a4,c2)",
+   "n": 175,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 2304,
+   "status": "ok",
+   "time": 7.393,
+   "note": "|Aut|=2304",
+   "stats": {
+    "stage": 12,
+    "solve": 968,
+    "cont": 812,
+    "young_root": 5,
+    "young_refine": 5,
+    "young_ind": 46,
+    "label_depth": 4,
+    "bl_calls_d1": 5,
+    "try_young": 69,
+    "branch": 69,
+    "enumerate": 184,
+    "memo_hit": 556,
+    "pruned": 806,
+    "bl_calls_d2": 14,
+    "bl_calls_d3": 21,
+    "bl_calls_d4": 6,
+    "enum_cosets": 115,
+    "product_refine": 11,
+    "product_cosets": 22,
+    "product_hint": 5,
+    "stage_chunks": 10,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    2
+   ],
+   "name": "Bil(p3,a4,c2)",
+   "n": 175,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 2304,
+   "status": "ok",
+   "time": 0.00335,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    2
+   ],
+   "name": "Bil(p3,a4,c2)-pair",
+   "n": 175,
+   "kind": "non",
+   "mode": "full",
+   "aut": 2304,
+   "status": "ok",
+   "time": 0.284,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    2
+   ],
+   "name": "Bil(p3,a4,c2)-pair",
+   "n": 175,
+   "kind": "non",
+   "mode": "ir0",
+   "aut": 2304,
+   "status": "ok",
+   "time": 0.02,
+   "note": "",
+   "stats": {
+    "refine_reject": 1,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    2
+   ],
+   "name": "Bil(p3,a4,c2)-pair",
+   "n": 175,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 2304,
+   "status": "ok",
+   "time": 0.00377,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    5,
+    2
+   ],
+   "name": "Bil(p2,a5,c2)",
+   "n": 190,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 96,
+   "status": "ok",
+   "time": 2.328,
+   "note": "|Aut|=96",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 11,
+    "refine": 11,
+    "stage": 198,
+    "solve": 198,
+    "cont": 198,
+    "enumerate": 159,
+    "ir_ind_d2": 4,
+    "memo_hit": 162,
+    "ir_pruned": 45,
+    "ir_depth": 2
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    5,
+    2
+   ],
+   "name": "Bil(p2,a5,c2)",
+   "n": 190,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 96,
+   "status": "ok",
+   "time": 4.517,
+   "note": "|Aut|=96",
+   "stats": {
+    "stage": 20,
+    "solve": 770,
+    "cont": 612,
+    "young_root": 4,
+    "young_refine": 8,
+    "young_ind": 18,
+    "label_depth": 2,
+    "bl_calls_d1": 8,
+    "try_young": 35,
+    "branch": 35,
+    "enum_cosets": 42,
+    "enumerate": 221,
+    "memo_hit": 334,
+    "pruned": 320,
+    "bl_calls_d2": 10,
+    "stage_chunks": 17,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    5,
+    2
+   ],
+   "name": "Bil(p2,a5,c2)",
+   "n": 190,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.00396,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    5,
+    2
+   ],
+   "name": "Bil(p2,a5,c2)-pair",
+   "n": 190,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 96,
+   "status": "ok",
+   "time": 1.205,
+   "note": "|Aut|=96",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 11,
+    "refine": 11,
+    "stage": 198,
+    "solve": 198,
+    "cont": 198,
+    "enumerate": 161,
+    "ir_ind_d2": 4,
+    "memo_hit": 162,
+    "ir_pruned": 45,
+    "ir_depth": 2
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    5,
+    2
+   ],
+   "name": "Bil(p2,a5,c2)-pair",
+   "n": 190,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 96,
+   "status": "ok",
+   "time": 5.458,
+   "note": "|Aut|=96",
+   "stats": {
+    "stage": 20,
+    "solve": 859,
+    "cont": 703,
+    "young_root": 4,
+    "young_refine": 8,
+    "young_ind": 18,
+    "label_depth": 2,
+    "bl_calls_d1": 8,
+    "try_young": 39,
+    "branch": 39,
+    "enum_cosets": 40,
+    "enumerate": 244,
+    "memo_hit": 425,
+    "pruned": 317,
+    "bl_calls_d2": 10,
+    "stage_chunks": 17,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    2,
+    5,
+    2
+   ],
+   "name": "Bil(p2,a5,c2)-pair",
+   "n": 190,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 96,
+   "status": "ok",
+   "time": 0.00413,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "name": "Bil(p3,a4,c3)",
+   "n": 197,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 576,
+   "status": "ok",
+   "time": 6.97,
+   "note": "|Aut|=576",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 15,
+    "refine": 15,
+    "stage": 629,
+    "solve": 699,
+    "cont": 699,
+    "enumerate": 337,
+    "ir_ind_d2": 3,
+    "ir_ind_d3": 5,
+    "stage_chunks": 98,
+    "memo_hit": 596,
+    "ir_pruned": 55,
+    "ir_depth": 3
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "name": "Bil(p3,a4,c3)",
+   "n": 197,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 576,
+   "status": "ok",
+   "time": 6.827,
+   "note": "|Aut|=576",
+   "stats": {
+    "stage": 19,
+    "solve": 1059,
+    "cont": 804,
+    "young_root": 6,
+    "young_refine": 7,
+    "young_ind": 26,
+    "label_depth": 2,
+    "bl_calls_d1": 7,
+    "try_young": 46,
+    "branch": 46,
+    "enumerate": 229,
+    "memo_hit": 421,
+    "pruned": 648,
+    "bl_calls_d2": 19,
+    "enum_cosets": 87,
+    "stage_chunks": 16,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "name": "Bil(p3,a4,c3)",
+   "n": 197,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 576,
+   "status": "ok",
+   "time": 0.00445,
+   "stats": {}
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "name": "Bil(p3,a4,c3)-pair",
+   "n": 197,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 576,
+   "status": "ok",
+   "time": 3.782,
+   "note": "|Aut|=576",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 15,
+    "refine": 15,
+    "stage": 629,
+    "solve": 699,
+    "cont": 699,
+    "enumerate": 349,
+    "ir_ind_d2": 3,
+    "ir_ind_d3": 5,
+    "stage_chunks": 98,
+    "memo_hit": 596,
+    "ir_pruned": 55,
+    "ir_depth": 3
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "name": "Bil(p3,a4,c3)-pair",
+   "n": 197,
+   "kind": "iso",
+   "mode": "ir0",
+   "aut": 576,
+   "status": "ok",
+   "time": 6.726,
+   "note": "|Aut|=576",
+   "stats": {
+    "stage": 19,
+    "solve": 1035,
+    "cont": 780,
+    "young_root": 6,
+    "young_refine": 7,
+    "young_ind": 24,
+    "label_depth": 2,
+    "bl_calls_d1": 7,
+    "try_young": 42,
+    "branch": 42,
+    "enumerate": 223,
+    "memo_hit": 397,
+    "pruned": 637,
+    "bl_calls_d2": 17,
+    "enum_cosets": 83,
+    "stage_chunks": 16,
+    "ir_depth": 0
+   }
+  },
+  {
+   "family": "bilinear",
+   "size": [
+    3,
+    4,
+    3
+   ],
+   "name": "Bil(p3,a4,c3)-pair",
+   "n": 197,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 576,
+   "status": "ok",
+   "time": 0.00413,
+   "stats": {}
+  }
+ ]
+}

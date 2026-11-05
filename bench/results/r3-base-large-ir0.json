@@ -1,0 +1,357 @@
+{
+ "label": "r3-base-large-ir0",
+ "solver_args": {
+  "certificates": false
+ },
+ "graph_args": {
+  "ir": 0
+ },
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "CFI(3reg8)",
+   "tier": "large",
+   "n": 80,
+   "status": "ok",
+   "time": 6.614,
+   "note": "|Aut|=512",
+   "stats": {
+    "stage": 5,
+    "solve": 1489,
+    "cont": 895,
+    "young_root": 2,
+    "young_refine": 3,
+    "young_ind": 6,
+    "branch": 16,
+    "enum_cosets": 58,
+    "enumerate": 85,
+    "memo_hit": 671,
+    "pruned": 108,
+    "stage_chunks": 3
+   }
+  },
+  {
+   "name": "CFI(3reg8)-twist",
+   "tier": "large",
+   "n": 80,
+   "status": "ok",
+   "time": 3.727,
+   "note": "",
+   "stats": {
+    "stage": 3,
+    "solve": 725,
+    "cont": 433,
+    "young_root": 2,
+    "young_refine": 3,
+    "young_ind": 36,
+    "branch": 74,
+    "enum_cosets": 4,
+    "enumerate": 60,
+    "memo_hit": 310,
+    "pruned": 289
+   }
+  },
+  {
+   "name": "PG(2,3)",
+   "tier": "large",
+   "n": 26,
+   "status": "ok",
+   "time": 0.132,
+   "note": "|Aut|=11232",
+   "stats": {
+    "stage": 1,
+    "solve": 26,
+    "cont": 26,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 17,
+    "branch": 24,
+    "enumerate": 1,
+    "memo_hit": 21,
+    "pruned": 120
+   }
+  },
+  {
+   "name": "PG(2,5)",
+   "tier": "large",
+   "n": 62,
+   "status": "ok",
+   "time": 2.977,
+   "note": "|Aut|=744000",
+   "stats": {
+    "stage": 1,
+    "solve": 35,
+    "cont": 35,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 26,
+    "branch": 33,
+    "enumerate": 1,
+    "memo_hit": 28,
+    "pruned": 234
+   }
+  },
+  {
+   "name": "Paley37",
+   "tier": "large",
+   "n": 37,
+   "status": "ok",
+   "time": 0.408,
+   "note": "|Aut|=666",
+   "stats": {
+    "stage": 1,
+    "solve": 10,
+    "cont": 10,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 4,
+    "branch": 8,
+    "enumerate": 1,
+    "memo_hit": 7,
+    "pruned": 83
+   }
+  },
+  {
+   "name": "Paley61",
+   "tier": "large",
+   "n": 61,
+   "status": "ok",
+   "time": 1.753,
+   "note": "|Aut|=1830",
+   "stats": {
+    "stage": 1,
+    "solve": 9,
+    "cont": 9,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 4,
+    "branch": 7,
+    "enumerate": 1,
+    "memo_hit": 6,
+    "pruned": 144
+   }
+  },
+  {
+   "name": "J(8,3)",
+   "tier": "large",
+   "n": 56,
+   "status": "ok",
+   "time": 2.106,
+   "note": "|Aut|=40320",
+   "stats": {
+    "stage": 1,
+    "solve": 60,
+    "cont": 60,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 10,
+    "branch": 16,
+    "enumerate": 7,
+    "memo_hit": 47,
+    "pruned": 106
+   }
+  },
+  {
+   "name": "J(8,4)",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 5.131,
+   "note": "|Aut|=80640",
+   "stats": {
+    "stage": 1,
+    "solve": 91,
+    "cont": 91,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 11,
+    "branch": 17,
+    "enumerate": 14,
+    "memo_hit": 72,
+    "pruned": 143
+   }
+  },
+  {
+   "name": "Kneser(8,3)",
+   "tier": "large",
+   "n": 56,
+   "status": "ok",
+   "time": 2.199,
+   "note": "|Aut|=40320",
+   "stats": {
+    "stage": 1,
+    "solve": 60,
+    "cont": 60,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 10,
+    "branch": 16,
+    "enumerate": 11,
+    "memo_hit": 47,
+    "pruned": 106
+   }
+  },
+  {
+   "name": "rook6",
+   "tier": "large",
+   "n": 36,
+   "status": "ok",
+   "time": 0.541,
+   "note": "|Aut|=1036800",
+   "stats": {
+    "stage": 1,
+    "solve": 48,
+    "cont": 48,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 16,
+    "branch": 24,
+    "enumerate": 12,
+    "memo_hit": 36,
+    "pruned": 162
+   }
+  },
+  {
+   "name": "Q6",
+   "tier": "large",
+   "n": 64,
+   "status": "ok",
+   "time": 4.466,
+   "note": "|Aut|=46080",
+   "stats": {
+    "stage": 1,
+    "solve": 136,
+    "cont": 136,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 13,
+    "branch": 18,
+    "enum_cosets": 4,
+    "enumerate": 47,
+    "memo_hit": 106,
+    "pruned": 131
+   }
+  },
+  {
+   "name": "T10",
+   "tier": "large",
+   "n": 45,
+   "status": "ok",
+   "time": 1.271,
+   "note": "|Aut|=3628800",
+   "stats": {
+    "stage": 1,
+    "solve": 67,
+    "cont": 67,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 16,
+    "branch": 23,
+    "enumerate": 14,
+    "memo_hit": 49,
+    "pruned": 142
+   }
+  },
+  {
+   "name": "Chang1",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.23,
+   "note": "|Aut|=384",
+   "stats": {
+    "stage": 1,
+    "solve": 43,
+    "cont": 39,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 14,
+    "branch": 19,
+    "enumerate": 10,
+    "memo_hit": 23,
+    "pruned": 137,
+    "one_offbase": 1,
+    "refine": 1
+   }
+  },
+  {
+   "name": "T8-vs-Chang1",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.318,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 43,
+    "cont": 43,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 32,
+    "branch": 35,
+    "enumerate": 4,
+    "memo_hit": 32,
+    "pruned": 324
+   }
+  },
+  {
+   "name": "Chang1-vs-Chang3",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.29,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 49,
+    "cont": 47,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 36,
+    "branch": 39,
+    "enumerate": 3,
+    "memo_hit": 37,
+    "pruned": 339
+   }
+  },
+  {
+   "name": "Latin(Z8)-vs-Latin(Z2xZ4)",
+   "tier": "large",
+   "n": 64,
+   "status": "ok",
+   "time": 17.223,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 452,
+    "cont": 376,
+    "young_root": 1,
+    "young_refine": 1,
+    "young_ind": 136,
+    "branch": 138,
+    "enumerate": 24,
+    "memo_hit": 331,
+    "pruned": 1543,
+    "one_offbase": 70
+   }
+  },
+  {
+   "name": "rand70",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.013,
+   "note": "|Aut|=1",
+   "stats": {}
+  },
+  {
+   "name": "3reg70",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.061,
+   "note": "|Aut|=1",
+   "stats": {}
+  }
+ ]
+}
