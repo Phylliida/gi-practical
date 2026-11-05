@@ -1,0 +1,20 @@
+CFI(3reg8)             large   n= 80 ok             10.07s  |Aut|=512
+CFI(3reg8)-twist       large   n= 80 ok             97.72s  
+PG(2,3)                large   n= 26 ok              0.42s  |Aut|=11232
+PG(2,5)                large   n= 62 ok              7.33s  |Aut|=744000
+Paley37                large   n= 37 ok              0.52s  |Aut|=666
+Paley61                large   n= 61 ok              2.28s  |Aut|=1830
+J(8,3)                 large   n= 56 ok              2.71s  |Aut|=40320
+J(8,4)                 large   n= 70 ok              6.83s  |Aut|=80640
+Kneser(8,3)            large   n= 56 ok              2.70s  |Aut|=40320
+rook6                  large   n= 36 ok              0.80s  |Aut|=1036800
+Q6                     large   n= 64 ok              4.62s  |Aut|=46080
+T10                    large   n= 45 ok              1.49s  |Aut|=3628800
+Chang1                 large   n= 28 ok              0.79s  |Aut|=384
+T8-vs-Chang1           large   n= 28 ok              0.78s  
+Chang1-vs-Chang3       large   n= 28 ok              1.07s  
+Latin(Z8)-vs-Latin(Z2xZ4) large   n= 64 ok             14.06s  
+rand70                 large   n= 70 ok              0.36s  |Aut|=1
+3reg70                 large   n= 70 ok              0.48s  |Aut|=1
+
+r2-start-large: solved 18/18, wrong 0, time on solved 155.0s

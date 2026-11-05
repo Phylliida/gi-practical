@@ -1,0 +1,20 @@
+CFI(3reg8)             large   n= 80 ok             13.52s  |Aut|=512
+CFI(3reg8)-twist       large   n= 80 ok              6.99s  
+PG(2,3)                large   n= 26 ok              0.86s  |Aut|=11232
+PG(2,5)                large   n= 62 timeout       180.48s  
+Paley37                large   n= 37 ok              2.57s  |Aut|=666
+Paley61                large   n= 61 ok             33.85s  |Aut|=1830
+J(8,3)                 large   n= 56 ok            170.72s  |Aut|=40320
+J(8,4)                 large   n= 70 timeout       180.47s  
+Kneser(8,3)            large   n= 56 ok             73.87s  |Aut|=40320
+rook6                  large   n= 36 ok              3.33s  |Aut|=1036800
+Q6                     large   n= 64 timeout       180.32s  
+T10                    large   n= 45 ok              9.34s  |Aut|=3628800
+Chang1                 large   n= 28 timeout       180.01s  
+T8-vs-Chang1           large   n= 28 ok              1.08s  
+Chang1-vs-Chang3       large   n= 28 timeout       180.02s  
+Latin(Z8)-vs-Latin(Z2xZ4) large   n= 64 timeout       180.38s  
+rand70                 large   n= 70 ok              0.37s  |Aut|=1
+3reg70                 large   n= 70 ok              0.43s  |Aut|=1
+
+r2-start-large-ir0: solved 12/18, wrong 0, time on solved 316.9s
