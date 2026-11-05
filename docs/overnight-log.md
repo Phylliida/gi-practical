@@ -399,3 +399,12 @@ are red-teams, a LaTeX paper, and final integration.
 ## Wave 10
 * w9-canontool and w9-paper (running).
 * w10-blackbox: reduce the GNS black-box cost; make c = 10/3 rigorous; aim for c = 3 for all d.
+
+### w9-paper (done, commit eb0c727; paper/canon.tex, paper/canon.pdf, paper/cover-note.md)
+* 45-page LaTeX draft covering Theorems A, B (with D), H, TW and corollaries H1–H4, each with its true
+  status; a 25-row assumptions table; the Lemma 7.2 issue posed as a Question; AI assistance disclosed;
+  author line left as a placeholder.
+* The agent reconciled 9 cross-document inconsistencies, always taking the more conservative statement.
+  Examples: TW is a SKETCH; the counterexample needs m ≥ 200; "beats BC" is claimed only for
+  k = polylog n.
+* cover-note.md: a draft note to an expert (not sent).
