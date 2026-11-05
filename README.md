@@ -163,7 +163,10 @@ runs in `_cont` on intransitive groups, before the orbit chain:
 `young_wl=1` is the default. On isomorphic instances it gives the same branch counts as 2-WL, at
 3-5x less solver time. 2-WL refutes the non-isomorphic Chang and Latin-square pairs with 0
 branches (1-WL needs 38 and 138). The transitive giant step also refines two-label pair
-colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
+colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph). The 1-WL label
+refinement (`refine_labels`) encodes each label's pair multiset as a sorted tuple of integers
+`code(p[a][b], p[b][a]) * K + c[b]` (one code table for both instances), built with C-level
+map/sort; the partitions are those of the literal multisets.
 
 ## What is simplified (exactness is kept, running time is not)
 
@@ -201,12 +204,17 @@ colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
 3. **Individualization policy** (`ir`, `ir_min`, `ir_max`, `ir_budget`; `graph.Policy`). A stage
    on a Sym factor of size at least `ir_min` (with a non-uniform induced coloring) can be replaced
    by branching on the image of one vertex. The first `ir` levels always branch. Levels up to
-   `ir_max` (default `max(ir, ceil(log2 n))`) first give the stage to the recursion with a time
-   budget of `ir_budget` times the mean refinement time of this graph (one branch costs at least
-   one refinement); if the recursion does not finish, its work is discarded and the stage
-   branches. No trial is made when `100 (|P|/n)^3 > ir_budget` (building the group of Sym(P) on
-   |P|^2 positions costs about |P|^3 sifts and cannot be interrupted), and after one timeout at a
-   given (depth, factor size), later stages with the same (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
+   `ir_max` (default `max(ir, ceil(log2 n))`) first give the stage to the recursion with a
+   **work budget** of `ir_budget` refinements of this graph (one branch costs at least one
+   refinement); if the recursion does not finish, its work is discarded and the stage
+   branches. Work is counted, not timed: each call of `Solver.solve`/`Solver.cont` in the trial
+   costs the degree of its group, and a refinement counts as `WORK_PER_REFINEMENT * n^2`
+   (1.5 n^2, calibrated so that the budget matches the old wall-clock one). So the output
+   (σ and the generators) does not depend on the machine or its load; the old timed budget
+   changed the output of 7 of the 56 benchmark instances under simulated preemption. No trial is
+   made when `100 (|P|/n)^3 > ir_budget` (trials on all sizes made the benchmark 18% slower),
+   and after one aborted trial at a given (depth, factor size), later stages with the same
+   (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
    exact memo entries behind), so the policy only affects speed and which generators are
    returned. Depth O(log n) costs at most a factor n^O(log n), so the n^O(log n) bound is kept.
 4. **Orbit pruning.** Automorphisms: Aut_{G_v}(x) (the branch of v against itself) plus one
@@ -220,25 +228,66 @@ colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
    random tables, computed for a whole row as one big-integer sum over packed rows. Any fixed
    function of the multiset is a canonical refinement, so exactness does not depend on the
    tables (a coincidence would only coarsen a round; `wl2_reference` keeps the definition and a
-   test checks equal partitions). Hashed 1-WL rounds (O(n^2) each) run first; when they make
-   the vertex colors discrete, no 2-WL round is needed. Each graph is refined on its own and cached (the same side
+   test checks equal partitions). Hashed 1-WL rounds (O(n^2) each) run before every 2-WL round
+   (folded into the pairs); once they make the vertex colors discrete, no further 2-WL round is
+   needed. Each step is implied by 2-WL, so the stable partition is unchanged; on random
+   3-regular graphs 1-WL is stuck at first but splits the vertices after one 2-WL round
+   (3reg200: 1 round instead of 4). Each graph is refined on its own and cached (the same side
    recurs across individualization branches); the shared naming is replaced by a direct check
    that the input color is one function of the refined color on both sides.
 6. **Chunked stages.** A stage with more than `CHUNK` (2000) positions is solved in chunks of
    orbits of its group, one after the other (orbit-chain rule), each chunk together with the
    diagonal of the stage's vertices (so the group acts faithfully); orbits where x and y share
    one constant color are skipped. The recursion then permutes a chunk instead of all positions
-   (CFI(3reg20)-twist, n = 200: 156s → 1.4s). Stage groups are built with a diagonal base, their
-   known order and an ambient base.
+   (CFI(3reg20)-twist, n = 200: 156s → 1.4s).
+7. **Explicit stage groups.** A stage whose factors are all symmetric groups gets its chain
+   written down instead of built by Schreier–Sims (`graph.sym_product_group`,
+   `PermGroup.from_bsgs`): base = the diagonal positions (v, v), classes with ≥ 3 points first;
+   the transversal of the level of v maps (w, w) to the transposition (v w) acting on the pairs,
+   made on first use (`group.LazyTransversal`); strong generators = a transposition and a cycle of
+   the remaining points of each class. The Young-label step's labels are then a base prefix, so its
+   restriction map reuses the chain (`RestrictionHom`), and its Young preimages are written down
+   too (`group.young_preimage`: views of the same transpositions, plus one product per cycle).
+   Schreier–Sims for Sym(62) on its 3844 pairs took seconds and could not be interrupted. Solved
+   factors still use Schreier–Sims with a diagonal base, their known order and an ambient base.
 
 No change to `solver.py` is needed: each stage calls `Solver.solve` on a group that is built
 directly on the stage's positions.
+
+## Round 3 results (r3-practical)
+
+`certificates=False`, seconds per tier; `bench/results/r3-practical-{full,ir0}{-before,}.json`
+(before = c3fd001). The machine's load varied between 3 and 36 during these runs, so single
+timings are noisy; the paired column runs the old and the new code back to back on each instance.
+
+| tier | full before | full after | ir=0 before | ir=0 after | ir=0 paired (old → new, load ~35) |
+|---|---|---|---|---|---|
+| hard (6) | 0.3 | 0.3 | 1.0 | 0.6 | |
+| large (18) | 3.9 | 3.8 | 49.7 | 46.9 | |
+| xl (9) | 11.6 | 10.5 | 270.4 | 121.3 | PG(2,7) 220 → 46, Paley101 24 → 1.0, Kneser(10,3) 53 → 3.5, rook10 51 → 14 |
+| all | 16.0 | 14.8 | 321.2 | 168.8 | |
+
+At low load, ir=0: PG(2,7) 112s → 18s, Paley101 16s → 0.65s, PG(2,5) 2.9s → 0.5s. The full
+hybrid individualizes before stages get large, so it gains little from explicit chains;
+3reg200 0.94s → 0.17s comes from the interleaved 1-WL. Determinism: the final code returned the
+same σ and generators on all 56 instances in a run at load 33 and in one at load 9 (239 trials
+finished, none aborted, in both); the old timed policy changed 7 of 56 outputs under simulated
+preemption.
+
+Remaining hotspots. Full hybrid on xl: 2-WL rounds (`_wl2_keys`, about 45%; big-integer
+arithmetic, about n^2 additions and one product per row color, near the floor for this
+representation), then the stage loop (`pick_stage`/`clean` about 10%, rechecking every factor
+pair after each stage). ir=0: when the Young classes fall below `young_min` the orbit chain runs
+on degree-n^2 Young groups, and `RestrictionHom`/`image_group`/`reduce_gens` there are
+Schreier–Sims again (Q7: 55 of 80s). `young_min=2` makes Q7 2.7s and rook10 2.6s, but PG(2,7)
+then times out, so this needs those restrictions written down, not a different threshold.
 
 ## Benchmark protocol
 
 ```sh
 python3 -m pytest -q tests                                   # must pass
 python3 bench/run.py --tiers tiny,small --timeout 60 --label NAME
+python3 bench/run.py --tiers large,xl --only "J(8,3)|PG(2,5)"     # names may contain commas
 python3 bench/run.py --tiers medium --timeout 120 --label NAME --solver-args '{"certificates": false}'
 ```
 

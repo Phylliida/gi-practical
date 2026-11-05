@@ -1,6 +1,7 @@
 """The optimized group layer must give exactly the results of the baseline code
 (tests/_ref_group.py): same chains, element order, lifts, kernels and block
 systems. Run: python3 -m pytest -q tests"""
+import math
 import os
 import random
 import sys
@@ -260,3 +261,170 @@ def test_ambient_base():
             base = rng.sample(range(n), min(n, rng.randint(0, 3)))
             assert chain(gg.PermGroup(n, sub, base=base, ambient_base=G.short_base())) == \
                 chain(ref.PermGroup(n, sub, base=base))
+
+
+# -- explicit chains (PermGroup.from_bsgs) ----------------------------------
+def check_bsgs(G):
+    """Every property from_bsgs relies on, checked against built chains:
+    T[l][p] fixes base[:l], maps base[l] to p and Ti[l][p] is its inverse;
+    S[l] fixes base[:l]; the orbit of base[l] under <S[l]> is the key set of
+    T[l]; S[l+1] lies in <S[l]> and |<S[l]>| = |T[l]| |<S[l+1]>| (so <S[l+1]>
+    is the whole stabilizer of base[l] in <S[l]>); <gens> = <S[0]>; and the
+    _ok-skipping convention: s in S[l] fixing base[l] is in S[l+1]."""
+    n, idn, base = G.n, G.idn, G.base
+    built = [gg.PermGroup(n, list(S)) for S in G.S] + [gg.PermGroup(n, [])]
+    for l, b in enumerate(base):
+        for p, u in G.T[l].items():
+            assert u[b] == p and all(u[c] == c for c in base[:l])
+            assert mul(u, G.Ti[l][p]) == idn
+            assert built[l].contains(u)
+        for s in G.S[l]:
+            assert all(s[c] == c for c in base[:l])
+            if s[b] == b and l + 1 < len(base):
+                assert s in G.S[l + 1]
+        orb = {b}
+        queue = [b]
+        for p in queue:
+            for s in G.S[l]:
+                if s[p] not in orb:
+                    orb.add(s[p])
+                    queue.append(s[p])
+        assert orb == set(G.T[l])
+        nxt = G.S[l + 1] if l + 1 < len(base) else []
+        assert all(built[l].contains(s) for s in nxt)
+        assert built[l].order() == len(G.T[l]) * gg.PermGroup(n, list(nxt)).order()
+    full = gg.PermGroup(n, list(G.gens))
+    assert full.order() == G.order() == (built[0].order() if G.S else 1)
+    assert all(full.contains(s) for s in G.strong_gens())
+
+
+def pair_actions(n, classes, D, rng, count):
+    """Random elements of prod Sym(C) as vertex permutations and on D."""
+    idx = {p: k for k, p in enumerate(D)}
+    out = []
+    for _ in range(count):
+        g = list(range(n))
+        for C in classes:
+            img = list(C)
+            rng.shuffle(img)
+            for a, b in zip(C, img):
+                g[a] = b
+        out.append(tuple(idx[(g[i], g[j])] for i, j in D))
+    return out
+
+
+SYM_CASES = [
+    (5, [[0, 1, 2, 3, 4]], "all"),
+    (6, [[0, 2, 4], [1, 3, 5]], "all"),
+    (7, [[1, 3, 5], [0, 2], [4, 6]], "all"),
+    (7, [[0, 1, 2, 3], [4, 5]], "all"),
+    (7, [[2, 3, 4, 5]], "block"),                 # a self stage P x P
+    (7, [[0, 1, 2], [4, 5, 6]], "merge"),         # cross block of two factors
+    (8, [[1, 2, 3]], "fixed"),                    # a factor against fixed vertices
+    (6, [[5, 4, 3], [2, 0, 1]], "all"),           # unsorted classes
+]
+
+
+def sym_case(n, classes, kind):
+    verts = sorted(v for C in classes for v in C)
+    if kind == "all":
+        D = [(i, j) for i in range(n) for j in range(n)]
+    elif kind == "block":
+        D = [(i, j) for i in verts for j in verts]
+    elif kind == "merge":
+        A, B = classes
+        D = sorted([(i, j) for i in A for j in B] + [(j, i) for i in A for j in B]
+                   + [(i, i) for i in A + B])
+    else:
+        A, B = [0, 6, 7], classes[0]
+        D = sorted([(i, j) for i in A for j in B] + [(j, i) for i in A for j in B]
+                   + [(i, i) for i in A + B])
+    return D
+
+
+def test_sym_product_group():
+    """graph.sym_product_group writes the chain of prod Sym(C) on pairs down;
+    it must be a valid chain of the right group: same order and membership
+    as the chain Schreier-Sims builds from its generators, and transposition
+    transversals."""
+    from gi.graph import sym_product_group
+    from gi.perm import sym_gens
+    rng = random.Random(17)
+    for n, classes, kind in SYM_CASES:
+        D = sym_case(n, classes, kind)
+        K = sym_product_group(n, classes, D)
+        check_bsgs(K)
+        m = len(D)
+        idx = {p: k for k, p in enumerate(D)}
+        vg = [g for C in classes for g in sym_gens(n, C)]   # the old Schreier-Sims path
+        B = gg.PermGroup(m, [tuple(idx[(g[i], g[j])] for i, j in D) for g in vg])
+        want = math.prod(math.factorial(len(C)) for C in classes)
+        assert K.order() == want == B.order() == gg.PermGroup(m, K.gens).order()
+        for g in pair_actions(n, classes, D, rng, 20):
+            assert K.contains(g) and B.contains(g)
+        for g in K.gens:
+            assert B.contains(g)
+        for _ in range(20):                     # random permutations of D: same verdict
+            g = rand_perm(m, rng)
+            assert K.contains(g) == B.contains(g)
+        # transposition transversals on the base points
+        assert K._transp == len(K.base)
+        for l, b in enumerate(K.base):
+            for p, u in K.T[l].items():
+                assert all(u[c] == (p if c == b else b if c == p else c) for c in K.base)
+                assert mul(u, u) == K.idn
+        # restriction to the diagonal of the classes with >= 3 points reuses the chain
+        gamma = sorted(idx[(v, v)] for C in classes if len(C) >= 3 for v in C)
+        if gamma:
+            psi = gg.RestrictionHom(K, gamma)
+            assert psi.C is K
+            built = gg.PermGroup(m, list(K.gens), base=gamma, order=K.order())
+            assert psi.image_order() == gg.PermGroup(len(gamma), [psi.image_of(g) for g in K.gens]).order()
+            assert psi.kernel().order() * psi.image_order() == K.order()
+            for g in pair_actions(n, classes, D, rng, 5):
+                p = psi.image_of(g)
+                h = psi.lift(p)
+                assert psi.image_of(h) == p and built.contains(h)
+
+
+def test_young_preimage():
+    """group.young_preimage writes the chain of psi^-1(Young(partition)) down;
+    it must equal (same order, mutual membership) the preimage built by
+    Schreier-Sims from lifts and the kernel."""
+    from gi.graph import sym_product_group
+    from gi.perm import sym_gens
+    rng = random.Random(29)
+    for n, classes, kind in SYM_CASES:
+        D = sym_case(n, classes, kind)
+        K = sym_product_group(n, classes, D)
+        idx = {p: k for k, p in enumerate(D)}
+        gamma = sorted(idx[(v, v)] for C in classes if len(C) >= 3 for v in C)
+        if not gamma:
+            continue
+        psi = gg.RestrictionHom(K, gamma)
+        lab = {p: i for i, p in enumerate(gamma)}
+        root = [[lab[idx[(v, v)]] for v in C] for C in classes if len(C) >= 3]
+        for _ in range(6):
+            part = []
+            for C in root:                      # a random refinement of the classes
+                C = list(C)
+                rng.shuffle(C)
+                cut = sorted(rng.sample(range(1, len(C)), rng.randint(0, len(C) - 1)))
+                for a, b in zip([0] + cut, cut + [len(C)]):
+                    part.append(C[a:b])
+            big = [Y for Y in part if len(Y) >= 2]
+            H = gg.young_preimage(psi, big)
+            assert H is not None
+            check_bsgs(H)
+            hs = [g for Y in big for g in sym_gens(len(gamma), Y)]
+            W = psi.preimage(hs) if hs else psi.kernel()
+            assert H.order() == W.order()
+            assert all(W.contains(g) for g in H.strong_gens())
+            assert all(H.contains(g) for g in W.gens)
+            for g in pair_actions(n, classes, D, rng, 10):
+                img = psi.image_of(g)
+                inside = all(img[a] in Y for Y in part for a in Y)
+                assert H.contains(g) == inside == W.contains(g)
+    # a chain without transposition transversals is refused
+    G = gg.PermGroup(4, [(1, 2, 3, 0), (1, 0, 2, 3)])
+    assert gg.young_preimage(gg.RestrictionHom(G, [0, 1, 2, 3]), [[0, 1]]) is None

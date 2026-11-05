@@ -172,6 +172,56 @@ def test_packed_wl2_matches_definition():
             assert partition(fast[0]) == partition(ref[0])
 
 
+def random_regular(n, d, rng):
+    """A random d-regular simple graph (pairing model with restarts)."""
+    while True:
+        pts = [v for v in range(n) for _ in range(d)]
+        rng.shuffle(pts)
+        A = [[0] * n for _ in range(n)]
+        ok = True
+        for a, b in zip(pts[0::2], pts[1::2]):
+            if a == b or A[a][b]:
+                ok = False
+                break
+            A[a][b] = A[b][a] = 1
+        if ok:
+            return A
+
+
+def test_wl2_interleaved_1wl(monkeypatch):
+    """wl2_single runs 1-WL on the vertices before every 2-WL round and stops
+    once the vertex colors (or the pairs) are discrete; the partitions are
+    those of the definition. Random 3-regular graphs: 1-WL is stuck at the
+    start, one 2-WL round lets it make the vertices discrete, so one round
+    suffices (the plain iteration needs about four)."""
+    import gi.refine as refine
+    rounds = []
+    real = refine._wl2_keys
+    monkeypatch.setattr(refine, "_wl2_keys", lambda *a: rounds.append(1) or real(*a))
+    rng = random.Random(41)
+    one = 0
+    for n in (10, 12, 14, 16, 20):
+        A = random_regular(n, 3, rng)
+        s = list(range(n))
+        rng.shuffle(s)
+        for B in (relabel(A, s), random_regular(n, 3, rng)):
+            PX, PY = initial_pair_colors(A, B)
+            fast, ref = wl2(PX, PY), wl2_reference(PX, PY)
+            assert (fast is None) == (ref is None)
+            if fast is not None:
+                assert partition(fast[0]) == partition(ref[0])
+                assert partition(fast[1]) == partition(ref[1])
+            rounds.clear()
+            R, trace = refine.wl2_single(PX)
+            assert partition(R) == partition(wl2_reference(PX, PX)[0])
+            one += len(rounds) == 1 and len(set(map(tuple, R))) == n
+    assert one > 0
+    # a discrete input is returned without a round
+    rounds.clear()
+    D = [[i * 7 + j for j in range(7)] for i in range(7)]
+    assert partition(refine.wl2_single(D)[0]) == partition(D) and not rounds
+
+
 def test_wl_separates_and_rejects():
     # C6 vs 2C3: 1-WL equivalent, 2-WL distinguishes
     X, Y = cycle(6), disjoint(cycle(3), cycle(3))
@@ -474,6 +524,44 @@ def test_policy_budgeted_levels(monkeypatch):
     assert "cont" not in S.__dict__ and "solve" not in S.__dict__
     assert Policy(100, ir=3).ir_max == 7 and Policy(100, ir=0).ir_max == 0
     assert Policy(100, ir=3, ir_budget=None).ir_max == 3
+
+
+def test_policy_deterministic(monkeypatch):
+    """The budget counts work, not time: the same input gives the same sigma
+    and generators even when the clock jumps (a loaded machine), and a
+    trial's budget is ir_budget * WORK_PER_REFINEMENT * n^2 units, one per
+    position of each recursive call."""
+    import time
+    from gi.graph import Policy, OverBudget, WORK_PER_REFINEMENT
+    rng = random.Random(31)
+    pairs = list(itertools.combinations(range(8), 2))       # T(8), 28 vertices
+    A = [[int(len(set(p) & set(q)) == 1) for q in pairs] for p in pairs]
+    s = list(range(28))
+    rng.shuffle(s)
+    B = relabel(A, s)
+    kw = {}
+    runs = []
+    for jumpy in (False, True, False):
+        if jumpy:
+            real = time.perf_counter
+            ticks = itertools.count()
+            monkeypatch.setattr(time, "perf_counter", lambda: real() + 0.05 * next(ticks))
+        S = Solver(certificates=False)
+        runs.append((graph_iso(A, B, solver=S, **kw), S.stats["trial_done"], S.stats["trial_abort"]))
+        monkeypatch.undo()
+    assert runs[0] == runs[1] == runs[2]
+    assert runs[0][1] > 0
+    # the budget in units
+    pol = Policy(16, ir=1, ir_budget=2.0)
+    assert pol.work_budget() == 2.0 * WORK_PER_REFINEMENT * 256
+    S = Solver(certificates=False)
+    G = PermGroup(4, [(1, 0, 2, 3), (1, 2, 3, 0)])
+    calls = []
+    pol.budget = 5 / (WORK_PER_REFINEMENT * 256)      # 5 units: one call of degree 4 only
+    with pytest.raises(OverBudget):
+        pol.trial(S, lambda: [calls.append(1), S.cont(G, (0, 1, 2, 3), (0, 1, 2, 3)),
+                              calls.append(2), S.cont(G, (0, 1, 2, 3), (0, 1, 2, 3))])
+    assert calls == [1, 2] and "cont" not in S.__dict__
 
 
 def test_chunked_stages(monkeypatch):

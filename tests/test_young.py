@@ -309,3 +309,62 @@ def test_young_symmetric_brute(cfg):
             y = act(y0, g)
             check_string(G, x, y, Solver(**cfg).solve(G, range(G.n), x, y))
         check_string(G, x, x, Solver(**cfg).solve(G, range(G.n), x, x))
+
+
+def _refine_labels_literal(q, hx, hy, cx, cy, px=None, py=None):
+    """refine_labels with the literal multisets (the definition)."""
+    cx, cy = list(cx), list(cy)
+    while True:
+        new = []
+        for h, c, p in ((hx, cx, px), (hy, cy, py)):
+            ms = [[] for _ in range(q)]
+            for T, (sig, roles) in h.items():
+                cols = [c[t] for t in T]
+                for i, t in enumerate(T):
+                    ms[t].append((sig, roles[i], tuple(sorted(cols[:i] + cols[i + 1:]))))
+            nb = [()] * q if p is None else [
+                tuple(sorted((p[a][b], p[b][a], c[b]) for b in range(q) if b != a))
+                for a in range(q)]
+            new.append([(c[g], nb[g], tuple(sorted(ms[g]))) for g in range(q)])
+        rank = {k: i for i, k in enumerate(sorted(set(new[0]) | set(new[1])))}
+        nx = [rank[k] for k in new[0]]
+        ny = [rank[k] for k in new[1]]
+        if len(set(nx)) == len(set(cx)) and len(set(ny)) == len(set(cy)):
+            return nx, ny
+        cx, cy = nx, ny
+
+
+def test_refine_labels_encoding():
+    """refine_labels encodes the pair multisets as sorted integer tuples; the
+    joint partitions (x and y together) must be those of the literal
+    multisets, with or without hypergraphs, for isomorphic and random pairs."""
+    from gi.solver import refine_labels
+    rng = random.Random(53)
+
+    def joint(cx, cy):
+        m = {}
+        return [m.setdefault(c, len(m)) for c in list(cx) + list(cy)]
+
+    for trial in range(60):
+        q = rng.randint(1, 12)
+        k = rng.randint(1, 4)
+        px = [[rng.randrange(k) for _ in range(q)] for _ in range(q)]
+        if trial % 2:
+            px = [[px[min(a, b)][max(a, b)] for b in range(q)] for a in range(q)]
+        cx = [rng.randrange(3) * 7 for _ in range(q)]
+        if trial % 3:
+            s = list(range(q))
+            rng.shuffle(s)
+            py = [[px[s[a]][s[b]] for b in range(q)] for a in range(q)]
+            cy = [cx[s[a]] for a in range(q)]
+        else:
+            py = [[rng.randrange(k) for _ in range(q)] for _ in range(q)]
+            cy = [rng.randrange(3) * 7 for _ in range(q)]
+        hx = hy = {}
+        if trial % 4 == 1 and q >= 3:
+            hx = {T: (rng.randrange(2), (1, 2, 3)) for T in itertools.combinations(range(q), 3)
+                  if rng.random() < 0.3}
+            hy = dict(hx) if trial % 3 == 0 else hx
+        a = refine_labels(q, hx, hy, cx, cy, px, py)
+        b = _refine_labels_literal(q, hx, hy, cx, cy, px, py)
+        assert joint(*a) == joint(*b)
