@@ -367,3 +367,19 @@ are red-teams, a LaTeX paper, and final integration.
   So HJ's σ-budget, the #1 residual risk under the conditional n^{O(log d)}, is machine-checked as part of
   HJ's theorem, modulo the 10 axioms. The new Λ-accounting itself is still pen-and-paper.
 * Comparator (fresh-kernel replay + statement match) is being built and run.
+
+### w9-redteam-hypercanon (done, commit 97c4b9d; docs/redteam-w8-hypercanon.md)
+* No break, and no isomorphic pair with different outputs.
+* Theorem H: canonicity sound. Renormalization is built from canonical data, Γ''1 is replaced by the
+  stabiliser of the canonical multiplicity string, and a toy check gave 0/60 failures while both mutants
+  failed 60/60. The defect bound holds at ≥ 3/4. Running time: plausible sketch. Minor fixes listed.
+* Theorem TW: the key claim is confirmed (cosetHyper called once, W336, on a hyperedge-preserving coset).
+  Three fixable gaps:
+  - TW-1: canonize the child colours χ first;
+  - TW-2: mark the parent adhesion set;
+  - TW-3: the doubling search must check degeneracy, not min-degree (grid counterexample).
+  Overall: SKETCH, conditional on Theorem A.
+* H4: Q 9.7 needs a parameter-free form. Missing prior art: Grohe (polynomial time per fixed minor) and
+  Lokshtanov–Pilipczuk–Pilipczuk–Saurabh STOC'22 (f(H)·n^{O(1)}); neither reaches n^{polylog h}.
+* Novelty: no prior canonization found, but Neuen's 2026 survey says canonization "is possible for many
+  of the algorithms", so experts may call these results expected.
