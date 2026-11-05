@@ -341,3 +341,17 @@ are red-teams, a LaTeX paper, and final integration.
   FPT" ⇔ R1_c FPT.
 * W6's Prop C is NOT new: it is AMBC Theorem 4.24(a) (Forum Math. Sigma 2025).
 * Smallest open poset family: height-2 posets with large μ (does μ capture hardness?).
+
+### w8-gnsexp (done, commit 6b98724; docs/w8-gnsexp.md)
+* GNS as written (with the Lemma 7.2 fix): c = 5 [PROVEN]. The main recursion (domain blow-up
+  n^{O(log² d)} × K = O(log³ d)) and the black box (Babai on d^{O(log d)} points, 2^{O(log⁶ d)}) each give
+  log⁵ d. Using the known n^{O(log d)} domain count: c = 4 for all d.
+* NEW, unconditional [PROVEN, pending red-team]: a multiplicative giant decrease k' ≤ 3k/4, via a CFSG-free
+  lemma (an Alt(m) composition factor with m > 3k/4 forces an Alt(Δ) with |Δ| ≥ m, contradicting the
+  symmetry defect). Height O(log d) gives a main recursion of n^{O(log³ d)}. Overall c = 3 when
+  log n ≥ log³ d (so d = polylog n: n^{O((log log n)³)} vs GNS's 5th power) and c = 4 for all d.
+  c = 10/3 for all d via Design Lemma / Split-or-Johnson in the black box [SKETCH].
+* Barrier [PROVEN]: c < 2 unconditionally would beat general GI's exp(O(log³ n)). c = 3 is the floor of GNS's
+  architecture [SKETCH].
+* HJ Thm A.9 re-derived except the CFSG primitive-valuation lemma. A weak σ ≤ C log d log N via GNS 3.13
+  gives n^{O(log² d)} conditional on HJ §§4–7 but not on that lemma [SKETCH].
