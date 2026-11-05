@@ -23,8 +23,15 @@ n^{O((log d)^c)}.**
   - the canonical Luks reduction (§8), following Babai–Luks 1983 §4.2–4.3, read from Luks's homepage.
   The assumptions are listed in §10 and the questions for experts in §13.
 * The write-up also flags an apparent gap in GNS's own Lemma 7.2 potential argument (repeated in Neuen
-  2020), with an explicit input (S_m wr S_2, product action) and a one-line fix; the SICOMP version may
-  already fix it. Being red-teamed (w7-redteam-gns72).
+  2020), with an explicit input (S_m wr S_2, product action) and a one-line fix.
+  - Red-team verdict (docs/redteam-gns-lemma72.md): a REAL GAP IN THE WRITTEN PROOF, not a misreading,
+    and not evidence the theorem is wrong. The text lets the next block system be the "columns", where
+    H'_(C') ≤ ker φ' fails. Checked by computation (m = 5–8); at m = 180 columns give k' = 180 vs the
+    required ≤ 172.
+  - The fix (choose the system coarser than C') is itself a legal run, so the algorithm and theorem are
+    unaffected.
+  - Present in all arXiv versions of GNS and of Neuen 2020; the SICOMP text could not be checked.
+  - Approach the authors as a question, not a claim; a draft paragraph is in §5 of the red-team report.
 * **Next step: a human expert (Wiebking, Neuen or Schweitzer) should look at it before any claim.**
 
 **2. Conditional on the HJ preprint: degree-d GI in n^{O(log d)}** (verify-theorem-R.md and
