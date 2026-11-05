@@ -311,3 +311,22 @@ are red-teams, a LaTeX paper, and final integration.
 * §2.5 sound. §10 is missing 4 assumptions; the main one is that all "function of the group" subroutines
   are deterministic and run on canonical generators (including Babai STOC'19).
 * SICOMP GNS and Neuen's thesis are behind bot checks; the agent did not bypass them. Left to the user.
+
+### w8-hypercanon (done, commit 9935b16; docs/w8-hypercanon.md)
+* Theorem H (canonical Neuen 2020): canonical forms for sets of m strings, or hypergraphs, under Γ̂_d
+  cosets in (n+m)^{O((log d)^c)}. Correctness [PROVEN mod Neuen/GNS/Babai lemmas + Theorem A]; time
+  [SKETCH].
+  - New obstacle: Neuen's local certificates run "on all pairs in parallel" with non-invariant
+    renormalization.
+  - Fix: a single object moved to Wiebking's canonical test set T0, canonized under its setwise stabilizer.
+* Theorem TW: canonical forms for treewidth k in n^{polylog k}. It needs only Theorem A (Corollary D),
+  since Wie20 applies the hypergraph lemma only to cosets already mapping hyperedges to hyperedges
+  (corrects write-up §9.2). [PROVEN mod Theorem A and canonical tools; Wie20 rewrite SKETCH.] Wie20 and
+  Wiebking's thesis predict it once GNS is canonical.
+* Corollaries (mostly sketches): coset-labelled hypergraphs; t-CR-bounded graphs; K_{3,h}-minor-free and
+  genus g; K_h-minor-free and topological-subgraph-free in n^{polylog h} (would answer thesis Q 9.7;
+  conditional).
+* Neuen 2020 repeats GAP-1 verbatim (N2716; same fix), and has a minor cost-accounting slip (fixable).
+
+## Wave 9
+* w9-redteam-hypercanon: adversarial check of Theorem H and Theorem TW.
