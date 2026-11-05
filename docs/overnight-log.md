@@ -110,3 +110,14 @@ claimed results get an independent red-team pass.
 
 ## Wave 4
 * w4-gnscanon: develop lead 1 rigorously (unconditional n^{polylog d} canonization?).
+
+### w3-redteam-coset (done, commit 73b1837; docs/redteam-w2-coset.md)
+* No breaks.
+* Theorem P is correct (72 brute-force instances), but its algorithm is Babai–Codenotti–Qiao 2012 Thm 5 /
+  Codenotti thesis Thm 4.2.1 (twisted code equivalence), so the novelty is low. Relabel it a corollary.
+  - Improved exponent: (b!)^{1+o(1)}·N^{2.33} (only (1+b²)^k states are reachable).
+  - Base-case fix: setwise transporter by coset intersection.
+* Corollary 2.2 needs rewording: the hard DP shape is a diagonal on a full-depth direct factor
+  K1×diag(G2), not a bare full diagonal. Example X: entanglement bounded in d (level-2 pairing can
+  survive), so the FPT conclusion stands. The tree-product automorphism claim is verified (22 cases;
+  depth colours essential). Theorem E' is the most interesting new claim, still a sketch.
