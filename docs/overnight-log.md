@@ -330,3 +330,14 @@ are red-teams, a LaTeX paper, and final integration.
 
 ## Wave 9
 * w9-redteam-hypercanon: adversarial check of Theorem H and Theorem TW.
+
+### w8-poset (done, commit 643ee53; docs/w8-poset.md)
+* Theorem 1 [PROVEN mod ADKT Thm 5]: string isomorphism under generalized wreath products ∏^{(P)} G_i
+  (G_i ≤ S_b) in b!·2^{O(b^{μ+1})}·N^{O(1)}. The DP runs over fibres above down-sets, and the fibre lemma
+  decouples everything above a minimal element. μ(P) is a new poset parameter (0 for antichains, chains
+  and series compositions). Validated on 1280 instances against brute force / nauty.
+* Prop H [PROVEN mod T2 Thm A]: for P = C_h ⊔ C_h (width 2, dimension 2) the problem is exactly complete-tree
+  tanglegram isomorphism R1_c. So width and dimension can't help, and "all coloured coordinate tanglegrams
+  FPT" ⇔ R1_c FPT.
+* W6's Prop C is NOT new: it is AMBC Theorem 4.24(a) (Forum Math. Sigma 2025).
+* Smallest open poset family: height-2 posets with large μ (does μ capture hardness?).
