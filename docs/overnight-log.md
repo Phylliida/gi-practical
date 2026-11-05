@@ -75,3 +75,19 @@ claimed results get an independent red-team pass.
 
 ## Wave 3
 * w3-canon: a canonical-form version of the HJ recursion, the integration gap both theory agents named.
+
+### w2-coset (done, commit faf0999; docs/w2-coset.md)
+* [PROVEN] The core is TreeCI(b), coset intersection for subgroups of Aut(tree of degree ≤ b). It is
+  fpt-equivalent to tree-group string isomorphism, to the block-DP combine step, and already to the
+  simplest (full diagonal) coupling. So depth, not pattern, is what matters; bounded coupling depth is FPT.
+  GNS's class refines to tree groups of node degree d!/2.
+* [PROVEN] Example X collapses for r ≥ 3 (it contains GL at every node, so Theorem E applies).
+* [PROVEN mod Babai] Theorem P: string isomorphism for any G ≤ Sym(Δ) wr S_k in product action runs in
+  b!·N^{3.17+o(1)}, with an arbitrary top group that is never enumerated. This covers the families on
+  which HJ+(M') pays N^{log d}, i.e. it removes the product-type enumeration channel. Theorem E' [SKETCH]:
+  FPT whenever every kernel's entanglement is ≤ f(d).
+* No hardness found (ETH forces parameter blow-up ≥ 2^{k^Ω(1)} for any W[1]-hardness).
+* Graphs: coloured Cartesian products of two b-ary trees put the full-group T^2 form inside bounded-degree
+  GI. [SPECULATION] degree-d GI is strictly easier than TreeCI.
+* Leads: FPT for T^2 (full-group case first); lower bound for coset-splitting on the iterated diagonal;
+  implement Theorem P in gi-practical; red-team Theorem P.
