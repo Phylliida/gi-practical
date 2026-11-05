@@ -121,3 +121,20 @@ claimed results get an independent red-team pass.
   K1×diag(G2), not a bare full diagonal. Example X: entanglement bounded in d (level-2 pairing can
   survive), so the FPT conclusion stands. The tree-product automorphism claim is verified (22 cases;
   depth colours essential). Theorem E' is the most interesting new claim, still a sketch.
+
+### w4-gnscanon (done, commit c1a043f; docs/w4-gnscanon.md)
+* Claimed (UNCONDITIONAL relative to published work, pending red-team): canonical labelling for graphs of
+  maximum degree d in n^{O((log d)^c)} (Theorem A for Γ̂_d strings; Corollary B for graphs), via the
+  canonical-colour trick applied to GNS.
+  - The trick is a "canonical subcoset" lemma: send a tuple to a reference T0 chosen from H alone, then
+    canonize under J0 = H_(T0) [PROVEN].
+  - The only pair-dependent step in GNS is the |S| < k/4 aggregation case (GNS L2370–2385).
+* Stated open by Schweitzer–Wiebking 2019 and Wiebking 2020. Risks:
+  - Wiebking's 2021 thesis not read (bot wall);
+  - Babai STOC'19 canonization is a "preliminary report";
+  - GNS's analysis reused unchanged [SKETCH];
+  - Babai–Luks 1983 canonical reduction not re-read.
+
+## Wave 5
+* w5-redteam-gnscanon: adversarial check, especially the coset-vs-group issue in canonization recursions
+  and the prior-art check against Wiebking's thesis.
