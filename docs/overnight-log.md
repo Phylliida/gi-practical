@@ -285,3 +285,17 @@ claimed results get an independent red-team pass.
   wreath product of S_b over a 2-dimensional poset as their group, checked against nauty on 21 instances.
 * Lead: extend the Theorem P DP from antichains to arbitrary posets (string isomorphism under generalized
   wreath products), which would cover all coordinate tanglegrams.
+
+# Day 2 campaign (2026-11-05, ~noon → 8–10 PM)
+
+The user offered two more 5-hour usage windows. Plan: wave 8 hardens and extends the canonization
+result; wave 9 is practical (canonical labeling tool, solvable layers, automatic dispatch); waves 10–11
+are red-teams, a LaTeX paper, and final integration.
+
+## Wave 8
+* w8-redteam-writeup: independent red-team of canonization-bounded-degree.md §7 (running time) and §8
+  (canonical Luks reduction); retry the SICOMP GNS text and Neuen's thesis.
+* w8-hypercanon: canonical version of Neuen 2020 (hypergraph isomorphism for Γ̂_d) with the
+  canonical-subcoset device; consequences for treewidth canonization via Wiebking.
+* w8-poset: extend the Babai–Codenotti–Qiao DP to generalized wreath products over posets
+  (coordinate tanglegrams); the Prop S one-call combine.
