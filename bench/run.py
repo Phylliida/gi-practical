@@ -89,7 +89,7 @@ def main():
     gkwargs = json.loads(args.graph_args)
     signal.signal(signal.SIGALRM, _alarm)
     rows = []
-    for name, tier, X, Y, expect_iso, expect_aut in instances():
+    for name, tier, X, Y, expect_iso, expect_aut in instances(tiers=tiers):
         if tier not in tiers or (only and name not in only):
             continue
         S = Solver(**kwargs)

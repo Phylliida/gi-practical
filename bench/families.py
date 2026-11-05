@@ -104,17 +104,86 @@ def cfi(base, twist=False):
     return G
 
 
-def instances(seed=0):
+def projective_plane(p):
+    """Point-line incidence graph of PG(2, p), p prime. |Aut| = 2 |PGL(3, p)|."""
+    pts = []
+    for v in itertools.product(range(p), repeat=3):
+        if any(v):
+            first = next(c for c in v if c)
+            inv = pow(first, p - 2, p)
+            w = tuple(c * inv % p for c in v)
+            if w not in pts:
+                pts.append(w)
+    G = nx.Graph()
+    G.add_nodes_from(("P", a) for a in pts)
+    G.add_nodes_from(("L", b) for b in pts)
+    G.add_edges_from((("P", a), ("L", b)) for a in pts for b in pts
+                     if sum(x * y for x, y in zip(a, b)) % p == 0)
+    return G
+
+
+def pgl3_order(p):
+    return p ** 3 * (p ** 3 - 1) * (p ** 2 - 1)
+
+
+def chang(kind):
+    """The Chang graphs: Seidel switching of T(8) on the edges of a perfect
+    matching (kind 1), C3 + C5 (kind 2) or C8 (kind 3) of K8. SRG(28,12,6,4)."""
+    switch = {1: [(0, 1), (2, 3), (4, 5), (6, 7)],
+              2: [(0, 1), (1, 2), (0, 2), (3, 4), (4, 5), (5, 6), (6, 7), (3, 7)],
+              3: [(i, (i + 1) % 8) for i in range(8)]}[kind]
+    S = {tuple(sorted(e)) for e in switch}
+    T = triangular(8)
+    G = nx.Graph()
+    G.add_nodes_from(T.nodes())
+    for u, v in itertools.combinations(sorted(T.nodes()), 2):
+        e = T.has_edge(u, v)
+        if (tuple(sorted(u)) in S) != (tuple(sorted(v)) in S):
+            e = not e
+        if e:
+            G.add_edge(u, v)
+    return G
+
+
+def latin_square_graph(table):
+    """Cells (r, c) adjacent when they share a row, a column or a symbol."""
+    n = len(table)
+    V = [(r, c) for r in range(n) for c in range(n)]
+    G = nx.Graph()
+    G.add_nodes_from(V)
+    G.add_edges_from(((r, c), (s, d)) for (r, c), (s, d) in itertools.combinations(V, 2)
+                     if r == s or c == d or table[r][c] == table[s][d])
+    return G
+
+
+def cayley_table(elems, op):
+    idx = {e: i for i, e in enumerate(elems)}
+    return [[idx[op(a, b)] for b in elems] for a in elems]
+
+
+def instances(seed=0, tiers=None):
     rng = random.Random(seed)
     out = []
 
+    def want(tier):
+        return tiers is None or tier in tiers
+
     def iso(name, tier, G, aut=None):
+        if not want(tier):
+            return
+        G = G() if callable(G) else G
         A = adj(G)
         out.append((name, tier, A, shuffled(A, rng), True, aut))
 
-    def noniso(name, tier, G, H):
-        # every non-isomorphism label is verified independently
-        assert not nx.is_isomorphic(G, H), name
+    def noniso(name, tier, G, H, verify=True):
+        if not want(tier):
+            return
+        G = G() if callable(G) else G
+        H = H() if callable(H) else H
+        # every non-isomorphism label is verified independently, by networkx
+        # or (verify=False) by a theorem cited at the call site
+        if verify:
+            assert not nx.is_isomorphic(G, H), name
         out.append((name, tier, adj(G), shuffled(adj(H), rng), False, None))
 
     # tiny: n <= 8
@@ -153,4 +222,43 @@ def instances(seed=0):
     iso("CFI(K4)", "hard", cfi(nx.complete_graph(4)))
     noniso("CFI(K4)-twist", "hard", cfi(nx.complete_graph(4)), cfi(nx.complete_graph(4), True))
     iso("rand40", "hard", nx.gnp_random_graph(40, 0.5, seed=9))
+    # large: n <= 70
+    base8 = nx.random_regular_graph(3, 8, seed=11)
+    iso("CFI(3reg8)", "large", lambda: cfi(base8))
+    # non-isomorphic by the CFI theorem (connected base graph, one twisted edge)
+    noniso("CFI(3reg8)-twist", "large", lambda: cfi(base8), lambda: cfi(base8, True), verify=False)
+    iso("PG(2,3)", "large", lambda: projective_plane(3), 2 * pgl3_order(3))
+    iso("PG(2,5)", "large", lambda: projective_plane(5), 2 * pgl3_order(5))
+    iso("Paley37", "large", lambda: paley(37), 37 * 18)
+    iso("Paley61", "large", lambda: paley(61), 61 * 30)
+    iso("J(8,3)", "large", lambda: johnson(8, 3), 40320)
+    iso("J(8,4)", "large", lambda: johnson(8, 4), 80640)
+    iso("Kneser(8,3)", "large", lambda: kneser(8, 3), 40320)
+    iso("rook6", "large", lambda: rook(6), 2 * 720 ** 2)
+    iso("Q6", "large", lambda: nx.hypercube_graph(6), 46080)
+    iso("T10", "large", lambda: triangular(10), 3628800)
+    iso("Chang1", "large", lambda: chang(1), 384)
+    noniso("T8-vs-Chang1", "large", lambda: triangular(8), lambda: chang(1))
+    noniso("Chang1-vs-Chang3", "large", lambda: chang(1), lambda: chang(3))
+    # Latin square graphs of Cayley tables of non-isomorphic groups are
+    # non-isomorphic (order >= 5: graph isomorphism = main-class equivalence,
+    # Bruck; group tables are isotopic only for isomorphic groups, Albert).
+    z8 = cayley_table(list(range(8)), lambda a, b: (a + b) % 8)
+    z2z4 = cayley_table([(a, b) for a in range(2) for b in range(4)],
+                        lambda u, v: ((u[0] + v[0]) % 2, (u[1] + v[1]) % 4))
+    noniso("Latin(Z8)-vs-Latin(Z2xZ4)", "large", lambda: latin_square_graph(z8),
+           lambda: latin_square_graph(z2z4), verify=False)
+    iso("rand70", "large", lambda: nx.gnp_random_graph(70, 0.5, seed=12))
+    iso("3reg70", "large", lambda: nx.random_regular_graph(3, 70, seed=13))
+    # xl: n <= 200
+    base14 = nx.random_regular_graph(3, 14, seed=14)
+    iso("CFI(3reg14)", "xl", lambda: cfi(base14))
+    noniso("CFI(3reg14)-twist", "xl", lambda: cfi(base14), lambda: cfi(base14, True), verify=False)
+    iso("PG(2,7)", "xl", lambda: projective_plane(7), 2 * pgl3_order(7))
+    iso("Paley101", "xl", lambda: paley(101), 101 * 50)
+    iso("Q7", "xl", lambda: nx.hypercube_graph(7), 645120)
+    iso("Kneser(10,3)", "xl", lambda: kneser(10, 3), 3628800)
+    iso("rook10", "xl", lambda: rook(10), 2 * 3628800 ** 2)
+    iso("rand200", "xl", lambda: nx.gnp_random_graph(200, 0.5, seed=15))
+    iso("3reg200", "xl", lambda: nx.random_regular_graph(3, 200, seed=16))
     return out

@@ -1,0 +1,128 @@
+{
+ "label": "r1-merge-eb-hard",
+ "solver_args": {
+  "certificates": false
+ },
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "T8",
+   "tier": "hard",
+   "n": 28,
+   "status": "ok",
+   "time": 0.92,
+   "note": "|Aut|=40320",
+   "stats": {
+    "solve": 311,
+    "cont": 282,
+    "giant_johnson": 13,
+    "giant_step": 44,
+    "branch": 34,
+    "enumerate": 80,
+    "memo_hit": 238,
+    "pruned": 532,
+    "giant_natural": 31,
+    "enum_cosets": 13
+   }
+  },
+  {
+   "name": "Paley29",
+   "tier": "hard",
+   "n": 29,
+   "status": "ok",
+   "time": 0.838,
+   "note": "|Aut|=406",
+   "stats": {
+    "solve": 894,
+    "cont": 893,
+    "giant_johnson": 1,
+    "giant_step": 273,
+    "branch": 214,
+    "giant_natural": 272,
+    "enum_cosets": 31,
+    "enumerate": 222,
+    "memo_hit": 751,
+    "pruned": 412,
+    "one_offbase": 81
+   }
+  },
+  {
+   "name": "J(7,3)",
+   "tier": "hard",
+   "n": 35,
+   "status": "timeout",
+   "time": 120.038,
+   "note": "",
+   "stats": {
+    "solve": 656932,
+    "cont": 656926,
+    "giant_johnson": 7,
+    "giant_step": 19303,
+    "branch": 73906,
+    "enumerate": 500360,
+    "memo_hit": 647736,
+    "pruned": 711717,
+    "enum_cosets": 53979,
+    "giant_natural": 19296,
+    "one_offbase": 32840
+   }
+  },
+  {
+   "name": "CFI(K4)",
+   "tier": "hard",
+   "n": 40,
+   "status": "ok",
+   "time": 4.185,
+   "note": "|Aut|=192",
+   "stats": {
+    "solve": 576,
+    "cont": 471,
+    "giant_johnson": 1,
+    "giant_step": 32,
+    "branch": 58,
+    "giant_natural": 31,
+    "enum_cosets": 29,
+    "enumerate": 198,
+    "memo_hit": 406,
+    "pruned": 427,
+    "one_offbase": 14
+   }
+  },
+  {
+   "name": "CFI(K4)-twist",
+   "tier": "hard",
+   "n": 40,
+   "status": "ok",
+   "time": 14.871,
+   "note": "",
+   "stats": {
+    "solve": 3214,
+    "cont": 2564,
+    "giant_johnson": 1,
+    "giant_step": 162,
+    "branch": 282,
+    "giant_natural": 161,
+    "enum_cosets": 164,
+    "enumerate": 1081,
+    "memo_hit": 2496,
+    "pruned": 2044,
+    "one_offbase": 86
+   }
+  },
+  {
+   "name": "rand40",
+   "tier": "hard",
+   "n": 40,
+   "status": "ok",
+   "time": 1.914,
+   "note": "|Aut|=1",
+   "stats": {
+    "solve": 4,
+    "cont": 3,
+    "giant_johnson": 1,
+    "giant_step": 1,
+    "enumerate": 1
+   }
+  }
+ ]
+}
