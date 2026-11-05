@@ -22,40 +22,46 @@ We keep
 starting from the trivial group on L_0 = (u0, u1) (colors of u0, u1 must
 match). One step r -> r + 1:
 
- (a) Down-degrees. delta(v) = |N(v) & L_{r+1}| for v in L_r. Every
-     isomorphism of X_{r+1} preserves it, so G_r and sigma_r are replaced by
-     the solution of the string problem "delta under G_r" (positions L_r).
-     Call the result G' sigma'. Note delta(v) <= d - 1: v has a neighbour in
-     L_{r-1} (or, for r = 0, the other end of f).
- (b) Down-edges. E = {(v, k) : v in L_r, k < delta(v)}, where (v, k) stands
-     for the edge from v to its k-th neighbour in L_{r+1} in X, and for the
-     edge from sigma'(v) to its k-th neighbour in L_{r+1}(Y) on the Y side.
-     The group
+ (1) Attachment sets. For w in L_{r+1}, up(w) = N(w) & L_r (nonempty). The
+     vertices of L_{r+1} with the same up-set S form a twin class T_S;
+     |T_S| <= d - 1, since every v in L_r has at most d - 1 neighbours in
+     L_{r+1} (v has a neighbour in L_{r-1}, or for r = 0 the other end of f).
+     Positions: the G_r-orbits of the up-sets of X (G_r acts on subsets of
+     L_r). The string: x(S) = the sorted colors of T_S (empty if no vertex of
+     X has up-set S). The target's up-sets are pulled back by sigma_r; one
+     outside the positions refutes the step (x is 0 on that whole orbit).
+     Solver.solve on the action of G_r on the positions (an ActionHom), lifted
+     back, gives G'' sigma'' (all of Iso is in it: an isomorphism of X_{r+1}
+     maps T_S onto the twin class of S^g, colors included).
+ (2) Twin classes and the edges inside L_{r+1}. With rho: G'' -> Sym(up-sets
+     of X), let H act on L_{r+1} by
 
-         H = tau(G') x| prod_v Sym({v} x [delta(v)])      (acting on E)
+         H = rho(G'') x| prod_{S, colors c} Sym(T_S & c),
 
-     (tau = restriction of G' to the vertices with delta > 0; the first factor
-     acts by (v, k) -> (v^g, k)) has composition factors among those of G'
-     and of Sym(delta(v)), delta(v) <= d - 1. The string on singletons and
-     unordered pairs of E: a singleton gets the color of the upper end of its
-     edge, a pair {a, b} gets 1 if a and b have the same upper end, 2 if the
-     upper ends are adjacent, 0 otherwise. The pair positions are the
-     H-orbits of the pairs that are nonzero for X (a pair that is nonzero for
-     Y but lies outside them refutes the step: H cannot map x's zeros onto
-     it). Then Solver.solve gives Iso_H(x, y) = Aut_H(x) h0.
+     the first factor mapping the k-th member of T_S (by color, then index)
+     to the k-th member of T_(S^g). Its composition factors are those of G''
+     and of Sym(|T_S|), |T_S| <= d - 1. psi maps the k-th member of T_S to
+     the k-th member of the target's class of sigma''(S) (colors agree after
+     (1)). If L_{r+1} has inner edges, the string on the H-orbits of the
+     inner edges of X (as pairs) is 1 on those edges and 0 elsewhere, the
+     target's is the adjacency of psi(.); Solver.solve gives Iso_H(x, y) =
+     Aut_H(x) h0 (an inner edge of the target outside the positions refutes
+     the step). Without inner edges, Aut_H(x) = H and h0 = 1 (the target
+     must have none either).
 
- Lifting. h in Aut_H(x) induces p = the map of lower ends on the vertices with
- delta > 0, which lies in tau(G'); let g = tau.lift(p). Define g+ = g on
- X_r, and w_a -> w_(h(a)) on L_{r+1} (w_a = upper end of a). It is well
- defined (x marks equal upper ends), maps L_r-L_{r+1} edges onto edges
- (h(v, k) = (g(v), k')), edges inside L_{r+1} onto edges and colors onto
- colors (x), so g+ is in G_{r+1}. Conversely every element of G_{r+1}
- restricts to G' and acts on the down-edges as an element of Aut_H(x); the
- kernel of that action is ker(tau) (fixed on L_{r+1}). Hence
-     G_{r+1} = < g+ (h in gens of Aut_H(x)), ker(tau) >,
- so G_{r+1} lies in the class of groups with composition factors in
- Sym(d - 1) by induction. sigma_{r+1} = (g0 then sigma') on X_r and
- w_a -> (upper end of h0(a) in Y) on L_{r+1}, with g0 = tau.lift(p(h0)).
+ Lifting. h in Aut_H(x) induces a permutation of the up-sets of X, which is
+ rho(g) for some g in G''. g+ = g on X_r and h on L_{r+1} is in G_{r+1}: a
+ member w of T_S goes to a member of T_(S^g), so the L_r-L_{r+1} edges and
+ the colors are kept, and the inner edges by x. Conversely an element of
+ G_{r+1} restricts to some g in G'' and to an element of Aut_H(x) on L_{r+1};
+ those that fix L_{r+1} pointwise are exactly ker(rho) (fixed on L_{r+1}).
+ Hence
+     G_{r+1} = < g+ (h in gens of Aut_H(x)), ker(rho) >,
+ and G_{r+1} lies in the class of groups with composition factors in
+ Sym(d - 1) by induction. sigma_{r+1} = (g0 then sigma'') on X_r and
+ w -> psi(h0(w)) on L_{r+1}, with rho(g0) = the permutation induced by h0.
+ (This is Luks's step: Helfgott's Exercise B.3 (c) uses all <= d-subsets of
+ L_r as positions; here only the orbits of the occurring ones.)
 
 After the last layer G_R = Aut_f(X) and sigma_R: X -> Y maps f to f'.
 
@@ -81,7 +87,7 @@ from collections import Counter
 from itertools import combinations
 
 from .perm import mul, identity, sym_gens
-from .group import PermGroup, RestrictionHom
+from .group import PermGroup, ActionHom
 from .solver import Solver
 
 
@@ -170,10 +176,11 @@ def _induced(g, part):
 class _Rooted:
     """BFS layers of a connected graph from the oriented edge (u0, u1).
     Vertices are renumbered by layers: order[i] is the vertex of index i,
-    start[r] the first index of layer r (start[-1] = n). down[i] lists the
-    indices of the neighbours of index i in the next layer, adj[i] all
-    neighbour indices, col[i] the color."""
-    __slots__ = ("order", "start", "down", "adj", "col")
+    start[r] the first index of layer r (start[-1] = n). up[i] is the set of
+    indices of the neighbours of index i in the previous layer, adj[i] the set
+    of all neighbour indices, col[i] the color. The attachment classes of
+    layer r + 1 (index sets up[t] -> sorted members) are cached per r."""
+    __slots__ = ("order", "start", "up", "adj", "col", "_att", "_inner")
 
     def __init__(self, g, u0, u1):
         n = g.n
@@ -202,13 +209,37 @@ class _Rooted:
         self.order, self.start = order, start
         self.adj = [frozenset(pos[w] for w in g.nbr[v]) for v in order]
         self.col = [g.col[v] for v in order]
-        self.down = [sorted(pos[w] for w in g.nbr[v] if dist[w] == dist[v] + 1) for v in order]
+        self.up = [frozenset(pos[w] for w in g.nbr[v] if dist[w] == dist[v] - 1) for v in order]
+        self._att = {}
+        self._inner = {}
+
+    def attachments(self, r):
+        """{up-set: members of layer r + 1 with that up-set, sorted by (color,
+        index)} (the twin classes over layer r)."""
+        a = self._att.get(r)
+        if a is None:
+            a = {}
+            for t in range(self.start[r + 1], self.start[r + 2]):
+                a.setdefault(self.up[t], []).append(t)
+            col = self.col
+            for ts in a.values():
+                ts.sort(key=lambda t: (col[t], t))
+            self._att[r] = a
+        return a
+
+    def inner_edges(self, r):
+        """The number of edges inside layer r + 1."""
+        e = self._inner.get(r)
+        if e is None:
+            b, c = self.start[r + 1], self.start[r + 2]
+            e = self._inner[r] = sum(1 for t in range(b, c) for u in self.adj[t] if t < u < c)
+        return e
 
 
-class _Hat:
-    """The data of step (b) for one layer of a chain (X side only)."""
-    __slots__ = ("E", "lower", "upper", "eid", "lplus", "lpos", "first", "ups",
-                 "pidx", "pairs", "group", "M", "x2", "tau", "kernel_ext", "b", "c")
+class _Layer:
+    """The X-side data of one step (see _Chain.step)."""
+    __slots__ = ("r", "a", "b", "c", "A", "aidx", "T", "slot", "S", "sidx", "xS", "phi1", "P1",
+                 "Gpp", "rho", "gens2", "order2", "H2", "x2", "pairs", "pidx", "kernel_ext")
 
 
 class _Chain:
@@ -218,11 +249,17 @@ class _Chain:
     def __init__(self, X, solver):
         self.X, self.solver = X, solver
         self.G = [PermGroup(2)]         # G[r] = G_r on range(start[r + 1])
-        self.Gp = []                    # Gp[r] = G' of step r (after (a))
-        self.hat = []                   # hat[r] = _Hat of step r
+        self.L = []                     # L[r] = _Layer of step r
+        self.codes = {(): 0}            # color multisets of twin classes -> ints
 
     def steps(self):
         return len(self.X.start) - 2
+
+    def code(self, t):
+        c = self.codes.get(t)
+        if c is None:
+            c = self.codes[t] = len(self.codes)
+        return c
 
     def run(self, Z):
         """sigma (index map X -> Z, an isomorphism of the rooted graphs) or
@@ -241,167 +278,203 @@ class _Chain:
                 return None
         return sigma
 
-    def step(self, r, Z, sigma):
-        X, S = self.X, self.solver
-        a, b = X.start[r], X.start[r + 1]
+    # -- phase 1: attachment sets under G_r ---------------------------------------
+    def layer1(self, r):
+        if len(self.L) > r:
+            return self.L[r]
+        X, st = self.X, self.solver.stats
         G = self.G[r]
-        # (a) down-degrees
-        xd = tuple([-1] * a + [len(X.down[i]) for i in range(a, b)])
-        yd = tuple([-1] * a + [len(Z.down[sigma[i]]) for i in range(a, b)])
-        res = S.solve(G, range(a, b), xd, yd)
-        if res is None:
-            return None
-        if len(self.Gp) == r:
-            if list(res.gens) == list(G.gens):
-                Gp = G
-            else:
-                Gp = PermGroup(b, res.gens, ambient_base=G.short_base())
-            self.Gp.append(Gp)
-        sigma = mul(res.rep, sigma)
-        # (b) down-edges
-        if len(self.hat) == r:
-            self.hat.append(self.build_hat(r))
-        H = self.hat[r]
-        yz = self.ycodes(H, Z, sigma)
-        if yz is None:
-            S.stats["luks_outside"] += 1
-            return None
-        y2, upY = yz
-        res = S.solve(H.group, range(H.M), H.x2, y2)
-        if res is None:
-            return None
-        if len(self.G) == r + 1:
-            gens = [self.extend(H, h) for h in res.gens] + H.kernel_ext
-            self.G.append(PermGroup(H.c, gens))
-        # the new isomorphism
-        h0 = res.rep
-        g0 = H.tau.lift(self.lower_map(H, h0))
-        new = list(mul(g0, sigma))
-        for es in H.ups:
-            new.append(upY[h0[es[0]]])
-        return tuple(new)
+        L = _Layer()
+        L.r, L.Gpp = r, None
+        L.a, L.b, L.c = X.start[r], X.start[r + 1], X.start[r + 2]
+        att = X.attachments(r)
+        L.A = list(att)                 # the attachment sets of X (in order of t)
+        L.aidx = {S: s for s, S in enumerate(L.A)}
+        L.T = att
+        L.slot = {}                     # t -> (index of its set, rank in its class)
+        for s, S in enumerate(L.A):
+            for k, t in enumerate(att[S]):
+                L.slot[t] = (s, k)
+        # positions: the G_r-orbits of the attachment sets of X
+        S_list = list(L.A)
+        sidx = dict(L.aidx)
+        for S in S_list:                # (the list grows: a BFS over the orbits)
+            for g in G.gens:
+                S2 = frozenset(g[i] for i in S)
+                if S2 not in sidx:
+                    sidx[S2] = len(S_list)
+                    S_list.append(S2)
+        L.S, L.sidx = S_list, sidx
+        xS = [0] * len(S_list)
+        for s, S in enumerate(L.A):
+            xS[s] = self.code(tuple(X.col[t] for t in att[S]))
+        L.xS = tuple(xS)
+        if G.gens:
+            m = len(S_list)
+            L.phi1 = ActionHom(G, m, lambda g: tuple(sidx[frozenset(g[i] for i in S)] for S in S_list))
+            L.P1 = L.phi1.image_group()
+        else:
+            L.phi1 = L.P1 = None
+        st["luks_phase1_max_degree"] = max(st["luks_phase1_max_degree"], len(S_list))
+        self.L.append(L)
+        return L
 
-    def build_hat(self, r):
-        X, S = self.X, self.solver
-        st = S.stats
-        Gp = self.Gp[r]
-        a, b, c = X.start[r], X.start[r + 1], X.start[r + 2]
-        H = _Hat()
-        H.b, H.c = b, c
-        H.lplus = [i for i in range(a, b) if X.down[i]]
-        H.lpos = {v: t for t, v in enumerate(H.lplus)}
-        E, eid = [], {}
-        for i in H.lplus:
-            for k in range(len(X.down[i])):
-                eid[(i, k)] = len(E)
-                E.append((i, k))
-        nE = len(E)
-        H.E, H.eid = E, eid
-        H.lower = [i for i, _ in E]
-        H.upper = [X.down[i][k] for i, k in E]
-        H.first = [eid[(i, 0)] for i in H.lplus]
-        ups = [[] for _ in range(b, c)]
-        for e, t in enumerate(H.upper):
-            ups[t - b].append(e)
-        H.ups = ups
-        # generators of H on E
-        idE = identity(nE)
-        gensE = []
-        for g in Gp.gens:
-            h = tuple(eid[(g[i], k)] for i, k in E)
-            if h != idE:
-                gensE.append(h)
-        dmax = 0
-        for i in H.lplus:
-            dl = len(X.down[i])
-            dmax = max(dmax, dl)
-            if dl >= 2:
-                gensE.extend(sym_gens(nE, [eid[(i, k)] for k in range(dl)]))
-        H.tau = RestrictionHom(Gp, H.lplus)
-        order = H.tau.image_order() * math.prod(math.factorial(len(X.down[i])) for i in H.lplus)
-        # the pairs that are nonzero for X, and their H-orbits
-        info = {}
-        for es in ups:
-            for p, q in combinations(es, 2):
-                info[(p, q)] = 1
+    # -- phase 2: twin classes and edges inside layer r + 1 ---------------------------
+    def layer2(self, L):
+        X, st = self.X, self.solver.stats
+        Gpp, b, c = L.Gpp, L.b, L.c
+        nV, nA = c - b, len(L.A)
+        A, aidx, T, slot = L.A, L.aidx, L.T, L.slot
+        if Gpp.gens:
+            L.rho = ActionHom(Gpp, nA, lambda g: tuple(aidx[frozenset(g[i] for i in S)] for S in A))
+            rho_order = L.rho.image_order()
+        else:
+            L.rho, rho_order = None, 1
+        gens = []
+        idV = identity(nV)
+        if L.rho is not None:
+            for g in Gpp.gens:
+                p = L.rho.image_of(g)
+                h = tuple(T[A[p[slot[t][0]]]][slot[t][1]] - b for t in range(b, c))
+                if h != idV:
+                    gens.append(h)
+        order = rho_order
+        col = X.col
+        for S in A:                     # Sym of each color class of each twin class
+            ts = T[S]
+            i = 0
+            while i < len(ts):
+                j = i
+                while j < len(ts) and col[ts[j]] == col[ts[i]]:
+                    j += 1
+                if j - i >= 2:
+                    gens.extend(sym_gens(nV, [t - b for t in ts[i:j]]))
+                    order *= math.factorial(j - i)
+                i = j
+        L.gens2, L.order2 = gens, order
+        st["luks_twin_max"] = max([st["luks_twin_max"]] + [len(ts) for ts in T.values()])
+        st["luks_phase2_max_log2_order"] = max(st["luks_phase2_max_log2_order"],
+                                               round(math.log2(order)))
+        kern = L.rho.kernel().gens if L.rho is not None else []
+        L.kernel_ext = [tuple(k) + tuple(range(b, c)) for k in kern]
+        L.H2 = None
+        if not X.inner_edges(L.r):
+            return
+        # pairs: the orbits of the edges inside layer r + 1 (as index pairs of
+        # the layer's vertices) under the group generated by gens
+        pairs, pidx = [], {}
         for t in range(b, c):
-            for t2 in X.adj[t]:
-                if t < t2 < c:
-                    for p in ups[t - b]:
-                        for q in ups[t2 - b]:
-                            info[(p, q) if p < q else (q, p)] = 2
-        pairs = list(info)
-        pidx = {pq: nE + j for j, pq in enumerate(pairs)}
-        for p, q in pairs:              # (the list grows: a BFS over the orbits)
-            for h in gensE:
+            for u in X.adj[t]:
+                if t < u < c:
+                    pidx[(t - b, u - b)] = nV + len(pairs)
+                    pairs.append((t - b, u - b))
+        ne = len(pairs)
+        for p, q in pairs:
+            for h in gens:
                 hp, hq = h[p], h[q]
                 pq = (hp, hq) if hp < hq else (hq, hp)
                 if pq not in pidx:
-                    pidx[pq] = nE + len(pairs)
+                    pidx[pq] = nV + len(pairs)
                     pairs.append(pq)
-        H.pairs, H.pidx = pairs, pidx
-        H.M = nE + len(pairs)
+        L.pairs, L.pidx = pairs, pidx
+        M = nV + len(pairs)
         gensD = []
-        for h in gensE:
+        for h in gens:
             img = list(h)
             for p, q in pairs:
                 hp, hq = h[p], h[q]
                 img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
             gensD.append(tuple(img))
-        H.group = PermGroup(H.M, gensD, order=order)
-        H.x2 = tuple([3 + X.col[t] for t in H.upper] + [info.get(pq, 0) for pq in pairs])
-        H.kernel_ext = [tuple(k) + tuple(range(b, c)) for k in H.tau.kernel().gens]
-        st["luks_hat_max_degree"] = max(st["luks_hat_max_degree"], H.M)
-        st["luks_hat_max_log2_order"] = max(st["luks_hat_max_log2_order"],
-                                            round(math.log2(order)) if order > 1 else 0)
-        st["luks_delta_max"] = max(st["luks_delta_max"], dmax)
-        return H
+        L.H2 = PermGroup(M, gensD, order=order)
+        L.x2 = tuple([0] * nV + [1] * ne + [0] * (len(pairs) - ne))
+        st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], M)
 
-    def ycodes(self, H, Z, sigma):
-        """The string of the target on H's positions (and the upper ends of
-        the target's down-edges), or None when a pair that is nonzero for
-        the target lies outside the positions (then no element of H maps
-        x onto it: x is 0 on every pair outside them)."""
-        b = H.b
-        upY = [Z.down[sigma[i]][k] for i, k in H.E]
-        nE = len(upY)
-        ups = {}
-        for e, t in enumerate(upY):
-            ups.setdefault(t, []).append(e)
-        vals = {}
-        pidx = H.pidx
-        for es in ups.values():
-            for p, q in combinations(es, 2):
-                j = pidx.get((p, q) if p < q else (q, p))
-                if j is None:
-                    return None
-                vals[j] = 1
-        c = H.c
-        for t, es in ups.items():
-            for t2 in Z.adj[t]:
-                if t < t2 < c and t2 >= b:
-                    for p in es:
-                        for q in ups[t2]:
-                            j = pidx.get((p, q) if p < q else (q, p))
-                            if j is None:
-                                return None
-                            vals[j] = 2
-        y2 = [3 + Z.col[t] for t in upY] + [0] * (H.M - nE)
-        for j, v in vals.items():
-            y2[j] = v
-        return tuple(y2), upY
+    def step(self, r, Z, sigma):
+        X, S = self.X, self.solver
+        L = self.layer1(r)
+        b, c = L.b, L.c
+        # (1) attachment sets of Z, pulled back to X's indices by sigma
+        sinv = [0] * b
+        for i, j in enumerate(sigma):
+            sinv[j] = i
+        attZ = Z.attachments(r)
+        yS = [0] * len(L.S)
+        for SZ, ts in attZ.items():
+            s = L.sidx.get(frozenset(sinv[j] for j in SZ))
+            if s is None:               # x is 0 on the whole G_r-orbit closure
+                return None
+            yS[s] = self.code(tuple(Z.col[t] for t in ts))
+        yS = tuple(yS)
+        first = L.Gpp is None
+        if L.P1 is None:
+            if yS != L.xS:
+                return None
+            rep = None
+            if first:
+                L.Gpp = self.G[r]
+        else:
+            res = S.solve(L.P1, range(len(L.S)), L.xS, yS)
+            if res is None:
+                return None
+            if first:
+                phi = L.phi1
+                L.Gpp = PermGroup(b, [phi.lift(h) for h in res.gens] + phi.kernel().gens,
+                                  ambient_base=self.G[r].short_base())
+            rep = L.phi1.lift(res.rep)
+        if rep is not None:
+            sigma = mul(rep, sigma)
+        if first:
+            self.layer2(L)
+        # (2) psi: X's twin classes onto Z's (by rank: colors agree after (1))
+        psi = [0] * (c - b)
+        for Sx, ts in L.T.items():
+            tz = attZ.get(frozenset(sigma[i] for i in Sx))
+            if tz is None or len(tz) != len(ts):
+                raise AssertionError("phase 1 left twin classes unmatched")
+            for t, u in zip(ts, tz):
+                psi[t - b] = u
+        if L.H2 is None:
+            if Z.inner_edges(r):
+                return None
+            h0, auts = None, L.gens2
+        else:
+            pairs, nV = L.pairs, c - b
+            y2 = [0] * len(L.x2)
+            ones = 0
+            for j, (p, q) in enumerate(pairs):
+                if psi[q] in Z.adj[psi[p]]:
+                    y2[nV + j] = 1
+                    ones += 1
+            if ones != Z.inner_edges(r):  # an edge of Z outside the positions
+                return None
+            res = S.solve(L.H2, range(len(y2)), L.x2, tuple(y2))
+            if res is None:
+                return None
+            h0, auts = res.rep, res.gens
+        if len(self.G) == r + 1:
+            G1 = PermGroup(c, [self.extend(L, h) for h in auts] + L.kernel_ext)
+            self.G.append(G1)
+            st = S.stats
+            st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"],
+                                                  round(math.log2(G1.order())))
+        if h0 is None:
+            return tuple(sigma) + tuple(psi)
+        g0 = self.lift2(L, h0)
+        return tuple(mul(g0, sigma)) + tuple(psi[h0[t - b]] for t in range(b, c))
 
-    def lower_map(self, H, h):
-        """The permutation of the lower ends (in tau's numbering) induced by
-        h in H."""
-        lower, lpos = H.lower, H.lpos
-        return tuple(lpos[lower[h[e]]] for e in H.first)
+    def lift2(self, L, h):
+        """g in G'' inducing on the attachment sets of X what h (a permutation
+        of layer r + 1, in the phase-2 group) induces."""
+        if L.rho is None:
+            return identity(L.b)
+        b, T, A, slot = L.b, L.T, L.A, L.slot
+        p = tuple(slot[b + h[T[S][0] - b]][0] for S in A)
+        return L.rho.lift(p)
 
-    def extend(self, H, h):
-        """g+ for h in Aut_H(x): an element of G_{r+1} (see the module
-        docstring)."""
-        g = H.tau.lift(self.lower_map(H, h))
-        return tuple(g) + tuple(H.upper[h[es[0]]] for es in H.ups)
+    def extend(self, L, h):
+        """g+ for h in Aut_H2(x2): an element of G_{r+1}."""
+        b = L.b
+        return tuple(self.lift2(L, h)) + tuple(b + h[t] for t in range(L.c - b))
 
     def aut(self):
         """Generators of G_R = Aut_f(X) as index permutations (the chain must
@@ -415,8 +488,8 @@ class _Connected:
     """A connected graph with its oriented-edge invariants; with aut=True also
     Aut(X), the orbits of Aut(X) on oriented edges and the chains used."""
 
-    def __init__(self, g, solver, aut=True):
-        self.g, self.solver = g, solver
+    def __init__(self, g, solver, aut=True, root="class"):
+        self.g, self.solver, self.root = g, solver, root
         n = g.n
         self.edges = [(u, v) for u in range(n) for v in g.nbr[u]]
         self.eidx = {e: i for i, e in enumerate(self.edges)}
@@ -466,7 +539,12 @@ class _Connected:
 
     def compute_aut(self):
         cls = Counter(self.invs)
-        f0 = min(range(len(self.edges)), key=lambda i: (cls[self.invs[i]], i))
+        if self.root == "degree":       # an edge between two vertices of maximum degree sum
+            deg = [len(x) for x in self.g.nbr]
+            f0 = min(range(len(self.edges)), key=lambda i: (
+                -deg[self.edges[i][0]] - deg[self.edges[i][1]], cls[self.invs[i]], i))
+        else:                           # the smallest invariant class (fewest tests)
+            f0 = min(range(len(self.edges)), key=lambda i: (cls[self.invs[i]], i))
         self.f0 = f0
         ch = self.chain(f0)
         X = ch.X
@@ -539,14 +617,17 @@ def _invert(p):
     return r
 
 
-def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True):
+def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, root="class"):
     """X, Y: adjacency matrices of undirected loopless graphs (any degree; the
     groups have composition factors in Sym(d - 1) for maximum degree d).
     Returns None if not isomorphic, else (sigma, aut_gens): sigma[i] is the
     image of vertex i (an isomorphism X -> Y) and aut_gens generate Aut(X)
     (vertex colors respected). solver: a Solver (default
     Solver(cameron_no_enum=True)); its stats count the reduction's work
-    (luks_*)."""
+    (luks_*). root: how the root edge f0 of each component is chosen,
+    "class" (smallest invariant class, the fewest tests) or "degree" (an edge
+    of maximum degree sum, which makes large twin classes appear early); it
+    only changes the running time and which generators are returned."""
     n = len(X)
     if len(Y) != n:
         return None
@@ -585,7 +666,7 @@ def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True):
                     C[1].append((part, t))
                     break
         else:
-            rep = _Connected(sub, solver) if len(part) > 1 else _Single(sub)
+            rep = _Connected(sub, solver, root=root) if len(part) > 1 else _Single(sub)
             classes.append([rep, [(part, tuple(range(len(part))))], k])
     matches = [[] for _ in classes]
     for part in py:

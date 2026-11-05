@@ -145,7 +145,7 @@ def test_random_regular(d, sizes):
             for S in solvers():
                 check(A, B, bounded_iso(A, B, solver=S))
                 check(A, C, bounded_iso(A, C, solver=S))
-                assert S.stats["luks_delta_max"] <= d - 1
+                assert 1 <= S.stats["luks_twin_max"] <= d - 1
 
 
 def test_trees():
@@ -236,6 +236,22 @@ def test_against_graph_iso():
         assert PermGroup(n, gens).order() == PermGroup(n, ref[1]).order()
 
 
+def test_root_degree():
+    """root="degree" (another root edge per component) is exact too."""
+    rng = random.Random(7)
+    for _ in range(12):
+        n = rng.randint(4, 11)
+        A = random_tree(n, rng) if rng.random() < 0.5 else random_regular(3, 2 * (n // 2), rng)
+        n = len(A)
+        B = shuffled(A, rng)
+        C = random_tree(n, rng) if rng.random() < 0.5 else random_regular(3, n - n % 2, rng)
+        for flag in (False, True):
+            S = Solver(cameron_no_enum=flag)
+            check(A, B, bounded_iso(A, B, solver=S, root="degree"))
+            if len(C) == n:
+                check(A, C, bounded_iso(A, C, solver=S, root="degree"))
+
+
 def test_rejects_non_simple():
     with pytest.raises(NotSimple):
         bounded_iso([[1, 0], [0, 0]], [[1, 0], [0, 0]])
@@ -289,6 +305,34 @@ def test_cameron_no_enum(m, k, alt):
                     assert S.stats["alt_section_max"] >= m
                 else:
                     assert S.stats["enumerate"] > 0
+
+
+def test_cameron_in_pipeline():
+    """Johnson gadgets (bench/bounded.py, jgad) with the root on a hub edge:
+    the up-sets of the grandchildren are the 2-sets of a twin class of 5, so
+    the solver meets Sym(5) on 10 points (order 120 <= enum_limit). Without
+    (M) it is enumerated, with (M) it takes the Johnson path; both exact."""
+    from bench.bounded import jgad
+    rng = random.Random(11)
+    for twist in (False, True):
+        A = jgad(4, random.Random(5))
+        B = shuffled(jgad(4, random.Random(5), twist=twist), rng)
+        n = len(A)
+        ref = graph_iso(A, B, solver=Solver(certificates=False))
+        for flag in (False, True):
+            S = Solver(cameron_no_enum=flag, certificates=False)
+            res = bounded_iso(A, B, solver=S, root="degree")
+            assert (res is None) == (ref is None)
+            if res is not None:
+                sigma, gens = res
+                assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+                assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
+                assert PermGroup(n, gens).order() == PermGroup(n, ref[1]).order()
+            if flag:
+                assert S.stats["cameron_small_johnson"] > 0
+                assert S.stats["enum_quotient_max_order"] < 60
+            else:
+                assert S.stats["enum_quotient_max_order"] == 120
 
 
 def test_cameron_flag_keeps_small_solvable():
