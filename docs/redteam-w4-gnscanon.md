@@ -372,7 +372,7 @@ I looked for a hidden failure:
 
 None found. Why the problem stayed open:
 1. **The obvious route really fails.** BC replaces the pairwise structure by R(x) from M(T,x) (Thm 12.1,
-   B L766–775). R(x) is trivial on asymmetric T (Cor. 12.3, B L794), so Claim 12.4 is needed.
+   B L764–775). R(x) is trivial on asymmetric T (Cor. 12.3, B L794), so Claim 12.4 is needed.
    * Claim 12.4 uses Cor. 13.3 (B L876–894, needs t ≥ 2 log₂ n) and Prop. 14.2 (B L906–940, same
      threshold, transitivity, Δ(T) ≠ Ω).
    * In GNS t = Θ(log d) and t < k/10 ≤ d/10. If d < 20 log₂ n the test sets cannot even have size
