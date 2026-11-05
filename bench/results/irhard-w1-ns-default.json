@@ -1,0 +1,214 @@
+{
+ "label": "w1-ns-default",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "ns4",
+   "family": "ns",
+   "size": 4,
+   "n": 88,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 192,
+   "cert": "lemma",
+   "gen_time": 0.01,
+   "default": {
+    "status": "ok",
+    "time": 0.078,
+    "note": "",
+    "iso": true,
+    "stats": {}
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns4-twist",
+   "family": "ns",
+   "size": 4,
+   "n": 88,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 192,
+   "cert": "lemma",
+   "gen_time": 0.01,
+   "default": {
+    "status": "ok",
+    "time": 0.042,
+    "note": "",
+    "iso": false,
+    "stats": {}
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns8",
+   "family": "ns",
+   "size": 8,
+   "n": 176,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 384,
+   "cert": "lemma",
+   "gen_time": 0.02,
+   "default": {
+    "status": "ok",
+    "time": 0.53,
+    "note": "",
+    "iso": true,
+    "stats": {}
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns8-twist",
+   "family": "ns",
+   "size": 8,
+   "n": 176,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 384,
+   "cert": "lemma",
+   "gen_time": 0.02,
+   "default": {
+    "status": "ok",
+    "time": 0.294,
+    "note": "",
+    "iso": false,
+    "stats": {}
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns12",
+   "family": "ns",
+   "size": 12,
+   "n": 264,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 576,
+   "cert": "lemma",
+   "gen_time": 0.02,
+   "default": {
+    "status": "ok",
+    "time": 1.32,
+    "note": "",
+    "iso": true,
+    "stats": {}
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns12-twist",
+   "family": "ns",
+   "size": 12,
+   "n": 264,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 576,
+   "cert": "lemma",
+   "gen_time": 0.02,
+   "default": {
+    "status": "ok",
+    "time": 0.679,
+    "note": "",
+    "iso": false,
+    "stats": {}
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "gen_time": 0.03,
+   "default": {
+    "status": "ok",
+    "time": 12.582,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "enumerate": 247,
+     "solve": 1887,
+     "cont": 1101
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "gen_time": 0.03,
+   "default": {
+    "status": "ok",
+    "time": 10.833,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "enumerate": 244,
+     "solve": 1884,
+     "cont": 1098
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns24",
+   "family": "ns",
+   "size": 24,
+   "n": 528,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1152,
+   "cert": "lemma",
+   "gen_time": 0.09,
+   "default": {
+    "status": "ok",
+    "time": 26.635,
+    "note": "",
+    "iso": true,
+    "stats": {}
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns24-twist",
+   "family": "ns",
+   "size": 24,
+   "n": 528,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1152,
+   "cert": "lemma",
+   "gen_time": 0.09,
+   "default": {
+    "status": "ok",
+    "time": 13.456,
+    "note": "",
+    "iso": false,
+    "stats": {}
+   },
+   "iso": false,
+   "aut": 1
+  }
+ ]
+}

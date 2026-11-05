@@ -1,0 +1,328 @@
+{
+ "label": "w1-nst",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "nst8",
+   "family": "nst",
+   "size": 8,
+   "n": 96,
+   "seed": 0,
+   "maxdeg": 19,
+   "edges": 784,
+   "cert": "flip",
+   "gen_time": 0.01,
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.007,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.007,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.007,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.068,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 93,
+     "luks_ea_layers": 35,
+     "luks_ea_fallback": 3,
+     "luks_layers_max": 15,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 32,
+     "luks_phase2_max_degree": 106,
+     "luks_phase2_max_log2_order": 4,
+     "luks_group_max_log2_order": 6,
+     "luks_twin_max": 2,
+     "enumerate": 9,
+     "solve": 28,
+     "cont": 21
+    }
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst16",
+   "family": "nst",
+   "size": 16,
+   "n": 192,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 1572,
+   "cert": "flip",
+   "gen_time": 0.02,
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.012,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.012,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.023,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.162,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 208,
+     "luks_ea_layers": 102,
+     "luks_layers_max": 26,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 28,
+     "luks_phase2_max_degree": 114,
+     "luks_phase2_max_log2_order": 7,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst24",
+   "family": "nst",
+   "size": 24,
+   "n": 288,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 2352,
+   "cert": "flip",
+   "gen_time": 0.03,
+   "dnd": {
+    "status": "ok",
+    "time": 0.06,
+    "wall": 0.068,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.018,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.16,
+    "wall": 0.16,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.218,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 174,
+     "luks_ea_layers": 58,
+     "luks_layers_max": 29,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 32,
+     "luks_phase2_max_degree": 120,
+     "luks_phase2_max_log2_order": 7,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst32",
+   "family": "nst",
+   "size": 32,
+   "n": 384,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 3156,
+   "cert": "flip",
+   "gen_time": 0.04,
+   "dnd": {
+    "status": "ok",
+    "time": 0.23,
+    "wall": 0.238,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.029,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 200.09
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.254,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 191,
+     "luks_ea_layers": 36,
+     "luks_ea_fallback": 2,
+     "luks_layers_max": 40,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 60,
+     "luks_phase2_max_degree": 214,
+     "luks_phase2_max_log2_order": 8,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 2,
+     "enumerate": 8,
+     "solve": 40,
+     "cont": 30
+    }
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst48",
+   "family": "nst",
+   "size": 48,
+   "n": 576,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 4696,
+   "cert": "flip",
+   "gen_time": 0.07,
+   "dnd": {
+    "status": "ok",
+    "time": 2.45,
+    "wall": 2.476,
+    "aut": 1.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.33,
+    "wall": 0.345,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 200.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.684,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 270,
+     "luks_ea_layers": 28,
+     "luks_ea_fallback": 2,
+     "luks_layers_max": 55,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 68,
+     "luks_phase2_max_degree": 218,
+     "luks_phase2_max_log2_order": 13,
+     "luks_group_max_log2_order": 18,
+     "luks_twin_max": 4,
+     "enumerate": 42,
+     "solve": 332,
+     "cont": 238
+    }
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst64",
+   "family": "nst",
+   "size": 64,
+   "n": 768,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 6244,
+   "cert": "flip",
+   "gen_time": 0.1,
+   "dnd": {
+    "status": "timeout",
+    "time": 200.1
+   },
+   "dns": {
+    "status": "ok",
+    "time": 78.92,
+    "wall": 79.408,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 200.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 4.475,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 410,
+     "luks_ea_layers": 34,
+     "luks_ea_fallback": 12,
+     "luks_layers_max": 69,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 128,
+     "luks_phase2_max_degree": 418,
+     "luks_phase2_max_log2_order": 19,
+     "luks_group_max_log2_order": 28,
+     "luks_twin_max": 2,
+     "enumerate": 109,
+     "solve": 1198,
+     "cont": 822
+    }
+   },
+   "iso": true,
+   "aut": 1.0
+  }
+ ]
+}

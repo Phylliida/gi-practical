@@ -1,0 +1,17 @@
+{"k": 16, "n": 352, "alg": "As", "status": "ok", "cpu": 0.01, "nodes": 569, "maxlev": "6", "grpsize": "1", "wall": 0.02, "line": ["352 orbits; grpsize=1; 0 gens; 569 nodes (395 bad leaves); maxlev=6"]}
+{"k": 16, "n": 352, "alg": "At", "status": "ok", "cpu": 0.01, "nodes": 256, "maxlev": "4", "grpsize": "1", "wall": 0.02, "line": [" Level 1:  132 cells; 16 singletons; target cell: 256; 352 orbits; 256 nodes (4 kept); 8 updates;"]}
+{"k": 16, "n": 352, "alg": "Ad", "status": "ok", "cpu": 0.09, "nodes": 313, "maxlev": "5", "grpsize": "1", "wall": 0.09, "line": ["352 orbits; grpsize=1; 0 gens; 313 nodes (279 bad leaves); maxlev=5"]}
+{"k": 32, "n": 704, "alg": "As", "status": "ok", "cpu": 0.06, "nodes": 3241, "maxlev": "8", "grpsize": "1", "wall": 0.07, "line": ["704 orbits; grpsize=1; 0 gens; 3241 nodes (1800 bad leaves); maxlev=8"]}
+{"k": 32, "n": 704, "alg": "At", "status": "ok", "cpu": 0.02, "nodes": 512, "maxlev": "5", "grpsize": "1", "wall": 0.03, "line": [" Level 1:  254 cells; 28 singletons; target cell: 512; 704 orbits; 512 nodes (4 kept); 9 updates;"]}
+{"k": 32, "n": 704, "alg": "Ad", "status": "ok", "cpu": 1.67, "nodes": 3041, "maxlev": "9", "grpsize": "1", "wall": 1.68, "line": ["704 orbits; grpsize=1; 0 gens; 3041 nodes (1737 bad leaves); maxlev=9"]}
+{"k": 48, "n": 1056, "alg": "As", "status": "ok", "cpu": 0.2, "nodes": 7913, "maxlev": "11", "grpsize": "1", "wall": 0.21, "line": ["1056 orbits; grpsize=1; 0 gens; 7913 nodes (4309 bad leaves); maxlev=11"]}
+{"k": 48, "n": 1056, "alg": "At", "status": "ok", "cpu": 0.95, "nodes": 768, "maxlev": "7", "grpsize": "1", "wall": 0.97, "line": [" Level 1:  361 cells; 22 singletons; target cell: 768; 1056 orbits; 768 nodes (4 kept); 5 updates;"]}
+{"k": 48, "n": 1056, "alg": "Ad", "status": "ok", "cpu": 9.18, "nodes": 7377, "maxlev": "10", "grpsize": "1", "wall": 9.24, "line": ["1056 orbits; grpsize=1; 0 gens; 7377 nodes (4019 bad leaves); maxlev=10"]}
+{"k": 64, "n": 1408, "alg": "As", "status": "ok", "cpu": 3.43, "nodes": 123849, "maxlev": "14", "grpsize": "1", "wall": 3.46, "line": ["1408 orbits; grpsize=1; 0 gens; 123849 nodes (62366 bad leaves); maxlev=14"]}
+{"k": 64, "n": 1408, "alg": "At", "status": "timeout", "wall": 200.0}
+{"k": 64, "n": 1408, "alg": "Ad", "status": "ok", "cpu": 163.41, "nodes": 107441, "maxlev": "13", "grpsize": "1", "wall": 164.48, "line": ["1408 orbits; grpsize=1; 0 gens; 107441 nodes (54148 bad leaves); maxlev=13"]}
+{"k": 80, "n": 1760, "alg": "As", "status": "ok", "cpu": 2.25, "nodes": 58593, "maxlev": "13", "grpsize": "1", "wall": 2.27, "line": ["1760 orbits; grpsize=1; 0 gens; 58593 nodes (29892 bad leaves); maxlev=13"]}
+{"k": 80, "n": 1760, "alg": "Ad", "status": "timeout", "wall": 200.0}
+{"k": 96, "n": 2112, "alg": "As", "status": "ok", "cpu": 40.89, "nodes": 918985, "maxlev": "17", "grpsize": "1", "wall": 41.16, "line": ["2112 orbits; grpsize=1; 0 gens; 918985 nodes (460155 bad leaves); maxlev=17"]}
+{"k": 112, "n": 2464, "alg": "As", "status": "ok", "cpu": 529.98, "nodes": 10225361, "maxlev": "21", "grpsize": "1", "wall": 533.49, "line": ["2464 orbits; grpsize=1; 0 gens; 10225361 nodes (5113482 bad leaves); maxlev=21"]}
+{"k": 112, "n": 2464, "alg": "At", "status": "timeout", "wall": 600.0}
