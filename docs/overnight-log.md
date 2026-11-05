@@ -27,3 +27,25 @@ claimed results get an independent red-team pass.
 * Leads: coset intersection for tree groups (test family T_{b,h}^L); prefix-DP for product-action
   quotients in the dispatcher; measure the entanglement index on real Luks towers; does the barrier
   transfer to graphs?
+
+### w1-structure (done, commit 61b8576; docs/w1-structure.md)
+* [SKETCH] Classification: for non-option-2 primitive P in Γ̂_d, μ(P) = log|P|/log d' ≤ C(1 + λ + min{log d,
+  log log d'}), λ = largest natural-module dimension of a classical factor. Two mechanisms: alternating /
+  top-group (d'^{Θ(log d)} only when d' ≥ 2^{d^{Ω(1)}}) and Lie-rank (AGL(r,2), PGL(r,2): μ ≈ log2(d+1)+1
+  already at d' ≈ d).
+* [CONDITIONAL on HJ] Theorem R**: string isomorphism in exp(O(log N·(log w + λ + 1))) (w = largest
+  alternating factor, λ = classical dimension). For degree-d graphs this equals R*; removing the
+  enumeration channel alone buys nothing for graphs.
+* [PROVEN] "Recurse on H" re-creates enumeration. Simply exponential canonization (Luks 1999, ADKT,
+  BCQ, Schweitzer–Wiebking) plus equivariant orbit-objects works: Theorem L [PROVEN modulo SW;
+  coset assembly SKETCH] gives 2^{O(k)}·N^{O(1)} for level-synchronised towers. The synchronised affine
+  tower G_{r,L} is FPT even though HJ+(M') needs ≥ N^{log2(d+1)+1−o(1)} branches on it, and it has
+  unbounded non-abelian entanglement, so "entanglement + large orbits" does not by itself imply hardness.
+* Main gap: the FPT-style methods are canonization algorithms; HJ is isomorphism-only. Leads: canonical
+  version of HJ; global dispatcher detecting synchronised structure; settle the Cayley-coupled Example X;
+  HJ's σ-machinery on non-Cameron giant homomorphisms (Neuen Ex. 5.5.10).
+
+## Wave 2
+* w2-redteam-fpt: adversarial check of w1-fpt.
+* w2-coset: the core problem both theory agents isolated (coset intersection / string isomorphism for
+  coupled tree groups; Example X; T_{b,h}^L).
