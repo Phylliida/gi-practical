@@ -254,6 +254,34 @@ map/sort; the partitions are those of the literal multisets.
 No change to `solver.py` is needed: each stage calls `Solver.solve` on a group that is built
 directly on the stage's positions.
 
+## Round 3 results (r3-practical)
+
+`certificates=False`, seconds per tier; `bench/results/r3-practical-{full,ir0}{-before,}.json`
+(before = c3fd001). The machine's load varied between 3 and 36 during these runs, so single
+timings are noisy; the paired column runs the old and the new code back to back on each instance.
+
+| tier | full before | full after | ir=0 before | ir=0 after | ir=0 paired (old → new, load ~35) |
+|---|---|---|---|---|---|
+| hard (6) | 0.3 | 0.3 | 1.0 | 0.6 | |
+| large (18) | 3.9 | 3.8 | 49.7 | 46.9 | |
+| xl (9) | 11.6 | 10.5 | 270.4 | 121.3 | PG(2,7) 220 → 46, Paley101 24 → 1.0, Kneser(10,3) 53 → 3.5, rook10 51 → 14 |
+| all | 16.0 | 14.8 | 321.2 | 168.8 | |
+
+At low load, ir=0: PG(2,7) 112s → 18s, Paley101 16s → 0.65s, PG(2,5) 2.9s → 0.5s. The full
+hybrid individualizes before stages get large, so it gains little from explicit chains;
+3reg200 0.94s → 0.17s comes from the interleaved 1-WL. Determinism: the final code returned the
+same σ and generators on all 56 instances in a run at load 33 and in one at load 9 (239 trials
+finished, none aborted, in both); the old timed policy changed 7 of 56 outputs under simulated
+preemption.
+
+Remaining hotspots. Full hybrid on xl: 2-WL rounds (`_wl2_keys`, about 45%; big-integer
+arithmetic, about n^2 additions and one product per row color, near the floor for this
+representation), then the stage loop (`pick_stage`/`clean` about 10%, rechecking every factor
+pair after each stage). ir=0: when the Young classes fall below `young_min` the orbit chain runs
+on degree-n^2 Young groups, and `RestrictionHom`/`image_group`/`reduce_gens` there are
+Schreier–Sims again (Q7: 55 of 80s). `young_min=2` makes Q7 2.7s and rook10 2.6s, but PG(2,7)
+then times out, so this needs those restrictions written down, not a different threshold.
+
 ## Benchmark protocol
 
 ```sh
