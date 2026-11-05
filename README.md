@@ -18,8 +18,9 @@ if res is not None:
 recursive operations of the last run.
 
 `graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True, ir=3,
-ir_min=6)`: adjacency entries may be edge colors, graphs may be directed and have loops. The
-keyword arguments control the front end (below); `ir=0` hands every stage to the recursion.
+ir_min=6, ir_max="auto", ir_budget=2.0)`: adjacency entries may be edge colors, graphs may be
+directed and have loops. The keyword arguments control the front end (below); `ir=0` hands every
+stage to the recursion.
 
 ## Layout
 
@@ -100,10 +101,30 @@ keyword arguments control the front end (below); `ir=0` hands every stage to the
    `Solver.solve`: the induced block of one factor, or the cross block of two factors. The answer
    replaces those factors (orbit-chain rule). Results that are products of symmetric groups, or
    direct products of two parts, are split again. When all blocks are clean, the answer is G.
-3. **Bounded individualization** (`ir`, `ir_min`). A stage on a Sym factor of size at least
-   `ir_min` can be replaced by branching on the image of one vertex, for up to `ir` levels.
-   Automorphisms use orbit pruning, and isomorphisms need only one successful branch. A constant
-   depth costs at most a factor n^ir, so the n^O(log n) bound is kept.
+3. **Individualization policy** (`ir`, `ir_min`, `ir_max`, `ir_budget`; `graph.Policy`). A stage
+   on a Sym factor of size at least `ir_min` (with a non-uniform induced coloring) can be replaced
+   by branching on the image of one vertex. The first `ir` levels always branch. Levels up to
+   `ir_max` (default `max(ir, ceil(log2 n))`) first give the stage to the recursion with a time
+   budget of `ir_budget` times the mean refinement time of this graph (one branch costs at least
+   one refinement); if the recursion does not finish, its work is discarded and the stage
+   branches. After one timeout at a given (depth, factor size), later stages with the same
+   (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
+   exact memo entries behind), so the policy only affects speed and which generators are
+   returned. Depth O(log n) costs at most a factor n^O(log n), so the n^O(log n) bound is kept.
+4. **Orbit pruning.** Automorphisms: Aut_{G_v}(x) (the branch of v against itself) plus one
+   element taking v to each point of its orbit, skipping points already in the orbit of the
+   generators found. Every search for a single isomorphism (the test whether u is in the orbit
+   of v, and the final x→y search) branches on the *preimage* u of the y-side vertex instead,
+   `Iso_G(x, y) = ∪_u t_u Iso_{G_v}(x^(t_u), y)`, and one u per orbit of the known automorphisms
+   suffices; the next level gets `t_u Stab(u) t_u`. For non-isomorphic pairs, where every branch
+   fails, this is most of the cost (CFI(3reg8)-twist: 153 branches before, 11 now).
+5. **Fast 2-WL.** The multiset of a pair is summarized by `sum_k U[C(i,k)] V[C(k,j)]` for fixed
+   random tables, computed for a whole row as one big-integer sum over packed rows. Any fixed
+   function of the multiset is a canonical refinement, so exactness does not depend on the
+   tables (a coincidence would only coarsen a round; `wl2_reference` keeps the definition and a
+   test checks equal partitions). Each graph is refined on its own and cached (the same side
+   recurs across individualization branches); the shared naming is replaced by a direct check
+   that the input color is one function of the refined color on both sides.
 
 No change to `solver.py` is needed: each stage calls `Solver.solve` on a group that is built
 directly on the stage's positions.

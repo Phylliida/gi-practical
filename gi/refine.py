@@ -15,12 +15,16 @@ So a vertex permutation maps X onto Y iff it maps the refined coloring of X
 onto the refined coloring of Y. If the color histograms of the two instances
 differ in some round, the graphs are not isomorphic and None is returned.
 
+2-WL (wl2) refines each instance on its own instead, with names taken from
+that instance alone (so one side can be cached and reused), and then checks
+the second property directly; see wl2.
+
 Pair colorings are n x n lists of ints (row i, column j is the pair (i, j)).
 """
 import random as _random
 import sys
 from array import array
-from collections import Counter
+from collections import Counter, OrderedDict
 from operator import add, itemgetter
 
 _BIG = sys.byteorder == "big"
@@ -173,33 +177,83 @@ def _wl2_keys(P, n, U, V):
     return out
 
 
-def wl2(PX, PY, max_rounds=None):
-    """2-dimensional WL (the coherent closure) on the pair colorings: the new
+def wl2_single(P):
+    """The stable 2-WL coloring of ONE pair coloring P (n x n, sortable
+    values), named canonically from P alone: in every round a color is the rank
+    of its key in this graph's own sorted set of keys. Returns (coloring,
+    trace), trace = the number of colors after each round.
+
+    Isomorphic inputs give the same trace and corresponding colorings (each
+    round depends only on the multiset of keys), which is what wl2 needs."""
+    n = len(P)
+    flat = [c for row in P for c in row]
+    names = {v: i for i, v in enumerate(sorted(set(flat)))}
+    P = [[names[c] for c in row] for row in P]
+    k = len(names)
+    trace = [k]
+    while True:
+        U, V = _tables(k, n)
+        keys = _wl2_keys(P, n, U, V)
+        uniq = sorted(set(keys))
+        if len(uniq) == k:              # the keys refine the old colors: stable
+            return P, tuple(trace)
+        rank = {v: i for i, v in enumerate(uniq)}
+        f = [rank[v] for v in keys]
+        P = [f[i * n:(i + 1) * n] for i in range(n)]
+        k = len(uniq)
+        trace.append(k)
+
+
+# Refinements of single colorings, keyed by the input coloring. The front end
+# refines the same side again and again (the x side against every candidate
+# image in an individualization loop, x against x for the automorphisms).
+_WL2_CACHE = OrderedDict()
+_WL2_CACHE_LIMIT = 48
+
+
+def _wl2_single_cached(P):
+    key = tuple(c for row in P for c in row)
+    r = _WL2_CACHE.get(key)
+    if r is None:
+        r = _WL2_CACHE[key] = wl2_single(P)
+        if len(_WL2_CACHE) > _WL2_CACHE_LIMIT:
+            _WL2_CACHE.popitem(last=False)
+    else:
+        _WL2_CACHE.move_to_end(key)
+    return r
+
+
+def wl2(PX, PY):
+    """2-dimensional WL (the coherent closure) of two pair colorings: the new
     color of (i, j) is (C(i, j), s(i, j)), where s summarizes the multiset of
     (C(i, k), C(k, j)) over k (see above). Returns the stable pair colorings
-    (PX', PY') or None. O(n^3) word operations per round."""
+    (PX', PY') or None. O(n^3) word operations per round.
+
+    Each side is refined separately by wl2_single (and cached), so the names
+    are not shared by construction. They are checked instead:
+      * invariance holds as for joint refinement: an isomorphism of the inputs
+        maps PX' onto PY', since both sides run the same canonical procedure;
+      * the input color must be one function of the refined color on both
+        sides (checked directly below), so a permutation mapping PX' onto PY'
+        maps PX onto PY.
+    If the check, the traces or the histograms disagree, the inputs are not
+    isomorphic (by invariance) and None is returned."""
     n = len(PX)
-    PX, PY = _rank([c for row in PX for c in row], [c for row in PY for c in row])
-    if Counter(PX) != Counter(PY):
+    RX, tx = _wl2_single_cached(PX)
+    RY, ty = (RX, tx) if PY == PX else _wl2_single_cached(PY)
+    if tx != ty:
         return None
-    PX = [PX[i * n:(i + 1) * n] for i in range(n)]
-    PY = [PY[i * n:(i + 1) * n] for i in range(n)]
-    k = len({c for row in PX for c in row})
-    rounds = 0
-    while max_rounds is None or rounds < max_rounds:
-        rounds += 1
-        U, V = _tables(1 + max(max(max(row) for row in PX), max(max(row) for row in PY)), n)
-        kx, ky = _wl2_keys(PX, n, U, V), _wl2_keys(PY, n, U, V)
-        fx, fy = _rank(kx, ky)
-        if Counter(fx) != Counter(fy):
-            return None
-        PX = [fx[i * n:(i + 1) * n] for i in range(n)]
-        PY = [fy[i * n:(i + 1) * n] for i in range(n)]
-        k2 = len(set(fx))
-        if k2 == k:
-            break
-        k = k2
-    return PX, PY
+    f = {}
+    for R, P in ((RX, PX), (RY, PY)):
+        for i in range(n):
+            Ri, Pi = R[i], P[i]
+            for j in range(n):
+                if f.setdefault(Ri[j], Pi[j]) != Pi[j]:
+                    return None
+    if RY is not RX and (Counter(c for row in RX for c in row)
+                         != Counter(c for row in RY for c in row)):
+        return None
+    return RX, RY
 
 
 def wl2_reference(PX, PY, max_rounds=None):

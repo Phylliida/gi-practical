@@ -416,3 +416,47 @@ def test_individualization_pruning():
     assert graph_iso(X, relabel(Z, list(range(len(Z)))[::-1]), solver=S, ir=3, ir_min=2) is None
     assert S.stats["ir_pruned"] > 0
     assert check_pair(X, Z, [dict(ir=1, ir_min=2), dict(ir=2, ir_min=4), dict(ir=0)], rng) == 192
+
+
+def test_policy_budgeted_levels():
+    """The individualization policy: levels below ir always individualize;
+    levels in [ir, ir_max) give the recursion a time budget first. ir_budget=0
+    stops every budgeted call at once (so those stages are individualized),
+    ir_budget=None turns the budgeted levels off. Every setting is exact, and
+    an aborted call leaves the solver unpatched."""
+    from gi.graph import Policy, OverBudget
+    rng = random.Random(23)
+    q3 = [[int((i ^ j) in (1, 2, 4)) for j in range(8)] for i in range(8)]
+    settings = [dict(ir=1, ir_min=2, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=None),
+                dict(ir=1, ir_min=2, ir_max=4, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=1e9)]
+    aborted = done = 0
+    for A, order in ((petersen(), 120), (q3, 48), (rook4(), 1152)):
+        n = len(A)
+        s = list(range(n))
+        rng.shuffle(s)
+        B = relabel(A, s)
+        for kw in settings:
+            S = Solver(certificates=False)
+            sigma, gens = graph_iso(A, B, solver=S, **kw)
+            assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+            assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
+            assert PermGroup(n, gens).order() == order
+            assert "cont" not in S.__dict__ and "solve" not in S.__dict__
+            aborted += S.stats["trial_abort"]
+            done += S.stats["trial_done"]
+    assert aborted > 0 and done > 0
+    # non-isomorphic pairs under every setting
+    X, Z = rook4(), shrikhande()
+    for kw in settings:
+        assert graph_iso(X, relabel(Z, list(range(16))[::-1]), solver=Solver(certificates=False),
+                         **kw) is None
+    # a budget of 0 stops the recursion at its first call
+    pol = Policy(16, ir=1, ir_budget=0)
+    pol.refine(lambda: None)
+    S = Solver(certificates=False)
+    G = PermGroup(4, [(1, 0, 2, 3), (1, 2, 3, 0)])
+    with pytest.raises(OverBudget):
+        pol.trial(S, lambda: S.solve(G, range(4), (0, 0, 1, 1), (1, 1, 0, 0)))
+    assert "cont" not in S.__dict__ and "solve" not in S.__dict__
+    assert Policy(100, ir=3).ir_max == 7 and Policy(100, ir=0).ir_max == 0
+    assert Policy(100, ir=3, ir_budget=None).ir_max == 3
