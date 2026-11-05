@@ -17,9 +17,14 @@ n^{O((log d)^c)}.**
   device: move a tuple to a reference tuple chosen from the group alone, then canonize under its
   stabilizer. Credit for the device goes to Wiebking's thesis, Lemma 5.34, which uses it for another
   purpose.
-* Status: derived in w4-gnscanon.md; no break in 7 attacks in redteam-w4-gnscanon.md. A paper-style
-  write-up is in progress (canonization-bounded-degree.md). The remaining written gaps are the
-  running-time section and the canonical Luks reduction (classical: Babai–Luks 1983).
+* Status: derived in w4-gnscanon.md; no break in 7 attacks in redteam-w4-gnscanon.md. Paper-style draft
+  in **docs/canonization-bounded-degree.md** (commit 3729e8e). Both write-up gaps are closed:
+  - the running time (§7), with a full branch-count table;
+  - the canonical Luks reduction (§8), following Babai–Luks 1983 §4.2–4.3, read from Luks's homepage.
+  The assumptions are listed in §10 and the questions for experts in §13.
+* The write-up also flags an apparent gap in GNS's own Lemma 7.2 potential argument (repeated in Neuen
+  2020), with an explicit input (S_m wr S_2, product action) and a one-line fix; the SICOMP version may
+  already fix it. Being red-teamed (w7-redteam-gns72).
 * **Next step: a human expert (Wiebking, Neuen or Schweitzer) should look at it before any claim.**
 
 **2. Conditional on the HJ preprint: degree-d GI in n^{O(log d)}** (verify-theorem-R.md and
