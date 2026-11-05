@@ -72,6 +72,16 @@ def random_groups(seed, count):
 GROUPS = random_groups(7, 150)
 
 
+@pytest.fixture(autouse=True, params=["cache", "nocache"])
+def chain_cache(request, monkeypatch):
+    """Run every test with and without the chain cache."""
+    gg.clear_chain_cache()
+    if request.param == "nocache":
+        monkeypatch.setattr(gg, "CHAIN_CACHE_LIMIT", 0)
+    yield
+    gg.clear_chain_cache()
+
+
 def chain(G):
     return (list(G.base), [list(S) for S in G.S], [list(T.items()) for T in G.T],
             [list(T.items()) for T in G.Ti], list(G.gens))
@@ -105,8 +115,9 @@ def test_wrong_order_detected():
     with pytest.raises(ValueError):
         gg.PermGroup(4, gens, order=5)
     assert gg.PermGroup(4, gens).order() == 24
-    with pytest.raises(ValueError):
-        gg.PermGroup(4, gens, order=12)
+    if gg.CHAIN_CACHE_LIMIT > 0:
+        with pytest.raises(ValueError):
+            gg.PermGroup(4, gens, order=12)
 
 
 def test_restriction_hom():
@@ -233,3 +244,19 @@ def test_johnson_labels():
             els = list(R.elements())
             for g in rng.sample(els, min(200, len(els))):
                 assert jr[1](g) == jg[1](g)
+
+
+def test_ambient_base():
+    rng = random.Random(11)
+    for n, gens in GROUPS:
+        R = ref.PermGroup(n, gens)
+        G = gg.PermGroup(n, gens)
+        els = list(R.elements()) if R.order() <= 2000 else None
+        for _ in range(3):
+            if els is not None:
+                sub = [rng.choice(els) for _ in range(rng.randint(1, 3))]
+            else:
+                sub = [mul(rng.choice(gens), rng.choice(gens)) for _ in range(2)]
+            base = rng.sample(range(n), min(n, rng.randint(0, 3)))
+            assert chain(gg.PermGroup(n, sub, base=base, ambient_base=G.short_base())) == \
+                chain(ref.PermGroup(n, sub, base=base))

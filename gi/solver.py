@@ -148,7 +148,7 @@ class Solver:
             a1 = self.solve(G, first, x, y)
             if a1 is None:
                 return None
-            H = PermGroup(n, a1.gens)
+            H = PermGroup(n, a1.gens, ambient_base=G.short_base())
             a2 = self.solve(H, rest, x, act(y, inv(a1.rep)))
             if a2 is None:
                 return None
@@ -400,4 +400,4 @@ class Solver:
             a = self.solve(M, V, x, act(x, inv(c)))
             if a is not None:
                 answers.append(Coset(a.gens, mul(a.rep, c)))
-        return PermGroup(n, combine(n, answers).gens)
+        return PermGroup(n, combine(n, answers).gens, ambient_base=A.short_base())

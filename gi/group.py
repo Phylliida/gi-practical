@@ -51,6 +51,9 @@ class PermGroup:
     u with base[l]^u = p (Ti[l][p] is u^-1). `gens` lists the generators that
     were accepted (each enlarged the group), so it is irredundant.
 
+    `ambient_base`, if given, must be a base of a group containing <gens>
+    (e.g. G.short_base() for a subgroup of G); it does not change the result.
+
     `order`, if given, must be the exact order of <gens>. Construction then
     stops as soon as the product of the orbit lengths reaches it: at that point
     the chain is complete, so the rest of the algorithm would not change it.
@@ -62,10 +65,13 @@ class PermGroup:
     unchanged transversal elements are reused when an orbit is recomputed.
     """
 
-    def __init__(self, n, gens=(), base=(), order=None):
+    def __init__(self, n, gens=(), base=(), order=None, ambient_base=None):
         self.n = n
         self.idn = _identity(n)
         self._target = order
+        # A base of some group containing <gens>: only the identity of that
+        # group fixes it, which makes identity tests cheap (see _sifts_to_id).
+        self._amb = list(ambient_base) if ambient_base and n > 1 else None
         self._snap = None
         self._elems = None              # all elements, once listed (small groups)
         self._isodata = None
@@ -231,11 +237,61 @@ class PermGroup:
             l = r
         return plan
 
+    def _sifts_to_id(self, factors, start):
+        """Whether the product of `factors` sifts to the identity from level
+        `start` (as sift would find), computing only the images of a few points:
+        the base points of the nontrivial levels and the ambient base. Trivial
+        levels are not checked: if the product moved such a level's point, the
+        later factors (which fix it) cannot make the final residue fix it, and
+        a residue fixing the ambient base is the identity."""
+        plans = self._plans
+        if plans is None or plans[0] is not self.T or plans[1] != len(self.base):
+            plans = self._plans = (self.T, len(self.base), {})
+        key = -1 - start
+        fp = plans[2].get(key)
+        if fp is None:
+            fp = plans[2][key] = self._make_fast_plan(start)
+        P, steps = fp
+        g = P
+        for f in factors:
+            g = itemgetter(*g)(f)
+        Tis = self.Ti
+        for l, k in steps:
+            p = g[k]
+            if p != P[k]:
+                t = Tis[l].get(p)
+                if t is None:
+                    return False
+                g = itemgetter(*g)(t)
+        return g == P
+
+    def _make_fast_plan(self, start):
+        base, T = self.base, self.T
+        pts, steps, where = [], [], {}
+        for l in range(start, len(base)):
+            if len(T[l]) > 1:
+                where[base[l]] = len(pts)
+                steps.append((l, len(pts)))
+                pts.append(base[l])
+        for b in self._amb:
+            if b not in where:
+                where[b] = len(pts)
+                pts.append(b)
+        if len(pts) < 2:                # (itemgetter needs two points)
+            pts.append(0 if pts[0] != 0 else 1)
+        return tuple(pts), steps
+
+    def short_base(self):
+        """The base points of the nontrivial levels (still a base)."""
+        return [b for b, t in zip(self.base, self.T) if len(t) > 1]
+
     def _moved_point(self, g):
         return next(i for i in range(self.n) if g[i] != i)
 
     def add(self, g):
         """Add a generator. Returns True if the group grew."""
+        if self._amb is not None and self._sifts_to_id((g,), 0):
+            return False
         r, j = self.sift(g)
         if j == len(self.base) and r == self.idn:
             return False
@@ -261,6 +317,7 @@ class PermGroup:
         appended to a range of levels ending at a level whose point they move),
         so its Schreier generator at the base point lies in <S[i+1]>."""
         idn, base, n = self.idn, self.base, self.n
+        amb = self._amb is not None
         while i >= 0:
             T = self.T[i]
             if len(T) == 1:             # all Schreier generators are in S[i+1]
@@ -282,6 +339,8 @@ class PermGroup:
                     if m is not None and m[0] is u and m[1] is v:
                         continue                # already known to lie in <S[i+1]>
                     ok[e] = (u, v)
+                    if amb and self._sifts_to_id((u, s, v), i + 1):
+                        continue
                     h = mul(mul(u, s), v)
                     if h == idn:
                         continue
@@ -444,7 +503,8 @@ class PermGroup:
         points = list(points)
         if self.base[:len(points)] == points:
             return self._tail(len(points))
-        H = PermGroup(self.n, self.strong_gens(), base=points, order=self.order())
+        H = PermGroup(self.n, self.strong_gens(), base=points, order=self.order(),
+                      ambient_base=self.short_base())
         return H._tail(len(points))
 
     def stabilizer(self, p):
@@ -484,7 +544,8 @@ class ActionHom:
         if image is not _ident:
             n = G.n
             comb = [g + tuple(n + v for v in image(g)) for g in G.gens]
-            self.C = PermGroup(n + m, comb, base=range(n, n + m), order=G.order())
+            self.C = PermGroup(n + m, comb, base=range(n, n + m), order=G.order(),
+                               ambient_base=G.short_base())
 
     def image_order(self):
         if self.C is None:
@@ -493,8 +554,12 @@ class ActionHom:
 
     def image_group(self):
         if self._image is None:
+            if self.C is None:
+                amb = self.G.short_base()
+            else:                       # the nontrivial image levels form a base of the image
+                amb = [l for l in range(self.m) if len(self.C.T[l]) > 1]
             self._image = PermGroup(self.m, [self.image_of(g) for g in self.G.gens],
-                                    order=self.image_order())
+                                    order=self.image_order(), ambient_base=amb)
         return self._image
 
     def lift(self, p):
@@ -550,7 +615,7 @@ class ActionHom:
             order = PermGroup(self.m, hs).order()
         K = self.kernel()
         return PermGroup(self.G.n, [self.lift(h) for h in hs] + K.gens,
-                         order=order * K.order())
+                         order=order * K.order(), ambient_base=self.G.short_base())
 
 
 class RestrictionHom(ActionHom):
@@ -577,7 +642,7 @@ class RestrictionHom(ActionHom):
         self._image = None
         self._kernel = None
         self._levels = None
-        self.C = PermGroup(n, G.gens, base=D, order=G.order())
+        self.C = PermGroup(n, G.gens, base=D, order=G.order(), ambient_base=G.short_base())
 
     def image_order(self):
         return math.prod(len(self.C.T[l]) for l in range(self.m))
@@ -779,7 +844,7 @@ def johnson_labels(P):
         return None
     if P.order() not in (math.factorial(m), math.factorial(m) // 2):
         return None
-    P0 = PermGroup(d, P.gens, base=[0], order=P.order())
+    P0 = PermGroup(d, P.gens, base=[0], order=P.order(), ambient_base=P.short_base())
     for orb in P0._tail(1).orbits():
         if len(orb) != 2 * (m - 2):
             continue
