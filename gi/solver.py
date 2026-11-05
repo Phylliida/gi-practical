@@ -8,8 +8,9 @@ is returned as Coset(gens, rep): every isomorphism is h * rep for some h in
 
 What is implemented as in the paper:
   * Solve / Continue with the orbit-chain rule (largest orbit first),
-  * the primitive-quotient dispatcher: enumerate small quotients, treat
-    natural giants and the Johnson action on 2-sets as giants,
+  * the primitive-quotient dispatcher (Maroti's form of Cameron's theorem):
+    enumerate small quotients, treat natural giants and Johnson actions on
+    k-sets as giants, and apply product refinement to product actions,
   * constant-size local certificates (Algorithm 3), with CheckNewWindow done by
     enumerating cosets of ker(phi_T) and solving on the window,
   * the "large known symmetry" branch (full certificates generate Alt(q)),
@@ -31,8 +32,8 @@ What is simplified (see README.md for details):
     coherent configurations and its "first rectangle" step instead;
   * no row/column step (Algorithm 4), no phases, hierarchy caps or budget
     bookkeeping: those only matter for the running-time proof;
-  * product actions (Maroti case r >= 2) and Johnson actions on k-sets with
-    k >= 3 are enumerated, or raise Unsupported when too large.
+  * primitive quotients that are neither giants, Johnson nor product
+    actions are enumerated, or raise Unsupported when too large.
 Every simplification keeps the answer exact; only the running time changes.
 """
 import itertools
@@ -41,7 +42,7 @@ from collections import Counter, namedtuple
 
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens, sym_gens
 from .group import (PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system,
-                    johnson_labels, label_support, clear_chain_cache)
+                    johnson_structure, product_action, label_support, clear_chain_cache)
 
 Coset = namedtuple("Coset", "gens rep")
 
@@ -105,13 +106,14 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
 
 class Solver:
     def __init__(self, kappa=3, enum_limit=500, certificates=True, max_enum=100000,
-                 cert_refine=True, seed=True):
+                 cert_refine=True, seed=True, recognize=True):
         self.kappa = kappa                  # size of the local test sets
         self.enum_limit = enum_limit        # enumerate groups/quotients up to this order
         self.certificates = certificates    # use local certificates in GiantStep
         self.cert_refine = cert_refine      # also refine labels by certificate signatures
         self.seed = seed                    # seed the memo for off-base one-mode branches
         self.max_enum = max_enum            # refuse to enumerate anything larger
+        self.recognize = recognize          # Johnson k >= 3 and product actions (else enumerate)
         self.stats = Counter()
         clear_chain_cache()                 # (a cache only: results do not depend on it)
         self.memo = {}                      # (G.gens, x) -> generators of Aut_G(x)
@@ -207,7 +209,28 @@ class Solver:
 
     # -- the primitive-quotient dispatcher ------------------------------------
     def transitive(self, G, x, y, known=None):
+        """Expose the primitive quotient P of degree d (the top of the stacked
+        block hierarchy) and dispatch on it as in the paper (Sec. 6, with
+        Maroti's form of Cameron's theorem):
+          * natural giant (Sym(d) or Alt(d), d >= 5): GiantStep on the blocks;
+          * small (order <= enum_limit, or d < 5): enumerate the quotient;
+          * Johnson action of Sym(m) or Alt(m) on k-sets (k >= 2): GiantStep
+            on the m recovered labels (r = 1);
+          * product action on D^r points (r >= 2): product refinement, i.e.
+            the union over the at most r! cosets of the coordinate-preserving
+            subgroup, which acts imprimitively (finer hierarchy);
+          * anything else: enumerate the quotient, up to max_enum.
+        The recognition is verified (see group.py): johnson_structure returns a
+        homomorphism onto Sym(m) or Alt(m), product_action a homomorphism onto
+        the coordinate permutations. Every branch is an exact reduction."""
         n = G.n
+        if all(maps(g, x, x) for g in G.gens):
+            # G preserves x, so x^g = x for every g in G: Iso_G(x, y) is G
+            # when y = x and empty otherwise.
+            self.stats["invariant"] += 1
+            if x != y:
+                return None
+            return Coset(list(G.gens) if known is None else known, G.idn)
         blocks = top_block_system(G)
         if blocks is None:                          # G itself is primitive
             d, phi, order = n, None, G.order()
@@ -227,15 +250,28 @@ class Solver:
             return self.giant(G, phi, x, y, known)
         if order <= self.enum_limit or d < 5:
             return self.enum_cosets(G, phi, x, y, known)
-        J = johnson_labels(phi.image_group() if phi else G)
-        if J is not None:
+        P = phi.image_group() if phi else G
+        J = johnson_structure(P)
+        if J is not None and (J[1] == 2 or self.recognize):
+            m, k, f = J
             self.stats["giant_johnson"] += 1
-            m, f = J
+            self.stats[f"johnson_k{k}"] += 1
             if phi is None:
                 psi = ActionHom(G, m, f)
             else:
                 psi = ActionHom(G, m, lambda g, phi=phi, f=f: f(phi.image_of(g)))
             return self.giant(G, psi, x, y, known)
+        R = product_action(P) if self.recognize else None
+        if R is not None:
+            r, f, _ = R
+            self.stats["product_refine"] += 1
+            if phi is None:
+                psi = ActionHom(G, r, f)
+            else:
+                psi = ActionHom(G, r, lambda g, phi=phi, f=f: f(phi.image_of(g)))
+            self.stats["product_cosets"] += psi.image_order()
+            return self.coset_union(psi, range(n), x, y, known)
+        self.stats["unrecognized_primitive"] += 1
         if order > self.max_enum:
             raise Unsupported(f"large primitive quotient of degree {d} and order {order}")
         self.stats["enum_large_primitive"] += 1
