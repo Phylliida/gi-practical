@@ -475,6 +475,70 @@
    "status": "ok",
    "time": 0.28938,
    "stats": {}
+  },
+  {
+   "family": "latin_random",
+   "size": 14,
+   "name": "LatinRand14",
+   "n": 196,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 1,
+   "status": "ok",
+   "time": 118.24,
+   "note": "|Aut|=1",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 290,
+    "refine": 290,
+    "refine_reject": 288,
+    "ir_pruned": 0,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "latin_random",
+   "size": 14,
+   "name": "LatinRand14",
+   "n": 196,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 1,
+   "status": "ok",
+   "time": 0.54482,
+   "stats": {}
+  },
+  {
+   "family": "latin_random",
+   "size": 14,
+   "name": "LatinRand14-pair",
+   "n": 196,
+   "kind": "non",
+   "mode": "full",
+   "aut": 1,
+   "status": "ok",
+   "time": 160.035,
+   "note": "",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 392,
+    "refine": 392,
+    "refine_reject": 391,
+    "ir_pruned": 0,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "latin_random",
+   "size": 14,
+   "name": "LatinRand14-pair",
+   "n": 196,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 1,
+   "status": "ok",
+   "time": 0.54383,
+   "stats": {}
   }
  ]
 }

@@ -715,6 +715,70 @@
    "status": "ok",
    "time": 1.41384,
    "stats": {}
+  },
+  {
+   "family": "sts",
+   "size": 31,
+   "name": "STS31",
+   "n": 186,
+   "kind": "iso",
+   "mode": "full",
+   "aut": 1,
+   "status": "ok",
+   "time": 97.536,
+   "note": "|Aut|=1",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 259,
+    "refine": 259,
+    "refine_reject": 257,
+    "ir_pruned": 0,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "sts",
+   "size": 31,
+   "name": "STS31",
+   "n": 186,
+   "kind": "iso",
+   "mode": "nauty",
+   "aut": 1,
+   "status": "ok",
+   "time": 2.42114,
+   "stats": {}
+  },
+  {
+   "family": "sts",
+   "size": 31,
+   "name": "STS31-pair",
+   "n": 186,
+   "kind": "non",
+   "mode": "full",
+   "aut": 1,
+   "status": "ok",
+   "time": 116.941,
+   "note": "",
+   "stats": {
+    "ir_ind_d1": 1,
+    "ir_branch": 310,
+    "refine": 310,
+    "refine_reject": 309,
+    "ir_pruned": 0,
+    "ir_depth": 1
+   }
+  },
+  {
+   "family": "sts",
+   "size": 31,
+   "name": "STS31-pair",
+   "n": 186,
+   "kind": "non",
+   "mode": "nauty",
+   "aut": 1,
+   "status": "ok",
+   "time": 2.42176,
+   "stats": {}
   }
  ]
 }
