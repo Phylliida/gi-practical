@@ -15,8 +15,8 @@ sys.setrecursionlimit(100000)
 
 from gi import Solver, graph_iso
 from gi import group as gg
-from gi.group import PermGroup, johnson_structure, johnson_labels, product_action
-from gi.perm import mul, inv, act, maps, parity
+from gi.group import PermGroup, johnson_structure, johnson_labels, product_action, giant_labels
+from gi.perm import mul, inv, act, maps, parity, alt_gens
 
 
 def rand_perm(m, rng, even=False):
@@ -196,8 +196,14 @@ def test_product_action(m, k, r, alt, top):
     assert P.order() == W.order()
     R = product_action(P)
     assert R is not None
-    rr, f, lines0 = R
+    rr, f, lines0, fibers0 = R
     assert rr == r
+    true_fibers = {c: {frozenset(W.idx[t] for t in W.pts if t[c] == v) for v in range(W.D)}
+                   for c in range(r)}
+    assert {frozenset(F) for F in fibers0} == true_fibers[
+        next(c for c in range(r) if {frozenset(L) for L in lines0} == {
+            frozenset(W.idx[t] for t in W.pts if t[:c] + t[c + 1:] == rest)
+            for rest in itertools.product(range(W.D), repeat=r - 1)})]
     # lines0 are the lines of one true coordinate
     true_lines = {c: {frozenset(W.idx[t] for t in W.pts if t[:c] + t[c + 1:] == rest)
                       for rest in itertools.product(range(W.D), repeat=r - 1)}
@@ -226,6 +232,97 @@ def test_product_rejects():
     for orb in orbs:
         nbr = gg._orbital_graph(A.d, T, b, orb)
         assert nbr is None or gg._product_lines(P, T, b, orb, nbr, 2, 6) is None
+
+
+# -- Sym(m) / Alt(m) in other actions --------------------------------------------
+class Bisections:
+    """Sym(m) or Alt(m) (m even) acting on the k|k bisections {A, complement}
+    of range(m), k = m/2: primitive, Cameron-small, not a Johnson action."""
+
+    def __init__(self, m, alt, rng):
+        k = m // 2
+        self.m, self.alt = m, alt
+        self.B = sorted({frozenset([A, tuple(sorted(set(range(m)) - set(A)))])
+                         for A in itertools.combinations(range(m), k)}, key=sorted)
+        self.d = len(self.B)
+        lab = scramble(self.d, rng)
+        self.idx = {b: lab[i] for i, b in enumerate(self.B)}
+        while True:
+            self.top = [rand_perm(m, rng, alt) for _ in range(2)]
+            if PermGroup(m, self.top).order() == math.factorial(m) // (2 if alt else 1):
+                break
+        self.gens = [self.lift(t) for t in self.top]
+
+    def lift(self, s):
+        p = [0] * self.d
+        for b in self.B:
+            p[self.idx[b]] = self.idx[frozenset(tuple(sorted(s[a] for a in A)) for A in b)]
+        return tuple(p)
+
+    def elements(self):
+        for s in itertools.permutations(range(self.m)):
+            if not self.alt or not parity(s):
+                yield self.lift(s)
+
+
+def pgl2(q, special):
+    """PGL(2, q) (or PSL(2, q)) on the q + 1 points of the projective line, q prime."""
+    pts = list(range(q)) + ["inf"]
+    ix = {v: i for i, v in enumerate(pts)}
+
+    def mobius(a, b, c, e):
+        out = []
+        for v in pts:
+            if v == "inf":
+                w = "inf" if c == 0 else a * pow(c, q - 2, q) % q
+            else:
+                num, den = (a * v + b) % q, (c * v + e) % q
+                w = "inf" if den == 0 else num * pow(den, q - 2, q) % q
+            out.append(ix[w])
+        return tuple(out)
+
+    squares = {(i * i) % q for i in range(1, q)}
+    gens = [mobius(1, 1, 0, 1), mobius(0, q - 1, 1, 0)]
+    gens.append(mobius(next(a for a in range(2, q) if a in squares) if special
+                       else next(a for a in range(2, q) if a not in squares), 0, 0, 1))
+    return PermGroup(q + 1, gens)
+
+
+@pytest.mark.parametrize("m,alt", [(6, False), (8, False), (8, True), (10, False)])
+def test_giant_labels_bisections(m, alt):
+    rng = random.Random(m + alt)
+    A = Bisections(m, alt, rng)
+    P = PermGroup(A.d, A.gens)
+    assert johnson_structure(P) is None and product_action(P) is None
+    R = giant_labels(P)
+    assert R is not None and R[0] == m
+    f = R[1]
+    els = [A.lift(rand_perm(m, rng, alt)) for _ in range(8)]
+    for g in els:
+        for h in els:
+            assert f(mul(g, h)) == mul(f(g), f(h))
+    img = PermGroup(m, [f(g) for g in P.gens])
+    assert img.order() == P.order()
+
+
+def test_giant_labels_small():
+    """PGL(2,5) = Sym(5) and PSL(2,5) = Alt(5) on 6 points are giants; groups
+    of factorial order that are not giants are rejected."""
+    for special, order in ((False, 120), (True, 60)):
+        P = pgl2(5, special)
+        assert P.order() == order
+        R = giant_labels(P)
+        assert R is not None and R[0] == 5
+        assert PermGroup(5, [R[1](g) for g in P.gens]).order() == order
+    # PGL(2,7) has order 336, PSL(2,7) order 168: not factorial
+    assert giant_labels(pgl2(7, False)) is None
+    # Z_2 x Alt(5) and Z_2 x Alt(6) have orders 5! and 6!, but no class of transpositions
+    for m in (5, 6):
+        gens = [c + (m, m + 1) for c in alt_gens(m, range(m))]
+        gens.append(tuple(range(m)) + (m + 1, m))
+        P = PermGroup(m + 2, gens)
+        assert P.order() == math.factorial(m)
+        assert giant_labels(P) is None
 
 
 # -- string isomorphism under these groups -------------------------------------
@@ -311,6 +408,25 @@ def test_string_iso_product(cfg, m, k, r, alt, top):
             assert S.stats["product_refine"] > 0
 
 
+@pytest.mark.parametrize("cfg", CFGS, ids=["nocert", "cert3"])
+@pytest.mark.parametrize("m,alt", [(6, False), (8, True)])
+def test_string_iso_bisections(cfg, m, alt):
+    """Sym(6) on 10 and Alt(8) on 35 bisections: primitive groups of order
+    m! or m!/2 that are not Johnson actions (the abstract giant path)."""
+    if m == 8 and cfg["certificates"]:
+        pytest.skip("slow; the nocert run covers the Alt(8) path")
+    rng = random.Random(m * 7 + alt)
+    A = Bisections(m, alt, rng)
+    els = list(A.elements())
+    G = PermGroup(A.d, A.gens)
+    for x, y in colorings(els, A.d, rng, 5):
+        S = Solver(**cfg)
+        ans = S.solve(G, range(A.d), x, y)
+        check(G, x, y, ans, brute(els, x, y), brute(els, x, x))
+        if len(set(x)) > 1 and sorted(x) == sorted(y):
+            assert S.stats["giant_abstract"] > 0
+
+
 @pytest.mark.parametrize("recognize", [True, False])
 def test_rook_graphs(recognize):
     """K_m x K_m: Aut = Sym(m) wr Sym(2) in product action, with the recursion
@@ -328,3 +444,155 @@ def test_rook_graphs(recognize):
         assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
         assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
         assert PermGroup(n, gens).order() == 2 * math.factorial(m) ** 2
+
+
+# -- Johnson and Hamming structure on the labels (scheme_step) ------------------
+def johnson_graph(m, k, rng=None):
+    V = list(itertools.combinations(range(m), k))
+    perm = scramble(len(V), rng) if rng else list(range(len(V)))
+    A = [[0] * len(V) for _ in V]
+    for i, a in enumerate(V):
+        for j, b in enumerate(V):
+            if len(set(a) & set(b)) == k - 1:
+                A[perm[i]][perm[j]] = 1
+    return A, [frozenset(V[perm.index(l)]) for l in range(len(V))]
+
+
+def hamming_graph(r, D, rng=None):
+    V = list(itertools.product(range(D), repeat=r))
+    perm = scramble(len(V), rng) if rng else list(range(len(V)))
+    A = [[0] * len(V) for _ in V]
+    for i, a in enumerate(V):
+        for j, b in enumerate(V):
+            if sum(u != v for u, v in zip(a, b)) == 1:
+                A[perm[i]][perm[j]] = 1
+    return A
+
+
+def nbrs(A):
+    return [{j for j in range(len(A)) if A[i][j]} for i in range(len(A))]
+
+
+def kneser_graph(m, k):
+    V = list(itertools.combinations(range(m), k))
+    return [[int(not set(a) & set(b)) for b in V] for a in V]
+
+
+def shrikhande():
+    V = [(a, b) for a in range(4) for b in range(4)]
+    D = {(0, 1), (0, 3), (1, 0), (3, 0), (1, 1), (3, 3)}
+    return [[int(((c - a) % 4, (d - b) % 4) in D) for (c, d) in V] for (a, b) in V]
+
+
+def chang1():
+    A, sets = johnson_graph(8, 2)
+    S = {frozenset(e) for e in [(0, 1), (2, 3), (4, 5), (6, 7)]}
+    n = len(A)
+    return [[A[i][j] ^ int(i != j and ((sets[i] in S) != (sets[j] in S))) for j in range(n)]
+            for i in range(n)]
+
+
+@pytest.mark.parametrize("m,k", [(6, 2), (7, 2), (10, 2), (7, 3), (8, 3), (6, 3), (8, 4), (9, 4)])
+def test_johnson_embedding(m, k):
+    rng = random.Random(m * 10 + k)
+    A, true = johnson_graph(m, k, rng)
+    e = gg.johnson_embedding(nbrs(A))
+    assert e is not None and e[:2] == (m, k)
+    sets = e[2]
+    # the recovered stars are the true stars (or, for m = 2k, the co-stars)
+    stars = {frozenset(l for l in range(len(A)) if i in sets[l]) for i in range(m)}
+    tstars = {frozenset(l for l in range(len(A)) if a in true[l]) for a in range(m)}
+    co = {frozenset(l for l in range(len(A)) if a not in true[l]) for a in range(m)}
+    assert stars == tstars or (m == 2 * k and stars == co)
+    assert gg.hamming_embedding(nbrs(A)) is None
+
+
+def test_scheme_embeddings_reject():
+    assert gg.johnson_embedding(nbrs(chang1())) is None             # SRG(28,12,6,4), not T(8)
+    assert gg.johnson_embedding(nbrs(kneser_graph(7, 3))) is None
+    assert gg.hamming_embedding(nbrs(shrikhande())) is None          # SRG(16,6,2,2), not H(2,4)
+    assert gg.johnson_embedding(nbrs(hamming_graph(2, 5))) is None
+
+
+@pytest.mark.parametrize("r,D", [(2, 3), (2, 4), (2, 6), (3, 3), (3, 4), (3, 2), (5, 2)])
+def test_hamming_embedding(r, D):
+    rng = random.Random(r * 10 + D)
+    A = hamming_graph(r, D, rng)
+    e = gg.hamming_embedding(nbrs(A))
+    assert e is not None and e[:2] == (r, D)
+    assert len(set(e[2])) == D ** r
+
+
+def check_graph(A, B, iso, aut_order, **solver_kw):
+    S = Solver(certificates=False, **solver_kw)
+    res = graph_iso(A, B, solver=S, ir=0)
+    n = len(A)
+    assert (res is not None) == iso
+    if res is not None:
+        sigma, gens = res
+        assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+        assert all(A[g[i]][g[j]] == A[i][j] for g in gens for i in range(n) for j in range(n))
+        assert PermGroup(n, gens).order() == aut_order
+    return S
+
+
+def relabeled(A, rng):
+    s = scramble(len(A), rng)
+    n = len(A)
+    B = [[0] * n for _ in range(n)]
+    for i in range(n):
+        for j in range(n):
+            B[s[i]][s[j]] = A[i][j]
+    return B
+
+
+@pytest.mark.parametrize("scheme", [True, False])
+def test_scheme_graphs(scheme):
+    """Johnson, Kneser and Hamming graphs with the recursion alone (ir=0)."""
+    rng = random.Random(11)
+    cases = [(johnson_graph(7, 2)[0], 5040), (johnson_graph(6, 3)[0], 1440),
+             (hamming_graph(2, 5), 28800), (hamming_graph(3, 3), 1296),
+             (hamming_graph(4, 2), 384)]
+    if scheme:
+        cases += [(johnson_graph(7, 3)[0], 5040), (kneser_graph(7, 3), 5040)]
+    for A, order in cases:
+        S = check_graph(A, relabeled(A, rng), True, order, scheme=scheme)
+        if scheme:
+            assert S.stats["scheme_johnson"] + S.stats["scheme_hamming"] > 0
+    check_graph(johnson_graph(8, 2)[0], relabeled(chang1(), rng), False, None, scheme=scheme)
+    check_graph(hamming_graph(2, 4), relabeled(shrikhande(), rng), False, None, scheme=scheme)
+
+
+@pytest.mark.parametrize("m,k", [(7, 2), (6, 2)])
+def test_scheme_alt(m, k):
+    """GiantStep under Alt(q) (q labels, positions the ordered pairs): the
+    scheme step must respect parity. Aut(J(m, k)) <= Alt(q) iff a
+    transposition of range(m) acts evenly on the k-sets."""
+    rng = random.Random(m + k)
+    A, _ = johnson_graph(m, k)
+    q = len(A)
+    P = [(a, b) for a in range(q) for b in range(q) if a != b]
+    pix = {p: i for i, p in enumerate(P)}
+
+    def on_pairs(s):
+        return tuple(pix[(s[a], s[b])] for a, b in P)
+
+    G = PermGroup(len(P), [on_pairs(g) for g in alt_gens(q, range(q))],
+                  order=math.factorial(q) // 2)
+    x = tuple(A[a][b] for a, b in P)
+    trans_odd = math.comb(m - 2, k - 1) % 2 == 1
+    aut_alt = math.factorial(m) // (2 if trans_odd else 1)
+    for odd in (False, True):
+        pi = rand_perm(q, rng, even=True)
+        if odd:
+            pi = (pi[1], pi[0]) + pi[2:]
+        y = act(x, on_pairs(pi))
+        S = Solver(certificates=False, enum_limit=1)
+        ans = S.solve(G, range(len(P)), x, y)
+        assert S.stats["scheme_johnson"] > 0
+        if odd and not trans_odd:
+            assert ans is None
+            continue
+        assert ans is not None and maps(ans.rep, x, y)
+        assert all(maps(g, x, x) for g in ans.gens)
+        assert PermGroup(len(P), ans.gens).order() == aut_alt

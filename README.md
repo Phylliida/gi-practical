@@ -14,7 +14,8 @@ if res is not None:
     sigma, aut_gens = res        # isomorphism X -> Y and generators of Aut(X)
 ```
 
-`Solver(kappa=3, enum_limit=500, certificates=True, max_enum=100000, cert_refine=True, recognize=True)`;
+`Solver(kappa=3, enum_limit=500, certificates=True, max_enum=100000, cert_refine=True, recognize=True,
+product_hint=True, scheme=True)`;
 `solver.stats` counts the recursive operations of the last run.
 
 `graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True, ir=3,
@@ -63,7 +64,11 @@ primitive quotient P (degree d) as follows: natural giant (order d! or d!/2) →
 (order ≤ `enum_limit`, or d < 5) → enumerate; Johnson action (r = 1, k ≥ 2) → GiantStep on the m
 recovered labels; product action (r ≥ 2) → **product refinement**: the union over the ≤ r! cosets
 of the coordinate-preserving subgroup, which is imprimitive, so the recursion continues on a finer
-hierarchy. If x is invariant under G, the answer is G (or empty) at once.
+hierarchy (its next quotient is the action on the fibers of one coordinate, as in the paper's
+inherited tower); Sym(m) or Alt(m) in any other action (for example on the k|k bisections, which
+are Cameron-small but have order (2k)!) → GiantStep on m labels; anything else → enumerate. If x
+is invariant under G, the answer is G (or empty) at once. The dispatch decision depends only on G
+and is cached (with its homomorphism objects) by G's generators.
 
 The structure is guessed from one orbital graph of P and then **verified**, so a wrong guess can
 only lead to `None` (and enumeration):
@@ -79,9 +84,26 @@ only lead to `None` (and enumeration):
   lines and coordinate classes to coordinate classes (so the induced map to Sym(r) is a
   homomorphism), and each class partitions the points into lines of size D = d^(1/r).
 
+* `group.giant_labels`: a transposition (a 3-cycle for Alt(m)) is found among powers of
+  pseudo-random elements (fixed seed); its conjugacy class must have C(m, 2) members (C(m, 3)
+  subgroups), and the conjugation action on it, a homomorphism, is a Johnson action on 2-sets
+  (3-sets), which `johnson_structure` recognizes and verifies.
+
+**Johnson and Hamming structure on the labels** (`Solver.scheme_step`, `scheme=True`). In graph
+problems the Johnson structure usually lives in the label coloring, not in the group: for J(7,3)
+with `ir=0` the group is Sym(35) and the projected pair coloring of the 35 labels is the distance
+coloring of J(7,3). Before a GiantStep on q labels (natural, Johnson or abstract giant), if a color
+class of x's two-label projection is exactly a Johnson graph J(m, k) (m ≥ 2k ≥ 4) or a Hamming graph
+H(r, D) (D ≥ 2, so hypercubes too) on all q labels (`group.johnson_embedding`, `group.hamming_embedding`, both verified
+edge by edge), its embedding is unique up to the graph's automorphism group A (Sym(m), with
+complementation when m = 2k; Sym(D) wr Sym(r)). Every isomorphism maps x's class graph onto y's,
+so Sym(q) is replaced by the preimage of A (embedded via x) and one coset representative that maps
+x's embedding onto y's (with parity handled when phi(G) = Alt(q)). This is Babai's "Johnson"
+outcome of Split-or-Johnson; stats `scheme_johnson`, `scheme_hamming`.
+
 `Solver(recognize=False)` restores the old dispatcher (only 2-set Johnson actions, the rest
-enumerated). Stats: `johnson_k<k>`, `product_refine`, `product_cosets`, `unrecognized_primitive`,
-`enum_large_primitive`, `invariant`.
+enumerated). Stats: `johnson_k<k>`, `giant_abstract`, `product_refine`, `product_cosets`,
+`product_hint`, `unrecognized_primitive`, `enum_large_primitive`, `invariant`.
 
 ## Branching economy (exact; not in the paper)
 

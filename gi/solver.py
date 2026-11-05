@@ -11,6 +11,9 @@ What is implemented as in the paper:
   * the primitive-quotient dispatcher (Maroti's form of Cameron's theorem):
     enumerate small quotients, treat natural giants and Johnson actions on
     k-sets as giants, and apply product refinement to product actions,
+  * the Johnson outcome before GiantStep: a color class of the projected label
+    coloring that is a Johnson (or Hamming) graph on all labels reduces Sym(q)
+    to its automorphism group (scheme_step),
   * constant-size local certificates (Algorithm 3), with CheckNewWindow done by
     enumerating cosets of ker(phi_T) and solving on the window,
   * the "large known symmetry" branch (full certificates generate Alt(q)),
@@ -38,11 +41,12 @@ Every simplification keeps the answer exact; only the running time changes.
 """
 import itertools
 import math
-from collections import Counter, namedtuple
+from collections import Counter, OrderedDict, namedtuple
 
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens, sym_gens
 from .group import (PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system,
-                    johnson_structure, product_action, label_support, clear_chain_cache)
+                    johnson_structure, product_action, giant_labels, label_support,
+                    johnson_embedding, hamming_embedding, clear_chain_cache)
 
 Coset = namedtuple("Coset", "gens rep")
 
@@ -106,14 +110,20 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
 
 class Solver:
     def __init__(self, kappa=3, enum_limit=500, certificates=True, max_enum=100000,
-                 cert_refine=True, seed=True, recognize=True):
+                 cert_refine=True, seed=True, recognize=True, product_hint=True, scheme=True):
         self.kappa = kappa                  # size of the local test sets
         self.enum_limit = enum_limit        # enumerate groups/quotients up to this order
         self.certificates = certificates    # use local certificates in GiantStep
         self.cert_refine = cert_refine      # also refine labels by certificate signatures
         self.seed = seed                    # seed the memo for off-base one-mode branches
         self.max_enum = max_enum            # refuse to enumerate anything larger
-        self.recognize = recognize          # Johnson k >= 3 and product actions (else enumerate)
+        self.recognize = recognize          # Johnson k >= 3, product actions, other giants
+        self.product_hint = product_hint    # after product refinement, use coordinate 0 next
+        self._hints = {}                    # (n, gens) -> a block system to use for that group
+        self._dispatch = OrderedDict()      # (n, gens) -> dispatch record (LRU)
+        self.dispatch_cache = 256
+        self.scheme = scheme                # Johnson/Hamming label structure before GiantStep
+        self._schemes = {}                  # (G, phi, x) -> scheme of x's label coloring
         self.stats = Counter()
         clear_chain_cache()                 # (a cache only: results do not depend on it)
         self.memo = {}                      # (G.gens, x) -> generators of Aut_G(x)
@@ -219,11 +229,14 @@ class Solver:
           * product action on D^r points (r >= 2): product refinement, i.e.
             the union over the at most r! cosets of the coordinate-preserving
             subgroup, which acts imprimitively (finer hierarchy);
+          * Sym(m) or Alt(m) in another action (e.g. on bisections, which are
+            Cameron-small but have order m!): GiantStep on m labels found from
+            the conjugation action on transpositions or 3-cycles;
           * anything else: enumerate the quotient, up to max_enum.
-        The recognition is verified (see group.py): johnson_structure returns a
-        homomorphism onto Sym(m) or Alt(m), product_action a homomorphism onto
-        the coordinate permutations. Every branch is an exact reduction."""
-        n = G.n
+        The recognition is verified (see group.py): johnson_structure and
+        giant_labels return homomorphisms onto Sym(m) or Alt(m), product_action
+        a homomorphism onto the coordinate permutations. Every branch is an
+        exact reduction."""
         if all(maps(g, x, x) for g in G.gens):
             # G preserves x, so x^g = x for every g in G: Iso_G(x, y) is G
             # when y = x and empty otherwise.
@@ -231,7 +244,61 @@ class Solver:
             if x != y:
                 return None
             return Coset(list(G.gens) if known is None else known, G.idn)
-        blocks = top_block_system(G)
+        kind, hom, d, order = self.dispatch(G)
+        if kind in ("enum", "product", "other"):
+            pass
+        elif self.scheme:
+            a = self.scheme_step(G, hom, x, y, known)
+            if a is not NotImplemented:
+                return a
+        if kind == "giant":
+            self.stats["giant_natural"] += 1
+            return self.giant(G, hom, x, y, known)
+        if kind == "enum":
+            return self.enum_cosets(G, hom, x, y, known)
+        if kind == "product":
+            self.stats["product_refine"] += 1
+            self.stats["product_cosets"] += hom.image_order()
+            return self.coset_union(hom, range(G.n), x, y, known)
+        if kind != "other":
+            self.stats["giant_johnson" if kind.startswith("johnson") else "giant_abstract"] += 1
+            if kind.startswith("johnson"):
+                self.stats[kind] += 1
+            return self.giant(G, hom, x, y, known)
+        self.stats["unrecognized_primitive"] += 1
+        if order > self.max_enum:
+            raise Unsupported(f"large primitive quotient of degree {d} and order {order}")
+        self.stats["enum_large_primitive"] += 1
+        return self.enum_cosets(G, hom, x, y, known)
+
+    def dispatch(self, G):
+        """(kind, hom, d, order) for transitive G: the primitive quotient has
+        degree d and the given order, and kind is
+          "giant" (hom: G -> Sym(d), the block action or the identity),
+          "enum" (hom: the block action, or None when G is primitive),
+          "johnson_k<k>" or "abstract" (hom: G -> Sym(m) onto a giant),
+          "product" (hom: G -> Sym(r), the coordinate permutations),
+          "other" (hom: the block action, or None).
+        It depends only on G, so it is cached by G's generators; reusing the
+        homomorphism objects also keeps their kernels and the Young subgroups
+        of young_group across calls (the results are identical)."""
+        key = (G.n, tuple(G.gens))
+        rec = self._dispatch.get(key)
+        if rec is not None:
+            self._dispatch.move_to_end(key)
+            return rec
+        rec = self._dispatch[key] = self._compute_dispatch(G)
+        if len(self._dispatch) > self.dispatch_cache:
+            self._dispatch.popitem(last=False)
+        return rec
+
+    def _compute_dispatch(self, G):
+        n = G.n
+        blocks = self._hints.get((n, tuple(G.gens))) if self._hints else None
+        if blocks is None:
+            blocks = top_block_system(G)
+        else:
+            self.stats["product_hint"] += 1
         if blocks is None:                          # G itself is primitive
             d, phi, order = n, None, G.order()
         else:
@@ -244,38 +311,97 @@ class Solver:
             phi = ActionHom(G, d, lambda g: tuple(block_of[g[r]] for r in reps))
             order = phi.image_order()
         if d >= 5 and order in (math.factorial(d), math.factorial(d) // 2):
-            self.stats["giant_natural"] += 1
-            if phi is None:
-                phi = ActionHom(G, n, None)      # identity
-            return self.giant(G, phi, x, y, known)
+            return "giant", phi if phi is not None else ActionHom(G, n, None), d, order
         if order <= self.enum_limit or d < 5:
-            return self.enum_cosets(G, phi, x, y, known)
+            return "enum", phi, d, order
         P = phi.image_group() if phi else G
+
+        def compose(m, f):
+            if phi is None:
+                return ActionHom(G, m, f)
+            return ActionHom(G, m, lambda g: f(phi.image_of(g)))
+
         J = johnson_structure(P)
         if J is not None and (J[1] == 2 or self.recognize):
             m, k, f = J
-            self.stats["giant_johnson"] += 1
-            self.stats[f"johnson_k{k}"] += 1
-            if phi is None:
-                psi = ActionHom(G, m, f)
-            else:
-                psi = ActionHom(G, m, lambda g, phi=phi, f=f: f(phi.image_of(g)))
-            return self.giant(G, psi, x, y, known)
+            return f"johnson_k{k}", compose(m, f), d, order
         R = product_action(P) if self.recognize else None
         if R is not None:
-            r, f, _ = R
-            self.stats["product_refine"] += 1
-            if phi is None:
-                psi = ActionHom(G, r, f)
-            else:
-                psi = ActionHom(G, r, lambda g, phi=phi, f=f: f(phi.image_of(g)))
-            self.stats["product_cosets"] += psi.image_order()
-            return self.coset_union(psi, range(n), x, y, known)
-        self.stats["unrecognized_primitive"] += 1
-        if order > self.max_enum:
-            raise Unsupported(f"large primitive quotient of degree {d} and order {order}")
-        self.stats["enum_large_primitive"] += 1
-        return self.enum_cosets(G, phi, x, y, known)
+            psi = compose(R.r, R.f)
+            if self.product_hint:
+                # Inherited hierarchy: the kernel K (coordinates fixed) acts on
+                # the fibers of coordinate 0 as the group of that coordinate.
+                # Their preimages are a block system of K; use it as K's next
+                # primitive quotient (any block system gives exact reductions).
+                fib = [0] * d
+                for i, F in enumerate(R.fibers0):
+                    for b in F:
+                        fib[b] = i
+                hint = [[] for _ in R.fibers0]
+                for p in range(n):
+                    hint[fib[p if phi is None else block_of[p]]].append(p)
+                K = psi.kernel()
+                self._hints[(n, tuple(K.gens))] = hint
+            return "product", psi, d, order
+        A = giant_labels(P) if self.recognize else None
+        if A is not None:
+            return "abstract", compose(*A), d, order
+        return "other", phi, d, order
+
+    def scheme_step(self, G, phi, x, y, known=None):
+        """Johnson and Hamming structure on the labels (Babai's "Johnson"
+        outcome of Split-or-Johnson, applied before GiantStep).
+
+        phi: G -> Sym(q) is onto Sym(q) or Alt(q). If some color class of x's
+        two-label projection (label_projection) is exactly a Johnson graph
+        J(m, k) (m >= 2k >= 4) or a Hamming graph H(r, D) (D >= 2) on all q
+        labels, its embedding E_x (labels -> k-subsets of range(m), or ->
+        range(D)^r) is unique up to the automorphism group A of the graph
+        (Sym(m), times complementation if m = 2k; Sym(D) wr Sym(r)). Every g in
+        Iso_G(x, y) maps x's projection onto y's (that is what GiantStep uses
+        too), so phi(g) maps the class graph of x onto that of y, hence E_x
+        onto an embedding of y's graph. So y's class graph must have the same
+        type (else Iso is empty), and phi(g) lies in J_x sigma0, where sigma0
+        maps E_x to E_y and J_x = E_x^-1 A E_x <= Sym(q). Then
+            Iso_G(x, y) = Iso_H(x, y^(tau^-1)) tau,
+        with H = phi^-1(J_x & phi(G)) and tau a lift of sigma0 (multiplied by
+        an odd element of J_x when phi(G) = Alt(q) and sigma0 is odd; if J_x
+        has none, Iso is empty). Returns NotImplemented when x has no such
+        class."""
+        q = phi.m
+        proj = self.label_projection(G, phi, x, y)
+        if proj is None or proj[2] is None:
+            return NotImplemented
+        px, py = proj[2], proj[3]
+        key = self._proj_key(G, phi) + (tuple(x),)
+        sx = self._schemes.get(key, False)
+        if sx is False:
+            sx = self._schemes[key] = _find_scheme(q, px)
+        if sx is None:
+            return NotImplemented
+        color, kind, ex = sx
+        nbr = _class_graph(q, py, color)
+        ey = None
+        if nbr is not None:
+            ey = johnson_embedding(nbr) if kind == "johnson" else hamming_embedding(nbr)
+        self.stats["scheme_" + kind] += 1
+        if ey is None or ey[:2] != ex[:2]:
+            return None
+        gens, order, sigma0 = _scheme_group(q, kind, ex, ey)
+        if phi.image_order() != math.factorial(q):          # phi(G) = Alt(q)
+            gens, odd = _even_part(gens)
+            if odd is not None:
+                order //= 2
+            if parity(sigma0):
+                if odd is None:
+                    return None
+                sigma0 = mul(odd, sigma0)
+        H = phi.preimage(gens, order=order)
+        tau = phi.lift(sigma0)
+        a = self.solve(H, range(G.n), x, act(y, inv(tau)))
+        if a is None:
+            return None
+        return Coset(a.gens if known is None else known, mul(a.rep, tau))
 
     def enum_cosets(self, G, phi, x, y, known=None):
         """Enumerate the quotient: Iso_G(x,y) = U_p Iso_K(x, y^(tau_p^-1)) tau_p."""
@@ -721,3 +847,85 @@ def _label_orbits(q, perms):
             if ri != rj:
                 parent[max(ri, rj)] = min(ri, rj)
     return [find(v) for v in range(q)]
+
+
+def _class_graph(q, p, color):
+    """Neighbour sets of the color class `color` of the pair coloring p, or
+    None if the class is not symmetric."""
+    nbr = [set() for _ in range(q)]
+    for a in range(q):
+        row = p[a]
+        for b in range(q):
+            if b != a and row[b] == color:
+                if p[b][a] != color:
+                    return None
+                nbr[a].add(b)
+    return nbr
+
+
+def _find_scheme(q, p):
+    """The first color class (by color) of the pair coloring p that is a
+    Johnson or Hamming graph on all q labels: (color, kind, embedding)."""
+    colors = sorted({p[a][b] for a in range(q) for b in range(q) if a != b})
+    for color in colors:
+        nbr = _class_graph(q, p, color)
+        if nbr is None or not nbr[0]:
+            continue
+        e = johnson_embedding(nbr)
+        if e is not None:
+            return color, "johnson", e
+        e = hamming_embedding(nbr)
+        if e is not None:
+            return color, "hamming", e
+    return None
+
+
+def _scheme_group(q, kind, ex, ey):
+    """Generators of J_x <= Sym(q) (the automorphisms of x's embedding), its
+    order, and sigma0 mapping x's embedding onto y's."""
+    if kind == "johnson":
+        m, k, sx = ex
+        sy = ey[2]
+        ix = {v: l for l, v in enumerate(sx)}
+        iy = {v: l for l, v in enumerate(sy)}
+
+        def lab(s):
+            return tuple(ix[frozenset(s[i] for i in sx[l])] for l in range(q))
+
+        gens = [lab(s) for s in sym_gens(m, range(m))]
+        order = math.factorial(m)
+        if m == 2 * k:                  # complementation
+            full = frozenset(range(m))
+            gens.append(tuple(ix[full - sx[l]] for l in range(q)))
+            order *= 2
+        sigma0 = tuple(iy[sx[l]] for l in range(q))
+        return gens, order, sigma0
+    r, D, cx = ex
+    cy = ey[2]
+    ix = {v: l for l, v in enumerate(cx)}
+    iy = {v: l for l, v in enumerate(cy)}
+    gens = [tuple(ix[(s[v[0]],) + v[1:]] for v in cx) for s in sym_gens(D, range(D))]
+    gens += [tuple(ix[tuple(v[t[c]] for c in range(r))] for v in cx) for t in sym_gens(r, range(r))]
+    order = math.factorial(D) ** r * math.factorial(r)
+    sigma0 = tuple(iy[v] for v in cx)
+    return gens, order, sigma0
+
+
+def _even_part(gens):
+    """Generators of the even permutations in <gens> (Schreier generators for
+    the transversal {1, o}), and an odd element o of <gens> (or None)."""
+    odd = next((g for g in gens if parity(g)), None)
+    if odd is None:
+        return list(gens), None
+    oi = inv(odd)
+    out = []
+    for g in gens:
+        if parity(g):
+            out.append(mul(g, oi))
+            out.append(mul(odd, g))
+        else:
+            out.append(g)
+            out.append(mul(mul(odd, g), oi))
+    n = len(odd)
+    idn = tuple(range(n))
+    return [g for g in dict.fromkeys(out) if g != idn], odd

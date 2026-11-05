@@ -5,8 +5,9 @@ Everything here is deterministic. These are the "basic operations" the paper
 treats as polynomial-time (Section 3: orbits, fixing points, images, lifting).
 """
 import math
+import random
 from bisect import bisect_left, insort
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from itertools import compress
 from operator import itemgetter, ne
 
@@ -1059,8 +1060,13 @@ def _johnson_stars(m, k, nbr):
         N = len(nbr)
         want, size = math.comb(m, j - 1), m - j - 1
         cl_of = [[] for _ in range(N)]
-        cliques = []
-        for b in range(N):
+        cliques = [] if m != 2 * j else _half_cliques(j, nbr)
+        if cliques is None:
+            return None
+        for i, cl in enumerate(cliques):
+            for p in cl:
+                cl_of[p].append(i)
+        for b in range(N if m != 2 * j else 0):
             nb = nbr[b]
             for c in nb:
                 if any(c in cliques[i] for i in cl_of[b]):
@@ -1096,6 +1102,59 @@ def _johnson_stars(m, k, nbr):
     return members
 
 
+def _half_cliques(j, nbr):
+    """J(2j, j): both kinds of maximal cliques have j + 1 vertices (the j-sets
+    containing a (j-1)-set, and the j-subsets of a (j+1)-set), and the two
+    halves of the common neighbourhood of an edge have j - 1 vertices each.
+    Two cliques of the same kind share at most one vertex, cliques of
+    different kinds share 0 or 2. Returns the cliques of the kind of the first
+    one found (complementation swaps the kinds, so either kind is a valid
+    choice of "(j-1)-sets"), or None."""
+    allc = {}
+    for b in range(len(nbr)):
+        nb = nbr[b]
+        for c in nb:
+            if c < b:
+                continue
+            common = nb & nbr[c]
+            if len(common) != 2 * j - 2:
+                return None
+            w = next(iter(common))
+            g1 = nbr[w] & common
+            g1.add(w)
+            g2 = common - g1
+            if len(g1) != j - 1 or len(g2) != j - 1:
+                return None
+            for g in (g1, g2):
+                cl = frozenset(g | {b, c})
+                allc.setdefault(cl, len(allc))
+    cl = list(allc)
+    of = [[] for _ in nbr]
+    for i, C in enumerate(cl):
+        for p in C:
+            of[p].append(i)
+    kind = [None] * len(cl)
+    kind[0] = 0
+    queue = [0]
+    for i in queue:
+        for p in cl[i]:
+            for i2 in of[p]:
+                if i2 == i:
+                    continue
+                t = len(cl[i] & cl[i2])
+                if t > 2:
+                    return None
+                want = kind[i] if t == 1 else 1 - kind[i]
+                if kind[i2] is None:
+                    kind[i2] = want
+                    queue.append(i2)
+                elif kind[i2] != want:
+                    return None
+    if None in kind:
+        return None
+    return [C for i, C in enumerate(cl) if kind[i] == 0]
+
+
 def _star_action(P, stars, k):
     """f: g -> the permutation of the stars induced by g, if every generator
     of P permutes the stars and the image is Sym(m) or Alt(m); else None.
@@ -1129,19 +1188,28 @@ def _star_action(P, stars, k):
         if -1 in im or f(g) != im:
             return None
         imgs.append(im)
-    if PermGroup(m, imgs).order() not in (math.factorial(m), math.factorial(m) // 2):
+    # f(P) is a homomorphic image of P, so |f(P)| <= |P|; with |P| as the
+    # target order, Schreier-Sims stops early exactly when |f(P)| = |P| and
+    # otherwise completes, so order() is the true |f(P)| either way.
+    if PermGroup(m, imgs, order=P.order()).order() not in (math.factorial(m),
+                                                         math.factorial(m) // 2):
         return None
     f.stars = stars                     # (for inspection and tests)
     return f
 
 
 # -- product actions -----------------------------------------------------------
+ProductAction = namedtuple("ProductAction", "r f lines0 fibers0")
+
+
 def product_action(P):
     """If the primitive group P on d = D^r points (r >= 2) preserves a product
-    structure, return (r, f, lines0): f maps each element of P to the
-    permutation it induces on the r coordinates (a homomorphism, verified),
-    and lines0 lists the lines of coordinate 0 (the points that differ only in
-    that coordinate), a block system of ker f. Otherwise None.
+    structure, return ProductAction(r, f, lines0, fibers0): f maps each element
+    of P to the permutation it induces on the r coordinates (a homomorphism,
+    verified); lines0 lists the lines of coordinate 0 (the points that differ
+    only in that coordinate) and fibers0 the D fibers of coordinate 0 (the
+    points with equal coordinate 0). Both are block systems of ker f, which
+    acts on fibers0 as the group of coordinate 0. Otherwise None.
 
     The structure is found from an orbital graph that is a Cartesian product
     of r graphs on D vertices (for Maroti's case Sym(m) wr Sym(r) on r-tuples
@@ -1312,5 +1380,301 @@ def _product_lines(P, T, b, orb, nbr, r, D):
             out.append(next(c2 for c2, oc in lines_c if oc[q1] == oc[q2]))
         return tuple(out)
 
+    # fibers of coordinate 0: the points joined by lines of the other coordinates
+    up = list(range(d))
+    for c in range(1, r):
+        for L, v in pts.items():
+            if coord[L] == c:
+                a = root(v[0])
+                for p in v[1:]:
+                    z = root(p)
+                    if z != a:
+                        up[z] = a
+    fib = {}
+    for p in range(d):
+        fib.setdefault(root(p), []).append(p)
+    if len(fib) != D or any(len(v) * D != d for v in fib.values()):
+        return None
     lines0 = sorted(sorted(v) for L, v in pts.items() if coord[L] == 0)
-    return r, f, lines0
+    return ProductAction(r, f, lines0, sorted(fib.values()))
+
+
+# -- giants in other actions ---------------------------------------------------
+def giant_labels(P):
+    """If P (in any faithful action, e.g. Sym(2k) on the k|k bisections) is
+    isomorphic to Sym(m) or Alt(m), m >= 5, return (m, f) with f: P -> Sym(m)
+    a homomorphism onto Sym(m) or Alt(m) (verified). Otherwise None.
+
+    A transposition t of Sym(m) (a 3-cycle for Alt(m)) is searched for among
+    powers g^(o/2) (g^(o/3)) of pseudo-random elements g of order o (product
+    replacement with a fixed seed, so the result is deterministic). Its class
+    must have C(m, 2) elements (C(m, 3) subgroups <t>). P acts on that class
+    by conjugation, a homomorphism; for transpositions (3-cycles) it is the
+    Johnson action on 2-sets (3-sets), and johnson_structure recovers the m
+    labels and verifies them. f is the composite of the two homomorphisms.
+    (For m = 6 the class of t may be that of the triple transpositions; then
+    f differs from the natural map by an outer automorphism, which is just
+    as good.)"""
+    return _recog_cached("giant", P, _giant_labels)
+
+
+def _perm_order(g):
+    seen = bytearray(len(g))
+    o = 1
+    for i in range(len(g)):
+        if not seen[i]:
+            L, j = 0, i
+            while not seen[j]:
+                seen[j] = 1
+                j = g[j]
+                L += 1
+            o = o * L // math.gcd(o, L)
+    return o
+
+
+def _perm_power(g, e):
+    out = None
+    while e:
+        if e & 1:
+            out = g if out is None else mul(out, g)
+        e >>= 1
+        if e:
+            g = mul(g, g)
+    return out
+
+
+def _giant_labels(P, tries=300):
+    order = P.order()
+    m = _factorial_degree(order)
+    if m is None or m < 5:
+        return None
+    sym = order == math.factorial(m)
+    if not sym and m < 7 and m != 5:        # Alt(6): 3-sets are not a Johnson action
+        return None
+    p, size = (2, math.comb(m, 2)) if sym else (3, math.comb(m, 3))
+    gens = list(P.gens)
+    rng = random.Random(1000003 * m + P.n)
+    state = (gens * 10)[:max(10, len(gens))]
+    acc = P.idn
+    tried = set()
+    for _ in range(tries):
+        i, j = rng.sample(range(len(state)), 2)
+        state[i] = mul(state[i], state[j])
+        acc = mul(acc, state[i])
+        o = _perm_order(acc)
+        if o % p:
+            continue
+        t = _perm_power(acc, o // p)
+        key = t if sym else min(t, mul(t, t))
+        if key in tried:
+            continue
+        tried.add(key)
+        res = _class_action(gens, t, size, sym)
+        if res is None:
+            continue
+        imgs, conj = res
+        Q = PermGroup(size, imgs, order=order)     # (|Q| <= |P|: see _star_action)
+        if Q.order() != order:
+            continue
+        J = johnson_structure(Q)
+        if J is None or J[0] != m:
+            continue
+        fq = J[2]
+
+        def f(g, fq=fq, conj=conj):
+            return fq(conj(g))
+
+        return m, f
+    return None
+
+
+def _class_action(gens, t, size, sym):
+    """The conjugacy class of t (sym) or of the subgroup <t> (t of order 3)
+    under <gens>, if it has `size` members: (images of gens on it, conj) with
+    conj(g) the permutation of the class induced by conjugation with g.
+    Conjugation c -> g^-1 c g is a right action, so conj is a homomorphism."""
+    if sym:
+        def key(c):
+            return c
+    else:
+        def key(c):
+            c2 = mul(c, c)
+            return c if c < c2 else c2
+    ginv = [inv(g) for g in gens]
+    cls = [key(t)]
+    index = {cls[0]: 0}
+    for c in cls:
+        for g, gi in zip(gens, ginv):
+            e = key(mul(mul(gi, c), g))
+            if e not in index:
+                if len(cls) == size:
+                    return None
+                index[e] = len(cls)
+                cls.append(e)
+    if len(cls) != size:
+        return None
+
+    def conj(g):
+        gi = inv(g)
+        return tuple(index[key(mul(mul(gi, c), g))] for c in cls)
+
+    return [conj(g) for g in gens], conj
+
+
+# -- Johnson and Hamming graphs on a set of labels -----------------------------
+# GiantStep can use these on a color class of the projected label coloring
+# (Babai's "Johnson" outcome): when the class is exactly a Johnson graph
+# J(m, k) or a Hamming graph H(r, D) on all labels, its embedding is unique up
+# to its automorphism group, so every isomorphism maps the embedding of x
+# onto that of y.
+def johnson_embedding(nbr):
+    """If the graph with neighbour sets nbr on range(q) is exactly J(m, k) for
+    some m >= 2k >= 4: (m, k, sets), sets[l] a k-subset of range(m), such that
+    l ~ l' iff |sets[l] & sets[l']| = k - 1 (verified). The embedding is unique
+    up to Sym(m), and complementation when m = 2k. Otherwise None."""
+    q = len(nbr)
+    if q < 6:
+        return None
+    deg = len(nbr[0])
+    if any(len(v) != deg for v in nbr):
+        return None
+    k = 2
+    while math.comb(2 * k, k) <= q:
+        m = 2 * k
+        while math.comb(m, k) < q:
+            m += 1
+        if math.comb(m, k) == q and k * (m - k) == deg:
+            stars = _johnson_stars(m, k, nbr)
+            if stars is not None:
+                sets = [[] for _ in range(q)]
+                for i, S in enumerate(stars):
+                    for l in S:
+                        sets[l].append(i)
+                sets = [frozenset(v) for v in sets]
+                if _is_johnson(m, k, sets, nbr):
+                    return m, k, sets
+        k += 1
+    return None
+
+
+def _is_johnson(m, k, sets, nbr):
+    index = {}
+    for l, v in enumerate(sets):
+        if len(v) != k or index.setdefault(v, l) != l:
+            return False
+    for l, v in enumerate(sets):
+        exp = set()
+        for a in v:
+            rest = v - {a}
+            for b in range(m):
+                if b not in v:
+                    exp.add(index[rest | {b}])
+        if exp != nbr[l]:
+            return False
+    return True
+
+
+def hamming_embedding(nbr):
+    """If the graph with neighbour sets nbr on range(q) is exactly the Hamming
+    graph H(r, D) for some r >= 2, D >= 2 (D = 2: the hypercube Q_r):
+    (r, D, coords), coords[l] an r-tuple over range(D), such that l ~ l' iff
+    their coordinates differ in exactly one place (verified). The embedding is
+    unique up to Aut(H(r, D)) = Sym(D) wr Sym(r). The lines (maximal cliques
+    of size D) through a vertex are the components of its neighbourhood;
+    coordinates of lines are propagated along squares (two neighbours of p in
+    different coordinates have exactly one common neighbour besides p);
+    coordinate c of a vertex is its fiber under the lines of the other
+    coordinates. Otherwise None."""
+    q = len(nbr)
+    deg = len(nbr[0]) if q else 0
+    if q < 4 or any(len(v) != deg for v in nbr):
+        return None
+    for r in range(2, q.bit_length() + 1):
+        D = round(q ** (1.0 / r))
+        if D >= 2 and D ** r == q and r * (D - 1) == deg:
+            res = _hamming(nbr, r, D)
+            if res is not None:
+                return r, D, res
+    return None
+
+
+def _hamming(nbr, r, D):
+    q = len(nbr)
+    lines_at = []
+    for l in range(q):
+        rest, ls = set(nbr[l]), []
+        while rest:
+            v = rest.pop()
+            comp = (nbr[v] & rest) | {v}
+            if len(comp) != D - 1:
+                return None
+            rest -= comp
+            ls.append(frozenset(comp | {l}))
+        if len(ls) != r:
+            return None
+        lines_at.append(ls)
+    coord = {L: c for c, L in enumerate(lines_at[0])}
+    seen = [False] * q
+    seen[0] = True
+    queue = [0]
+    for p in queue:
+        for L in lines_at[p]:
+            a = coord[L]
+            for v in L:
+                if seen[v]:
+                    continue
+                for L2 in lines_at[p]:
+                    if L2 is L:
+                        continue
+                    t = next(u for u in L2 if u != p)
+                    common = nbr[v] & nbr[t]
+                    common.discard(p)
+                    if len(common) != 1:
+                        return None
+                    s = common.pop()
+                    Lv = next((M for M in lines_at[v] if s in M), None)
+                    if Lv is None or coord.setdefault(Lv, coord[L2]) != coord[L2]:
+                        return None
+                if not any(M == L for M in lines_at[v]):
+                    return None
+                seen[v] = True
+                queue.append(v)
+    if not all(seen):
+        return None
+    for l in range(q):
+        if sorted(coord.get(L, -1) for L in lines_at[l]) != list(range(r)):
+            return None
+    coords = [[0] * r for _ in range(q)]
+    for c in range(r):
+        up = list(range(q))
+
+        def root(v):
+            while up[v] != v:
+                up[v] = up[up[v]]
+                v = up[v]
+            return v
+
+        for L, cl in coord.items():
+            if cl != c:
+                it = iter(L)
+                a = root(next(it))
+                for v in it:
+                    z = root(v)
+                    if z != a:
+                        up[z] = a
+        fib = {}
+        for l in range(q):
+            fib.setdefault(root(l), len(fib))
+        if len(fib) != D:
+            return None
+        for l in range(q):
+            coords[l][c] = fib[root(l)]
+    coords = [tuple(v) for v in coords]
+    index = {v: l for l, v in enumerate(coords)}
+    if len(index) != q:
+        return None
+    for l, v in enumerate(coords):
+        exp = {index[v[:c] + (b,) + v[c + 1:]] for c in range(r) for b in range(D) if b != v[c]}
+        if exp != nbr[l]:
+            return None
+    return coords
