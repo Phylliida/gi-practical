@@ -366,7 +366,13 @@ are red-teams, a LaTeX paper, and final integration.
 * Dependency cone of main_theorem (115,555 constants) contains GI.Paper.thm_hereditary_budget (HJ Thm A.9).
   So HJ's σ-budget, the #1 residual risk under the conditional n^{O(log d)}, is machine-checked as part of
   HJ's theorem, modulo the 10 axioms. The new Λ-accounting itself is still pen-and-paper.
-* Comparator (fresh-kernel replay + statement match) is being built and run.
+* COMPARATOR ACCEPTS (13:28–14:15): "Lean default kernel accepts the solution. Your solution is okay!"
+  Solution.lean proves exactly Challenge.lean's statement, built in a landrun sandbox, exported with
+  lean4export and replayed in a fresh kernel, using only the 3 standard axioms plus the 10 permitted
+  ones. Kernel replay took 46m22s.
+  - Tools: comparator and lean4export at v4.30.0-rc2, landrun 5ed4a3d.
+  - One local deviation: comparator's landrun args gained `--rox /nix/store` so the NixOS toolchain
+    wrappers can execute; writes stay confined to .lake.
 
 ### w9-redteam-hypercanon (done, commit 97c4b9d; docs/redteam-w8-hypercanon.md)
 * No break, and no isomorphic pair with different outputs.
