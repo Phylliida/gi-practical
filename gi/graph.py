@@ -53,6 +53,7 @@ factor n^O(log n), so the n^O(log n) bound of the recursion is kept.
 """
 import time
 from math import factorial, prod, ceil, log2
+from operator import itemgetter
 
 from .perm import sym_gens, identity, mul, cycle
 from .group import PermGroup, reduce_gens
@@ -135,6 +136,72 @@ def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None):
         return tuple(p)
 
     return Coset([back(h) for h in a.gens], back(a.rep))
+
+
+# Stages with more positions than this are solved in chunks of whole orbits.
+CHUNK = 2000
+
+
+def solve_stage(solver, n, parts, D, x, y):
+    """Iso_K(x|D, y|D) for K = the product of the parts, as solve_on, but a large
+    D is cut into chunks of K-orbits that are solved one after the other (the
+    orbit-chain rule, as in Solver.cont):
+
+        Iso_K(x|D1+D2, y|D1+D2) = Iso_K1(x|D2, y^(r1^-1)|D2) r1,
+        where Iso_K(x|D1, y|D1) = K1 r1,
+
+    for K-invariant D1, D2 (D2 is then K1-invariant). Every chunk also holds the
+    diagonal positions of all vertices of the parts, so the current group acts
+    faithfully on it. An orbit on which x is constant and y has the same
+    constant value is skipped: every element of K maps x to y there, and that
+    stays true after y moves by elements of K. The recursion then works with
+    permutations of a chunk instead of all of D, which is much cheaper when D
+    is large (e.g. the cross block of two big solved factors)."""
+    vgens = factor_gens(n, parts)
+    if len(D) <= CHUNK:
+        return solve_on(solver, n, vgens, D, x, y, *factor_base_order(n, parts))
+    verts = sorted({i for i, _ in D})
+    diag = [(v, v) for v in verts]
+    dset = set(diag)
+    seen, orbits = set(dset), []
+    for p in D:
+        if p in seen:
+            continue
+        seen.add(p)
+        orb = [p]
+        for i, j in orb:
+            for g in vgens:
+                q = (g[i], g[j])
+                if q not in seen:
+                    seen.add(q)
+                    orb.append(q)
+        c = x[p[0]][p[1]]
+        if all(x[i][j] == c and y[i][j] == c for i, j in orb):
+            continue
+        orbits.append(orb)
+    if len(orbits) <= 1 and sum(map(len, orbits)) + len(diag) >= len(D):
+        return solve_on(solver, n, vgens, D, x, y, *factor_base_order(n, parts))
+    orbits.sort(key=lambda o: (len(o), o[0]))
+    chunks, cur = [], []
+    for o in orbits:
+        if cur and len(cur) + len(o) > CHUNK:
+            chunks.append(cur)
+            cur = []
+        cur += o
+    chunks.append(cur)
+    solver.stats["stage_chunks"] += len(chunks)
+    gens, vbase, order = vgens, *factor_base_order(n, parts)
+    rep = identity(n)
+    for chunk in chunks:
+        a = solve_on(solver, n, gens, sorted(diag + chunk), x, y, vbase, order)
+        if a is None:
+            return None
+        y = pull_back(y, a.rep)
+        rep = mul(a.rep, rep)
+        gens = list(a.gens)
+        H = PermGroup(n, gens)
+        vbase, order = H.short_base(), H.order()
+    return Coset(gens, rep)
 
 
 def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True,
@@ -348,20 +415,81 @@ def factor_base_order(n, factors):
 
 def clean(x, y, A, B, gens):
     """Whether x == y on A x B and every generator (vertex permutations
-    fixing A and B setwise) preserves x there."""
+    fixing A and B setwise) preserves x there. (Rows are compared as tuples.)"""
+    if not A or not B:
+        return True
+    gB = itemgetter(*B)
     for i in A:
-        xi, yi = x[i], y[i]
-        for j in B:
-            if xi[j] != yi[j] or any(x[g[i]][g[j]] != xi[j] for g in gens):
+        if gB(x[i]) != gB(y[i]):
+            return False
+    for g in gens:
+        gBg = itemgetter(*[g[j] for j in B])
+        for i in A:
+            if gBg(x[g[i]]) != gB(x[i]):
                 return False
     return True
 
 
 def sym_clean(x, y, A, B):
     """clean() for a group containing Sym(A) x Sym(B) (A, B disjoint or equal):
-    x == y on A x B and x uniform on its off-diagonal part."""
+    x == y on A x B off the diagonal, and x uniform on its off-diagonal part."""
+    if not A or not B:
+        return True
+    gB = itemgetter(*B)
+    if A is not B and set(A).isdisjoint(B):
+        cols = set()
+        for i in A:
+            t = gB(x[i])
+            if t != gB(y[i]):
+                return False
+            cols.update(t if len(B) > 1 else (t,))
+            if len(cols) > 1:
+                return False
+        return True
+    if A is B or A == B:
+        # fast path: whole rows (the diagonal entry occurring once in its row)
+        cols = set()
+        for i in A:
+            t = gB(x[i])
+            d = x[i][i]
+            if t != gB(y[i]) or t.count(d) != 1:
+                break
+            off = set(t)                # the off-diagonal values of row i
+            off.discard(d)
+            cols |= off
+            if len(cols) > 1:
+                return False
+        else:
+            return True
     cols = {x[i][j] for i in A for j in B if i != j}
     return len(cols) <= 1 and all(x[i][j] == y[i][j] for i in A for j in B if i != j)
+
+
+def factor_orbit_labels(n, factors):
+    """orbit_labels for G = prod of the factors: each vertex labeled by the
+    least vertex of its G-orbit (orbits of a factor lie inside its set P)."""
+    lab = list(range(n))
+    for P, gens in factors:
+        if gens is None:
+            m = min(P)
+            for v in P:
+                lab[v] = m
+        elif gens:
+            seen = set()
+            for v in sorted(P):
+                if v in seen:
+                    continue
+                seen.add(v)
+                orb = [v]               # v is the least point of its orbit
+                for a in orb:
+                    for g in gens:
+                        b = g[a]
+                        if b not in seen:
+                            seen.add(b)
+                            orb.append(b)
+                for b in orb:
+                    lab[b] = v
+    return lab
 
 
 def new_factors(n, gens, P):
@@ -421,8 +549,7 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
     while True:
         # 1. refine with the G-orbits as extra vertex labels
         if not fresh:
-            lab = orbit_labels(n, [g for P, gens in factors if gens for g in gens],
-                               [P for P, gens in factors if gens is None])
+            lab = factor_orbit_labels(n, factors)
             if labels_add_information(x, y, lab):
                 solver.stats["refine"] += 1
                 r = pol.refine(lambda: refine_pairs(x, y, lab, lab, method))
@@ -455,8 +582,7 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
         if now is None:
             solver.stats["stage"] += 1
             try:
-                a = pol.trial(solver, lambda: solve_on(solver, n, factor_gens(n, parts), D, x, y,
-                                                       *factor_base_order(n, parts)))
+                a = pol.trial(solver, lambda: solve_stage(solver, n, parts, D, x, y))
                 solver.stats["trial_done"] += 1
             except OverBudget:
                 solver.stats["trial_abort"] += 1
@@ -467,7 +593,7 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
             return None if a is None else Coset(a.gens, mul(a.rep, rho))
         if a is OverBudget:
             solver.stats["stage"] += 1
-            a = solve_on(solver, n, factor_gens(n, parts), D, x, y, *factor_base_order(n, parts))
+            a = solve_stage(solver, n, parts, D, x, y)
         if a is None:
             return None
         y = pull_back(y, a.rep)

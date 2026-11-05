@@ -460,3 +460,26 @@ def test_policy_budgeted_levels():
     assert "cont" not in S.__dict__ and "solve" not in S.__dict__
     assert Policy(100, ir=3).ir_max == 7 and Policy(100, ir=0).ir_max == 0
     assert Policy(100, ir=3, ir_budget=None).ir_max == 3
+
+
+def test_chunked_stages(monkeypatch):
+    """Stages solved in chunks of orbits (forced by a tiny CHUNK) give the same
+    exact answers: random graphs against brute force, CFI(K4) and its twist,
+    rook4 vs Shrikhande."""
+    import gi.graph
+    monkeypatch.setattr(gi.graph, "CHUNK", 6)
+    rng = random.Random(29)
+    for _ in range(25):
+        n = rng.randint(2, 7)
+        A = rand_matrix(n, rng, rng.choice([0.3, 0.5]), (1, 2), rng.random() < 0.3)
+        s = list(range(n))
+        rng.shuffle(s)
+        B = relabel(A, s) if rng.random() < 0.6 else rand_matrix(n, rng, 0.4, (1, 2))
+        for kw in (dict(ir=0), dict()):
+            S = Solver(certificates=False)
+            check_answer(A, B, graph_iso(A, B, solver=S, **kw))
+    S = Solver(certificates=False)
+    graph_iso(cfi(K4, 4), cfi(K4, 4), solver=S, ir=0)
+    assert S.stats["stage_chunks"] > 0
+    assert check_pair(cfi(K4, 4), cfi(K4, 4, twist=True), [dict(ir=0), dict()], rng) == 192
+    assert check_pair(rook4(), shrikhande(), [dict(ir=0), dict()], rng) == 1152
