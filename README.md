@@ -107,8 +107,9 @@ stage to the recursion.
    `ir_max` (default `max(ir, ceil(log2 n))`) first give the stage to the recursion with a time
    budget of `ir_budget` times the mean refinement time of this graph (one branch costs at least
    one refinement); if the recursion does not finish, its work is discarded and the stage
-   branches. After one timeout at a given (depth, factor size), later stages with the same
-   (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
+   branches. No trial is made when `100 (|P|/n)^3 > ir_budget` (building the group of Sym(P) on
+   |P|^2 positions costs about |P|^3 sifts and cannot be interrupted), and after one timeout at a
+   given (depth, factor size), later stages with the same (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
    exact memo entries behind), so the policy only affects speed and which generators are
    returned. Depth O(log n) costs at most a factor n^O(log n), so the n^O(log n) bound is kept.
 4. **Orbit pruning.** Automorphisms: Aut_{G_v}(x) (the branch of v against itself) plus one
@@ -122,9 +123,16 @@ stage to the recursion.
    random tables, computed for a whole row as one big-integer sum over packed rows. Any fixed
    function of the multiset is a canonical refinement, so exactness does not depend on the
    tables (a coincidence would only coarsen a round; `wl2_reference` keeps the definition and a
-   test checks equal partitions). Each graph is refined on its own and cached (the same side
+   test checks equal partitions). Hashed 1-WL rounds (O(n^2) each) run first; when they make
+   the vertex colors discrete, no 2-WL round is needed. Each graph is refined on its own and cached (the same side
    recurs across individualization branches); the shared naming is replaced by a direct check
    that the input color is one function of the refined color on both sides.
+6. **Chunked stages.** A stage with more than `CHUNK` (2000) positions is solved in chunks of
+   orbits of its group, one after the other (orbit-chain rule), each chunk together with the
+   diagonal of the stage's vertices (so the group acts faithfully); orbits where x and y share
+   one constant color are skipped. The recursion then permutes a chunk instead of all positions
+   (CFI(3reg20)-twist, n = 200: 156s → 1.4s). Stage groups are built with a diagonal base, their
+   known order and an ambient base.
 
 No change to `solver.py` is needed: each stage calls `Solver.solve` on a group that is built
 directly on the stage's positions.
@@ -136,6 +144,11 @@ python3 -m pytest -q tests                                   # must pass
 python3 bench/run.py --tiers tiny,small --timeout 60 --label NAME
 python3 bench/run.py --tiers medium --timeout 120 --label NAME --solver-args '{"certificates": false}'
 ```
+
+`bench/reference.py` times networkx VF2 (decision only) and, if importable, pynauty on the same
+instances (`python3 -m venv .venv && .venv/bin/pip install pynauty networkx sympy`, then run it
+with `.venv/bin/python`); `bench/nauty_check.py` cross-checks graph_iso against nauty on graphs
+outside the families.
 
 `--graph-args '{"ir": 0}'` passes keyword arguments to `graph_iso` (for example, to measure the
 recursion without individualization). `bench/run.py` checks every answer. It verifies the isomorphism, verifies that each generator is

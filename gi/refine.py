@@ -23,6 +23,7 @@ Pair colorings are n x n lists of ints (row i, column j is the pair (i, j)).
 """
 import random as _random
 import sys
+from math import sumprod
 from array import array
 from collections import Counter, OrderedDict
 from itertools import chain
@@ -127,9 +128,10 @@ _TABLES = {}                                    # bits -> (U, V, generator)
 assert array("Q").itemsize == 8
 
 
-def _tables(size, n):
-    """U, V with at least `size` entries, scaled so that n products fit in a field."""
-    bits = min(_TABLE_BITS, (8 * _FIELD - max(1, n).bit_length()) // 2)
+def _tables(size, n, field_bits=8 * _FIELD):
+    """U, V with at least `size` entries, scaled so that a sum of n products
+    U[a] V[b] stays below 2^field_bits."""
+    bits = min(_TABLE_BITS, (field_bits - max(1, n).bit_length()) // 2)
     t = _TABLES.get(bits)
     if t is None:
         t = _TABLES[bits] = ([], [], _random.Random(bits))
@@ -178,11 +180,43 @@ def _wl2_keys(P, n, U, V):
     return out
 
 
+def _wl1_vertex_colors(P, k):
+    """Colour refinement (1-WL) of the vertices of ONE pair coloring P with
+    int names < k: the vertex color starts as the diagonal color, and the new
+    color of i is (c(i), sum_j W[P(i, j)] Z[c(j)]) for fixed tables W, Z (a
+    function of the multiset of (P(i, j), c(j)), as in 2-WL), named by rank
+    in this graph's own key set. Returns the stable vertex colors and the
+    number of classes after each round."""
+    n = len(P)
+    W, Z = _tables(max(k, n), n, 63)    # the sums fit in a C long (sumprod's fast path)
+    names = {v: i for i, v in enumerate(sorted({P[i][i] for i in range(n)}))}
+    c = [names[P[i][i]] for i in range(n)]
+    m = len(names)
+    trace = [m]
+    getw = W.__getitem__
+    while m < n:
+        cz = [Z[x] for x in c]
+        keys = [(ci << 64) | sumprod(map(getw, row), cz) for ci, row in zip(c, P)]
+        uniq = sorted(set(keys))
+        if len(uniq) == m:
+            break
+        rank = {v: i for i, v in enumerate(uniq)}
+        c = list(map(rank.__getitem__, keys))
+        m = len(uniq)
+        trace.append(m)
+    return c, trace
+
+
 def wl2_single(P):
     """The stable 2-WL coloring of ONE pair coloring P (n x n, sortable
     values), named canonically from P alone: in every round a color is the rank
     of its key in this graph's own sorted set of keys. Returns (coloring,
     trace), trace = the number of colors after each round.
+
+    1-WL runs first (its rounds cost O(n^2) instead of O(n^3)). If it splits
+    the vertex classes, its colors are folded into the pair colors; if it
+    makes them discrete, every pair has its own color and 2-WL cannot refine
+    any further, so no 2-WL round is needed.
 
     Isomorphic inputs give the same trace and corresponding colorings (each
     round depends only on the multiset of keys), which is what wl2 needs."""
@@ -191,7 +225,18 @@ def wl2_single(P):
     get = names.__getitem__
     P = [list(map(get, row)) for row in P]
     k = len(names)
-    trace = [k]
+    c, t1 = _wl1_vertex_colors(P, k)
+    trace = [k, tuple(t1)]
+    if len(t1) > 1:                     # 1-WL split the vertex classes: fold them in
+        keys = [(ci * n + cj) * k + v for ci, row in zip(c, P) for cj, v in zip(c, row)]
+        uniq = sorted(set(keys))
+        rank = {v: i for i, v in enumerate(uniq)}
+        f = list(map(rank.__getitem__, keys))
+        P = [f[i * n:(i + 1) * n] for i in range(n)]
+        k = len(uniq)
+        trace.append(k)
+        if t1[-1] == n:                 # discrete vertex colors: stable for 2-WL
+            return P, tuple(trace)
     while True:
         U, V = _tables(k, n)
         keys = _wl2_keys(P, n, U, V)
