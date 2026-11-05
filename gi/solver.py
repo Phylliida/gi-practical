@@ -38,6 +38,7 @@ Every simplification keeps the answer exact; only the running time changes.
 import itertools
 import math
 from collections import Counter, namedtuple
+from operator import add
 
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens, sym_gens
 from .group import (PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system,
@@ -103,20 +104,80 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
         cx, cy = nx, ny
 
 
+def _rank2(sx, sy):
+    """Shared content-based names for two lists of signatures."""
+    rank = {s: i for i, s in enumerate(sorted(set(sx) | set(sy)))}
+    return [rank[s] for s in sx], [rank[s] for s in sy]
+
+
+def wl2_joint(PX, PY):
+    """Joint 2-dimensional WL (the coherent closure) of two m x m colorings,
+    given as flat lists of sortable values (entry a*m+b is the pair (a, b)).
+    The new color of (a, b) is (old color, multiset of (C(a, c), C(c, b))),
+    named by rank in the union of both instances' signatures. (The same rule
+    as refine.wl2, copied so that the front end can change independently.)
+    Returns the stable flat int colorings, or None if the histograms differ."""
+    fx, fy = _rank2(PX, PY)
+    if Counter(fx) != Counter(fy):
+        return None
+    m = math.isqrt(len(fx))
+    k = len(set(fx))
+    while True:
+        sigs = []
+        for P in (fx, fy):
+            K = 1 + max(P)
+            rows = [P[a * m:(a + 1) * m] for a in range(m)]
+            cols = [P[b::m] for b in range(m)]
+            s = []
+            for a in range(m):
+                ra = [c * K for c in rows[a]]
+                Pa = rows[a]
+                for b in range(m):
+                    s.append((Pa[b], tuple(sorted(map(add, ra, cols[b])))))
+            sigs.append(s)
+        fx, fy = _rank2(sigs[0], sigs[1])
+        if Counter(fx) != Counter(fy):
+            return None
+        k2 = len(set(fx))
+        if k2 == k:
+            return fx, fy
+        k = k2
+
+
+class YoungRoot:
+    """A label structure for an intransitive group G0 (see Solver.young_root):
+    labels = the positions of `gamma` (label i is gamma[i]), on which G0 acts
+    as the full product of Sym(C) over `classes`; psi = the restriction to
+    gamma; unary[a] / pair[(a, b)] = the positions w whose support is (a,) or
+    (a, b), each with its G0-orbit index."""
+    __slots__ = ("G", "psi", "m", "gamma", "classes", "unary", "pair")
+
+
+_FALLBACK = object()
+
+
 class Solver:
     def __init__(self, kappa=3, enum_limit=500, certificates=True, max_enum=100000,
-                 cert_refine=True, seed=True):
+                 cert_refine=True, seed=True, young=True, young_min=5, young_wl=2,
+                 giant_wl=2):
         self.kappa = kappa                  # size of the local test sets
         self.enum_limit = enum_limit        # enumerate groups/quotients up to this order
         self.certificates = certificates    # use local certificates in GiantStep
         self.cert_refine = cert_refine      # also refine labels by certificate signatures
         self.seed = seed                    # seed the memo for off-base one-mode branches
         self.max_enum = max_enum            # refuse to enumerate anything larger
+        self.young = young                  # Young-label step on intransitive groups
+        self.young_min = young_min          # individualize Young classes of this size
+        self.young_wl = young_wl            # label refinement there: 2 = 2-WL, 1 = 1-WL
+        self.giant_wl = giant_wl            # GiantStep pair colors: 2 = also 2-WL, 1 = 1-WL
         self.stats = Counter()
         clear_chain_cache()                 # (a cache only: results do not depend on it)
         self.memo = {}                      # (G.gens, x) -> generators of Aut_G(x)
         self._supp = {}                     # (G, phi) -> support map of label_projection
         self._certs = {}                    # (G, phi, x) -> local certificates of x
+        self._yroots = {}                   # G.gens -> YoungRoot or None
+        self._ynodes = {}                   # H.gens -> (YoungRoot, partition of the labels)
+        self._ypull = {}                    # (root, coloring) -> pulled-back label colors
 
     # -- Solve: restrict to the positions that still need checking -----------
     def solve(self, G, D, x, y):
@@ -180,6 +241,10 @@ class Solver:
             return self.enumerate(G, x, y, known)
         orbs = G.orbits()
         if len(orbs) > 1:
+            if self.young:
+                a = self.young_step(G, x, y, known)
+                if a is not _FALLBACK:
+                    return a
             # orbit-chain rule, largest orbit first
             orbs.sort(key=lambda o: (-len(o), o[0]))
             first = orbs[0]
@@ -375,9 +440,10 @@ class Solver:
         proj = self.label_projection(G, phi, x, y)
         cx, cy, px, py = proj if proj else ([0] * q, [0] * q, None, None)
         hx = hy = {}
-        cx, cy = refine_labels(q, hx, hy, cx, cy, px, py)
-        if Counter(cx) != Counter(cy):
+        r = self.label_refine(q, hx, hy, cx, cy, px, py)
+        if r is None:
             return None
+        cx, cy = r
         seeds = []
         if len(set(cx)) == 1 and self.certificates and q > self.kappa:
             certs_x = self.certificates_of(G, phi, x)
@@ -389,12 +455,50 @@ class Solver:
                 certs_y = certs_x if x == y else self.certificates_of(G, phi, y)
                 hx = {T: (s, r) for T, (s, r, _) in certs_x.items()}
                 hy = {T: (s, r) for T, (s, r, _) in certs_y.items()}
-                cx, cy = refine_labels(q, hx, hy, cx, cy, px, py)
-                if Counter(cx) != Counter(cy):
+                r = self.label_refine(q, hx, hy, cx, cy, px, py)
+                if r is None:
                     return None
+                cx, cy = r
         if len(set(cx)) > 1:
             return self.lift_and_continue(G, phi, sym, cx, cy, x, y)
         return self.individualize(G, phi, sym, cx, cy, hx, hy, px, py, x, y, known, seeds)
+
+    def label_refine(self, q, hx, hy, cx, cy, px=None, py=None):
+        """refine_labels (1-WL with the hypergraphs and pair colors), and with
+        giant_wl=2 and a pair coloring, alternated with joint 2-WL (the
+        coherent closure) of the pair coloring with the label colors on its
+        diagonal, until stable. Both steps are joint and content-named, so
+        every isomorphism maps the x-coloring onto the y-coloring. Returns
+        (cx, cy), or None if the color histograms differ."""
+        cx, cy = refine_labels(q, hx, hy, cx, cy, px, py)
+        if Counter(cx) != Counter(cy):
+            return None
+        if px is None or self.giant_wl != 2:
+            return cx, cy
+        fx = [(0, px[a][b]) if a != b else None for a in range(q) for b in range(q)]
+        fy = [(0, py[a][b]) if a != b else None for a in range(q) for b in range(q)]
+        while True:
+            k = len(set(cx))
+            for a in range(q):
+                fx[a * q + a] = (-1, cx[a])
+                fy[a * q + a] = (-1, cy[a])
+            r = wl2_joint(fx, fy)
+            if r is None:
+                return None
+            fx, fy = r
+            cx, cy = fx[::q + 1], fy[::q + 1]
+            if not hx or len(set(cx)) == k:
+                return cx, cy
+            k = len(set(cx))
+            qx = [fx[a * q:(a + 1) * q] for a in range(q)]
+            qy = [fy[a * q:(a + 1) * q] for a in range(q)]
+            cx, cy = refine_labels(q, hx, hy, cx, cy, qx, qy)
+            if Counter(cx) != Counter(cy):
+                return None
+            if len(set(cx)) == k:
+                return cx, cy
+            fx = [(0, c) for c in fx]
+            fy = [(0, c) for c in fy]
 
     def large_symmetry_step(self, G, phi, sym, F, x, y, known=None):
         """F <= Aut_G(x) with phi(F) >= Alt(q). For g in Iso_G(x, y) there is
@@ -450,7 +554,7 @@ class Solver:
         for none, so one representative l per orbit suffices. l = 0 comes
         first: its branch group is the one used in full mode, so its recursion
         hits the memo."""
-        n, q = G.n, phi.m
+        q = phi.m
 
         def refined(l, g, z):
             cz, hz, pz = (cx, hx, px) if z is x else (cy, hy, py)
@@ -458,24 +562,38 @@ class Solver:
             iz = [2 * c for c in cz]
             ix[l] += 1
             iz[g] += 1
-            ax, az = refine_labels(q, hx, hz, ix, iz, px, pz)
-            return (ax, az) if Counter(ax) == Counter(az) else None
+            return self.label_refine(q, hx, hz, ix, iz, px, pz)
 
+        return self.branch_labels(G, phi, sym, list(range(q)), list(range(q)), refined,
+                                  x, y, known, seeds)
+
+    def branch_labels(self, G, phi, sym, Cx, Cy, refined, x, y, known, seeds=()):
+        """Iso_G(x, y) = U_{g in Cy} B(l0, g), l0 = Cx[0], where Cx and Cy are
+        the label classes of one color in x and y (every isomorphism maps l0
+        into Cy). refined(l, g, z) is the joint invariant refinement with l
+        individualized in x and g in z (None if it rules the branch out); each
+        branch is finished by LiftAndContinue. The pruning, the memo and
+        one-mode are those described in `individualize` (with label 0 read as
+        l0, and the one-mode target 0 as Cy[0]); the arguments there only use
+        (*), which holds for every invariant refinement."""
+        n, q = G.n, phi.m
+        l0, g0 = Cx[0], Cy[0]
+        seeds = list(seeds)
         if known is not None:
             orbit = _label_orbits(q, [phi.image_of(a) for a in known])
             reps = []
             seen = set()
-            for l in range(q):
+            for l in Cx:
                 if orbit[l] not in seen:
                     seen.add(orbit[l])
                     reps.append(l)
-            self.stats["pruned"] += q - len(reps)
+            self.stats["pruned"] += len(Cx) - len(reps)
             for l in reps:
-                r = refined(l, 0, y)
+                r = refined(l, g0, y)
                 if r is None:
                     continue
                 self.stats["branch"] += 1
-                if l:
+                if l != l0:
                     self.stats["one_offbase"] += 1
                     if self.seed:
                         self.seed_label_stabilizer(phi, sym, r[0], known, l, x)
@@ -502,12 +620,12 @@ class Solver:
         base = sigma = s = s_inv = None
         out = list(seeds)
         explored = []
-        for g in range(q):
+        for g in Cy:
             if explored and find(g) in {find(e) for e in explored}:
                 self.stats["pruned"] += 1
                 continue
             explored.append(g)
-            r = refined(0, g, y)
+            r = refined(l0, g, y)
             if r is None:
                 continue
             ax, ay = r
@@ -530,7 +648,25 @@ class Solver:
                 absorb([mul(s_inv, phi.image_of(a.rep))])
         if sigma is None:
             return None
-        return Coset(reduce_gens(n, list(base.gens) + out), sigma)
+        return Coset(self.reduce_through(G, phi, list(base.gens) + out), sigma)
+
+    def reduce_through(self, G, phi, gens):
+        """An irredundant generating list of <gens> (gens in G). When phi is
+        faithful on G, redundancy is decided on the images in Sym(m), which is
+        much cheaper than in degree n; otherwise reduce_gens."""
+        f = phi.__dict__.get("_faithful")
+        if f is None:
+            f = phi._faithful = phi.kernel().order() == 1
+        if not f:
+            return reduce_gens(G.n, gens)
+        idn = G.idn
+        gens = [g for g in dict.fromkeys(gens) if g != idn]
+        if len(gens) <= 4:
+            return gens
+        back = {}
+        for g in gens:
+            back.setdefault(phi.image_of(g), g)
+        return [back[h] for h in PermGroup(phi.m, list(back)).gens]
 
     def young_group(self, phi, sym, cx):
         """H = phi^-1(Young subgroup of the partition of cx) when phi(G) = Sym(q),
@@ -550,7 +686,20 @@ class Solver:
                 ygens = [g for C in big for g in alt_gens(q, C)]
                 transp = [cycle(q, C[:2]) for C in big]
                 ygens += [mul(transp[0], t) for t in transp[1:]]
-            H = cache[key] = phi.preimage(ygens)
+            root = getattr(phi, "_yroot", None)
+            if root is None:
+                H = cache[key] = phi.preimage(ygens)
+            else:                           # a Young node: psi0^-1(Young(partition))
+                # The label positions of the classes (all but one point each)
+                # make a short base prefix with small orbits; the result is the
+                # same group as phi.preimage(ygens).
+                K = phi.kernel()
+                order = math.prod(math.factorial(len(C)) for C in big) * K.order()
+                base = [root.gamma[a] for C in big for a in C[:-1]]
+                H = cache[key] = PermGroup(phi.G.n, [phi.lift(h) for h in ygens] + K.gens,
+                                           base=base, order=order,
+                                           ambient_base=phi.G.short_base())
+                self._ynodes.setdefault(tuple(H.gens), (root, key))
         return H
 
     def lift_and_continue(self, G, phi, sym, cx, cy, x, y):
@@ -590,6 +739,215 @@ class Solver:
         C = PermGroup(n + q, [a + tuple(n + v for v in phi.image_of(a)) for a in known],
                       base=[n + l])
         self.memo[key] = reduce_gens(n, [s[:n] for s in C._tail(1).gens])
+
+    # -- the Young-label step: aggregation over the whole instance ------------
+    def young_root(self, G):
+        """A label structure for the intransitive group G, or None (cached).
+
+        Labels: the union gamma of the G-orbits O with |O| >= 3 on which G acts
+        as the full product of Sym(O) (the restriction psi to gamma has image
+        exactly prod Sym(O); orbits are taken greedily, smallest first). On a
+        graph stage these are the diagonal positions, i.e. the vertex classes.
+        The support of a position w is the set of labels fixed by G_w (as in
+        label_projection); positions with one or two labels in their support
+        are recorded with their G-orbit index. Everything depends on G alone,
+        and the support map is G-equivariant, hence H-equivariant for every
+        subgroup H: supp(w^h) = supp(w)^psi(h)."""
+        key = tuple(G.gens)
+        if key in self._yroots:
+            return self._yroots[key]
+        r = self._yroots[key] = self._young_detect(G)
+        return r
+
+    def _young_detect(self, G):
+        n = G.n
+        order = G.order()
+        orbs = G.orbits()
+        cand = sorted((O for O in orbs if 3 <= len(O) < n
+                       and order % math.factorial(len(O)) == 0), key=lambda O: (len(O), O[0]))
+        if not any(len(O) >= self.young_min for O in cand):
+            return None
+
+        homs = {}
+
+        def product(Os):
+            t = math.prod(math.factorial(len(O)) for O in Os)
+            if order % t:
+                return False
+            D = tuple(sorted(p for O in Os for p in O))
+            h = homs[D] = RestrictionHom(G, D)
+            return h.image_order() == t
+
+        if not product(cand):
+            acc = []
+            for O in cand:
+                if product(acc + [O]):
+                    acc.append(O)
+            cand = acc
+        if not any(len(O) >= self.young_min for O in cand):
+            return None
+        self.stats["young_root"] += 1
+        gamma = sorted(p for O in cand for p in O)
+        m = len(gamma)
+        lab = {p: i for i, p in enumerate(gamma)}
+        psi = homs[tuple(gamma)]
+        ig = [psi.image_of(g) for g in G.gens]
+        gens = G.gens
+        idm = tuple(range(m))
+        unary = [[] for _ in range(m)]
+        pair = {}
+        for k, O in enumerate(orbs):
+            # t[w] = psi(u_w) for a transversal element u_w with O[0]^u_w = w;
+            # F = the labels fixed by psi(G_O[0]), checked on the Schreier
+            # generators u_w g u_(w^g)^-1, which generate G_O[0].
+            p = O[0]
+            t = {p: idm}
+            F = list(range(m))
+            queue = [p]
+            for w in queue:
+                tw = t[w]
+                for g, im in zip(gens, ig):
+                    w2 = g[w]
+                    t2 = t.get(w2)
+                    if t2 is None:
+                        t[w2] = mul(tw, im)
+                        queue.append(w2)
+                    elif F:
+                        F = [a for a in F if im[tw[a]] == t2[a]]
+            if len(F) == 1:
+                a = F[0]
+                for w in O:
+                    unary[t[w][a]].append((w, k))
+            elif len(F) == 2:
+                a, b = F
+                for w in O:
+                    tw = t[w]
+                    pair.setdefault((tw[a], tw[b]), []).append((w, k))
+        R = YoungRoot()
+        R.G, R.psi, R.m, R.gamma = G, psi, m, gamma
+        R.classes = tuple(tuple(sorted(lab[p] for p in O)) for O in
+                          sorted(cand, key=lambda O: O[0]))
+        R.unary, R.pair = unary, pair
+        psi._yroot = R
+        return R
+
+    def young_refine(self, R, cls, x, y, mx=None, my=None):
+        """Jointly refine the labels of R: the initial color of a label is its
+        class index cls[a] (a mark if it is mx in x or my in y) and the colors
+        (orbit, x[w]) of the positions with support (a,); a pair (a, b) gets
+        those with support (a, b). 2-WL (young_wl=2) or 1-WL with pair colors
+        (young_wl=1) follows. For g in Iso_H(x, y), H <= R.G preserving the
+        classes, psi(g) maps the x-coloring onto the y-coloring (the support
+        map is equivariant, orbits are invariant), so it maps the refined
+        colors onto each other too. Returns (dx, dy) or None."""
+        m = R.m
+        init = []
+        for z, mk in ((x, mx), (y, my)):
+            un, off = self.young_pullback(R, z)
+            diag = [(0, cls[a], a == mk, un[a]) for a in range(m)]
+            init.append((diag, off))
+        none = (2,)
+        if self.young_wl == 2:
+            flat = []
+            for diag, off in init:
+                f = [none] * (m * m)
+                for a in range(m):
+                    f[a * m + a] = diag[a]
+                for (a, b), v in off.items():
+                    f[a * m + b] = v
+                flat.append(f)
+            r = wl2_joint(flat[0], flat[1])
+            if r is None:
+                return None
+            fx, fy = r
+            return fx[::m + 1], fy[::m + 1]
+        (dgx, ofx), (dgy, ofy) = init
+        cx, cy = _rank2(dgx, dgy)
+        vals = {v: i for i, v in enumerate(sorted(set(ofx.values()) | set(ofy.values())))}
+        nn = len(vals)
+        px = [[nn] * m for _ in range(m)]
+        py = [[nn] * m for _ in range(m)]
+        for P, off in ((px, ofx), (py, ofy)):
+            for (a, b), v in off.items():
+                P[a][b] = vals[v]
+        if Counter(cx) != Counter(cy):
+            return None
+        dx, dy = refine_labels(m, {}, {}, cx, cy, px, py)
+        return (dx, dy) if Counter(dx) == Counter(dy) else None
+
+    def young_pullback(self, R, z):
+        """The colors of z pulled back to the labels of R: per label, the sorted
+        (orbit, z[w]) over the positions w with support (a,); per pair, those
+        with support (a, b). Cached (the branches of one step share x and y)."""
+        key = (id(R), z)
+        c = self._ypull.get(key)
+        if c is None:
+            un = [tuple(sorted((k, z[w]) for w, k in ws)) for ws in R.unary]
+            off = {s: (1, tuple(sorted((k, z[w]) for w, k in ws))) for s, ws in R.pair.items()}
+            if len(self._ypull) > 256:
+                self._ypull.clear()
+            c = self._ypull[key] = (un, off)
+        return c
+
+    def young_step(self, G, x, y, known=None):
+        """Iso_G(x, y) for intransitive G with a Young label structure: G is
+        psi0^-1(Young(partition)) for a root R (G = R.G at the root). Returns
+        _FALLBACK when there is none, or when no large class can be
+        individualized usefully (then the orbit chain runs).
+
+        1. Refine the labels jointly (young_refine). If the partition splits,
+           LiftAndContinue under psi0^-1(Young(refined)), exact as in GiantStep:
+           every g in Iso_G(x, y) maps the refined classes of x onto those of
+           y, and the class-matching map lies in Young(partition) = psi0(G).
+        2. If x is G-invariant, Iso_G(x, y) is G (x == y) or empty.
+        3. Otherwise individualize a label of a class of size >= young_min
+           (branch_labels), the smallest class that meets the support of a
+           position in a G-orbit where x is not constant."""
+        node = self._ynodes.get(tuple(G.gens))
+        if node is None:
+            R = self.young_root(G)
+            if R is None:
+                return _FALLBACK
+            node = (R, R.classes)
+        R, part = node
+        m = R.m
+        cls = [0] * m
+        for i, C in enumerate(part):
+            for a in C:
+                cls[a] = i
+        self.stats["young_refine"] += 1
+        r = self.young_refine(R, cls, x, y)
+        if r is None:
+            return None
+        dx, dy = r
+        if len(set(dx)) > len(part):
+            self.stats["young_split"] += 1
+            return self.lift_and_continue(R.G, R.psi, True, dx, dy, x, y)
+        if all(maps(h, x, x) for h in G.gens):
+            return Coset(list(G.gens), G.idn) if x == y else None
+        touched = set()
+        for O in G.orbits():
+            x0 = x[O[0]]
+            if any(x[w] != x0 for w in O):
+                touched.update(O)
+        involved = set()
+        for a in range(m):
+            if any(w in touched for w, _ in R.unary[a]):
+                involved.add(cls[a])
+        for (a, b), ws in R.pair.items():
+            if cls[a] not in involved or cls[b] not in involved:
+                if any(w in touched for w, _ in ws):
+                    involved.update((cls[a], cls[b]))
+        big = [C for i, C in enumerate(part) if len(C) >= self.young_min and i in involved]
+        if not big:
+            return _FALLBACK
+        C = list(min(big, key=lambda C: (len(C), C[0])))
+        self.stats["young_ind"] += 1
+
+        def refined(l, g, z):
+            return self.young_refine(R, cls, x, z, l, g)
+
+        return self.branch_labels(R.G, R.psi, True, C, C, refined, x, y, known)
 
     # -- local certificates (Algorithm 3) -------------------------------------
     def certificates_of(self, G, phi, x):
