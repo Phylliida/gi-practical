@@ -181,3 +181,22 @@ claimed results get an independent red-team pass.
 ## Wave 6
 * w5-writeup (running): paper-style draft of the canonization result.
 * w6-tanglegram: attack (R1), tanglegram isomorphism FPT in out-degree.
+
+### w1-scale (done, commits ba25237, c35df43, 753860a; docs/w1-scale.md)
+* Speedups (all exact):
+  - rooted 1-WL refinement with the root edge individualized;
+  - colour-class layer order, which keeps layer groups elementary abelian on CFI-type graphs;
+  - new gi/ea2.py, which solves elementary-abelian layers by Gaussian elimination over F_2 with no
+    Schreier–Sims.
+  CFI n=800: 10.5s → 0.50s. ns multipedes n=528–704: >300s → 0.2–0.3s.
+* bench/irhard.py: Neuen–Schweitzer multipedes. Answers and |Aut|=1 are proved by NS Lemma 2.3 (extended
+  to isomorphisms), with its conditions checked per instance. Also CFI over random cubics, and a Miyazaki
+  generator matching the bliss files edge for edge.
+* HEADLINE: on ns multipedes we beat dense nauty, sparse nauty and Traces (dreadnaut, nauty 2.9.1).
+  - At n=2464 all three time out (>600s); ours gives a fully verified answer in 1.4s.
+  - Ours grows ~n^1.17; nauty grows exponentially (dense 2^(9.3n/1000), sparse 2^(6.4n/1000)).
+  - The crossover with sparse nauty is at n ≈ 1056–1760.
+  - Sanity checks: nauty solves the smaller members; on X alone sparse nauty needs 530s and 10.2M nodes.
+* Where we lose: Traces is >100× faster on CFI over random cubics and solves Miyazaki graphs instantly;
+  sparse nauty wins on everything below n ≈ 1000.
+* Tests: 341 passed.
