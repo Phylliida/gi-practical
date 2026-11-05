@@ -98,12 +98,21 @@ class PermGroup:
         self.gens = []
         self.base, self.S, self.T, self.Ti = [], [], [], []
         self._par, self._ok = [], []    # BFS tree edges; verified Schreier pairs
+        self._ginv = {}                 # id(s) -> (s, s^-1) for strong generators
         self._order = 1                 # product of the orbit lengths
         self._ord_T = self.T            # (_order is valid while T is this list)
         self._nt, self._nt_T = [], self.T
         self._done = order == 1
-        for b in base:
-            self._push_base(b)
+        if base:
+            idn = self.idn
+            self.base = list(base)
+            self.S = [[] for _ in self.base]
+            self.T = [{b: idn} for b in self.base]
+            self.Ti = [{b: idn} for b in self.base]
+            self._par = [{} for _ in self.base]
+            self._ok = [{} for _ in self.base]
+            self._ord_T = self.T
+            self._nt, self._nt_T = [], self.T
         for g in gens:
             if self._done:              # complete: every further generator is redundant
                 break
@@ -118,6 +127,7 @@ class PermGroup:
         self._cow = True
         self.T, self.Ti, self._par = list(c.T), list(c.Ti), list(c.par)
         self._ok = [{} for _ in c.base]
+        self._ginv = {}
         self._order = c.order
         self._ord_T = self.T
         self._nt, self._nt_T = list(c.nt), self.T
@@ -159,6 +169,7 @@ class PermGroup:
         b, S, idn, n = self.base[l], self.S[l], self.idn, self.n
         oT, oTi, opar = self.T[l], self.Ti[l], self._par[l]
         T, Ti, par, queue = {b: idn}, {b: idn}, {}, [b]
+        ginv = self._ginv
         for p in queue:
             u = T[p]
             same = oT.get(p) is u
@@ -170,9 +181,11 @@ class PermGroup:
                         T[q] = oT[q]
                         Ti[q] = oTi[q]
                     else:
-                        v = mul(u, s)
-                        T[q] = v
-                        Ti[q] = inv(v)
+                        T[q] = mul(u, s)
+                        si = ginv.get(id(s))
+                        if si is None or si[0] is not s:
+                            si = ginv[id(s)] = (s, inv(s))
+                        Ti[q] = mul(si[1], Ti[p])      # (u s)^-1 = s^-1 u^-1
                     par[q] = e
                     queue.append(q)
                 e += n
@@ -486,23 +499,28 @@ class PermGroup:
             return [self.idn] if maps(self.idn, x, y) else []
         last, lastfix = levels[-1], newfix[k]
 
-        def rec(j, v):
-            for p in newfix[j]:
-                if x[p] != y[v[p]]:
-                    return
+        def rec(j, v):                  # v passed the checks of newfix[j]
             if j < k - 1:
+                nf = newfix[j + 1]
                 for u in levels[j]:
-                    rec(j + 1, mul(u, v))
+                    for p in nf:        # (u v)[p] = v[u[p]], checked before multiplying
+                        if x[p] != y[v[u[p]]]:
+                            break
+                    else:
+                        rec(j + 1, mul(u, v))
                 return
             for u in last:              # the last level, inline
-                w = mul(u, v)
                 for p in lastfix:
-                    if x[p] != y[w[p]]:
+                    if x[p] != y[v[u[p]]]:
                         break
                 else:
+                    w = mul(u, v)
                     if maps(w, x, y):
                         out.append(w)
 
+        for p in newfix[0]:
+            if x[p] != y[p]:
+                return out
         rec(0, self.idn)
         return out
 
