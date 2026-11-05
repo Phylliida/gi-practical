@@ -1,0 +1,58 @@
+C6                     tiny    n=  6 ok              0.00s  |Aut|=12
+K4                     tiny    n=  4 ok              0.00s  |Aut|=24
+Q3                     tiny    n=  8 ok              0.00s  |Aut|=48
+rand8                  tiny    n=  8 ok              0.00s  |Aut|=2
+C8-vs-2C4              tiny    n=  8 ok              0.00s  
+rand8-pair             tiny    n=  8 ok              0.00s  
+Petersen               small   n= 10 ok              0.01s  |Aut|=120
+C12                    small   n= 12 ok              0.01s  |Aut|=24
+K44                    small   n=  8 ok              0.00s  |Aut|=1152
+T5                     small   n= 10 ok              0.01s  |Aut|=120
+Paley13                small   n= 13 ok              0.01s  |Aut|=78
+rand12                 small   n= 12 ok              0.00s  |Aut|=1
+3reg12                 small   n= 12 ok              0.01s  |Aut|=2
+3reg12-pair            small   n= 12 ok              0.00s  
+rook4                  medium  n= 16 ok              0.05s  |Aut|=1152
+Shrikhande             medium  n= 16 ok              0.02s  |Aut|=192
+rook4-vs-Shrikhande    medium  n= 16 ok              0.01s  
+Q4                     medium  n= 16 ok              0.02s  |Aut|=384
+Paley17                medium  n= 17 ok              0.01s  |Aut|=136
+T6                     medium  n= 15 ok              0.01s  |Aut|=720
+rand20                 medium  n= 20 ok              0.00s  |Aut|=1
+3reg20                 medium  n= 20 ok              0.01s  |Aut|=1
+Kneser(6,2)            medium  n= 15 ok              0.01s  |Aut|=720
+T8                     hard    n= 28 ok              0.06s  |Aut|=40320
+Paley29                hard    n= 29 ok              0.02s  |Aut|=406
+J(7,3)                 hard    n= 35 ok              0.08s  |Aut|=5040
+CFI(K4)                hard    n= 40 ok              0.12s  |Aut|=192
+CFI(K4)-twist          hard    n= 40 ok              0.07s  
+rand40                 hard    n= 40 ok              0.00s  |Aut|=1
+CFI(3reg8)             large   n= 80 ok              0.69s  |Aut|=512
+CFI(3reg8)-twist       large   n= 80 ok              0.38s  
+PG(2,3)                large   n= 26 ok              0.07s  |Aut|=11232
+PG(2,5)                large   n= 62 ok              0.45s  |Aut|=744000
+Paley37                large   n= 37 ok              0.04s  |Aut|=666
+Paley61                large   n= 61 ok              0.11s  |Aut|=1830
+J(8,3)                 large   n= 56 ok              0.23s  |Aut|=40320
+J(8,4)                 large   n= 70 ok              0.41s  |Aut|=80640
+Kneser(8,3)            large   n= 56 ok              0.23s  |Aut|=40320
+rook6                  large   n= 36 ok              0.12s  |Aut|=1036800
+Q6                     large   n= 64 ok              0.31s  |Aut|=46080
+T10                    large   n= 45 ok              0.25s  |Aut|=3628800
+Chang1                 large   n= 28 ok              0.16s  |Aut|=384
+T8-vs-Chang1           large   n= 28 ok              0.05s  
+Chang1-vs-Chang3       large   n= 28 ok              0.04s  
+Latin(Z8)-vs-Latin(Z2xZ4) large   n= 64 ok              0.27s  
+rand70                 large   n= 70 ok              0.01s  |Aut|=1
+3reg70                 large   n= 70 ok              0.06s  |Aut|=1
+CFI(3reg14)            xl      n=140 ok              2.16s  |Aut|=512
+CFI(3reg14)-twist      xl      n=140 ok              1.33s  
+PG(2,7)                xl      n=114 ok              1.75s  |Aut|=11261376
+Paley101               xl      n=101 ok              0.30s  |Aut|=5050
+Q7                     xl      n=128 ok              1.49s  |Aut|=645120
+Kneser(10,3)           xl      n=120 ok              1.47s  |Aut|=3628800
+rook10                 xl      n=100 ok              2.18s  |Aut|=26336378880000
+rand200                xl      n=200 ok              0.11s  |Aut|=1
+3reg200                xl      n=200 ok              0.95s  |Aut|=1
+
+r2-merged-full: solved 56/56, wrong 0, time on solved 16.2s

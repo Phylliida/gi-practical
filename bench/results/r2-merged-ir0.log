@@ -1,0 +1,35 @@
+T8                     hard    n= 28 ok              0.21s  |Aut|=40320
+Paley29                hard    n= 29 ok              0.11s  |Aut|=406
+J(7,3)                 hard    n= 35 ok              0.36s  |Aut|=5040
+CFI(K4)                hard    n= 40 ok              0.32s  |Aut|=192
+CFI(K4)-twist          hard    n= 40 ok              0.04s  
+rand40                 hard    n= 40 ok              0.00s  |Aut|=1
+CFI(3reg8)             large   n= 80 ok              6.14s  |Aut|=512
+CFI(3reg8)-twist       large   n= 80 ok              4.91s  
+PG(2,3)                large   n= 26 ok              0.12s  |Aut|=11232
+PG(2,5)                large   n= 62 ok              2.91s  |Aut|=744000
+Paley37                large   n= 37 ok              0.29s  |Aut|=666
+Paley61                large   n= 61 ok              1.99s  |Aut|=1830
+J(8,3)                 large   n= 56 ok              2.09s  |Aut|=40320
+J(8,4)                 large   n= 70 ok              5.09s  |Aut|=80640
+Kneser(8,3)            large   n= 56 ok              2.14s  |Aut|=40320
+rook6                  large   n= 36 ok              0.57s  |Aut|=1036800
+Q6                     large   n= 64 ok              4.51s  |Aut|=46080
+T10                    large   n= 45 ok              1.20s  |Aut|=3628800
+Chang1                 large   n= 28 ok              0.28s  |Aut|=384
+T8-vs-Chang1           large   n= 28 ok              0.23s  
+Chang1-vs-Chang3       large   n= 28 ok              0.28s  
+Latin(Z8)-vs-Latin(Z2xZ4) large   n= 64 ok             17.18s  
+rand70                 large   n= 70 ok              0.01s  |Aut|=1
+3reg70                 large   n= 70 ok              0.06s  |Aut|=1
+CFI(3reg14)            xl      n=140 ok              1.84s  |Aut|=512
+CFI(3reg14)-twist      xl      n=140 ok              1.40s  
+PG(2,7)                xl      n=114 ok            112.01s  |Aut|=11261376
+Paley101               xl      n=101 ok             16.64s  |Aut|=5050
+Q7                     xl      n=128 ok             79.38s  |Aut|=645120
+Kneser(10,3)           xl      n=120 ok             28.89s  |Aut|=3628800
+rook10                 xl      n=100 ok             29.74s  |Aut|=26336378880000
+rand200                xl      n=200 ok              0.10s  |Aut|=1
+3reg200                xl      n=200 ok              0.92s  |Aut|=1
+
+r2-merged-ir0: solved 33/33, wrong 0, time on solved 322.0s
