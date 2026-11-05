@@ -211,7 +211,7 @@ class Solver:
     def __init__(self, kappa=3, enum_limit=500, certificates=True, max_enum=100000,
                  cert_refine=True, seed=True, young=True, young_min=5, young_wl=1,
                  giant_wl=2, young_pick="small", recognize=True, product_hint=True,
-                 scheme=True):
+                 scheme=True, cameron_no_enum=False, cameron_q0=4):
         self.kappa = kappa                  # size of the local test sets
         self.enum_limit = enum_limit        # enumerate groups/quotients up to this order
         self.certificates = certificates    # use local certificates in GiantStep
@@ -230,6 +230,12 @@ class Solver:
         self.dispatch_cache = 256
         self.scheme = scheme                # Johnson/Hamming label structure before GiantStep
         self._schemes = {}                  # (G, phi, x) -> scheme of x's label coloring
+        # Dispatcher modification (M) (docs/moonshot-theory.md, Sec. 4.1): never
+        # enumerate a primitive quotient recognized as a Cameron group with an
+        # Alt(m) section, m > cameron_q0, even when its order is small.
+        self.cameron_no_enum = cameron_no_enum
+        self.cameron_q0 = cameron_q0
+        self._alt_min = math.factorial(cameron_q0 + 1) // 2    # |Alt(q0 + 1)|
         self.stats = Counter()
         clear_chain_cache()                 # (a cache only: results do not depend on it)
         self.memo = {}                      # (G.gens, x) -> generators of Aut_G(x)
@@ -296,10 +302,19 @@ class Solver:
         a = self._cont(G, x, y, known)
         return None if a is None else Coset(known, a.rep)
 
+    def _may_be_cameron(self, order):
+        """Under (M): whether a group of this order can have a section Alt(m)
+        with m > cameron_q0 (|Alt(q0 + 1)| divides |Alt(m)|, which divides
+        the order of any group with such a section)."""
+        return self.cameron_no_enum and order % self._alt_min == 0
+
     def _cont(self, G, x, y, known):
         n = G.n
-        if G.order() <= self.enum_limit:
-            return self.enumerate(G, x, y, known)
+        order = G.order()
+        if order <= self.enum_limit:
+            if not self._may_be_cameron(order):
+                return self.enumerate(G, x, y, known)
+            self.stats["cameron_skip_enum"] += 1    # (M): dispatch its quotients instead
         orbs = G.orbits()
         if len(orbs) > 1:
             if self.young:
@@ -350,7 +365,17 @@ class Solver:
         The recognition is verified (see group.py): johnson_structure and
         giant_labels return homomorphisms onto Sym(m) or Alt(m), product_action
         a homomorphism onto the coordinate permutations. Every branch is an
-        exact reduction."""
+        exact reduction.
+
+        With cameron_no_enum (the moonshot memo's modification (M)), a small
+        quotient (and, in _cont, a small group) whose order is divisible by
+        |Alt(q0 + 1)| is not enumerated before recognition: if it is a
+        Johnson action or abstract giant with m > q0, or a product action of
+        order >= |Alt(q0 + 1)|^r, it takes the Cameron path above; only the
+        remaining ones are enumerated. Stats: cameron_skip_enum (small groups
+        not enumerated in _cont), cameron_small_<kind> (small quotients on a
+        Cameron path), enum_quotient (+ _max_order, _max_degree) and
+        alt_section_max (the largest m of an Alt(m) section met)."""
         if all(maps(g, x, x) for g in G.gens):
             # G preserves x, so x^g = x for every g in G: Iso_G(x, y) is G
             # when y = x and empty otherwise.
@@ -359,6 +384,23 @@ class Solver:
                 return None
             return Coset(list(G.gens) if known is None else known, G.idn)
         kind, hom, d, order = self.dispatch(G)
+        st = self.stats
+        if kind in ("enum", "other"):
+            # instrumentation: the largest primitive quotient enumerated
+            st["enum_quotient"] += 1
+            st["enum_quotient_max_order"] = max(st["enum_quotient_max_order"], order)
+            st["enum_quotient_max_degree"] = max(st["enum_quotient_max_degree"], d)
+        else:
+            if kind != "product":
+                # an Alt(m) section of G (m = hom.m): a lower bound on the
+                # composition width of the groups met
+                st["alt_section_max"] = max(st["alt_section_max"], hom.m)
+            if order <= self.enum_limit:
+                # a Cameron quotient of small order that is not enumerated
+                # (natural giants never were; the other kinds only under (M))
+                st["cameron_small_" + ("giant" if kind == "giant" else
+                                       "product" if kind == "product" else
+                                       "johnson" if kind.startswith("johnson") else kind)] += 1
         if kind in ("enum", "product", "other"):
             pass
         elif self.scheme:
@@ -425,9 +467,16 @@ class Solver:
             phi = ActionHom(G, d, lambda g: tuple(block_of[g[r]] for r in reps))
             order = phi.image_order()
         if d >= 5 and order in (math.factorial(d), math.factorial(d) // 2):
+            if order <= self.enum_limit:
+                self.stats["dispatch_small_giant"] += 1
             return "giant", phi if phi is not None else ActionHom(G, n, None), d, order
-        if order <= self.enum_limit or d < 5:
+        small = order <= self.enum_limit or d < 5
+        if small and not (d >= 5 and self._may_be_cameron(order)):
             return "enum", phi, d, order
+        # Under (M), a small quotient whose order allows an Alt(m) section
+        # (m > q0) is recognized first; it is enumerated only if it is not a
+        # Cameron group with m > q0. Every branch below is an exact reduction.
+        q0 = self.cameron_q0
         P = phi.image_group() if phi else G
 
         def compose(m, f):
@@ -435,12 +484,24 @@ class Solver:
                 return ActionHom(G, m, f)
             return ActionHom(G, m, lambda g: f(phi.image_of(g)))
 
+        def cameron(kind):
+            self.stats["dispatch_cameron_small"] += 1
+            self.stats["dispatch_cameron_small_" + kind] += 1
+
         J = johnson_structure(P)
         if J is not None and (J[1] == 2 or self.recognize):
             m, k, f = J
+            if small and m <= q0:
+                return "enum", phi, d, order
+            if small:
+                cameron("johnson")
             return f"johnson_k{k}", compose(m, f), d, order
         R = product_action(P) if self.recognize else None
+        if R is not None and small and order < (math.factorial(q0 + 1) // 2) ** R.r:
+            return "enum", phi, d, order    # too small to contain Alt(m)^r, m > q0
         if R is not None:
+            if small:
+                cameron("product")
             psi = compose(R.r, R.f)
             if self.product_hint:
                 # Inherited hierarchy: the kernel K (coordinates fixed) acts on
@@ -459,7 +520,13 @@ class Solver:
             return "product", psi, d, order
         A = giant_labels(P) if self.recognize else None
         if A is not None:
+            if small and A[0] <= q0:
+                return "enum", phi, d, order
+            if small:
+                cameron("abstract")
             return "abstract", compose(*A), d, order
+        if small:
+            return "enum", phi, d, order
         return "other", phi, d, order
 
     def scheme_step(self, G, phi, x, y, known=None):
