@@ -299,3 +299,5 @@ are red-teams, a LaTeX paper, and final integration.
   canonical-subcoset device; consequences for treewidth canonization via Wiebking.
 * w8-poset: extend the Babai–Codenotti–Qiao DP to generalized wreath products over posets
   (coordinate tanglegrams); the Prop S one-call combine.
+* w8-gnsexp: tighten GNS's n^{(log d)^c} unconditionally (exponent c; target n^{O(log^2 d)} or better).
+* The HJ Lean build is authorized (machine free; 88 GB disk free at start).
