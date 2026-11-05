@@ -418,17 +418,25 @@ def test_individualization_pruning():
     assert check_pair(X, Z, [dict(ir=1, ir_min=2), dict(ir=2, ir_min=4), dict(ir=0)], rng) == 192
 
 
-def test_policy_budgeted_levels():
+def test_policy_budgeted_levels(monkeypatch):
     """The individualization policy: levels below ir always individualize;
     levels in [ir, ir_max) give the recursion a time budget first. ir_budget=0
-    stops every budgeted call at once (so those stages are individualized),
-    ir_budget=None turns the budgeted levels off. Every setting is exact, and
-    an aborted call leaves the solver unpatched."""
+    individualizes up to ir_max without trials, ir_budget=None turns the
+    budgeted levels off, a huge budget lets every trial finish, and trials
+    that always time out (simulated) fall back to individualization. Every
+    setting is exact, and an aborted call leaves the solver unpatched."""
+    import gi.graph
     from gi.graph import Policy, OverBudget
     rng = random.Random(23)
     q3 = [[int((i ^ j) in (1, 2, 4)) for j in range(8)] for i in range(8)]
     settings = [dict(ir=1, ir_min=2, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=None),
-                dict(ir=1, ir_min=2, ir_max=4, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=1e9)]
+                dict(ir=1, ir_min=2, ir_max=4, ir_budget=0), dict(ir=1, ir_min=2, ir_budget=1e9),
+                "timeout"]
+    real_trial = Policy.trial
+
+    def always_late(self, solver, f):
+        return real_trial(self, solver, lambda: (_ for _ in ()).throw(OverBudget()))
+
     aborted = done = 0
     for A, order in ((petersen(), 120), (q3, 48), (rook4(), 1152)):
         n = len(A)
@@ -436,6 +444,11 @@ def test_policy_budgeted_levels():
         rng.shuffle(s)
         B = relabel(A, s)
         for kw in settings:
+            if kw == "timeout":
+                monkeypatch.setattr(Policy, "trial", always_late)
+                kw = dict(ir=1, ir_min=2, ir_budget=1e9)
+            else:
+                monkeypatch.setattr(Policy, "trial", real_trial)
             S = Solver(certificates=False)
             sigma, gens = graph_iso(A, B, solver=S, **kw)
             assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
@@ -445,9 +458,10 @@ def test_policy_budgeted_levels():
             aborted += S.stats["trial_abort"]
             done += S.stats["trial_done"]
     assert aborted > 0 and done > 0
+    monkeypatch.setattr(Policy, "trial", real_trial)
     # non-isomorphic pairs under every setting
     X, Z = rook4(), shrikhande()
-    for kw in settings:
+    for kw in settings[:-1]:
         assert graph_iso(X, relabel(Z, list(range(16))[::-1]), solver=Solver(certificates=False),
                          **kw) is None
     # a budget of 0 stops the recursion at its first call

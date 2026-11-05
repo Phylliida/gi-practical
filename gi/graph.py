@@ -253,11 +253,16 @@ class Policy:
       * depth >= ir_max: never.
 
     A budgeted call can only be stopped between two recursive calls, so it may
-    overrun its budget by one step of the group engine. Stages at the same
-    depth on factors of the same size tend to behave alike (they are often
-    siblings in the individualization tree), so once a call for (depth, |P|)
-    has run out of time, later stages with the same (depth, |P|) are
-    individualized without a trial.
+    overrun its budget by one step of the group engine, and building the
+    stage's group on the |P|^2 positions (before the recursion starts) cannot
+    be stopped at all; Schreier-Sims for Sym(P) costs about |P|^3 sifts, while
+    a refinement costs about n^3 steps. So a trial is only made when
+    100 (|P|/n)^3 <= ir_budget (|P| <= 0.27 n for the default); larger
+    factors are individualized at once. Stages at the same depth on factors
+    of the same size tend to behave alike (they are often siblings in the
+    individualization tree), so once a call for (depth, |P|) has run out of
+    time, later stages with the same (depth, |P|) are individualized without
+    a trial.
 
     Exactness never depends on the policy: both choices compute
     Iso_G(x, y) exactly, an aborted call leaves only exact results behind
@@ -275,6 +280,7 @@ class Policy:
         elif ir_max == "auto":
             ir_max = max(ir, ceil(log2(max(n, 2))))
         self.ir_max = ir_max
+        self.n = n
         self.t_ref, self.n_ref = 0.0, 0
         self.aborted = set()            # (depth, |P|) whose budgeted call ran out of time
 
@@ -290,7 +296,9 @@ class Policy:
         """True: individualize; False: recursion; None: recursion on a budget."""
         if depth >= self.ir_max or len(P) < self.ir_min:
             return False
-        return True if depth < self.ir or (depth, len(P)) in self.aborted else None
+        if depth < self.ir or (depth, len(P)) in self.aborted:
+            return True
+        return None if 100 * (len(P) / self.n) ** 3 <= self.budget else True
 
     def trial(self, solver, f):
         """f() with every call of solver.solve / solver.cont checking a deadline;

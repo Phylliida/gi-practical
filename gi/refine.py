@@ -25,6 +25,7 @@ import random as _random
 import sys
 from array import array
 from collections import Counter, OrderedDict
+from itertools import chain
 from operator import add, itemgetter
 
 _BIG = sys.byteorder == "big"
@@ -186,9 +187,9 @@ def wl2_single(P):
     Isomorphic inputs give the same trace and corresponding colorings (each
     round depends only on the multiset of keys), which is what wl2 needs."""
     n = len(P)
-    flat = [c for row in P for c in row]
-    names = {v: i for i, v in enumerate(sorted(set(flat)))}
-    P = [[names[c] for c in row] for row in P]
+    names = {v: i for i, v in enumerate(sorted(set(chain.from_iterable(P))))}
+    get = names.__getitem__
+    P = [list(map(get, row)) for row in P]
     k = len(names)
     trace = [k]
     while True:
@@ -198,7 +199,7 @@ def wl2_single(P):
         if len(uniq) == k:              # the keys refine the old colors: stable
             return P, tuple(trace)
         rank = {v: i for i, v in enumerate(uniq)}
-        f = [rank[v] for v in keys]
+        f = list(map(rank.__getitem__, keys))
         P = [f[i * n:(i + 1) * n] for i in range(n)]
         k = len(uniq)
         trace.append(k)
@@ -212,7 +213,7 @@ _WL2_CACHE_LIMIT = 48
 
 
 def _wl2_single_cached(P):
-    key = tuple(c for row in P for c in row)
+    key = tuple(chain.from_iterable(P))
     r = _WL2_CACHE.get(key)
     if r is None:
         r = _WL2_CACHE[key] = wl2_single(P)
@@ -243,15 +244,12 @@ def wl2(PX, PY):
     RY, ty = (RX, tx) if PY == PX else _wl2_single_cached(PY)
     if tx != ty:
         return None
-    f = {}
-    for R, P in ((RX, PX), (RY, PY)):
-        for i in range(n):
-            Ri, Pi = R[i], P[i]
-            for j in range(n):
-                if f.setdefault(Ri[j], Pi[j]) != Pi[j]:
-                    return None
-    if RY is not RX and (Counter(c for row in RX for c in row)
-                         != Counter(c for row in RY for c in row)):
+    pairs = set(zip(chain.from_iterable(RX), chain.from_iterable(PX)))
+    if RY is not RX:
+        pairs.update(zip(chain.from_iterable(RY), chain.from_iterable(PY)))
+    if len({r for r, _ in pairs}) != len(pairs):    # not one function on both sides
+        return None
+    if RY is not RX and Counter(chain.from_iterable(RX)) != Counter(chain.from_iterable(RY)):
         return None
     return RX, RY
 
@@ -304,7 +302,17 @@ def refine_pairs(PX, PY, lx=None, ly=None, method="2wl"):
     labels (sortable), folded into the diagonal before refining. Returns the
     refined pair colorings or None."""
     n = len(PX)
-    if lx is not None:
+    if lx is not None and method == "2wl":
+        # only the diagonal changes: (color, label) named jointly by negative
+        # ints (off-diagonal colors are >= 0); wl2 renames everything anyway
+        dx = [(PX[i][i], lx[i]) for i in range(n)]
+        dy = [(PY[i][i], ly[i]) for i in range(n)]
+        fx, fy = _rank(dx, dy)
+        PX, PY = [list(row) for row in PX], [list(row) for row in PY]
+        for i in range(n):
+            PX[i][i] = -1 - fx[i]
+            PY[i][i] = -1 - fy[i]
+    elif lx is not None:
         fx, fy = _rank([(1, PX[i][j], lx[i]) if i == j else (0, PX[i][j])
                         for i in range(n) for j in range(n)],
                        [(1, PY[i][j], ly[i]) if i == j else (0, PY[i][j])
