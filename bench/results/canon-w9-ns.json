@@ -1,0 +1,514 @@
+{
+ "label": "w9-ns",
+ "timeout": 600.0,
+ "rows": [
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 0.188,
+    "t_x": 0.089,
+    "t_y": 0.1,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.19,
+    "t_x": 0.09,
+    "t_y": 0.1,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.141,
+    "t_x": 0.084,
+    "t_y": 0.057,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 2.939,
+    "t_x": 1.671,
+    "t_y": 1.268,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 2.91,
+    "t_x": 1.64,
+    "t_y": 1.27,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.11,
+    "t_x": 0.06,
+    "t_y": 0.05,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.05,
+    "t_x": 0.03,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.263,
+    "t_x": 0.147,
+    "t_y": 0.117,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns48",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 15.828,
+    "t_x": 9.748,
+    "t_y": 6.08,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 14.59,
+    "t_x": 9.08,
+    "t_y": 5.51,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.41,
+    "t_x": 0.2,
+    "t_y": 0.21,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 1.87,
+    "t_x": 0.95,
+    "t_y": 0.92,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.431,
+    "t_x": 0.226,
+    "t_y": 0.205,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 211.809,
+    "t_x": 168.716,
+    "t_y": 43.092,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 203.83,
+    "t_x": 163.42,
+    "t_y": 40.41,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 4.81,
+    "t_x": 3.44,
+    "t_y": 1.37,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.614,
+    "t_x": 0.319,
+    "t_y": 0.295,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns80",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "pyn": {
+    "status": "timeout",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 7.55,
+    "t_x": 2.27,
+    "t_y": 5.28,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.805,
+    "t_x": 0.399,
+    "t_y": 0.406,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns96",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 68.2,
+    "t_x": 40.81,
+    "t_y": 27.39,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.97,
+    "t_x": 0.475,
+    "t_y": 0.495,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "timeout",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.251,
+    "t_x": 0.612,
+    "t_y": 0.639,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns128",
+   "family": "ns",
+   "size": 128,
+   "n": 2816,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6144,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.498,
+    "t_x": 0.747,
+    "t_y": 0.751,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns144",
+   "family": "ns",
+   "size": 144,
+   "n": 3168,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6912,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.969,
+    "t_x": 0.973,
+    "t_y": 0.997,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns160",
+   "family": "ns",
+   "size": 160,
+   "n": 3520,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 7680,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 2.136,
+    "t_x": 1.062,
+    "t_y": 1.074,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns192",
+   "family": "ns",
+   "size": 192,
+   "n": 4224,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 9216,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 2.7,
+    "t_x": 1.341,
+    "t_y": 1.36,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns256",
+   "family": "ns",
+   "size": 256,
+   "n": 5632,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 12288,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 4.226,
+    "t_x": 2.099,
+    "t_y": 2.127,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  }
+ ]
+}

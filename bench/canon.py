@@ -11,8 +11,8 @@ compares them; times are for the two canonical forms, construction and I/O
 excluded):
   canon  gi.canon.canonical_labeling_lists on X and on Y (in process, wall
          time); its decision is form(X) == form(Y);
-  iso    for reference: gi.bounded.bounded_iso_lists(X, Y), the isomorphism
-         test with Aut(X) (no canonical forms), in process;
+  biso   for reference: gi.bounded.bounded_iso_lists(X, Y), the isomorphism
+         test with Aut(X) (no canonical forms), in process ("iso" is an alias);
   pyn    pynauty 2.8.8.1 certificate(X), certificate(Y) (dense nauty, default
          options), in a subprocess so that the timeout can stop it;
   dnd, dns, dnt  dreadnaut (nauty 2.9.1): dense nauty (Ad), sparse nauty (As),
@@ -209,7 +209,7 @@ def run_iso(I, timeout):
 def run_mode(I, mode, timeout):
     if mode == "canon":
         return run_canon(I, timeout)
-    if mode == "iso":
+    if mode == "biso":
         return run_iso(I, timeout)
     if mode == "pyn":
         return run_pyn(I, timeout)
@@ -217,11 +217,11 @@ def run_mode(I, mode, timeout):
 
 
 # -- commands ---------------------------------------------------------------------------------
-MODES = ("canon", "iso", "pyn", "dnd", "dns", "dnt")
+MODES = ("canon", "biso", "pyn", "dnd", "dns", "dnt")
 
 
 def cmd_run(args):
-    modes = args.modes.split(",")
+    modes = ["biso" if m == "iso" else m for m in args.modes.split(",")]   # (alias)
     path = os.path.join(RESULTS, f"canon-{args.label}.json")
     rows = json.load(open(path))["rows"] if os.path.exists(path) and args.append else []
     dead = set()
@@ -238,14 +238,14 @@ def cmd_run(args):
                        maxdeg=max(map(len, I["X"])), edges=sum(map(len, I["X"])) // 2,
                        cert=I["cert"])
             expect, aut = I["claim"], I["aut"]
-            for mode in sorted(modes, key=lambda m: m in ("canon", "iso")):    # nauty first
+            for mode in sorted(modes, key=lambda m: m in ("canon", "biso")):   # nauty first
                 if (mode, kind) in dead:
                     row[mode] = dict(status="skipped", time=args.timeout)
                     continue
                 r = row[mode] = run_mode(I, mode, args.timeout)
                 if r["status"] == "timeout" and not args.no_skip:
                     dead.add((mode, kind))
-                if mode not in ("canon", "iso") and r["status"] == "ok":
+                if mode not in ("canon", "biso") and r["status"] == "ok":
                     if expect is None:
                         expect = r["same"]
                     elif r["same"] != expect:
@@ -255,7 +255,7 @@ def cmd_run(args):
             if expect is None:                  # no nauty answer: gi.bounded decides
                 expect = bounded_iso_lists(I["X"], I["Y"]) is not None
                 row["cert"] = "bounded_iso"
-            c = row.get("iso")
+            c = row.get("biso")
             if c and c["status"] == "ok" and c["same"] != expect:
                 c["status"], c["note"] = "WRONG", "wrong decision"
             c = row.get("canon")
@@ -302,7 +302,7 @@ def cmd_table(args):
 
     def cell(r, m):
         v = r.get(m)
-        if v is None:
+        if not isinstance(v, dict):
             return "-"
         if v["status"] in ("timeout", "skipped"):
             return f">{v['time']:.0f}"
