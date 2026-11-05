@@ -1,0 +1,177 @@
+{
+ "label": "r2-hybrid-xl",
+ "solver_args": {
+  "certificates": false
+ },
+ "graph_args": {},
+ "timeout": 300.0,
+ "rows": [
+  {
+   "name": "CFI(3reg14)",
+   "tier": "xl",
+   "n": 140,
+   "status": "ok",
+   "time": 3.485,
+   "note": "|Aut|=512",
+   "stats": {
+    "stage": 297,
+    "solve": 329,
+    "cont": 329,
+    "enumerate": 136,
+    "ir_branch": 5,
+    "refine": 5,
+    "stage_chunks": 10,
+    "memo_hit": 248,
+    "ir_pruned": 11
+   }
+  },
+  {
+   "name": "CFI(3reg14)-twist",
+   "tier": "xl",
+   "n": 140,
+   "status": "ok",
+   "time": 2.312,
+   "note": "",
+   "stats": {
+    "stage": 297,
+    "solve": 329,
+    "cont": 329,
+    "enumerate": 144,
+    "ir_branch": 5,
+    "refine": 5,
+    "stage_chunks": 10,
+    "memo_hit": 248,
+    "ir_pruned": 11
+   }
+  },
+  {
+   "name": "PG(2,7)",
+   "tier": "xl",
+   "n": 114,
+   "status": "ok",
+   "time": 2.888,
+   "note": "|Aut|=11261376",
+   "stats": {
+    "ir_branch": 29,
+    "refine": 29,
+    "stage": 19,
+    "solve": 30,
+    "cont": 27,
+    "giant_johnson": 3,
+    "giant_step": 3,
+    "branch": 5,
+    "enumerate": 7,
+    "memo_hit": 23,
+    "pruned": 13,
+    "trial_done": 8,
+    "ir_pruned": 1011
+   }
+  },
+  {
+   "name": "Paley101",
+   "tier": "xl",
+   "n": 101,
+   "status": "ok",
+   "time": 0.527,
+   "note": "|Aut|=5050",
+   "stats": {
+    "ir_branch": 8,
+    "refine": 8,
+    "ir_pruned": 344
+   }
+  },
+  {
+   "name": "Q7",
+   "tier": "xl",
+   "n": 128,
+   "status": "ok",
+   "time": 2.499,
+   "note": "|Aut|=645120",
+   "stats": {
+    "ir_branch": 13,
+    "refine": 13,
+    "stage": 186,
+    "solve": 489,
+    "cont": 473,
+    "giant_johnson": 16,
+    "giant_step": 16,
+    "branch": 24,
+    "enumerate": 150,
+    "memo_hit": 353,
+    "pruned": 413,
+    "trial_done": 48,
+    "enum_cosets": 46,
+    "stage_chunks": 36,
+    "ir_pruned": 346
+   }
+  },
+  {
+   "name": "Kneser(10,3)",
+   "tier": "xl",
+   "n": 120,
+   "status": "ok",
+   "time": 2.56,
+   "note": "|Aut|=3628800",
+   "stats": {
+    "ir_branch": 15,
+    "refine": 15,
+    "stage": 147,
+    "solve": 513,
+    "cont": 489,
+    "giant_johnson": 24,
+    "giant_step": 54,
+    "branch": 60,
+    "enumerate": 126,
+    "memo_hit": 360,
+    "pruned": 1347,
+    "trial_done": 42,
+    "giant_natural": 30,
+    "enum_cosets": 30,
+    "stage_chunks": 35,
+    "ir_pruned": 348
+   }
+  },
+  {
+   "name": "rook10",
+   "tier": "xl",
+   "n": 100,
+   "status": "ok",
+   "time": 3.123,
+   "note": "|Aut|=26336378880000",
+   "stats": {
+    "ir_branch": 63,
+    "refine": 63,
+    "stage": 211,
+    "solve": 314,
+    "cont": 311,
+    "giant_johnson": 7,
+    "giant_step": 7,
+    "branch": 11,
+    "trial_abort": 1,
+    "enumerate": 57,
+    "memo_hit": 266,
+    "pruned": 204,
+    "enum_cosets": 16,
+    "ir_pruned": 1911
+   }
+  },
+  {
+   "name": "rand200",
+   "tier": "xl",
+   "n": 200,
+   "status": "ok",
+   "time": 0.263,
+   "note": "|Aut|=1",
+   "stats": {}
+  },
+  {
+   "name": "3reg200",
+   "tier": "xl",
+   "n": 200,
+   "status": "ok",
+   "time": 1.761,
+   "note": "|Aut|=1",
+   "stats": {}
+  }
+ ]
+}

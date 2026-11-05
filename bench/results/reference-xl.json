@@ -1,0 +1,142 @@
+{
+ "label": "reference-xl",
+ "timeout": 300.0,
+ "pynauty": "2.8.8.1",
+ "rows": [
+  {
+   "name": "CFI(3reg14)",
+   "tier": "xl",
+   "n": 140,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 2.298
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0141,
+    "note": ""
+   }
+  },
+  {
+   "name": "CFI(3reg14)-twist",
+   "tier": "xl",
+   "n": 140,
+   "expect_iso": false,
+   "vf2": {
+    "status": "ok",
+    "time": 103.953
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0142,
+    "note": ""
+   }
+  },
+  {
+   "name": "PG(2,7)",
+   "tier": "xl",
+   "n": 114,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 2.34
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0012,
+    "note": ""
+   }
+  },
+  {
+   "name": "Paley101",
+   "tier": "xl",
+   "n": 101,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.052
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0007,
+    "note": ""
+   }
+  },
+  {
+   "name": "Q7",
+   "tier": "xl",
+   "n": 128,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.057
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0015,
+    "note": ""
+   }
+  },
+  {
+   "name": "Kneser(10,3)",
+   "tier": "xl",
+   "n": 120,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.041
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0022,
+    "note": ""
+   }
+  },
+  {
+   "name": "rook10",
+   "tier": "xl",
+   "n": 100,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.018
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.002,
+    "note": ""
+   }
+  },
+  {
+   "name": "rand200",
+   "tier": "xl",
+   "n": 200,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 0.13
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0011,
+    "note": ""
+   }
+  },
+  {
+   "name": "3reg200",
+   "tier": "xl",
+   "n": 200,
+   "expect_iso": true,
+   "vf2": {
+    "status": "ok",
+    "time": 68.93
+   },
+   "pynauty": {
+    "status": "ok",
+    "time": 0.0797,
+    "note": ""
+   }
+  }
+ ]
+}

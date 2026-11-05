@@ -155,3 +155,18 @@ recursion without individualization). `bench/run.py` checks every answer. It ver
 an automorphism, and checks that the order of the generated group (computed with sympy) equals
 the known |Aut|. A wrong answer is a failure regardless of speed. Results go to
 `bench/results/NAME.json`.
+
+## Reference comparison (r2, machine under load ~35)
+
+Seconds per instance, `certificates=False`; VF2 is `nx.is_isomorphic` (decision only, no
+automorphism group), pynauty compares certificates and reports |Aut|.
+
+| tier | ours (total) | VF2 | pynauty |
+|---|---|---|---|
+| large (18) | 6.0 (max 1.1) | iso pairs ≤ 0.3; non-iso 2-WL-equivalent pairs 2.4–111 | ≤ 0.003 |
+| xl (9) | 19.4 (max 3.5) | ≤ 2.3, but CFI(3reg14)-twist 104, 3reg200 69 | ≤ 0.08 |
+
+So the exact pure-Python solver is about 1000× slower than nauty, faster than VF2 on non-isomorphic
+CFI/strongly-regular pairs and random regular graphs, and slower than VF2 on isomorphic symmetric
+pairs (where VF2 finds one match quickly and computes no group).
+
