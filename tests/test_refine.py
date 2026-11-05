@@ -14,7 +14,7 @@ sys.setrecursionlimit(100000)
 
 from gi import graph_iso, Solver
 from gi.group import PermGroup
-from gi.refine import refine_graphs, initial_pair_colors, wl1, wl2
+from gi.refine import refine_graphs, initial_pair_colors, wl1, wl2, wl2_reference
 
 METHODS = ["none", "1wl", "2wl"]
 # front-end modes: refinement method plus graph_iso keyword arguments
@@ -129,6 +129,47 @@ def test_refinement_is_invariant(method):
                 for j in range(n):
                     key = (P[i][j], i == j)
                     assert f.setdefault(key, M[i][j]) == M[i][j]
+
+
+def partition(P):
+    n = len(P)
+    cls = {}
+    for i in range(n):
+        for j in range(n):
+            cls.setdefault(P[i][j], []).append((i, j))
+    return sorted(cls.values())
+
+
+def test_packed_wl2_matches_definition():
+    """wl2 (packed bilinear signatures) computes the same partitions and the
+    same rejections as 2-WL with literal multiset signatures, on undirected,
+    directed, edge-colored and looped graphs, isomorphic or not."""
+    rng = random.Random(21)
+    for _ in range(80):
+        n = rng.randint(1, 13)
+        directed = rng.random() < 0.4
+        values = (1,) if rng.random() < 0.5 else (1, 2, 3)
+        A = rand_matrix(n, rng, rng.choice([0.2, 0.4, 0.6]), values, directed, rng.random() < 0.2)
+        if rng.random() < 0.5:
+            s = list(range(n))
+            rng.shuffle(s)
+            B = relabel(A, s)
+        else:
+            B = rand_matrix(n, rng, 0.4, values, directed, rng.random() < 0.2)
+        PX, PY = initial_pair_colors(A, B)
+        fast, ref = wl2(PX, PY), wl2_reference(PX, PY)
+        assert (fast is None) == (ref is None)
+        if fast is not None:
+            assert partition(fast[0]) == partition(ref[0])
+            assert partition(fast[1]) == partition(ref[1])
+    # strongly regular and CFI graphs, where many rounds are needed
+    for X, Z in ((rook4(), shrikhande()), (cfi(K4, 4), cfi(K4, 4, twist=True)),
+                 (cfi(K3, 3), cfi(K3, 3, twist=True))):
+        PX, PY = initial_pair_colors(X, Z)
+        fast, ref = wl2(PX, PY), wl2_reference(PX, PY)
+        assert (fast is None) == (ref is None)
+        if fast is not None:
+            assert partition(fast[0]) == partition(ref[0])
 
 
 def test_wl_separates_and_rejects():

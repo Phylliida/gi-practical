@@ -17,8 +17,13 @@ differ in some round, the graphs are not isomorphic and None is returned.
 
 Pair colorings are n x n lists of ints (row i, column j is the pair (i, j)).
 """
+import random as _random
+import sys
+from array import array
 from collections import Counter
-from operator import add
+from operator import add, itemgetter
+
+_BIG = sys.byteorder == "big"
 
 
 def _rank(sx, sy):
@@ -89,10 +94,117 @@ def wl1_pairs(PX, PY):
     return [fx[i * n:(i + 1) * n] for i in range(n)], [fy[i * n:(i + 1) * n] for i in range(n)]
 
 
+# -- 2-WL with packed bilinear signatures ---------------------------------------
+#
+# The multiset M(i, j) = {(C(i, k), C(k, j)) : k} is summarized by the integer
+#
+#     s(i, j) = sum_k U[C(i, k)] * V[C(k, j)],
+#
+# for two fixed tables U, V of pseudo-random integers (indexed by color names).
+# s is a function of M(i, j), the same function for both graphs, so the new
+# color (C(i, j), s(i, j)) is a canonical refinement in the sense of the module
+# docstring: isomorphisms map it onto itself, it contains the old color, and
+# different histograms still prove non-isomorphism. Exactness never depends on
+# U and V. Two different multisets give the same s only on the zero set of a
+# nonzero degree-2 polynomial in the table entries (probability <= 2^-58 for
+# each pair of multisets, by Schwartz-Zippel), and such a coincidence would
+# only make that round coarser than 2-WL, never wrong.
+#
+# All n sums of row i come from one big-integer expression: row k of V[C] is
+# packed into an integer PV_k with one 128-bit field per column j, and
+# sum_k U[C(i, k)] * PV_k holds s(i, j) in field j (the bit sizes are chosen
+# so that no field overflows into the next). This moves the O(n^3) inner work
+# into CPython's big-integer arithmetic.
+
+_FIELD = 16                                     # bytes per packed field (128 bits)
+_TABLE_BITS = 62
+_TABLES = {}                                    # bits -> (U, V, generator)
+assert array("Q").itemsize == 8
+
+
+def _tables(size, n):
+    """U, V with at least `size` entries, scaled so that n products fit in a field."""
+    bits = min(_TABLE_BITS, (8 * _FIELD - max(1, n).bit_length()) // 2)
+    t = _TABLES.get(bits)
+    if t is None:
+        t = _TABLES[bits] = ([], [], _random.Random(bits))
+    U, V, rng = t
+    while len(U) < size:                # entry i is the same in every call
+        U.append(rng.getrandbits(bits))
+        V.append(rng.getrandbits(bits))
+    return U, V
+
+
+def _wl2_keys(P, n, U, V):
+    """For each pair (i, j), row-major: the integer (C(i, j) << 128) + s(i, j).
+
+    Row i: s(i, .) = sum_a U[a] S_a with S_a = sum of PV_k over C(i, k) = a.
+    With b the most frequent color of the row and T the sum of all PV_k, this
+    is U[b] T + sum_{a != b} (U[a] - U[b]) S_a, which needs one product per
+    color and only the additions outside the largest class."""
+    zeros = array("Q", [0]) * (2 * n)
+    PV = []
+    for row in P:
+        a = array("Q", zeros)
+        a[0::2] = array("Q", [V[c] for c in row])     # field j = V[C(k, j)]
+        if _BIG:
+            a.byteswap()
+        PV.append(int.from_bytes(a.tobytes(), "little"))
+    T = sum(PV)
+    out = []
+    nb = _FIELD * n
+    for row in P:
+        cls = {}
+        for k, c in enumerate(row):
+            if c in cls:
+                cls[c].append(k)
+            else:
+                cls[c] = [k]
+        b = max(cls, key=lambda c: len(cls[c]))
+        ub = U[b]
+        r = ub * T
+        for c, ks in cls.items():
+            if c != b:
+                r += (U[c] - ub) * (sum(itemgetter(*ks)(PV)) if len(ks) > 1 else PV[ks[0]])
+        q = array("Q", r.to_bytes(nb, "little"))
+        if _BIG:
+            q.byteswap()
+        out.extend([(c << 128) | (h << 64) | lo for c, lo, h in zip(row, q[0::2], q[1::2])])
+    return out
+
+
 def wl2(PX, PY, max_rounds=None):
     """2-dimensional WL (the coherent closure) on the pair colorings: the new
-    color of (i, j) is (C(i, j), multiset of (C(i, k), C(k, j)) over k).
-    Returns the stable pair colorings (PX', PY') or None. O(n^3) per round."""
+    color of (i, j) is (C(i, j), s(i, j)), where s summarizes the multiset of
+    (C(i, k), C(k, j)) over k (see above). Returns the stable pair colorings
+    (PX', PY') or None. O(n^3) word operations per round."""
+    n = len(PX)
+    PX, PY = _rank([c for row in PX for c in row], [c for row in PY for c in row])
+    if Counter(PX) != Counter(PY):
+        return None
+    PX = [PX[i * n:(i + 1) * n] for i in range(n)]
+    PY = [PY[i * n:(i + 1) * n] for i in range(n)]
+    k = len({c for row in PX for c in row})
+    rounds = 0
+    while max_rounds is None or rounds < max_rounds:
+        rounds += 1
+        U, V = _tables(1 + max(max(max(row) for row in PX), max(max(row) for row in PY)), n)
+        kx, ky = _wl2_keys(PX, n, U, V), _wl2_keys(PY, n, U, V)
+        fx, fy = _rank(kx, ky)
+        if Counter(fx) != Counter(fy):
+            return None
+        PX = [fx[i * n:(i + 1) * n] for i in range(n)]
+        PY = [fy[i * n:(i + 1) * n] for i in range(n)]
+        k2 = len(set(fx))
+        if k2 == k:
+            break
+        k = k2
+    return PX, PY
+
+
+def wl2_reference(PX, PY, max_rounds=None):
+    """2-WL with the literal multisets as signatures (the definition; slow).
+    Used by the tests to check that wl2 computes the same partitions."""
     n = len(PX)
     PX, PY = _rank([c for row in PX for c in row], [c for row in PY for c in row])
     if Counter(PX) != Counter(PY):
