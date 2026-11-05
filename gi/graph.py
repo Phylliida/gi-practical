@@ -479,8 +479,10 @@ def direct_iso(solver, n, PX, PY):
     return Coset([vertex_perm(n, g) for g in ans.gens], mul(vertex_perm(n, ans.rep), tau))
 
 
-def orbit_labels(n, gens, classes):
-    """For each vertex, the least vertex of its orbit under <gens> x prod Sym(C)."""
+def orbit_labels(n, gens, classes, points=None):
+    """For each vertex, the least vertex of its orbit under <gens> x prod Sym(C).
+    points: if given, a list holding every vertex the gens move (only these
+    are scanned)."""
     parent = list(range(n))
 
     def find(v):
@@ -494,9 +496,11 @@ def orbit_labels(n, gens, classes):
         if ra != rb:
             parent[max(ra, rb)] = min(ra, rb)
 
+    pts = range(n) if points is None else points
     for g in gens:
-        for i in range(n):
-            union(i, g[i])
+        for i in pts:
+            if g[i] != i:
+                union(i, g[i])
     for C in classes:
         for v in C[1:]:
             union(C[0], v)
@@ -618,7 +622,7 @@ def new_factors(n, gens, P):
     """Split the group <gens> on the vertex set P into factors: its fixed points,
     then either the full symmetric groups on its orbits, or a direct product of
     two projections when it is one, or the group itself."""
-    lab = orbit_labels(n, gens, [])
+    lab = orbit_labels(n, gens, [], P)  # (the gens move only points of P)
     orbs = {}
     for v in P:
         orbs.setdefault(lab[v], []).append(v)
@@ -796,8 +800,10 @@ def individualize(solver, n, x, y, method, factors, fixed, C, pol, depth, need_a
     a = search(x, x, True, None)
     av = list(a.gens) + ([a.rep] if a.rep != idn else [])
     gens = list(av)
+    orbit = None
     for u in C[1:]:
-        orbit = orbit_labels(n, gens, [])
+        if orbit is None:               # (recomputed only after gens grew)
+            orbit = orbit_labels(n, gens, [])
         if orbit[u] == orbit[v]:
             solver.stats["ir_pruned"] += 1
             continue
@@ -805,6 +811,7 @@ def individualize(solver, n, x, y, method, factors, fixed, C, pol, depth, need_a
         b = search(x, pull_back(x, tu), False, av)
         if b is not None:
             gens.append(mul(b.rep, tu))
+            orbit = None
     if x == y:
         sigma = idn
     else:

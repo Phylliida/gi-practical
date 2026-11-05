@@ -211,33 +211,41 @@ def wl2_single(P):
     """The stable 2-WL coloring of ONE pair coloring P (n x n, sortable
     values), named canonically from P alone: in every round a color is the rank
     of its key in this graph's own sorted set of keys. Returns (coloring,
-    trace), trace = the number of colors after each round.
+    trace), trace = the number of colors after each step.
 
-    1-WL runs first (its rounds cost O(n^2) instead of O(n^3)). If it splits
-    the vertex classes, its colors are folded into the pair colors; if it
-    makes them discrete, every pair has its own color and 2-WL cannot refine
-    any further, so no 2-WL round is needed.
+    1-WL on the vertices runs before every 2-WL round (its rounds cost O(n^2)
+    instead of O(n^3)): if it splits the vertex classes, its colors are folded
+    into the pair colors, and once the vertex colors are discrete, every pair
+    has its own color and no further 2-WL round is needed. A discrete pair
+    coloring is stable as well. Each step is implied by 2-WL (diagonal colors
+    never occur off the diagonal in the front end's colorings, so 2-WL sees
+    the vertex colors), hence the stable partition is that of 2-WL; the
+    interleaving only saves rounds (random 3-regular graph, n = 200: 1 round
+    instead of 4: 1-WL is stuck at the start, but splits the vertices as soon
+    as one 2-WL round has colored the pairs).
 
     Isomorphic inputs give the same trace and corresponding colorings (each
-    round depends only on the multiset of keys), which is what wl2 needs."""
+    step depends only on the multiset of keys), which is what wl2 needs."""
     n = len(P)
     names = {v: i for i, v in enumerate(sorted(set(chain.from_iterable(P))))}
     get = names.__getitem__
     P = [list(map(get, row)) for row in P]
     k = len(names)
-    c, t1 = _wl1_vertex_colors(P, k)
-    trace = [k, tuple(t1)]
-    if len(t1) > 1:                     # 1-WL split the vertex classes: fold them in
-        keys = [(ci * n + cj) * k + v for ci, row in zip(c, P) for cj, v in zip(c, row)]
-        uniq = sorted(set(keys))
-        rank = {v: i for i, v in enumerate(uniq)}
-        f = list(map(rank.__getitem__, keys))
-        P = [f[i * n:(i + 1) * n] for i in range(n)]
-        k = len(uniq)
-        trace.append(k)
-        if t1[-1] == n:                 # discrete vertex colors: stable for 2-WL
-            return P, tuple(trace)
+    trace = [k]
     while True:
+        c, t1 = _wl1_vertex_colors(P, k)
+        trace.append(tuple(t1))
+        if len(t1) > 1 or (t1[-1] == n and k < n * n):
+            # 1-WL split the vertex classes (or they are discrete): fold them in
+            keys = [(ci * n + cj) * k + v for ci, row in zip(c, P) for cj, v in zip(c, row)]
+            uniq = sorted(set(keys))
+            rank = {v: i for i, v in enumerate(uniq)}
+            f = list(map(rank.__getitem__, keys))
+            P = [f[i * n:(i + 1) * n] for i in range(n)]
+            k = len(uniq)
+            trace.append(k)
+        if k == n * n or t1[-1] == n:   # discrete: stable for 2-WL
+            return P, tuple(trace)
         U, V = _tables(k, n)
         keys = _wl2_keys(P, n, U, V)
         uniq = sorted(set(keys))

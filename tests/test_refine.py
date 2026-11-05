@@ -172,6 +172,56 @@ def test_packed_wl2_matches_definition():
             assert partition(fast[0]) == partition(ref[0])
 
 
+def random_regular(n, d, rng):
+    """A random d-regular simple graph (pairing model with restarts)."""
+    while True:
+        pts = [v for v in range(n) for _ in range(d)]
+        rng.shuffle(pts)
+        A = [[0] * n for _ in range(n)]
+        ok = True
+        for a, b in zip(pts[0::2], pts[1::2]):
+            if a == b or A[a][b]:
+                ok = False
+                break
+            A[a][b] = A[b][a] = 1
+        if ok:
+            return A
+
+
+def test_wl2_interleaved_1wl(monkeypatch):
+    """wl2_single runs 1-WL on the vertices before every 2-WL round and stops
+    once the vertex colors (or the pairs) are discrete; the partitions are
+    those of the definition. Random 3-regular graphs: 1-WL is stuck at the
+    start, one 2-WL round lets it make the vertices discrete, so one round
+    suffices (the plain iteration needs about four)."""
+    import gi.refine as refine
+    rounds = []
+    real = refine._wl2_keys
+    monkeypatch.setattr(refine, "_wl2_keys", lambda *a: rounds.append(1) or real(*a))
+    rng = random.Random(41)
+    one = 0
+    for n in (10, 12, 14, 16, 20):
+        A = random_regular(n, 3, rng)
+        s = list(range(n))
+        rng.shuffle(s)
+        for B in (relabel(A, s), random_regular(n, 3, rng)):
+            PX, PY = initial_pair_colors(A, B)
+            fast, ref = wl2(PX, PY), wl2_reference(PX, PY)
+            assert (fast is None) == (ref is None)
+            if fast is not None:
+                assert partition(fast[0]) == partition(ref[0])
+                assert partition(fast[1]) == partition(ref[1])
+            rounds.clear()
+            R, trace = refine.wl2_single(PX)
+            assert partition(R) == partition(wl2_reference(PX, PX)[0])
+            one += len(rounds) == 1 and len(set(map(tuple, R))) == n
+    assert one > 0
+    # a discrete input is returned without a round
+    rounds.clear()
+    D = [[i * 7 + j for j in range(7)] for i in range(7)]
+    assert partition(refine.wl2_single(D)[0]) == partition(D) and not rounds
+
+
 def test_wl_separates_and_rejects():
     # C6 vs 2C3: 1-WL equivalent, 2-WL distinguishes
     X, Y = cycle(6), disjoint(cycle(3), cycle(3))
