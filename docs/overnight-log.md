@@ -59,3 +59,19 @@ claimed results get an independent red-team pass.
   max index over blocks is the right quantity) and is plausibly new but elementary. Prop 4.2 holds after
   running the DP on the given tree.
 * Verdict: the barrier is the solid HJ-specific contribution; correct, not deep.
+
+### w2-redteam-structure (done, commit ae84005; docs/redteam-w1-structure.md)
+* No breaks.
+  - Classification: sound as a sketch; w and λ must be defined via sections.
+  - R**: sound conditional on HJ.
+  - Theorem L: now proven modulo Schweitzer–Wiebking, coset version included after a repair.
+  - G_{r,L}: FPT given its tower; HJ (and HJ+(M')) create ≥ N^{r+1−1.8/r−o(1)} branches on it, regardless
+    of HJ's correctness.
+* Gaps:
+  - low–medium: the decoupled row's twisted terminal costs |P|·poly(s) as a global factor, not a node toll;
+  - low: the consequences paragraph overstated (S_m wr S_k carries m!).
+* Novelty: modest. Theorem L / G_{r,L} are a clean counterexample to "entangled + no small faithful
+  domain ⇒ hard".
+
+## Wave 3
+* w3-canon: a canonical-form version of the HJ recursion, the integration gap both theory agents named.
