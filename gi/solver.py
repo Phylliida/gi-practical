@@ -24,11 +24,18 @@ Branching economy (not in the paper; exact, see the docstrings):
     for one isomorphism ("one-mode"), pruned by Aut_G(x);
   * certificates only for x, only on uniform labels, cached.
 
+Aggregation over the whole instance (Solver.young_step): on intransitive
+groups, the orbits on which the group acts as a product of symmetric groups
+serve as labels; all positions with one- or two-label supports refine them
+jointly (1-WL or 2-WL), then LiftAndContinue or individualize, before the
+orbit chain would split the instance into orbits.
+
 What is simplified (see README.md for details):
-  * aggregation: certificate signatures are refined on the labels as a
-    k-uniform colored hypergraph, then one label is individualized at a time.
-    The paper uses ordered lockstep comparisons, Babai's Design Lemma,
-    coherent configurations and its "first rectangle" step instead;
+  * aggregation: pulled-back colors (and certificate signatures, as a
+    k-uniform colored hypergraph) are refined on the labels by WL-style
+    refinement, then one label is individualized at a time. The paper uses
+    ordered lockstep comparisons, Babai's Design Lemma and its "first
+    rectangle" step instead;
   * no row/column step (Algorithm 4), no phases, hierarchy caps or budget
     bookkeeping: those only matter for the running-time proof;
   * product actions (Maroti case r >= 2) and Johnson actions on k-sets with
