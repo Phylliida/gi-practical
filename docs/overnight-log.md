@@ -440,3 +440,9 @@ are red-teams, a LaTeX paper, and final integration.
     sketch the proof") and deterministic subroutines on canonical generators. Babai is only called on
     Sym/Alt on ≤ d points.
 * Still running when the usage window ended: w9-canontool, w11-redteam-blackbox (resume them after reset).
+
+### w11-redteam-blackbox (done, commit 0c29907; docs/redteam-w10-blackbox.md)
+* Theorem X SOUND: degree-d GI in n^{O(log³ d)}·2^{O(log⁵ d)}, so n^{O(log^{10/3} d)} for all d (the worst
+  case over d drops from 4 to 10/3) and n^{O(log³ d)} for d ≤ 2^{√log n}.
+* The arity lower-bound claim is BROKEN (PGL(2,q) is sharply 3-transitive, so 3 individualizations suffice).
+* Theorem G is still a sketch: O3 closed; a new gap needs a maintained-tower rule.
