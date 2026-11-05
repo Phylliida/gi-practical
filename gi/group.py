@@ -5,8 +5,10 @@ Everything here is deterministic. These are the "basic operations" the paper
 treats as polynomial-time (Section 3: orbits, fixing points, images, lifting).
 """
 import math
+from bisect import bisect_left, insort
 from collections import OrderedDict
-from operator import itemgetter
+from itertools import compress
+from operator import itemgetter, ne
 
 from .perm import identity, mul, inv, maps
 
@@ -33,7 +35,8 @@ _chains_size = 0
 
 
 class _Chain:
-    __slots__ = ("key", "gens", "base", "S", "T", "Ti", "par", "order", "size", "elements")
+    __slots__ = ("key", "gens", "base", "S", "T", "Ti", "par", "order", "size", "elements", "nt",
+                 "isodata")
 
 
 def clear_chain_cache():
@@ -78,6 +81,7 @@ class PermGroup:
         self._orbs = None               # all orbits, once computed
         self._cow = False
         self._plans = None              # sift plans by start level
+        self._nt = self._nt_T = None    # nontrivial levels, valid while T is self._nt_T
         if not isinstance(gens, (list, tuple)):
             gens = list(gens)
         key = None
@@ -95,6 +99,8 @@ class PermGroup:
         self.base, self.S, self.T, self.Ti = [], [], [], []
         self._par, self._ok = [], []    # BFS tree edges; verified Schreier pairs
         self._order = 1                 # product of the orbit lengths
+        self._ord_T = self.T            # (_order is valid while T is this list)
+        self._nt, self._nt_T = [], self.T
         self._done = order == 1
         for b in base:
             self._push_base(b)
@@ -113,6 +119,8 @@ class PermGroup:
         self.T, self.Ti, self._par = list(c.T), list(c.Ti), list(c.par)
         self._ok = [{} for _ in c.base]
         self._order = c.order
+        self._ord_T = self.T
+        self._nt, self._nt_T = list(c.nt), self.T
         self._snap = c
 
     def _store(self, key):
@@ -126,6 +134,7 @@ class PermGroup:
         c.S = tuple(tuple(s) for s in self.S)
         c.T, c.Ti, c.par = tuple(self.T), tuple(self.Ti), tuple(self._par)
         c.order, c.size, c.elements = self._order, size, None
+        c.nt, c.isodata = tuple(self._nontrivial()), None
         _CHAINS[key] = c
         _chains_size += size
         while _chains_size > CHAIN_CACHE_LIMIT:
@@ -169,6 +178,7 @@ class PermGroup:
                 e += n
         if len(oT) == 1 and len(T) > 1:
             self._plans = None
+            insort(self._nontrivial(), l)
         self._order = self._order // len(oT) * len(T)
         self.T[l], self.Ti[l], self._par[l] = T, Ti, par
 
@@ -219,22 +229,18 @@ class PermGroup:
         """The levels from `start` as steps (l, base point, None, None) for
         nontrivial levels and (l, None, getter, points) for runs of at least
         two trivial levels, which are checked at once."""
-        plan, base, T = [], self.base, self.T
-        l, L = start, len(base)
-        while l < L:
-            if len(T[l]) > 1:
-                plan.append((l, base[l], None, None))
-                l += 1
-                continue
-            r = l
-            while r < L and len(T[r]) == 1:
-                r += 1
-            if r - l >= 2:
-                fix = tuple(base[l:r])
+        plan, base = [], self.base
+        nt = self._nontrivial()
+        l = start
+        for L in nt[bisect_left(nt, start):] + [len(base)]:
+            if L - l >= 2:
+                fix = tuple(base[l:L])
                 plan.append((l, None, itemgetter(*fix), fix))
-            else:
+            elif L - l == 1:
                 plan.append((l, base[l], None, None))
-            l = r
+            if L < len(base):
+                plan.append((L, base[L], None, None))
+            l = L + 1
         return plan
 
     def _sifts_to_id(self, factors, start):
@@ -266,13 +272,13 @@ class PermGroup:
         return g == P
 
     def _make_fast_plan(self, start):
-        base, T = self.base, self.T
+        base = self.base
+        nt = self._nontrivial()
         pts, steps, where = [], [], {}
-        for l in range(start, len(base)):
-            if len(T[l]) > 1:
-                where[base[l]] = len(pts)
-                steps.append((l, len(pts)))
-                pts.append(base[l])
+        for l in nt[bisect_left(nt, start):]:
+            where[base[l]] = len(pts)
+            steps.append((l, len(pts)))
+            pts.append(base[l])
         for b in self._amb:
             if b not in where:
                 where[b] = len(pts)
@@ -283,7 +289,8 @@ class PermGroup:
 
     def short_base(self):
         """The base points of the nontrivial levels (still a base)."""
-        return [b for b, t in zip(self.base, self.T) if len(t) > 1]
+        base = self.base
+        return [base[l] for l in self._nontrivial()]
 
     def _moved_point(self, g):
         return next(i for i in range(self.n) if g[i] != i)
@@ -361,7 +368,16 @@ class PermGroup:
 
     # -- queries -------------------------------------------------------------
     def order(self):
+        if self._ord_T is self.T:
+            return self._order
         return math.prod(len(t) for t in self.T)
+
+    def _nontrivial(self):
+        """The indices of the levels with a nontrivial orbit (increasing)."""
+        if self._nt_T is not self.T:
+            self._nt = [l for l, t in enumerate(self.T) if len(t) > 1]
+            self._nt_T = self.T
+        return self._nt
 
     def contains(self, g):
         r, j = self.sift(g)
@@ -455,34 +471,61 @@ class PermGroup:
         every point p fixed by that level's group, so x[p] == y[v[p]] is needed."""
         lv = self._isodata
         if lv is None:
-            lv = self._isodata = self._iso_levels()
+            c = self._snap
+            if c is not None and c.isodata is not None:
+                lv = c.isodata
+            else:
+                lv = self._iso_levels()
+                if c is not None:
+                    c.isodata = lv
+            self._isodata = lv
         levels, newfix = lv
         k = len(levels)
         out = []
+        if k == 0:
+            return [self.idn] if maps(self.idn, x, y) else []
+        last, lastfix = levels[-1], newfix[k]
 
         def rec(j, v):
             for p in newfix[j]:
                 if x[p] != y[v[p]]:
                     return
-            if j == k:
-                if maps(v, x, y):
-                    out.append(v)
+            if j < k - 1:
+                for u in levels[j]:
+                    rec(j + 1, mul(u, v))
                 return
-            for u in levels[j]:
-                rec(j + 1, mul(u, v))
+            for u in last:              # the last level, inline
+                w = mul(u, v)
+                for p in lastfix:
+                    if x[p] != y[w[p]]:
+                        break
+                else:
+                    if maps(w, x, y):
+                        out.append(w)
 
         rec(0, self.idn)
         return out
 
     def _iso_levels(self):
-        levels, newfix, fixed = [], [], set()
-        for t, S in zip(self.T, self.S):
-            if len(t) > 1:
-                fx = [p for p in range(self.n) if p not in fixed and all(s[p] == p for s in S)]
-                fixed.update(fx)
-                newfix.append(fx)
-                levels.append(list(t.values()))
-        newfix.append([p for p in range(self.n) if p not in fixed][:8])   # (then a full check)
+        """The nontrivial levels' transversals, and for each the points fixed
+        by its group but not by the previous one (then up to 8 other points)."""
+        n, idn = self.n, self.idn
+        moved_of = {}
+
+        def moved(s):
+            m = moved_of.get(id(s))
+            if m is None:
+                m = moved_of[id(s)] = set(compress(range(n), map(ne, s, idn)))
+            return m
+
+        levels, newfix = [], []
+        prev = set(range(n))            # the points moved by the previous level's group
+        for l in self._nontrivial():
+            cur = set().union(*[moved(s) for s in self.S[l]])
+            newfix.append(sorted(prev - cur))
+            levels.append(list(self.T[l].values()))
+            prev = cur
+        newfix.append(sorted(prev)[:8])  # (then a full check)
         return levels, newfix
 
     def _tail(self, m):
@@ -497,6 +540,7 @@ class PermGroup:
             H._ok = [{} for _ in H.base]
             H.gens = list(H.S[0])
             H._order = H.order()
+            H._ord_T = H.T
         return H
 
     def pointwise_stabilizer(self, points):
@@ -605,6 +649,7 @@ class ActionHom:
                 K._ok = [{} for _ in K.base]
                 K.gens = list(K.S[0])
                 K._order = K.order()
+                K._ord_T = K.T
             self._kernel = K
         return self._kernel
 
