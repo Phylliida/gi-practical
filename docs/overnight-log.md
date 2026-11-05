@@ -414,3 +414,18 @@ are red-teams, a LaTeX paper, and final integration.
   Examples: TW is a SKETCH; the counterexample needs m ≥ 200; "beats BC" is claimed only for
   k = polylog n.
 * cover-note.md: a draft note to an expert (not sent).
+
+### w10-blackbox (done, commit 07c3068; docs/w10-blackbox.md)
+* The black box is GNS case (v): t-ary structures (t = max(9, 3 + log d)) on > 3k/4 points.
+* [PROVEN] No canonical arity reduction: PSL(2,q) instances make every individualization-free binary
+  relaxation trivial, so reducing arity costs 2^{Θ(log² d)} branches.
+* [PROVEN, pending red-team] Theorem X: degree-d GI in n^{O(log³ d)}·2^{O(log⁵ d)}. That is c = 10/3 for all
+  d, and c = 3 for d ≤ 2^{√log n} or d ≥ 2^{(log n)^{2/3}}. Route: one Design-Lemma / Split-or-Johnson
+  round, then GNS on the reduced instance (≤ 3m/4 points), unrolled.
+* [SKETCH] Theorem G: c = 3 for all d (Design rounds charged to a non-reset tower potential; gaps O2, O3).
+* The HJ black-box route works (log M = O(log² d)) but is redundant: n^{O(log n)} on the whole graph already
+  covers it. The Lean development verifies only GI at the machine level, not HJ's string-isomorphism
+  theorem.
+
+## Wave 11
+* w11-redteam-blackbox: adversarial check of Theorem X (and the gaps in G).
