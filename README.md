@@ -17,6 +17,10 @@ if res is not None:
 `Solver(kappa=3, enum_limit=500, certificates=True, max_enum=100000)`; `solver.stats` counts the
 recursive operations of the last run.
 
+`graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True, ir=3,
+ir_min=6)`: adjacency entries may be edge colors, graphs may be directed and have loops. The
+keyword arguments control the front end (below); `ir=0` hands every stage to the recursion.
+
 ## Layout
 
 * `gi/perm.py`: permutations as tuples. Right action: `mul(p, q)` means first `p`, then `q`, and
@@ -25,8 +29,12 @@ recursive operations of the last run.
   stacked block hierarchy, action homomorphisms with lifting and kernels (`ActionHom`), and
   recognition of the Johnson action on 2-sets.
 * `gi/solver.py`: string isomorphism `Iso_G(x, y)`, which is the paper's recursion.
+* `gi/refine.py`: joint canonical color refinement of two graphs (1-WL and 2-WL), with colors named
+  by one content-based rule for both graphs.
 * `gi/graph.py`: the graph wrapper (paper Algorithm 1). Positions are the ordered vertex pairs and
-  the group is Sym(n) acting on both coordinates.
+  the group acts on both coordinates. Front end: refinement, then a staged orbit chain over
+  vertex-class factors with refinement between stages, and optional bounded-depth
+  individualization (see below).
 * `tests/`: exactness tests against brute force.
 * `bench/`: benchmark families with known answers, and a runner that verifies every answer.
 
@@ -60,6 +68,28 @@ recursive operations of the last run.
 4. **Small constants.** κ = 3 by default (the paper uses κ = 64), and groups of order up to
    `enum_limit` are enumerated directly.
 
+## Front end (graph level)
+
+1. **Joint 2-WL.** X and Y are refined together (coherent closure of the pair coloring). Every
+   new color contains the old one, and names are ranks in the sorted union of both graphs'
+   signatures. So isomorphisms map refined colors onto refined colors, and adjacency is a function
+   of the refined pair color. Different histograms mean the graphs are not isomorphic. The group
+   becomes the product of Sym(C) over the refined vertex classes C.
+2. **Staged orbit chain** (`staged=True`). The state is `Iso(X, Y) = Iso_G(x, y) * rho` with
+   `G = F_1 x ... x F_k` over disjoint vertex sets (each F_i is the full Sym or a solved group).
+   The loop re-refines with the G-orbits as vertex labels, which is exact because G fixes its own
+   orbits. It shrinks the Sym factors to the refined classes, then gives one stage to
+   `Solver.solve`: the induced block of one factor, or the cross block of two factors. The answer
+   replaces those factors (orbit-chain rule). Results that are products of symmetric groups, or
+   direct products of two parts, are split again. When all blocks are clean, the answer is G.
+3. **Bounded individualization** (`ir`, `ir_min`). A stage on a Sym factor of size at least
+   `ir_min` can be replaced by branching on the image of one vertex, for up to `ir` levels.
+   Automorphisms use orbit pruning, and isomorphisms need only one successful branch. A constant
+   depth costs at most a factor n^ir, so the n^O(log n) bound is kept.
+
+No change to `solver.py` is needed: each stage calls `Solver.solve` on a group that is built
+directly on the stage's positions.
+
 ## Benchmark protocol
 
 ```sh
@@ -68,7 +98,8 @@ python3 bench/run.py --tiers tiny,small --timeout 60 --label NAME
 python3 bench/run.py --tiers medium --timeout 120 --label NAME --solver-args '{"certificates": false}'
 ```
 
-`bench/run.py` checks every answer. It verifies the isomorphism, verifies that each generator is
+`--graph-args '{"ir": 0}'` passes keyword arguments to `graph_iso` (for example, to measure the
+recursion without individualization). `bench/run.py` checks every answer. It verifies the isomorphism, verifies that each generator is
 an automorphism, and checks that the order of the generated group (computed with sympy) equals
 the known |Aut|. A wrong answer is a failure regardless of speed. Results go to
 `bench/results/NAME.json`.
