@@ -200,3 +200,16 @@ claimed results get an independent red-team pass.
 * Where we lose: Traces is >100× faster on CFI over random cubics and solves Miyazaki graphs instantly;
   sparse nauty wins on everything below n ≈ 1000.
 * Tests: 341 passed.
+
+### w6-tanglegram (done, commit 53f8b51; docs/w6-tanglegram.md)
+* (R1) is still open. No literature on the complexity of tanglegram isomorphism (phylogenetics counts
+  tanglegrams via double cosets; isomorphism is done with GAP/nauty). Closest open relative:
+  tree-sibling network isomorphism (Cardona et al. conjecture P at bounded in-degree).
+* [PROVEN mod Luks 1993 Cor. 6.3/6.4] Prop L: if EITHER tree has out-degree ≤ 4 the problem is
+  polynomial, with no bound on the other tree; out-degree ≤ d gives n^{O(d/log d)}. Probably folklore.
+  Hard instances need deep Sym(≥5) towers in BOTH trees.
+* [PROVEN] Prop D: prime decomposition via common clusters. Prop S: fibre-product structure over
+  straddling subtrees. Prop C (new to the agent's knowledge): coordinate tanglegrams have the generalized
+  wreath product of S_b over a 2-dimensional poset as their group, checked against nauty on 21 instances.
+* Lead: extend the Theorem P DP from antichains to arbitrary posets (string isomorphism under generalized
+  wreath products), which would cover all coordinate tanglegrams.
