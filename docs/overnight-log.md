@@ -159,3 +159,25 @@ claimed results get an independent red-team pass.
   sets, canonical labellings for Γ̂_d-strings in n^{O((log d)^c)}; graphs of maximum degree d likewise
   once the canonical Luks reduction is written out. Before any public claim: contact Wiebking / Neuen /
   Schweitzer and check the SICOMP 2023 GNS text.
+
+### w4-t2 (done, commit c8491b3; docs/w4-t2.md)
+* [PROVEN] Full-group T² is fpt-equivalent, with polynomial size, to coloured TANGLEGRAM isomorphism (two
+  rooted trees of out-degree ≤ b on one leaf set), to coset intersection of two full coloured tree groups,
+  to isomorphism of arbitrary graphs carrying a b-ary hierarchical clustering, and to multi-sorted
+  tree-structured structures. T²_full ≤ coloured GI of degree b+1.
+* TreeCI = coset intersection of an arbitrary tree group with a full one. The gap to the graph core is
+  "definability" of tree groups (R2). (R1), tanglegram isomorphism FPT in the out-degree, is NECESSARY for
+  degree-d GI to be FPT.
+* [PROVEN mod the standard CFI game] Theorem B: CFI over cubic expanders embeds into coloured binary
+  tanglegrams (size O(n)), so the WL dimension is Ω(|V|) already at b = 2. Any FPT algorithm must be
+  group-theoretic.
+* Prop T: FPT in (b, τ), τ = largest Goursat quotient of the instance's row strips. Every brief idea fails
+  the same way (the combine step is a same-size T²_full instance).
+* Experiments: equivalences 54/54; CFI tanglegrams defeat CR and 2-WL; Aut(T)∩Alt(L) is definable
+  (degree-9 structure, N ≤ 64), so the classic Alt(n) obstruction to definability disappears.
+* Leads: abelian twisting via linear algebra; definability for 2-groups; a straddling-node recursion;
+  tanglegrams as a lower-bound family and a solver stress family.
+
+## Wave 6
+* w5-writeup (running): paper-style draft of the canonization result.
+* w6-tanglegram: attack (R1), tanglegram isomorphism FPT in out-degree.
