@@ -1,0 +1,530 @@
+{
+ "label": "w1-cfix",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "CFIx20",
+   "family": "cfix",
+   "size": 20,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "cfi",
+   "gen_time": 0.0,
+   "dnd": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.031,
+    "aut": 2048.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.013,
+    "aut": 2048.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.005,
+    "aut": 2048.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.054,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 165,
+     "luks_ea_layers": 55,
+     "luks_layers_max": 55,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 1,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 2048.0
+  },
+  {
+   "name": "CFIx20-twist",
+   "family": "cfix",
+   "size": 20,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "cfi",
+   "gen_time": 0.0,
+   "dnd": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.033,
+    "aut": 2048.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "wall": 0.017,
+    "aut": 2048.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.009,
+    "aut": 2048.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.053,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 165,
+     "luks_ea_layers": 55,
+     "luks_layers_max": 55,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 1,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": false,
+   "aut": null
+  },
+  {
+   "name": "CFIx40",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "gen_time": 0.0,
+   "dnd": {
+    "status": "ok",
+    "time": 0.25,
+    "wall": 0.255,
+    "aut": 2097152.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.09,
+    "wall": 0.091,
+    "aut": 2097152.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.007,
+    "aut": 2097152.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.187,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 348,
+     "luks_ea_layers": 116,
+     "luks_layers_max": 116,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 1,
+     "luks_phase2_max_log2_order": 20,
+     "luks_group_max_log2_order": 20,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 2097152.0
+  },
+  {
+   "name": "CFIx40-twist",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "gen_time": 0.0,
+   "dnd": {
+    "status": "ok",
+    "time": 0.24,
+    "wall": 0.248,
+    "aut": 2097152.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.12,
+    "wall": 0.129,
+    "aut": 2097152.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "wall": 0.009,
+    "aut": 2097152.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.191,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 348,
+     "luks_ea_layers": 116,
+     "luks_layers_max": 116,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 1,
+     "luks_phase2_max_log2_order": 20,
+     "luks_group_max_log2_order": 20,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": false,
+   "aut": null
+  },
+  {
+   "name": "CFIx80",
+   "family": "cfix",
+   "size": 80,
+   "n": 800,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1200,
+   "cert": "cfi",
+   "gen_time": 0.0,
+   "dnd": {
+    "status": "ok",
+    "time": 2.96,
+    "wall": 2.988,
+    "aut": 2199023255552.0,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 1.35,
+    "wall": 1.365,
+    "aut": 2199023255552.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "wall": 0.015,
+    "aut": 2199023255552.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.488,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 717,
+     "luks_ea_layers": 239,
+     "luks_layers_max": 239,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 4,
+     "luks_phase2_max_log2_order": 40,
+     "luks_group_max_log2_order": 40,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 2199023255552.0
+  },
+  {
+   "name": "CFIx80-twist",
+   "family": "cfix",
+   "size": 80,
+   "n": 800,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1200,
+   "cert": "cfi",
+   "gen_time": 0.0,
+   "dnd": {
+    "status": "ok",
+    "time": 3.05,
+    "wall": 3.068,
+    "aut": 2199023255552.0,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 1.29,
+    "wall": 1.302,
+    "aut": 2199023255552.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "wall": 0.014,
+    "aut": 2199023255552.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.466,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 717,
+     "luks_ea_layers": 239,
+     "luks_layers_max": 239,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 4,
+     "luks_phase2_max_log2_order": 40,
+     "luks_group_max_log2_order": 40,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": false,
+   "aut": null
+  },
+  {
+   "name": "CFIx160",
+   "family": "cfix",
+   "size": 160,
+   "n": 1600,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 2400,
+   "cert": "cfi",
+   "gen_time": 0.01,
+   "dnd": {
+    "status": "ok",
+    "time": 42.6,
+    "wall": 42.876,
+    "aut": 2.417851639229e+24,
+    "same": true
+   },
+   "dns": {
+    "status": "ok",
+    "time": 16.7,
+    "wall": 16.824,
+    "aut": 2.417851639229e+24,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.027,
+    "aut": 2.417851639229e+24,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.656,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 1473,
+     "luks_ea_layers": 491,
+     "luks_layers_max": 491,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 80,
+     "luks_group_max_log2_order": 80,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 2.417851639229e+24
+  },
+  {
+   "name": "CFIx160-twist",
+   "family": "cfix",
+   "size": 160,
+   "n": 1600,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 2400,
+   "cert": "cfi",
+   "gen_time": 0.01,
+   "dnd": {
+    "status": "ok",
+    "time": 42.12,
+    "wall": 42.387,
+    "aut": 2.417851639229e+24,
+    "same": false
+   },
+   "dns": {
+    "status": "ok",
+    "time": 25.92,
+    "wall": 26.106,
+    "aut": 2.417851639229e+24,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "wall": 0.027,
+    "aut": 2.417851639229e+24,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.566,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 1473,
+     "luks_ea_layers": 491,
+     "luks_layers_max": 491,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 80,
+     "luks_group_max_log2_order": 80,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": false,
+   "aut": null
+  },
+  {
+   "name": "CFIx320",
+   "family": "cfix",
+   "size": 320,
+   "n": 3200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4800,
+   "cert": "cfi",
+   "gen_time": 0.04,
+   "dnd": {
+    "status": "timeout",
+    "time": 200.1
+   },
+   "dns": {
+    "status": "ok",
+    "time": 68.64,
+    "wall": 69.124,
+    "aut": 2.923003274662e+48,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.06,
+    "wall": 0.073,
+    "aut": 2.923003274662e+48,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 8.477,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 3000,
+     "luks_ea_layers": 1000,
+     "luks_layers_max": 1000,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 1,
+     "luks_phase2_max_log2_order": 160,
+     "luks_group_max_log2_order": 160,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": true,
+   "aut": 2.923003274662e+48
+  },
+  {
+   "name": "CFIx320-twist",
+   "family": "cfix",
+   "size": 320,
+   "n": 3200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4800,
+   "cert": "cfi",
+   "gen_time": 0.04,
+   "dnd": {
+    "status": "timeout",
+    "time": 200.1
+   },
+   "dns": {
+    "status": "ok",
+    "time": 108.75,
+    "wall": 109.519,
+    "aut": 2.923003274662e+48,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.06,
+    "wall": 0.073,
+    "aut": 2.923003274662e+48,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 7.674,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 3,
+     "luks_steps": 3000,
+     "luks_ea_layers": 1000,
+     "luks_layers_max": 1000,
+     "luks_aut_tests": 1,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 6,
+     "luks_phase2_max_degree": 1,
+     "luks_phase2_max_log2_order": 160,
+     "luks_group_max_log2_order": 160,
+     "luks_twin_max": 2
+    }
+   },
+   "iso": false,
+   "aut": null
+  }
+ ]
+}

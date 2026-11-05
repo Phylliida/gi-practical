@@ -1,0 +1,362 @@
+{
+ "label": "w1-ns-s2",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "ns48",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "gen_time": 0.15,
+   "dns": {
+    "status": "ok",
+    "time": 0.5,
+    "wall": 0.51,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 1.99,
+    "wall": 2.023,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.433,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 432,
+     "luks_ea_layers": 191,
+     "luks_layers_max": 66,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 156,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 7,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns48-twist",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "gen_time": 0.15,
+   "dns": {
+    "status": "ok",
+    "time": 0.53,
+    "wall": 0.533,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 2.01,
+    "wall": 2.029,
+    "aut": 1.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.492,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 488,
+     "luks_ea_layers": 245,
+     "luks_layers_max": 66,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 156,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 7,
+     "luks_group_max_log2_order": 7,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "gen_time": 0.21,
+   "dns": {
+    "status": "ok",
+    "time": 4.06,
+    "wall": 4.091,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 21.07,
+    "wall": 21.346,
+    "aut": 1.0,
+    "same": true
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.491,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 5,
+     "luks_steps": 396,
+     "luks_ea_layers": 82,
+     "luks_layers_max": 82,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 1,
+     "luks_phase1_max_degree": 192,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 8,
+     "luks_group_max_log2_order": 8,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "gen_time": 0.21,
+   "dns": {
+    "status": "ok",
+    "time": 4.26,
+    "wall": 4.288,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 20.9,
+    "wall": 21.092,
+    "aut": 1.0,
+    "same": false
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.679,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 624,
+     "luks_ea_layers": 311,
+     "luks_layers_max": 82,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 192,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 8,
+     "luks_group_max_log2_order": 8,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns80",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "gen_time": 0.33,
+   "dns": {
+    "status": "ok",
+    "time": 25.05,
+    "wall": 25.21,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 200.25
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.835,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 611,
+     "luks_ea_layers": 270,
+     "luks_layers_max": 93,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 220,
+     "luks_phase2_max_degree": 18,
+     "luks_phase2_max_log2_order": 13,
+     "luks_group_max_log2_order": 13,
+     "luks_twin_max": 9
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns80-twist",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "gen_time": 0.33,
+   "dns": {
+    "status": "ok",
+    "time": 18.39,
+    "wall": 18.514,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 200.25
+   },
+   "new": {
+    "status": "ok",
+    "time": 0.89,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 689,
+     "luks_ea_layers": 346,
+     "luks_layers_max": 93,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 220,
+     "luks_phase2_max_degree": 18,
+     "luks_phase2_max_log2_order": 13,
+     "luks_group_max_log2_order": 13,
+     "luks_twin_max": 9
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns96",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "gen_time": 0.5,
+   "dns": {
+    "status": "ok",
+    "time": 183.59,
+    "wall": 184.782,
+    "aut": 1.0,
+    "same": true
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 200.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.116,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 817,
+     "luks_ea_layers": 356,
+     "luks_layers_max": 121,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 312,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 15,
+     "luks_group_max_log2_order": 15,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns96-twist",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 2,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "gen_time": 0.5,
+   "dns": {
+    "status": "ok",
+    "time": 194.78,
+    "wall": 196.038,
+    "aut": 1.0,
+    "same": false
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 200.0
+   },
+   "new": {
+    "status": "ok",
+    "time": 1.211,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 927,
+     "luks_ea_layers": 464,
+     "luks_layers_max": 121,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 312,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 15,
+     "luks_group_max_log2_order": 15,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  }
+ ]
+}

@@ -1,6 +1,8 @@
 # w1-scale: scaling the bounded-degree pipeline, and graphs where it beats nauty
 
-(draft; tables filled in from bench/results/irhard-w1-*.json)
+Data: bench/results/irhard-w1-*.json (`bench/irhard.py table --label w1-ns` etc.). All runs used
+one process at a time, `nice -n 19`, and timeouts; the machine was otherwise lightly loaded
+(load about 1.5–3). Across all of them, no answer was wrong.
 
 ## 1. What changed in `gi/`
 
@@ -70,6 +72,39 @@ matters at n ≥ 2000.
 
 Options (all exact; for tests and ablation): `rooted_wl`, `layers="class"|"bfs"`, `ea`.
 `rooted_wl=False, ea=False` is the previous pipeline.
+
+### 1.6 Speedups: before and after
+
+The two code versions were timed back to back on the same instances: `bounded_iso` of commit
+cc58dee against the final code, one process, `nice`. Times are in seconds and cover Aut(X) plus
+the isomorphism or refutation.
+
+| instance | n | before | after | speedup |
+|---|---|---|---|---|
+| CFI(3reg20) / twist | 200 | 0.24 / 0.23 | 0.066 / 0.052 | 3.6–4.4× |
+| CFI(3reg40) / twist | 400 | 0.87 / 0.86 | 0.17 / 0.16 | 5.2–5.4× |
+| CFI(3reg60) / twist | 600 | 2.66 / 2.61 | 1.17 / 1.10 | 2.3–2.4× |
+| CFI(3reg80) / twist | 800 | 10.5 / 11.0 | 0.50 / 0.51 | 21× |
+| NS multipede ns16 / twist | 352 | 41.5 / 63.1 | 0.11 / 0.13 | 390–470× |
+| ns24, ns32 (iso and twist) | 528, 704 | > 300 | 0.22, 0.33 | > 900× |
+| colored 3-XOR multipede (r3) / non-iso | 264 | 1.87 / 2.06 | 0.078 / 0.071 | 24–29× |
+| colored 3-XOR multipede / non-iso | 440 | 5.46 / 8.68 | 0.11 / 0.15 | 50–57× |
+| random 3-regular / other | 400 | 0.82 / 0.77 | 0.081 / 0.059 | 10–13× |
+| random 4-regular / other | 400 | 5.10 / 2.86 | 0.082 / 0.059 | 48–62× |
+| hypercube Q6, Q8 | 64, 256 | 0.035, 0.43 | 0.026, 0.14 | 1.3×, 3.1× |
+
+CFI(3reg80) was 2.5× slower than dense nauty (10.8 s against 4.4 s); it is now 8× faster. Most
+of the gain on CFI and the multipedes comes from the elementary abelian path: no Schreier–Sims at
+all. The groups are also smaller under the class order. On CFI(3reg80), max log2|G_r| is 40,
+which is log2|Aut| itself, against 79 with BFS layers. On ns up to n = 3168 it is at most 21. On random
+regular graphs it comes from the cheaper invariants and the rooted refinement, which makes the
+coloring discrete, so the groups are trivial. The CFI(3reg60) instance is slower than
+CFI(3reg80). Its chain has more layers on the permutation path. The run is deterministic, so this
+is a property of the instance, not noise.
+
+Hypercubes were the one regression in development: class layers made Q8 take more than 200 s.
+`class_plan` now gives up (returns BFS layers) as soon as it would add a twin block of ≥ 3
+vertices.
 
 ## 2. Hard instances for IR solvers (`bench/irhard.py`)
 
@@ -213,3 +248,107 @@ against a relabeled R(B, e_v) with e_v ∉ col(A) (not isomorphic).
      and grpsize = 1: 352–2112 for sparse nauty, 352–1408 for dense nauty, 352–1056 for Traces.
    * Given the full 10-minute cap, sparse nauty does finish on X, after 10.2 million nodes. The
      pair runs only count time, so the earlier timeout was simply the cost of two such runs.
+
+### 3.2 Other seeds (robustness)
+
+There are two more random σ per size: seeds 1 and 2, with 200 s timeouts. Data:
+bench/results/irhard-w1-ns-s{1,2}.json. Each cell gives iso / non-iso times in seconds.
+
+| n | ours (s1) | sparse nauty (s1) | Traces (s1) | ours (s2) | sparse nauty (s2) | Traces (s2) |
+|---|---|---|---|---|---|---|
+| 1056 | 0.49 / 0.50 | 0.30 / 0.49 | 0.35 / 0.34 | 0.43 / 0.49 | 0.50 / 0.53 | 2.0 / 2.0 |
+| 1408 | 0.69 / 0.67 | 0.52 / 1.02 | 2.6 / 2.6 | 0.49 / 0.68 | 4.1 / 4.3 | 21 / 21 |
+| 1760 | 0.86 / 0.91 | 9.5 / 8.3 | > 200 | 0.84 / 0.89 | 25 / 18 | > 200 |
+| 2112 | 0.77 / 1.12 | 139 / 165 | > 200 | 1.12 / 1.21 | 184 / 195 | > 200 |
+
+The crossover with sparse nauty moves with σ, as NS17 also observed. It lies between 1056 and
+1408 for seeds 0 and 2, and between 1408 and 1760 for seed 1. From n = 1760 on, ours wins on all
+three seeds, by 10–30×. At 2112 it wins by 60–180×, and at 2464 by more than 400× (seed 0).
+Our own times hardly vary with σ (0.77–1.21 s at 2112).
+
+## 4. The other families: where we win and where we lose
+
+Times are in seconds; each cell gives iso / non-iso; the timeout is 200 s. The
+answers for nss, nst, cfix and mz are from the construction (iso pairs) or from nauty (non-iso
+pairs and |Aut|), and all of ours were verified against them.
+
+**Shrunken multipedes `nst`** (NS's t2, 12k vertices; iso pairs only):
+
+| n | ours | dense nauty | sparse nauty | Traces |
+|---|---|---|---|---|
+| 288 | 0.22 | 0.06 | 0.02 | 0.16 |
+| 384 | 0.25 | 0.23 | 0.02 | > 200 |
+| 576 | 0.68 | 2.5 | 0.33 | > 200 |
+| 768 | 4.5 | > 200 | 78.9 | > 200 |
+
+Traces fails from n = 384, dense nauty from 768. Sparse nauty is faster up to 576 and 18× slower
+at 768. Here ours grows faster than on ns. log2|G_r| reaches 28 at n = 768, because the bypassed
+graphs have no feet, so twin pairs with nonempty up-sets appear, and 12 layers fall back to the
+permutation path. Even so, it is far below nauty's growth.
+
+**CFI over random cubic graphs `cfix`** (|Aut| = 2^(b/2+1)):
+
+| n | ours | dense nauty | sparse nauty | Traces |
+|---|---|---|---|---|
+| 400 | 0.19 / 0.19 | 0.25 / 0.24 | 0.09 / 0.12 | 0.00 / 0.00 |
+| 800 | 0.49 / 0.47 | 3.0 / 3.1 | 1.4 / 1.3 | 0.01 / 0.01 |
+| 1600 | 1.7 / 1.6 | 43 / 42 | 17 / 26 | 0.02 / 0.02 |
+| 3200 | 8.5 / 7.7 | > 200 | 69 / 109 | 0.06 / 0.06 |
+
+We beat dense nauty from n ≈ 400 and sparse nauty from n ≈ 800, by 8–14× at 3200. Here every
+mode grows polynomially. The fits are: ours n^1.75 (R² 0.99), dense nauty n^3.7, sparse nauty
+n^3.2–3.4. **Traces is far ahead
+at every size:** 0.06 s at 3200, more than 100× faster than ours. CFI graphs have huge
+automorphism groups, and Traces' automorphism pruning keeps its search tiny.
+
+**Miyazaki graphs `mzgen`** (our generator, identical to the bliss files for k ≤ 50):
+
+| n | ours | dense nauty | sparse nauty | Traces |
+|---|---|---|---|---|
+| 1000 | 3.7 / 3.6 | 5.9 / 5.9 | 1.8 / 3.0 | 0.00 |
+| 2000 | 17 / 17 | 76 / 78 | 22 / 15 | 0.01 |
+| 3000 | 45 / 43 | > 200 | > 200 | 0.02 |
+
+Ours beats dense nauty at all sizes from n ≈ 1000, and sparse nauty around 2000–3000. Traces
+solves them at once, as Miyazaki and NS17 report. Ours fits n^2.10 (R² 0.998), dense nauty n^3.1–3.5, sparse nauty n^3.1–3.6. The groups are
+large:
+|Aut| = 2^(n/10 + 1), and log2|G_r| reaches 301.
+
+**Default pipeline (`graph_iso`) on ns:** 0.08, 0.53, 1.3, 12.6 and 26.6 s for n = 88, 176, 264,
+352, 528 (iso). That fits n^3.4 (R² 0.96), and 100–200× slower than the new bounded pipeline at 352–528.
+Its 2-WL front end is Θ(n³) per refinement, so it was not run further.
+
+## 5. Summary and confidence
+
+* **Regime where we beat nauty and Traces.** These are rigid, bounded-degree multipede graphs from
+  Neuen–Schweitzer's construction (`ns`, NS's z2), with answers known by a lemma checked at every
+  size. Ours is faster than dense nauty from n ≈ 350 and faster than Traces from n ≈ 1000 (Traces
+  fails at 1408–1760). Against sparse nauty the crossover is n ≈ 1056–1760, depending on σ.
+  Beyond 1760 ours wins on every instance measured. At n = 2464 all three modes exceed 600 s; on
+  the graph alone, sparse nauty needs 530 s per canonical form, against 1.4 s for our complete
+  answer. The NS shrunken multipedes (nst) show the same picture from n = 768.
+* **Confidence.** High that the gap widens: nauty's tree is exponential (10^7 nodes at 2464,
+  depth 21, all bad leaves), while ours grows like n^1.2 up to 3168. The fits favour exponential
+  over polynomial for nauty (R² 0.97–0.99 against 0.95–0.96). The exact rate of sparse nauty is
+  uncertain to within a factor of about 2 in the doubling distance (σ-dependent).
+* **Where we lose.** Traces is far faster on CFI over random cubic graphs and on Miyazaki graphs,
+  where large automorphism groups let it prune. Sparse nauty is faster on all families below
+  n ≈ 1000. Our pipeline is pure Python. It is exact everywhere, and the polynomial guarantee is
+  Luks's.
+* **What the multipede win rests on.** The rooted 1-WL coloring followed by the class order turns
+  each rooted test into a few hundred linear-algebra steps over F_2 with tiny groups (log2|G_r| ≤ 21).
+  This is the group-theoretic advantage NS17 point to ("bounded color class size ... polynomial by
+  group-theoretic techniques"). An IR solver instead has to search a tree whose depth grows
+  linearly.
+
+## 6. Reproduce
+
+```sh
+PY=../r2-hybrid/.venv/bin/python        # dreadnaut: nixpkgs nauty 2.9.1 (DREADNAUT=... to override)
+nice $PY bench/irhard.py run --family ns --sizes 16,32,48,64,80,96,112,128,144 \
+     --modes new,dnd,dns,dnt --timeout 600 --label w1-ns
+$PY bench/irhard.py table --label w1-ns;  $PY bench/irhard.py fit --label w1-ns --floor 0.1
+nice $PY bench/irhard.py audit --size 112          # §3.1, items 1, 2 and 5
+nice $PY bench/irhard.py nodes --sizes 16,32,48,64,80,96 --algs As,At,Ad --timeout 200
+python3 -m pytest -q tests                          # 341 passed, 19 skipped
+```
