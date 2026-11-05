@@ -102,8 +102,10 @@ def classes_of(c, among=None):
 
 def pull_back(P, pi):
     """The pair coloring P^(pi^-1): entry (i, j) is P[pi i][pi j]."""
-    n = len(P)
-    return [[P[pi[i]][pi[j]] for j in range(n)] for i in range(n)]
+    if len(P) < 2:
+        return [list(row) for row in P]
+    g = itemgetter(*pi)
+    return [list(g(P[p])) for p in pi]
 
 
 def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None):
