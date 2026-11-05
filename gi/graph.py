@@ -48,10 +48,10 @@ Searches for a single isomorphism branch on the preimage of v instead, one
 branch per orbit of the automorphisms already known (see individualize).
 Policy decides when: always for the first ir levels, then up to
 ir_max = O(log n) levels only when the recursion does not finish the stage
-within a budget of a few refinement times. Depth O(log n) costs at most a
+within a work budget worth a few refinements (counted, not timed, so the
+output does not depend on the machine's load). Depth O(log n) costs at most a
 factor n^O(log n), so the n^O(log n) bound of the recursion is kept.
 """
-import time
 from math import factorial, prod, ceil, log2
 from operator import itemgetter
 
@@ -333,7 +333,15 @@ def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", s
 
 
 class OverBudget(Exception):
-    """A budgeted call of the recursion ran out of time (its work is discarded)."""
+    """A budgeted call of the recursion ran out of work (its work is discarded)."""
+
+
+# The work budget of a trial is ir_budget * WORK_PER_REFINEMENT * n^2 units,
+# one unit per position of every recursive call (see Policy). Calibration
+# (bench, r3): a refinement of an n-vertex graph took 1.1-4.6 us * n^2
+# (median 2.9), a budgeted trial 1.1-11 us per unit (median 1.8-2.5), so
+# 1.5 n^2 units cost about as much as one refinement did on the clock.
+WORK_PER_REFINEMENT = 1.5
 
 
 class Policy:
@@ -341,24 +349,32 @@ class Policy:
     uniform) is replaced by graph-level individualization.
 
       * depth < ir: always (bounded depth, as before);
-      * ir <= depth < ir_max: the recursion gets the stage first, with a time
-        budget of ir_budget times the mean duration of a refinement of this
-        graph (one individualization branch costs at least one refinement).
-        If it finishes, its exact answer is used; if not, its work is
-        discarded and the stage is individualized;
+      * ir <= depth < ir_max: the recursion gets the stage first, with a work
+        budget of ir_budget refinements of this graph (one individualization
+        branch costs at least one refinement). If it finishes, its exact
+        answer is used; if not, its work is discarded and the stage is
+        individualized;
       * depth >= ir_max: never.
 
+    Work is counted, not timed, so the decisions (and hence the returned
+    generators) do not depend on the machine or its load: every call of
+    Solver.solve and Solver.cont during the trial costs the degree of its
+    group (the number of positions it permutes), and a refinement is
+    WORK_PER_REFINEMENT * n^2 units (2-WL on n vertices handles the n^2 pairs
+    in a few rounds; the constant is calibrated against the wall clock).
+
     A budgeted call can only be stopped between two recursive calls, so it may
-    overrun its budget by one step of the group engine, and building the
-    stage's group on the |P|^2 positions (before the recursion starts) cannot
-    be stopped at all; Schreier-Sims for Sym(P) costs about |P|^3 sifts, while
-    a refinement costs about n^3 steps. So a trial is only made when
+    overrun its budget by the work of one call. A trial is only made when
     100 (|P|/n)^3 <= ir_budget (|P| <= 0.27 n for the default); larger
-    factors are individualized at once. Stages at the same depth on factors
-    of the same size tend to behave alike (they are often siblings in the
-    individualization tree), so once a call for (depth, |P|) has run out of
-    time, later stages with the same (depth, |P|) are individualized without
-    a trial.
+    factors are individualized at once. (The rule dates from when building
+    the stage group took Schreier-Sims for Sym(P), which could not be
+    stopped; that chain is now written down, see sym_product_group, but
+    trials on all sizes still made the full benchmark 18% slower: on large
+    factors the recursion that fits in the budget rarely beats
+    individualization.) Stages at the same depth on factors of the same size
+    tend to behave alike (they are often siblings in the individualization
+    tree), so once a call for (depth, |P|) has run out of work, later stages
+    with the same (depth, |P|) are individualized without a trial.
 
     Exactness never depends on the policy: both choices compute
     Iso_G(x, y) exactly, an aborted call leaves only exact results behind
@@ -377,16 +393,13 @@ class Policy:
             ir_max = max(ir, ceil(log2(max(n, 2))))
         self.ir_max = ir_max
         self.n = n
-        self.t_ref, self.n_ref = 0.0, 0
-        self.aborted = set()            # (depth, |P|) whose budgeted call ran out of time
+        self.n_ref = 0
+        self.aborted = set()            # (depth, |P|) whose budgeted call ran out of work
 
     def refine(self, f):
-        """f() (a refinement), timed for the budget."""
-        t0 = time.perf_counter()
-        r = f()
-        self.t_ref += time.perf_counter() - t0
+        """f() (a refinement), counted."""
         self.n_ref += 1
-        return r
+        return f()
 
     def individualize_now(self, depth, P):
         """True: individualize; False: recursion; None: recursion on a budget."""
@@ -396,20 +409,25 @@ class Policy:
             return True
         return None if 100 * (len(P) / self.n) ** 3 <= self.budget else True
 
+    def work_budget(self):
+        """The work a trial may use: ir_budget refinements."""
+        return self.budget * WORK_PER_REFINEMENT * self.n * self.n
+
     def trial(self, solver, f):
-        """f() with every call of solver.solve / solver.cont checking a deadline;
-        raises OverBudget when it passes. (The hooks are instance attributes,
-        removed afterwards; solver.py is unchanged.)"""
-        seconds = self.budget * self.t_ref / max(1, self.n_ref)
-        deadline = time.perf_counter() + seconds
+        """f() with every call of solver.solve / solver.cont charging the degree
+        of its group against work_budget(); raises OverBudget when a call would
+        pass it. (The hooks are instance attributes, removed afterwards;
+        solver.py is unchanged.)"""
+        left = [self.work_budget()]
         d = solver.__dict__
         saved = {k: d[k] for k in ("solve", "cont") if k in d}
 
         def hook(inner):
-            def h(*a):
-                if time.perf_counter() > deadline:
+            def h(G, *a):
+                left[0] -= G.n
+                if left[0] < 0:
                     raise OverBudget
-                return inner(*a)
+                return inner(G, *a)
             return h
 
         for k in ("solve", "cont"):

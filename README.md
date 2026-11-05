@@ -201,12 +201,17 @@ colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
 3. **Individualization policy** (`ir`, `ir_min`, `ir_max`, `ir_budget`; `graph.Policy`). A stage
    on a Sym factor of size at least `ir_min` (with a non-uniform induced coloring) can be replaced
    by branching on the image of one vertex. The first `ir` levels always branch. Levels up to
-   `ir_max` (default `max(ir, ceil(log2 n))`) first give the stage to the recursion with a time
-   budget of `ir_budget` times the mean refinement time of this graph (one branch costs at least
-   one refinement); if the recursion does not finish, its work is discarded and the stage
-   branches. No trial is made when `100 (|P|/n)^3 > ir_budget` (building the group of Sym(P) on
-   |P|^2 positions costs about |P|^3 sifts and cannot be interrupted), and after one timeout at a
-   given (depth, factor size), later stages with the same (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
+   `ir_max` (default `max(ir, ceil(log2 n))`) first give the stage to the recursion with a
+   **work budget** of `ir_budget` refinements of this graph (one branch costs at least one
+   refinement); if the recursion does not finish, its work is discarded and the stage
+   branches. Work is counted, not timed: each call of `Solver.solve`/`Solver.cont` in the trial
+   costs the degree of its group, and a refinement counts as `WORK_PER_REFINEMENT * n^2`
+   (1.5 n^2, calibrated so that the budget matches the old wall-clock one). So the output
+   (σ and the generators) does not depend on the machine or its load; the old timed budget
+   changed the output of 7 of the 56 benchmark instances under simulated preemption. No trial is
+   made when `100 (|P|/n)^3 > ir_budget` (trials on all sizes made the benchmark 18% slower),
+   and after one aborted trial at a given (depth, factor size), later stages with the same
+   (depth, size) branch at once. Both choices are exact (an aborted call leaves only finished,
    exact memo entries behind), so the policy only affects speed and which generators are
    returned. Depth O(log n) costs at most a factor n^O(log n), so the n^O(log n) bound is kept.
 4. **Orbit pruning.** Automorphisms: Aut_{G_v}(x) (the branch of v against itself) plus one
@@ -228,8 +233,17 @@ colorings by 2-WL (`giant_wl=2`, alternated with the certificate hypergraph).
    orbits of its group, one after the other (orbit-chain rule), each chunk together with the
    diagonal of the stage's vertices (so the group acts faithfully); orbits where x and y share
    one constant color are skipped. The recursion then permutes a chunk instead of all positions
-   (CFI(3reg20)-twist, n = 200: 156s → 1.4s). Stage groups are built with a diagonal base, their
-   known order and an ambient base.
+   (CFI(3reg20)-twist, n = 200: 156s → 1.4s).
+7. **Explicit stage groups.** A stage whose factors are all symmetric groups gets its chain
+   written down instead of built by Schreier–Sims (`graph.sym_product_group`,
+   `PermGroup.from_bsgs`): base = the diagonal positions (v, v), classes with ≥ 3 points first;
+   the transversal of the level of v maps (w, w) to the transposition (v w) acting on the pairs,
+   made on first use (`group.LazyTransversal`); strong generators = a transposition and a cycle of
+   the remaining points of each class. The Young-label step's labels are then a base prefix, so its
+   restriction map reuses the chain (`RestrictionHom`), and its Young preimages are written down
+   too (`group.young_preimage`: views of the same transpositions, plus one product per cycle).
+   Schreier–Sims for Sym(62) on its 3844 pairs took seconds and could not be interrupted. Solved
+   factors still use Schreier–Sims with a diagonal base, their known order and an ambient base.
 
 No change to `solver.py` is needed: each stage calls `Solver.solve` on a group that is built
 directly on the stage's positions.
@@ -239,6 +253,7 @@ directly on the stage's positions.
 ```sh
 python3 -m pytest -q tests                                   # must pass
 python3 bench/run.py --tiers tiny,small --timeout 60 --label NAME
+python3 bench/run.py --tiers large,xl --only "J(8,3)|PG(2,5)"     # names may contain commas
 python3 bench/run.py --tiers medium --timeout 120 --label NAME --solver-args '{"certificates": false}'
 ```
 

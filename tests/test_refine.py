@@ -476,6 +476,44 @@ def test_policy_budgeted_levels(monkeypatch):
     assert Policy(100, ir=3, ir_budget=None).ir_max == 3
 
 
+def test_policy_deterministic(monkeypatch):
+    """The budget counts work, not time: the same input gives the same sigma
+    and generators even when the clock jumps (a loaded machine), and a
+    trial's budget is ir_budget * WORK_PER_REFINEMENT * n^2 units, one per
+    position of each recursive call."""
+    import time
+    from gi.graph import Policy, OverBudget, WORK_PER_REFINEMENT
+    rng = random.Random(31)
+    pairs = list(itertools.combinations(range(8), 2))       # T(8), 28 vertices
+    A = [[int(len(set(p) & set(q)) == 1) for q in pairs] for p in pairs]
+    s = list(range(28))
+    rng.shuffle(s)
+    B = relabel(A, s)
+    kw = {}
+    runs = []
+    for jumpy in (False, True, False):
+        if jumpy:
+            real = time.perf_counter
+            ticks = itertools.count()
+            monkeypatch.setattr(time, "perf_counter", lambda: real() + 0.05 * next(ticks))
+        S = Solver(certificates=False)
+        runs.append((graph_iso(A, B, solver=S, **kw), S.stats["trial_done"], S.stats["trial_abort"]))
+        monkeypatch.undo()
+    assert runs[0] == runs[1] == runs[2]
+    assert runs[0][1] > 0
+    # the budget in units
+    pol = Policy(16, ir=1, ir_budget=2.0)
+    assert pol.work_budget() == 2.0 * WORK_PER_REFINEMENT * 256
+    S = Solver(certificates=False)
+    G = PermGroup(4, [(1, 0, 2, 3), (1, 2, 3, 0)])
+    calls = []
+    pol.budget = 5 / (WORK_PER_REFINEMENT * 256)      # 5 units: one call of degree 4 only
+    with pytest.raises(OverBudget):
+        pol.trial(S, lambda: [calls.append(1), S.cont(G, (0, 1, 2, 3), (0, 1, 2, 3)),
+                              calls.append(2), S.cont(G, (0, 1, 2, 3), (0, 1, 2, 3))])
+    assert calls == [1, 2] and "cont" not in S.__dict__
+
+
 def test_chunked_stages(monkeypatch):
     """Stages solved in chunks of orbits (forced by a tiny CHUNK) give the same
     exact answers: random graphs against brute force, CFI(K4) and its twist,
