@@ -429,3 +429,14 @@ are red-teams, a LaTeX paper, and final integration.
 
 ## Wave 11
 * w11-redteam-blackbox: adversarial check of Theorem X (and the gaps in G).
+
+### w10-referee (done, commit 71b7438; docs/referee-canon-paper.md)
+* No mathematical error found in Theorem A, B or D. ~120 citations checked; 7 fixed. 17 of 26 minor issues
+  fixed in paper/canon.tex (47 pp, recompiles).
+* MAJOR, status labelling (not applied; text proposed in the report):
+  - M1: Theorem H's "correctness proved" is overstated (no written algorithm; termination argument not
+    well-founded). Relabel as "proof outline" or write it out.
+  - M2: surface Theorem A's dependencies in the abstract, Table 1 and the status box: Babai STOC'19 ("we
+    sketch the proof") and deterministic subroutines on canonical generators. Babai is only called on
+    Sym/Alt on ≤ d points.
+* Still running when the usage window ended: w9-canontool, w11-redteam-blackbox (resume them after reset).
