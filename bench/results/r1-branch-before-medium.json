@@ -1,0 +1,44 @@
+{
+ "label": "r1-branch-before-medium",
+ "solver_args": {
+  "certificates": false
+ },
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "rook4",
+   "tier": "medium",
+   "n": 16,
+   "status": "timeout",
+   "time": 120.004,
+   "note": "",
+   "stats": {
+    "solve": 662,
+    "cont": 661,
+    "giant_johnson": 8,
+    "giant_step": 15,
+    "branch": 134,
+    "enumerate": 630,
+    "enum_cosets": 7
+   }
+  },
+  {
+   "name": "T6",
+   "tier": "medium",
+   "n": 15,
+   "status": "timeout",
+   "time": 120.003,
+   "note": "",
+   "stats": {
+    "solve": 9217,
+    "cont": 9216,
+    "giant_johnson": 13,
+    "giant_step": 102,
+    "branch": 600,
+    "enumerate": 8376,
+    "giant_natural": 77,
+    "enum_cosets": 330
+   }
+  }
+ ]
+}
