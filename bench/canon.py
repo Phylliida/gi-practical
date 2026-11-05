@@ -11,6 +11,8 @@ compares them; times are for the two canonical forms, construction and I/O
 excluded):
   canon  gi.canon.canonical_labeling_lists on X and on Y (in process, wall
          time); its decision is form(X) == form(Y);
+  iso    for reference: gi.bounded.bounded_iso_lists(X, Y), the isomorphism
+         test with Aut(X) (no canonical forms), in process;
   pyn    pynauty 2.8.8.1 certificate(X), certificate(Y) (dense nauty, default
          options), in a subprocess so that the timeout can stop it;
   dnd, dns, dnt  dreadnaut (nauty 2.9.1): dense nauty (Ad), sparse nauty (As),
@@ -189,16 +191,33 @@ def run_dreadnaut(I, alg, timeout):
                 same="are identical" in out, aut=float(grp[0]) if grp else None)
 
 
+def run_iso(I, timeout):
+    """gi.bounded.bounded_iso_lists(X, Y) (isomorphism and Aut(X), no
+    canonical form), for reference."""
+    signal.signal(signal.SIGALRM, _alarm)
+    signal.setitimer(signal.ITIMER_REAL, timeout)
+    try:
+        t0 = time.perf_counter()
+        res = bounded_iso_lists(I["X"], I["Y"])
+        dt = time.perf_counter() - t0
+        signal.setitimer(signal.ITIMER_REAL, 0)
+    except Timeout:
+        return dict(status="timeout", time=timeout)
+    return dict(status="ok", time=round(dt, 3), same=res is not None)
+
+
 def run_mode(I, mode, timeout):
     if mode == "canon":
         return run_canon(I, timeout)
+    if mode == "iso":
+        return run_iso(I, timeout)
     if mode == "pyn":
         return run_pyn(I, timeout)
     return run_dreadnaut(I, {"dnd": "Ad", "dns": "As", "dnt": "At"}[mode], timeout)
 
 
 # -- commands ---------------------------------------------------------------------------------
-MODES = ("canon", "pyn", "dnd", "dns", "dnt")
+MODES = ("canon", "iso", "pyn", "dnd", "dns", "dnt")
 
 
 def cmd_run(args):
@@ -219,14 +238,14 @@ def cmd_run(args):
                        maxdeg=max(map(len, I["X"])), edges=sum(map(len, I["X"])) // 2,
                        cert=I["cert"])
             expect, aut = I["claim"], I["aut"]
-            for mode in sorted(modes, key=lambda m: m == "canon"):    # nauty first
+            for mode in sorted(modes, key=lambda m: m in ("canon", "iso")):    # nauty first
                 if (mode, kind) in dead:
                     row[mode] = dict(status="skipped", time=args.timeout)
                     continue
                 r = row[mode] = run_mode(I, mode, args.timeout)
                 if r["status"] == "timeout" and not args.no_skip:
                     dead.add((mode, kind))
-                if mode != "canon" and r["status"] == "ok":
+                if mode not in ("canon", "iso") and r["status"] == "ok":
                     if expect is None:
                         expect = r["same"]
                     elif r["same"] != expect:
@@ -236,6 +255,9 @@ def cmd_run(args):
             if expect is None:                  # no nauty answer: gi.bounded decides
                 expect = bounded_iso_lists(I["X"], I["Y"]) is not None
                 row["cert"] = "bounded_iso"
+            c = row.get("iso")
+            if c and c["status"] == "ok" and c["same"] != expect:
+                c["status"], c["note"] = "WRONG", "wrong decision"
             c = row.get("canon")
             if c and c["status"] == "ok":
                 if c["same"] != expect:
@@ -260,9 +282,17 @@ def cmd_run(args):
 
 
 def load(labels):
-    rows = []
+    """The rows of the given labels; rows of the same instance (name, seed)
+    from several labels are merged (later labels add modes)."""
+    rows, at = [], {}
     for lab in labels.split(","):
-        rows += json.load(open(os.path.join(RESULTS, f"canon-{lab}.json")))["rows"]
+        for r in json.load(open(os.path.join(RESULTS, f"canon-{lab}.json")))["rows"]:
+            k = (r["name"], r["seed"])
+            if k in at:
+                at[k].update({m: r[m] for m in MODES if m in r})
+            else:
+                at[k] = r
+                rows.append(r)
     return rows
 
 

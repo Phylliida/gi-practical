@@ -510,3 +510,68 @@ def test_structured_graphs_exercise_all_paths():
     st = Counter()
     canonical_labeling_lists(irhard.FAMILIES["nst"](16, random.Random(1))[0]["X"], stats=st)
     assert st["canon_ea_p1"] > 0 and st["canon_ea_p2"] > 0
+
+
+def _small_base(rng):
+    while True:
+        n = rng.randrange(3, 7)
+        G = nx.gnm_random_graph(n, rng.randrange(n - 1, min(n * (n - 1) // 2, 2 * n) + 1),
+                                seed=rng.randrange(10 ** 6))
+        if nx.is_connected(G) and max(dict(G.degree()).values()) <= 4:
+            return G
+
+
+def _lift(B, k, rng):
+    G = nx.Graph()
+    G.add_nodes_from((v, i) for v in B.nodes() for i in range(k))
+    for u, v in B.edges():
+        p = list(range(k))
+        rng.shuffle(p)
+        G.add_edges_from(((u, i), (v, p[i])) for i in range(k))
+    return G
+
+
+def _cfi_random_twists(B, rng):
+    G = nx.Graph()
+    E = [tuple(sorted(e)) for e in B.edges()]
+    tw = {e: rng.randrange(2) for e in E}
+    for v in B.nodes():
+        es = [tuple(sorted(e)) for e in B.edges(v)]
+        G.add_nodes_from(("o", v, e, c) for e in es for c in (0, 1))
+        for bits in itertools.product((0, 1), repeat=len(es)):
+            if sum(bits) % 2 == 0:
+                G.add_edges_from((("m", v, bits), ("o", v, e, c)) for e, c in zip(es, bits))
+    for u, v in E:
+        G.add_edges_from((("o", u, (u, v), c), ("o", v, (u, v), c ^ tw[(u, v)])) for c in (0, 1))
+    return G
+
+
+@pytest.mark.parametrize("seed", range(4))
+def test_structured_random_graphs(seed):
+    """Random covers (lifts) of small graphs, products of small graphs and CFI
+    graphs with random twists: these have nontrivial non-abelian layer groups
+    and WL-equivalent non-isomorphic pairs. Forms against gi.bounded's
+    isomorphism test on pairs of equal size, |Aut| against its group, and
+    relabeling invariance."""
+    rng = random.Random(500 + seed)
+    items = []
+    for _ in range(40):
+        t = rng.randrange(3)
+        if t == 0:
+            G = _lift(_small_base(rng), rng.randrange(2, 4), rng)
+        elif t == 1:
+            G = nx.cartesian_product(_small_base(rng), _small_base(rng))
+        else:
+            G = _cfi_random_twists(_small_base(rng), rng)
+        nbr = lists_of(G)
+        form, order = check_labeling(nbr)
+        res = bounded_iso_lists(nbr, nbr)
+        assert order == (PermGroup(len(nbr), res[1]).order() if res[1] else 1)
+        assert canonical_form_lists(relabeled(nbr, rng)) == form
+        items.append((form, nbr))
+    by = {}
+    for form, nbr in items:
+        by.setdefault((len(nbr), sum(map(len, nbr))), []).append((form, nbr))
+    for L in by.values():
+        for (f1, n1), (f2, n2) in itertools.combinations(L, 2):
+            assert (f1 == f2) == (bounded_iso_lists(n1, n2) is not None)
