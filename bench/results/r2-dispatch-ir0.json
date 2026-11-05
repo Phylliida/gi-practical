@@ -1,0 +1,427 @@
+{
+ "label": "r2-dispatch-ir0",
+ "solver_args": {
+  "certificates": false
+ },
+ "graph_args": {
+  "ir": 0
+ },
+ "timeout": 180.0,
+ "rows": [
+  {
+   "name": "T8",
+   "tier": "hard",
+   "n": 28,
+   "status": "ok",
+   "time": 1.03,
+   "note": "|Aut|=40320",
+   "stats": {
+    "stage": 1,
+    "solve": 6,
+    "cont": 3,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "Paley29",
+   "tier": "hard",
+   "n": 29,
+   "status": "ok",
+   "time": 1.557,
+   "note": "|Aut|=406",
+   "stats": {
+    "stage": 1,
+    "solve": 733,
+    "cont": 732,
+    "giant_johnson": 1,
+    "johnson_k2": 1,
+    "giant_step": 211,
+    "branch": 158,
+    "giant_natural": 210,
+    "enum_cosets": 26,
+    "enumerate": 201,
+    "memo_hit": 602,
+    "pruned": 439,
+    "one_offbase": 68
+   }
+  },
+  {
+   "name": "J(7,3)",
+   "tier": "hard",
+   "n": 35,
+   "status": "ok",
+   "time": 2.547,
+   "note": "|Aut|=5040",
+   "stats": {
+    "stage": 1,
+    "solve": 8,
+    "cont": 4,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "CFI(K4)",
+   "tier": "hard",
+   "n": 40,
+   "status": "ok",
+   "time": 1.377,
+   "note": "|Aut|=192",
+   "stats": {
+    "stage": 3,
+    "solve": 217,
+    "cont": 194,
+    "scheme_hamming": 1,
+    "enum_cosets": 11,
+    "enumerate": 91,
+    "memo_hit": 161,
+    "pruned": 102,
+    "giant_johnson": 1,
+    "johnson_k2": 1,
+    "giant_step": 1,
+    "branch": 3
+   }
+  },
+  {
+   "name": "CFI(K4)-twist",
+   "tier": "hard",
+   "n": 40,
+   "status": "ok",
+   "time": 0.18,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 2,
+    "cont": 2,
+    "scheme_hamming": 1
+   }
+  },
+  {
+   "name": "rand40",
+   "tier": "hard",
+   "n": 40,
+   "status": "ok",
+   "time": 0.093,
+   "note": "|Aut|=1",
+   "stats": {}
+  },
+  {
+   "name": "CFI(3reg8)",
+   "tier": "large",
+   "n": 80,
+   "status": "ok",
+   "time": 19.782,
+   "note": "|Aut|=512",
+   "stats": {
+    "stage": 5,
+    "solve": 1497,
+    "cont": 952,
+    "giant_johnson": 3,
+    "johnson_k2": 3,
+    "giant_step": 15,
+    "branch": 14,
+    "enum_cosets": 69,
+    "enumerate": 129,
+    "memo_hit": 706,
+    "pruned": 164,
+    "giant_natural": 12
+   }
+  },
+  {
+   "name": "CFI(3reg8)-twist",
+   "tier": "large",
+   "n": 80,
+   "status": "ok",
+   "time": 12.671,
+   "note": "",
+   "stats": {
+    "stage": 3,
+    "solve": 2106,
+    "cont": 1508,
+    "giant_johnson": 3,
+    "johnson_k2": 3,
+    "giant_step": 105,
+    "branch": 74,
+    "enum_cosets": 100,
+    "enumerate": 340,
+    "memo_hit": 1357,
+    "pruned": 411,
+    "giant_natural": 102
+   }
+  },
+  {
+   "name": "PG(2,3)",
+   "tier": "large",
+   "n": 26,
+   "status": "ok",
+   "time": 1.263,
+   "note": "|Aut|=11232",
+   "stats": {
+    "stage": 1,
+    "solve": 405,
+    "cont": 395,
+    "giant_johnson": 1,
+    "johnson_k2": 1,
+    "giant_step": 117,
+    "branch": 92,
+    "giant_natural": 116,
+    "enumerate": 81,
+    "memo_hit": 309,
+    "pruned": 313,
+    "one_offbase": 24,
+    "enum_cosets": 6
+   }
+  },
+  {
+   "name": "PG(2,5)",
+   "tier": "large",
+   "n": 62,
+   "status": "timeout",
+   "time": 180.309,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 11861,
+    "cont": 11601,
+    "giant_johnson": 1,
+    "johnson_k2": 1,
+    "giant_step": 2365,
+    "branch": 2475,
+    "giant_natural": 2364,
+    "enumerate": 5389,
+    "memo_hit": 10224,
+    "pruned": 4211,
+    "enum_cosets": 255,
+    "one_offbase": 840
+   }
+  },
+  {
+   "name": "Paley37",
+   "tier": "large",
+   "n": 37,
+   "status": "ok",
+   "time": 3.812,
+   "note": "|Aut|=666",
+   "stats": {
+    "stage": 1,
+    "solve": 164,
+    "cont": 161,
+    "giant_johnson": 1,
+    "johnson_k2": 1,
+    "giant_step": 40,
+    "branch": 8,
+    "giant_natural": 39,
+    "enumerate": 48,
+    "memo_hit": 131,
+    "pruned": 83
+   }
+  },
+  {
+   "name": "Paley61",
+   "tier": "large",
+   "n": 61,
+   "status": "ok",
+   "time": 54.849,
+   "note": "|Aut|=1830",
+   "stats": {
+    "stage": 1,
+    "solve": 106913,
+    "cont": 106848,
+    "giant_johnson": 1,
+    "johnson_k2": 1,
+    "giant_step": 46634,
+    "branch": 47575,
+    "giant_natural": 46633,
+    "enumerate": 8435,
+    "memo_hit": 98838,
+    "pruned": 28886,
+    "one_offbase": 23295,
+    "enum_cosets": 195
+   }
+  },
+  {
+   "name": "J(8,3)",
+   "tier": "large",
+   "n": 56,
+   "status": "ok",
+   "time": 20.487,
+   "note": "|Aut|=40320",
+   "stats": {
+    "stage": 1,
+    "solve": 8,
+    "cont": 4,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "J(8,4)",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 57.993,
+   "note": "|Aut|=80640",
+   "stats": {
+    "stage": 1,
+    "solve": 10,
+    "cont": 5,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "Kneser(8,3)",
+   "tier": "large",
+   "n": 56,
+   "status": "ok",
+   "time": 20.412,
+   "note": "|Aut|=40320",
+   "stats": {
+    "stage": 1,
+    "solve": 8,
+    "cont": 4,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "rook6",
+   "tier": "large",
+   "n": 36,
+   "status": "ok",
+   "time": 2.937,
+   "note": "|Aut|=1036800",
+   "stats": {
+    "stage": 1,
+    "solve": 6,
+    "cont": 3,
+    "scheme_hamming": 1
+   }
+  },
+  {
+   "name": "Q6",
+   "tier": "large",
+   "n": 64,
+   "status": "ok",
+   "time": 37.662,
+   "note": "|Aut|=46080",
+   "stats": {
+    "stage": 1,
+    "solve": 14,
+    "cont": 7,
+    "scheme_hamming": 1
+   }
+  },
+  {
+   "name": "T10",
+   "tier": "large",
+   "n": 45,
+   "status": "ok",
+   "time": 7.81,
+   "note": "|Aut|=3628800",
+   "stats": {
+    "stage": 1,
+    "solve": 6,
+    "cont": 3,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "Chang1",
+   "tier": "large",
+   "n": 28,
+   "status": "timeout",
+   "time": 180.011,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1521068,
+    "cont": 1521068,
+    "giant_johnson": 2,
+    "johnson_k2": 2,
+    "giant_step": 24302,
+    "branch": 98381,
+    "enum_cosets": 72260,
+    "enumerate": 1307562,
+    "memo_hit": 1504072,
+    "pruned": 347557,
+    "giant_natural": 24300,
+    "one_offbase": 61393
+   }
+  },
+  {
+   "name": "T8-vs-Chang1",
+   "tier": "large",
+   "n": 28,
+   "status": "ok",
+   "time": 0.854,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 2,
+    "cont": 2,
+    "scheme_johnson": 1
+   }
+  },
+  {
+   "name": "Chang1-vs-Chang3",
+   "tier": "large",
+   "n": 28,
+   "status": "timeout",
+   "time": 180.013,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 1533218,
+    "cont": 1533218,
+    "giant_johnson": 2,
+    "johnson_k2": 2,
+    "giant_step": 24468,
+    "branch": 99104,
+    "enum_cosets": 72814,
+    "enumerate": 1318157,
+    "memo_hit": 1516123,
+    "pruned": 349928,
+    "giant_natural": 24466,
+    "one_offbase": 61855
+   }
+  },
+  {
+   "name": "Latin(Z8)-vs-Latin(Z2xZ4)",
+   "tier": "large",
+   "n": 64,
+   "status": "ok",
+   "time": 172.363,
+   "note": "",
+   "stats": {
+    "stage": 1,
+    "solve": 8410,
+    "cont": 8392,
+    "giant_johnson": 69,
+    "johnson_k2": 69,
+    "giant_step": 403,
+    "branch": 832,
+    "enumerate": 6276,
+    "memo_hit": 8111,
+    "pruned": 7627,
+    "enum_cosets": 503,
+    "giant_natural": 334,
+    "one_offbase": 419
+   }
+  },
+  {
+   "name": "rand70",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.475,
+   "note": "|Aut|=1",
+   "stats": {}
+  },
+  {
+   "name": "3reg70",
+   "tier": "large",
+   "n": 70,
+   "status": "ok",
+   "time": 0.593,
+   "note": "|Aut|=1",
+   "stats": {}
+  }
+ ]
+}

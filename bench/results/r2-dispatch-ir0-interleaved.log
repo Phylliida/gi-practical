@@ -1,0 +1,22 @@
+T8             base       ok          1.84s {'giant_step': 44, 'enum_cosets': 13}
+T8             new        ok          0.93s {'scheme_johnson': 1}
+Paley29        base       ok          1.57s {'giant_step': 273, 'enum_cosets': 31}
+Paley29        new        ok          1.25s {'johnson_k2': 1, 'giant_step': 273, 'enum_cosets': 31}
+CFI(K4)        base       ok          1.19s {'giant_step': 10, 'enum_cosets': 10}
+CFI(K4)        new        ok          1.14s {'scheme_hamming': 1, 'enum_cosets': 11, 'johnson_k2': 1, 'giant_step': 1}
+CFI(3reg8)     base       ok         21.41s {'giant_step': 18, 'enum_cosets': 69}
+CFI(3reg8)     new        ok         20.29s {'johnson_k2': 3, 'giant_step': 18, 'enum_cosets': 69}
+Paley37        base       ok          4.20s {'giant_step': 40}
+Paley37        new        ok          4.00s {'johnson_k2': 1, 'giant_step': 40}
+Paley61        base       ok         51.55s {'giant_step': 10956, 'enum_cosets': 147}
+Paley61        new        ok         28.43s {'johnson_k2': 1, 'giant_step': 10956, 'enum_cosets': 147}
+J(8,3)         base       ok         90.17s {'giant_step': 113028, 'enum_cosets': 2685}
+J(8,3)         new        ok         13.03s {'scheme_johnson': 1}
+Kneser(8,3)    base       timeout   180.22s {'giant_step': 258470, 'enum_cosets': 5461}
+Kneser(8,3)    new        ok         12.99s {'scheme_johnson': 1}
+rook6          base       ok          3.43s {'giant_step': 41, 'enum_cosets': 12}
+rook6          new        ok          1.74s {'scheme_hamming': 1}
+T10            base       ok          9.55s {'giant_step': 92, 'enum_cosets': 22}
+T10            new        ok          4.80s {'scheme_johnson': 1}
+T8-vs-Chang1   base       ok          1.11s {'giant_step': 61, 'enum_cosets': 13}
+T8-vs-Chang1   new        ok          0.59s {'scheme_johnson': 1}

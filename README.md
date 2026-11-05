@@ -49,6 +49,7 @@ keyword arguments control the front end (below); `ir=0` hands every stage to the
 | Primitive-quotient dispatcher: enumerate small quotients | `Solver.transitive`, `enum_cosets` |
 | Giant on blocks, Johnson action on k-sets → labels (Maróti, r = 1) | `Solver.transitive`, `group.johnson_structure` |
 | Product action (Maróti, r ≥ 2) → product refinement over ≤ r! coordinate cosets | `Solver.transitive`, `group.product_action` |
+| Johnson outcome (Split-or-Johnson): Johnson/Hamming color class on the labels | `Solver.scheme_step`, `group.johnson_embedding` |
 | Giant step on Sym(q) directly (Young subgroups of Sym(q)); parity-restricted path for Alt(q) | `Solver.giant`, `lift_and_continue` |
 | One-/two-label support map of the positions (Cor. "physical support thresholds") | `Solver.label_projection` |
 | Alg. 3 `LocalCertificate` with windows, affected and visible orbits | `Solver.local_certificate` |
@@ -83,7 +84,6 @@ only lead to `None` (and enumeration):
   lines, and coordinates are propagated along squares. Verified: every generator maps lines to
   lines and coordinate classes to coordinate classes (so the induced map to Sym(r) is a
   homomorphism), and each class partitions the points into lines of size D = d^(1/r).
-
 * `group.giant_labels`: a transposition (a 3-cycle for Alt(m)) is found among powers of
   pseudo-random elements (fixed seed); its conjugacy class must have C(m, 2) members (C(m, 3)
   subgroups), and the conjugation action on it, a homomorphism, is a Johnson action on 2-sets
@@ -94,8 +94,8 @@ problems the Johnson structure usually lives in the label coloring, not in the g
 with `ir=0` the group is Sym(35) and the projected pair coloring of the 35 labels is the distance
 coloring of J(7,3). Before a GiantStep on q labels (natural, Johnson or abstract giant), if a color
 class of x's two-label projection is exactly a Johnson graph J(m, k) (m ≥ 2k ≥ 4) or a Hamming graph
-H(r, D) (D ≥ 2, so hypercubes too) on all q labels (`group.johnson_embedding`, `group.hamming_embedding`, both verified
-edge by edge), its embedding is unique up to the graph's automorphism group A (Sym(m), with
+H(r, D) (D ≥ 2, so hypercubes too) on all q labels (`group.johnson_embedding`,
+`group.hamming_embedding`, both verified edge by edge), its embedding is unique up to the graph's automorphism group A (Sym(m), with
 complementation when m = 2k; Sym(D) wr Sym(r)). Every isomorphism maps x's class graph onto y's,
 so Sym(q) is replaced by the preimage of A (embedded via x) and one coset representative that maps
 x's embedding onto y's (with parity handled when phi(G) = Alt(q)). This is Babai's "Johnson"
@@ -132,9 +132,9 @@ enumerated). Stats: `johnson_k<k>`, `giant_abstract`, `product_refine`, `product
    then individualized one at a time. Branching is over all images of the individualized label.
 2. **No row/column step** (Alg. 4) and no phase, hierarchy-cap or hereditary-budget bookkeeping.
    The bookkeeping only matters for the running-time proof.
-3. **Other primitive quotients.** Natural giants, Johnson actions on k-sets (any k ≥ 2) and
-   product actions are recognized (below); any other large primitive quotient is enumerated, and
-   beyond `max_enum` it raises `Unsupported`.
+3. **Other primitive quotients.** Natural giants, Johnson actions on k-sets (any k ≥ 2), product
+   actions and Sym(m)/Alt(m) in other actions are recognized (above); any other large primitive
+   quotient is enumerated, and beyond `max_enum` it raises `Unsupported`.
 4. **Small constants.** κ = 3 by default (the paper uses κ = 64), and groups of order up to
    `enum_limit` are enumerated directly.
 
