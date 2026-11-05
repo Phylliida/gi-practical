@@ -126,7 +126,7 @@ class Solver:
         if a is None:
             return None
         gens = [rho.lift(h) for h in a.gens] + rho.kernel().gens
-        return Coset(reduce_gens(n, gens), rho.lift(a.rep))
+        return Coset(reduce_gens(n, gens, G.short_base()), rho.lift(a.rep))
 
     # -- Continue -------------------------------------------------------------
     def cont(self, G, x, y):

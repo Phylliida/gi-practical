@@ -36,7 +36,7 @@ _chains_size = 0
 
 class _Chain:
     __slots__ = ("key", "gens", "base", "S", "T", "Ti", "par", "order", "size", "elements", "nt",
-                 "isodata")
+                 "isodata", "orbs", "blocks")
 
 
 def clear_chain_cache():
@@ -145,6 +145,7 @@ class PermGroup:
         c.T, c.Ti, c.par = tuple(self.T), tuple(self.Ti), tuple(self._par)
         c.order, c.size, c.elements = self._order, size, None
         c.nt, c.isodata = tuple(self._nontrivial()), None
+        c.orbs, c.blocks = None, False
         _CHAINS[key] = c
         _chains_size += size
         while _chains_size > CHAIN_CACHE_LIMIT:
@@ -412,6 +413,9 @@ class PermGroup:
         c = self._orbs
         if c is not None and c[0] is gens and c[1] == len(gens):
             allo = c[2]
+        elif self._snap is not None and self._snap.orbs is not None:
+            allo = self._snap.orbs
+            self._orbs = (gens, len(gens), allo)
         else:
             n = self.n
             seen = [False] * n
@@ -430,6 +434,8 @@ class PermGroup:
                 orb.sort()
                 allo.append(orb)
             self._orbs = (gens, len(gens), allo)
+            if self._snap is not None:
+                self._snap.orbs = allo
         if points is None:
             return [list(o) for o in allo]
         pts = set(points)
@@ -573,13 +579,14 @@ class PermGroup:
         return self.pointwise_stabilizer([p])
 
 
-def reduce_gens(n, gens):
-    """An irredundant generating list for <gens>."""
+def reduce_gens(n, gens, ambient_base=None):
+    """An irredundant generating list for <gens>. `ambient_base`: optional base
+    of a group containing the gens (only for speed)."""
     idn = _identity(n)
     gens = [g for g in dict.fromkeys(gens) if g != idn]
     if len(gens) <= 4:
         return gens
-    return PermGroup(n, gens).gens
+    return PermGroup(n, gens, ambient_base=ambient_base).gens
 
 
 def _ident(g):
@@ -828,7 +835,18 @@ def stabilizer_orbit_reps(G, p=0):
 def top_block_system(G):
     """For transitive G: a block system on which G acts primitively, reached by
     stacking minimal block systems (the paper's partition hierarchy, read
-    bottom-up). Returns the blocks, or None if G is primitive."""
+    bottom-up). Returns the blocks, or None if G is primitive.
+    (Remembered with a cached chain: it depends only on the group.)"""
+    c = G._snap
+    if c is not None and c.blocks is not False:
+        return None if c.blocks is None else [list(B) for B in c.blocks]
+    blocks = _top_block_system(G)
+    if c is not None:
+        c.blocks = None if blocks is None else tuple(tuple(B) for B in blocks)
+    return blocks
+
+
+def _top_block_system(G):
     n = G.n
     blocks = [[p] for p in range(n)]
     changed = False
