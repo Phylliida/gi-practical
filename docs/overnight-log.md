@@ -301,3 +301,13 @@ are red-teams, a LaTeX paper, and final integration.
   (coordinate tanglegrams); the Prop S one-call combine.
 * w8-gnsexp: tighten GNS's n^{(log d)^c} unconditionally (exponent c; target n^{O(log^2 d)} or better).
 * The HJ Lean build is authorized (machine free; 88 GB disk free at start).
+
+### w8-redteam-writeup (done, commit bbbb475; docs/redteam-canonization-writeup.md)
+* §7 (running time) sound: Lemma 7.0 covers the semi-regular Luks step; the §7.3 fix restores
+  k' ≤ k − k/(3 log k); every branch-count row matches GNS (canonization explores no extra branches).
+* §8 (canonical Luks reduction) sound: S_{d−1} wr Aut(CF_r; both roots) ∈ Γ̂_{d−1}. A literal brute-force
+  implementation (docs/redteam-canonization-writeup-check.py) passes on 47 small graphs and catches two
+  sabotaged variants.
+* §2.5 sound. §10 is missing 4 assumptions; the main one is that all "function of the group" subroutines
+  are deterministic and run on canonical generators (including Babai STOC'19).
+* SICOMP GNS and Neuen's thesis are behind bot checks; the agent did not bypass them. Left to the user.
