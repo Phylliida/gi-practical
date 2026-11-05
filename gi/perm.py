@@ -5,6 +5,7 @@ product mul(p, q) means "first p, then q".  A coloring x is a tuple of colors
 indexed by points; relabeling by g gives x^g with x^g[g[i]] = x[i].  So g is an
 isomorphism from x to y exactly when act(x, g) == y.
 """
+from operator import itemgetter
 
 
 def identity(n):
@@ -13,7 +14,9 @@ def identity(n):
 
 def mul(p, q):
     """p then q."""
-    return tuple(map(q.__getitem__, p))
+    if len(p) > 1:
+        return itemgetter(*p)(q)        # much faster than a map or a comprehension
+    return tuple(q[i] for i in p)
 
 
 def inv(p):
@@ -37,7 +40,16 @@ def act(x, g):
 
 def maps(g, x, y):
     """Whether x^g == y."""
-    return all(y[g[i]] == c for i, c in enumerate(x))
+    # Most non-isomorphisms are rejected within the first points; once those
+    # agree, a full comparison in C is faster than a Python loop.
+    if len(x) > 4:
+        if y[g[0]] != x[0] or y[g[1]] != x[1] or y[g[2]] != x[2] or y[g[3]] != x[3]:
+            return False
+        return itemgetter(*g)(y) == tuple(x)
+    for i, c in enumerate(x):
+        if y[g[i]] != c:
+            return False
+    return True
 
 
 def parity(p):

@@ -2,6 +2,8 @@
 positions are ordered vertex pairs, colored by diagonal status and adjacency,
 and the allowed relabelings are the vertex permutations acting on both
 coordinates."""
+import math
+
 from .perm import sym_gens
 from .group import PermGroup
 from .solver import Solver
@@ -18,7 +20,9 @@ def sym_on_pairs(n):
     gens = []
     for g in sym_gens(n, range(n)):
         gens.append(tuple(g[i] * n + g[j] for i in range(n) for j in range(n)))
-    return PermGroup(n * n, gens)
+    # (only the identity fixes every diagonal position)
+    return PermGroup(n * n, gens, order=math.factorial(n),
+                     ambient_base=[i * (n + 1) for i in range(n)])
 
 
 def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None):
