@@ -489,3 +489,13 @@ are red-teams, a LaTeX paper, and final integration.
   the proof's own construction, where it fails (t_{p+2} ≤ t', Claim 4.25). The potential ŝ repairs it, and the
   main theorem is unaffected. Present in arXiv v1, v2 and ICALP Thm 11; the TALG version not accessed.
 * paper/canon.tex Remark rem:neu20(3) rewritten as a question to the author.
+
+### w12-theoremg (done, commit 5e6a3d0; docs/w12-theoremg.md, paper/exponent.tex)
+* Claimed, single pass only: Theorem G with a complete written argument: degree-d GI in n^{O(log³ d)} for
+  all d (c = 3), overall n^{O(min{log³ d, log² n})}. All four open items closed (pairwise heavy round;
+  maintained-tower rule, a legal GNS run; O2 parity; case (iv) calls absorbed, "no t-ary black box").
+* Fallback if G fails: Theorem X (c = 10/3 for all d; c = 3 for d ≤ 2^{√log n}).
+* Correction: Split-or-Johnson individualizes up to O(log² m) points, not O(log m); no bound changes.
+* paper/exponent.tex: 12-page note.
+
+### w15-redteam-theoremg: adversarial check of Theorem G.
