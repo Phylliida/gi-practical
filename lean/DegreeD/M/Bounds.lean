@@ -227,7 +227,7 @@ theorem DispatchStep.n_le_multL {cc : ChargingConstants} {c₁ c₂ : ℝ}
   cases I with
   | enumeration Q fin htr hns reps hkeep =>
     haveI := fin
-    have h := enumeration_card_le (P := P) hBCP hGNS hc₁ hc₂ hcc hq hS Q hns
+    have h := enumeration_card_le (P := P) hBCP hGNS hc₁ hc₂ hcc hq hS Q hns.1
     have hidx : (DispatchStep.enumeration Q fin htr hns reps hkeep).n = Nat.card Q.ρ.range := by
       show (Q.kernel.subgroupOf S.G).index = _
       rw [Q.kernel_subgroupOf, Subgroup.index_ker]

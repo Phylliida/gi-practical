@@ -39,7 +39,7 @@ def gen_run():
     i = src.index('-- The injectivity theorems')
     j = src.index('\nend\n\nend GI.Algorithm')
     body = src[i:j] + '\nend\n'
-    body = body.replace('(hsm : ¬ Q.SmallZ P.smallExp)', '(hsm : Structural P Q)')
+    body = body.replace('(hsm : ¬ Q.SmallZ P.smallExp)', '(hsm : Structural P Q ∧ ExposedSplit Q)')
     assert 'Structural P Q' in body
     out = """import DegreeD.M.Dispatch
 

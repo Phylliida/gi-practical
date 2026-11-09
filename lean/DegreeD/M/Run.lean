@@ -86,7 +86,7 @@ inductive Run (P : Params) : Mode → {Ω C : Type} → (S : State Ω C) →
   factor otherwise (mode `giant`, `NormAbove.childLabels`). -/
   | normalize {Ω C : Type} {hfin : Finite Ω} {S : State Ω C}
       (hs : (S.N : ℝ) ^ P.γ < S.size) (htr : S.Transitive) (hfl : ¬ S.FloorEntered)
-      (Q : PrimitiveQuotient S) (hsm : Structural P Q)
+      (Q : PrimitiveQuotient S) (hsm : Structural P Q ∧ ExposedSplit Q)
       (c : Q.NormChoice) (hq : P.q₀ < (Q.normalizationOf c).q)
       (hkc : Q.KillsCols) (hkl : Q.KeepsLevels)
       (N : NormAbove P S) (hN : N = Q.normAboveOf c htr hq hkc hkl) (m : Mode)

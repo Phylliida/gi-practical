@@ -42,6 +42,17 @@ def Structural (P : Params) {S : State Ω C} (Q : PrimitiveQuotient S) : Prop :=
   ∃ (m k r : ℕ) (e : Fin Q.d ≃ (Fin r → Product.KSet m k)), Q.ProductStructure m k r e ∧
     2 * k ≤ m ∧ P.q₀ < m ∧ 4 * Real.logb 2 (m.choose k) < m
 
+/-- **The exposed hierarchy of a quotient comes from splitting one interval.** Algorithm 5:
+"Expose the next primitive quotient"; Section 7.1: "Splitting or restricting intervals also cannot
+increase `Q`". The stored hierarchy is `pre₀ ++ J :: post₀`; the quotient `Q` keeps `pre₀`, adds an
+interval of ratio `c₁` when `c₁ ≠ 1`, then `top` of ratio `d`, then `post₀`, with `c₁ d ≤ ratio J` and
+with caps at most the cap of `J`. `State.expose` satisfies it (`DegreeD.M.exposed_split`). This
+is what makes the clipped cap moment `hierQd` monotone (`ExposedSplit.Qd_le`). -/
+structure ExposedSplit {S : State Ω C} (Q : PrimitiveQuotient S) : Prop where
+  out : ∃ (pre₀ post₀ : List (Interval Ω)) (J : Interval Ω) (c₁ : ℕ),
+    S.hier = pre₀ ++ J :: post₀ ∧ 1 ≤ c₁ ∧ c₁ * Q.d ≤ J.ratio ∧ Q.post = post₀ ∧ Q.top.cap ≤ J.cap ∧
+    ((c₁ = 1 ∧ Q.pre = pre₀) ∨ (∃ mid : Interval Ω, Q.pre = pre₀ ++ [mid] ∧ mid.ratio = c₁ ∧ mid.cap ≤ J.cap))
+
 /-- The facts of a dispatcher reduction: `GI.Algorithm.DispatchFacts` without the enumeration
 index bound. -/
 def DispatchFacts (S : State Ω C) (K : Subgroup (Perm Ω)) (n : ℕ)
@@ -126,11 +137,11 @@ happens only for quotients that are not structural (`Structural`), with no order
 Product refinement is the same as in HJ. -/
 inductive DispatchStep (P : Params) {Ω C : Type} (S : State Ω C) : Type
   | enumeration (Q : PrimitiveQuotient S) (fin : Finite Ω) (htr : S.Transitive)
-      (hns : ¬ Structural P Q) (reps : CosetReps S.G Q.kernel)
+      (hns : ¬ Structural P Q ∧ ExposedSplit Q) (reps : CosetReps S.G Q.kernel)
       (hkeep : CarrierOK Q.kernel S.dom S.rows (Q.pre ++ Q.top :: Q.post))
   | product (Q : PrimitiveQuotient S) (fin : Finite Ω)
       (c : Q.ProductChoice) (reps : CosetReps S.G (Q.productRed P c).K)
-      (hkeep : CarrierOK (Q.productRed P c).K S.dom S.rows (Q.productRed P c).hier')
+      (hkeep : CarrierOK (Q.productRed P c).K S.dom S.rows (Q.productRed P c).hier' ∧ ExposedSplit Q)
 
 namespace DispatchStep
 
@@ -184,7 +195,7 @@ theorem exists_not_mem_K : ∃ g ∈ S.G, g ∉ I.K := by
 theorem keeps : CarrierOK I.K S.dom S.rows I.hier' := by
   cases I with
   | enumeration Q fin htr hs reps hk => exact hk
-  | product Q fin c reps hk => exact hk
+  | product Q fin c reps hk => exact hk.1
 
 end DispatchStep
 
