@@ -518,3 +518,18 @@ are red-teams, a LaTeX paper, and final integration.
 * w18-latin (moonshot): n^{o(log n)} for Latin square or Steiner triple system isomorphism; does any graph
   family force n^{log n} on HJ's algorithm?
 * w19-video: an HTML/CSS/JS animated explainer of the HJ algorithm and its running time (video/).
+
+### w17-affine (done, commit 6f28e9a; docs/w17-affine.md)
+* No 2^{o(k²)} algorithm. Corrects the campaign's "nothing better than brute force" by a constant in the
+  exponent, pending red-team:
+  - Theorem A: canonical form for AGL(k,2)-strings in 2^{k²/2+k/2}·poly(N) (flags + Borel 2-group).
+  - Theorem B: deterministic Iso in 2^{k²/4+k/2}·poly(N) (bidirectional collision, Rosenbaum-style).
+  Both [PROVEN mod Babai–Luks]; Theorem B is possibly folklore.
+* Theorem C [PROVEN reduction]: d-tensor isomorphism of format k^{×d} reduces to AGL(dk,2)-SI, so 2^{o(K²)} for
+  AGL solves every fixed-d TI in 2^{o(k²)}. A 2^{Ω(K²)} lower bound is conditional on 4-TI hardness, a
+  hypothesis without independent support.
+* Prop. 2's tightness holds for HJ as written, not for the problem. Enumerating a Sylow-2 transversal gives
+  |P|_{2'} cosets at classical nodes [SKETCH]; R** keeps its form (λ coefficient halved).
+* Experiments (k ≤ 10) cannot distinguish k from k² scaling.
+
+### w20-redteam-affine: adversarial check of w17.
