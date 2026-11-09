@@ -461,3 +461,14 @@ are red-teams, a LaTeX paper, and final integration.
 * Multipede canonical forms: n=2464 in 1.25s (all nauty modes and Traces > 600s), n=5632 in 4.23s; fit n^1.25.
 * Traces beats us on everything except the multipede families (24× on 3-regular, 220× on CFI, 230× on Q11).
   All nauty modes win on hypercubes. Python wall time vs C CPU time; one seed per size.
+
+### w12-paperfix (done, commit 22fb2c0)
+* M1: Theorem H's algorithm written out (§10.9, Algorithm CanHyp, Lemmas E4 and F2^set; termination by
+  (virtual size, |Γ|) under a complete-occupancy invariant). Status unchanged (correctness proof modulo
+  §13; running time a sketch). The new text has not yet been independently checked.
+* M2: Babai's STOC'19 "we sketch the proof" and (D1)–(D4) now appear in the abstract, Table 1 and the status
+  box. The referee's sharpening held only in part: BC is called only under A_k/S_k with k ≤ d, but on
+  t-ary structures, so it is not graph canonization on ≤ d points (Remark rem:BC).
+* All 9 proposed minor fixes applied. 52 pages.
+
+### w13-redteam-canhyp: adversarial check of the new §10.9.
