@@ -482,3 +482,10 @@ are red-teams, a LaTeX paper, and final integration.
 * Test: 0 failures over 4868 toy calls; all mutants detected. Giant steps (k > 90) are not exercised.
 
 ### w13-verify-neu417: independent check of the claimed counterexample to Neuen 2020 Thm 4.17(G).
+
+### w13-verify-neu417 (done, commit 51ec3a5; docs/verify-neu417.md)
+* Verdict: a real error in Neuen 2020's PROOF only, not a misreading and not a false statement. Thm 4.17
+  claims only existence, and a trivial witness satisfies (A)–(G), so the statement is true; but Thm 4.24 needs (G) for
+  the proof's own construction, where it fails (t_{p+2} ≤ t', Claim 4.25). The potential ŝ repairs it, and the
+  main theorem is unaffected. Present in arXiv v1, v2 and ICALP Thm 11; the TALG version not accessed.
+* paper/canon.tex Remark rem:neu20(3) rewritten as a question to the author.
