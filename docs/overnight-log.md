@@ -446,3 +446,10 @@ are red-teams, a LaTeX paper, and final integration.
   case over d drops from 4 to 10/3) and n^{O(log³ d)} for d ≤ 2^{√log n}.
 * The arity lower-bound claim is BROKEN (PGL(2,q) is sharply 3-transitive, so 3 individualizations suffice).
 * Theorem G is still a sketch: O3 closed; a new gap needs a maintained-tower rule.
+
+
+## Wave 12 (resumed 2026-11-08)
+* w9-canontool (resumed): finish the canonical labeling tool's benchmarks and write-up.
+* w12-paperfix: apply referee issues M1 and M2 and the proposed minor fixes to paper/canon.tex.
+* w12-theoremg: close the gaps in Theorem G (c = 3 for all d); write up the exponent results as a note.
+* Disk: 11 GB free at start of this wave (not from this project); agents told not to write large files.
