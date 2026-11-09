@@ -28,7 +28,7 @@ What the project relied on, and how each source was used. The BibTeX for the pap
 | Luks, *Permutation groups and polynomial-time computation*, DIMACS 1993 | relevant parts | Prop L |
 | Pago, arXiv:2302.05426 | Lemmas `G_groupInduction`, `G_fixingTheRestPointwise` | Lemma A credit |
 | Grochow, Ivanyos, Qiao, Sun, arXiv:2610.00874 (unrefereed) | statements | w17 |
-| Rosenbaum, arXiv:1304.3935 | §1, §2, §5–6 | w17 Theorem B |
+| Rosenbaum, arXiv:1304.3935 | §1, §2, §5–6 (w17); §§1–3 (w18); §§2–3 (w26) | w17 Theorem B; w18 Theorem A1 |
 | "The Exponential Time Hypothesis is False" (OpenAI math release, Oct 2026; unrefereed) | core sections, appendices partially | [w21-eth](../docs/w21-eth.md) |
 | Anagnostopoulou-Merkouri, Bailey, Cameron, Forum Math. Sigma 2025 (arXiv:2409.10461) | full text | w8-poset |
 | Neuen, Schweitzer, arXiv:1705.03283 and 1705.03686 | source and constructions | multipedes |
@@ -45,13 +45,15 @@ What the project relied on, and how each source was used. The BibTeX for the pap
 | Luks, STOC 1999 | not obtained; via ADKT, Schweitzer–Wiebking, Neuen 2020 |
 | Luks 1982; Babai–Kantor–Luks 1983; Babai–Luks–Seress 1987; Kantor–Luks 1990 | cited or as quoted by GNS |
 | Sun STOC 2023 (arXiv:2303.15412); IMQSZ FOCS 2024; Grochow–Qiao; Dietrich–Wilson; Le Gall–Rosenbaum (arXiv:1609.08253) | abstracts or statements |
-| Levet 2023; Gill 2025 (arXiv:2402.06205); Miller 1978–79; Colbourn–Colbourn 1980 | as cited or abstracts, some from memory; w18's survey was delegated (see `docs/w18-latin.md` §1) |
+| Levet 2023; Gill 2025 (arXiv:2402.06205); Miller 1978–79; Colbourn–Colbourn 1980 | as cited or abstracts, some from memory; w18's survey was delegated (see [w18-latin](../docs/w18-latin.md) §1) |
 | Liebeck–Shalev, Liebeck 1984, GSS98, Cooperstein, Kleidman–Liebeck, Pálfy, Wolf | through GNS |
 | Matsen et al., Konvalinka–Wagner, Billey et al., Diaconis et al. (tanglegrams) | verified from sources by a search agent |
 | Lokshtanov, Pilipczuk, Pilipczuk, Saurabh STOC 2022 (arXiv:2210.14638); Grohe 2010, 2017 | statements via red-team |
 | Cardona et al., arXiv:0902.4640 | read through a fetch summary |
 | Otachi–Schweitzer arXiv:1403.7238 | from downloaded text |
 | Dixon, Mortimer, *Permutation Groups*; Seress | from memory for specific lemmas |
+| Ray-Chaudhuri, Wilson 1975; arXiv:1006.5892 (design isomorphism) | cited in [w28-sigma](../docs/w28-sigma.md) §7, §14; the variable-block form is proved there |
+| Bruck, Bose (net recovery); Veblen–Young | from memory in [w18-latin](../docs/w18-latin.md) and [w28-sigma](../docs/w28-sigma.md) §8 |
 
 ## Unread (blocked or not obtained)
 

@@ -13,10 +13,8 @@
 
 | Branch | When it lands, update |
 |---|---|
-| `w22-speed` (`624be06`) | [Software](Software.md) module list and pipelines; [Benchmarks](Benchmarks.md) progression and tables; [Timeline](Timeline.md); test count |
-| `w23-speed2` (`4742c66`) | [Software](Software.md) and [Benchmarks](Benchmarks.md) kernel section; [Timeline](Timeline.md) |
-| `w18-latin` (merged; `8047173`) | when its red-team lands, update [Moonshots](Moonshots.md), [Barriers](Math-Barriers.md), [Results ledger](Results-Ledger.md). Replace the backticked references to `docs/w18-latin.md` by links after merging master into this branch |
-| `w24-video-review` (merged; `4085217`) | link `video/REVIEW.md` from [Reproduce](Reproduce.md#the-video) after merging master into this branch |
+| `w27-tree` (`63372b5`, in progress) | [Core problem](Math-Core-Problem.md), [Moonshots](Moonshots.md), [Open problems](Open-Problems.md), [Results ledger](Results-Ledger.md), [Tried and failed](Tried-and-Failed.md), [Timeline](Timeline.md), and the table on [Home](Home.md) |
+| `w28-sigma` (on master, `27292f8`, not red-teamed) | when its red-team lands: [Moonshots](Moonshots.md), [Barriers](Math-Barriers.md), [Results ledger](Results-Ledger.md), [Corrections](Corrections.md), and the row on [Home](Home.md) |
 
 After merging: search this directory for "in progress" and "as of", and update the "Work still in progress" table.
 

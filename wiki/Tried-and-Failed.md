@@ -44,11 +44,23 @@ So nobody repeats it. Each item says where the attempt stopped. Sources are in t
 
 | Idea | Where it stopped | Source |
 |---|---|---|
-| Generator enumeration with a coset representation of Aut(T) | extension test is a string-isomorphism condition under Aut(T), as hard as the original | `docs/w18-latin.md` §3.4 |
+| Generator enumeration with a coset representation of Aut(T) | extension test is a string-isomorphism condition under Aut(T), as hard as the original | [w18-latin](../docs/w18-latin.md) §3.4 |
 | Top-down chain enumeration | gives exactly Miller's bound; only the bidirectional split (Theorem A1) halves it | same |
 | HJ-style constant-size certificates on natural labels | refuted for HJ's form by Theorem B1 | same |
 | Sun's individualize-then-average | no linear structure exists in a general quasigroup | same |
 | "Hard cases are group-like" | not established; index-2 towers carry non-associative data | same |
+
+## Avoiding HJ's σ channel (w28, not yet red-teamed)
+
+| Idea | Where it stopped | Source |
+|---|---|---|
+| Exact memoization by kernel state | distinct states are at least the number of flags; saves only n^{O_κ(1)} on X_m (M1) | [w28-sigma](../docs/w28-sigma.md) §3 |
+| Coarse memo keyed by D_j | unsound in general; still 2^{m²/4} values, so it can at best halve the constant (M2) | same §3 |
+| Merging tests into orbits | works on X_m with certified automorphisms (P1, and P2 as a sketch); has nothing to use on rigid inputs (R1); local equivalence is unsound (P3) | same §4, §8 |
+| A thin canonical test family | any Aut-invariant rule is all-or-none on independent T (C1) | same §5 |
+| Lazy Step 4 (LHJ) | correct (L1) and removes the chain on X_m (L2), but the cost moves to the Q channel (Q1, a sketch); the residual uniform case is open | same §5–6 |
+| A sharper charge for σ | improves only case (a) of Theorem U, by a constant factor; does not go below log² | same §7 |
+| A rigid lower bound | rigid variants tested have WL-visible anchors (R2, experiment only) | same §8 |
 
 ## Practical experiments
 
@@ -66,6 +78,7 @@ So nobody repeats it. Each item says where the attempt stopped. Sources are in t
 | k-XOR multipedes (`multipede4`) | 2-WL splits gadgets; behaves like `multipede` | [hardness](../docs/hardness.md) |
 | Finding hardness in small instances | fits on n ∈ [30, 300] cannot separate polynomial from n^{c log n}; use the trend of the local exponent instead | same |
 | Solvable-layer extension of `ea2` | not done; profiles did not point to it, so `gi.canon` has no polynomial guarantee at d ≤ 5 | [w14-solver](../docs/w14-solver.md) |
+| Compiling the F₂ solver first (`ea_canon`) | worth only 3–8% on Miyazaki and multipedes; the multipede cost was `SparseEA.restrict` | [w23-speed2](../docs/w23-speed2.md) §2 |
 
 ## Literature access attempts
 

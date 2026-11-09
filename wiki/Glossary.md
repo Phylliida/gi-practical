@@ -43,12 +43,15 @@
 | H1, H2 | recognition and call grouping (both discharged) | |
 | (M), (M′) | dispatcher modification; structural rule | |
 | TreeCI, TreeSI, PCI, T², T²_full | see [Core problem](Math-Core-Problem.md#definitions) | |
-| R1, R1_c, R2 | tanglegram isomorphism; complete-tree version; definability | not to be confused with Theorems R, R\* |
+| R1, R1_c, R2 | tanglegram isomorphism; complete-tree version; definability | not to be confused with Theorems R, R\*, or with R1 and R2 of w28 (see below) |
 | HCGI, FullCI, Def-CI, HS(b,r) | graph-side equivalents | [w4-t2](../docs/w4-t2.md) |
 | CF, CP | canonical form, canonical placement | |
 | BC, BL83, GNS, HBD, B–H | Babai 2019, Babai–Luks 1983, Grohe–Neuen–Schweitzer, Helfgott–Bajpai–Dona, Babai with Helfgott's analysis | see [Bibliography](Bibliography.md) |
 | WL, CR, IR, SI, CI | Weisfeiler–Leman, colour refinement, individualization-refinement, string isomorphism, coset intersection | |
 | CLIQUE-LB | k-Clique has no f(k)n^{o(k)} algorithm | |
+| X_m, X_{m,R} | point–line incidence graph of PG(m−1,2); the same with a set R of lines deleted | w18, w28 |
+| q₀, q₁ | HJ's absolute degree cutoff; the largest symmetric degree HJ's enumeration test accepts (q₁ = 486290 at Lean's parameters) | w18 used q₀ where q₁ is meant; see [Corrections](Corrections.md#latin-squares-and-hj-on-graphs-w18-w26-w28) |
+| LHJ | "lazy HJ": HJ with Step 4 delayed until a large uniform class appears | w28 |
 
 ## Names that are reused
 
@@ -63,7 +66,7 @@ Memo names disambiguate; the [ledger](Results-Ledger.md) gives the memo for each
 | Theorem E | bounded entanglement (w1-fpt); weak hereditary budget (w8); Prop E vectorial quadratics (w17) |
 | Theorem G | no t-ary black box (w12); Prop G Sylow (w17) |
 | Theorem H | canonical Neuen (w8); frontier hybrid (w3); Prop H width-2 (w8-poset) |
-| Theorem L | level-synchronised towers (w1-structure); Prop L one-sided polynomial (w6) |
+| Theorem L | level-synchronised towers (w1-structure); Prop L one-sided polynomial (w6); limitation of prefix-determined rules (w28) |
 | Lemma A | composition factors (w8); Lemma S canonical subcoset (w4) |
 | Prop A′, A″ | w4-t2 |
 | Prop B | multiplicative giant (w8-gnsexp); recognition of coordinate structure (w8-poset); Prop B′ oracle bound (w17) |
@@ -72,6 +75,7 @@ Memo names disambiguate; the [ledger](Results-Ledger.md) gives the memo for each
 | Theorem P, P-canon | product actions (w2), its canonical version (w3) |
 | Theorem R, R\*, R\*\* | degree-d conditional bounds; not the same as R1 |
 | Theorem A1, A2, B1 | w18: quasigroups (A1, A2); HJ on PG incidence graphs (B1); not Theorems A, B |
+| M1, M2; P1–P3; C1; L1, L2; Q1; R1, R2; U | w28: memoization; pruning; canonical test rules; lazy HJ; Q channel; rigid variant; Ray-Chaudhuri–Wilson variant. Not tanglegram R1/R2, not Theorem P (w2), not the (M1), (M2) of the referee report |
 | Theorem X | black box (w10) |
 | "Theorem 1" | exponents (w8-gnsexp); poset DP (w8-poset) |
 | Example X, X′ | Cayley-coupled towers (w1-structure, w2-coset) |

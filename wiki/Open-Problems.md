@@ -8,7 +8,7 @@
 2. **Before writing to them, read the unread sources**: the SICOMP 2023 text of GNS, especially Lemma 7.2, and Neuen's dissertation (the unseen Lemma 6.1.17). Accessing them was blocked; see [Disclosures](Disclosures.md#literature-that-was-not-read).
 3. **Ask as questions, not error claims,** about GNS Lemma 7.2 and Neuen 2020 Thm 4.17(G).
 4. Decide about publishing [exponent.tex](../paper/exponent.tex). Theorem G should be regarded as provisional until a human checks it; Theorem X is the fallback.
-5. Merge the running work ([Maintaining](Maintaining.md)).
+5. Fold in `w27-tree` when it lands, and red-team [w28-sigma](../docs/w28-sigma.md) ([Maintaining](Maintaining.md)).
 
 ## Core questions
 
@@ -18,7 +18,7 @@
 * **Is TreeCI FPT?** **TreeCan versus TreeCI**: would an FPT TreeCI algorithm canonize? Open.
 * **(W2 §3.5)** Entangled kernels under product-type nodes: is coordinate-tree CI reducible to TreeCI?
 * **Neuen Q4.8**: is there an fpt-reduction from SI by composition width to GI by degree?
-* **Height-2 posets with large μ** ([w8-poset](../docs/w8-poset.md) §5.3): the smallest open poset family, whether μ captures hardness.
+* **Height-2 posets with large μ** ([w8-poset](../docs/w8-poset.md) §5.3): the smallest open poset family, whether μ captures hardness. As of `1368fb6`, `w27-tree` is in progress on this and on R1_c.
 * **R1 versus R1_c**: reduce general trees to complete ones, or explain why unbalanced trees are easier.
 * **Lower bounds**: an adversary argument that every coset-splitting strategy needs N^{Ω(log b)} on iterated PCI_diag or twisted coordinate tanglegrams would be the first lower bound for a group-theoretic model.
 * **Hardness**: no source problem believed not FPT encodes into tree groups.
@@ -30,9 +30,10 @@
 * **Arity reduction**: do O(1) individualizations always suffice for a binary black box? Open after the [refutation](Corrections.md#arity-lower-bound-for-the-gns-black-box).
 * **HJ's σ-machinery on heart-type non-Cameron giants** ([w1-structure](../docs/w1-structure.md) §4.9).
 * **Theorem G** human check: the functorial reading of Split-or-Johnson; Lemma 3.1 of w12.
-* **Red-team Theorem B1 of w18** (HJ on PG(m−1,2) incidence graphs) and turn the Latin-square and rigid variants from sketches into proofs.
+* **Turn w18's sketches into proofs:** the Latin-square-graph and block-graph chains (B2) and Paley graphs (B3). Theorem B1 itself has been AI red-teamed ([report](../docs/redteam-w18-latin.md)).
+* **Red-team [w28-sigma](../docs/w28-sigma.md)**, and then the leads it lists: prove or refute the Uniform Prefix Conjecture (§7.3, speculation); case (b) of Theorem U; turn Q1 into a theorem; find a family that defeats LHJ + P1 + bounded WL (§12).
 * **Transferring HJ's string lower bounds to graphs:** does a graph family force the N^{log d} of w1 at fixed degree? Open (w18's B1 is a different channel at unbounded degree).
-* **Canonically chosen test sets** in HJ's certificate step (O(1) tests per level) would directly target the σ channel (w18 lead).
+* **Canonically chosen test sets** in HJ's certificate step (a w18 lead). w28 (not red-teamed) shows any Aut-invariant rule is all-or-none on X_m, so a thin canonical family does not exist there; see [Barriers](Math-Barriers.md#can-hj-avoid-the-σx-channel-w28-not-yet-red-teamed).
 * **BC simplification** (Remark 5.2 of w4): check against a full version of BC if one exists.
 
 ## Canonization
@@ -45,13 +46,15 @@
 
 * Cubic Boolean equivalence in 2^{Õ(k^{1.5})}; 4-TI below 2^{o(k²)}; an "affine CFI" ([w17-affine](../docs/w17-affine.md) §8).
 * Ask whether the "ETH is False" preprint survives review; then update [Moonshots](Moonshots.md).
-* Latin squares and Steiner triple systems: rank-Ω(log n) quasigroups ('locally algebraic'?), `docs/w18-latin.md`.
+* Latin squares and Steiner triple systems: rank-Ω(log n) quasigroups ('locally algebraic'?), [w18-latin](../docs/w18-latin.md) §6.
 
 ## Engineering
 
 * Solvable-layer extension of `ea2`, or a polynomial `perm_canon` replacement (Theorem A or BL83 canonical Luks).
 * A principled individualization rule (trial refinement per class) instead of `young_pick`.
-* Compile `edge_invariants`, `canon.step` and `absorb` ([w16-ckernel](../docs/w16-ckernel.md) §6; up to 1.9×–4× estimated).
+* Cut the remaining Python per layer: `RootedCanon.step` (40–60% on CFI and Miyazaki), `_Rooted` construction and the root class ([w23-speed2](../docs/w23-speed2.md) §6). w23 compiled `absorb` and most other hot primitives; the "up to 1.9×–4×" estimate in [w16-ckernel](../docs/w16-ckernel.md) §6 predates it.
+* A sparse representation of non-elementary-abelian groups on long graphs, the next algorithmic step ([w23-speed2](../docs/w23-speed2.md) §6).
+* Fewer groups, rather than cheaper ones, for Q7 at `ir=0` ([w22-speed](../docs/w22-speed.md) §6).
 * Faster Young-subgroup bookkeeping for `ir=0` (Θ(n⁴) per node).
 * Measure entanglement on real Luks towers (CFI, multipedes) to see if Theorem E is practical.
 * Implement Theorem P or Theorem 1 of w8-poset as dispatcher cases.

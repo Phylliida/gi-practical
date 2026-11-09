@@ -30,17 +30,32 @@ Long-shot attempts: an honest try at each, done knowing success was unlikely.
 
 ## Latin squares and Steiner systems (w18)
 
-Source: `docs/w18-latin.md` (on master from `860e782`; this wiki branch was cut at `b1a2d03`, so the file is not linked here). The memo is at commit `8047173`, **not yet red-teamed**. The brief: n^{o(log n)} for Latin square or Steiner triple system isomorphism, and whether any graph family forces n^{log n} on HJ's algorithm.
+Source: [w18-latin](../docs/w18-latin.md) (`8047173`), red-teamed by [redteam-w18-latin](../docs/redteam-w18-latin.md) (`b503900`), which found no claim broken. The memo's text was not edited afterwards; read it with the red-team's §5, or use [Corrections](Corrections.md#latin-squares-and-hj-on-graphs-w18-w26-w28). The brief: n^{o(log n)} for Latin square or Steiner triple system isomorphism, and whether any graph family forces n^{log n} on HJ's algorithm.
 
 * **No n^{o(log n)} algorithm** for general Latin squares, Steiner triple systems or conference graphs.
-* **Theorem A1:** quasigroup, Latin-square isotopy and STS isomorphism in n^{(1/2)log₂ n + O(1)} time and space, an immediate extension of Rosenbaum's bidirectional collision. Proven; not found stated for quasigroups.
-* **Theorem A2, Lemma A3:** a DP over the subquasigroup lattice runs in poly(n, M, A); structural lemmas about generation chains.
-* **Theorem B1:** HJ creates ≥ n^{(1/8)log₂ n − O_κ(1)} recursive calls on the PG(m−1,2) incidence graphs, through the σx channel. Answers the earlier question of whether any graph family forces n^{log n} on HJ. A bound on HJ, not on GI. See [Barriers](Math-Barriers.md#hj-is-tight-on-graphs-too-w18).
-* Latin-square graphs of Z₂^m and STS block graphs: same chain, sketch. Paley graphs: no chain (Aut solvable), sketch. A rigid variant of X_m: sketch.
+* **Theorem A1:** quasigroup, Latin-square isotopy and paratopy, and STS isomorphism in n^{(1/2)log₂ n + O(1)} time and space. Sound after four repairs; a routine one-paragraph application of Rosenbaum's bidirectional collision, not found stated for quasigroups. Latin-square graphs on N vertices of large order: N^{(1/8)log₂ N + O(1)}, assuming recovery of the net (the memo's (1/4) is wrong).
+* **Theorem A2, Lemma A3:** a DP over the subquasigroup lattice runs in poly(n, M, A); structural lemmas about generation chains. Sound (A3 with two wording fixes).
+* **Theorem B1:** HJ as written creates ≥ n^{(1/8)log₂ n − O_κ(1)} recursive calls on the PG(m−1,2) incidence graphs, through the σx channel. AI red-teamed: sound as a statement about HJ as written, asymptotic only (no nesting below m ≈ 214 at κ = 64; the cutoff is q₁ = 486290 at Lean's parameters). Answers the earlier question of whether any graph family forces n^{log n} on HJ. A bound on HJ, not on GI. See [Barriers](Math-Barriers.md#hj-is-tight-on-graphs-too-w18).
+* Latin-square graphs of Z₂^m and STS block graphs: same chain, sketch; the red-team could not exhibit or refute it at small sizes. Paley graphs: no chain (Aut solvable), sketch. The single-switched-block rigid variant in w18 §2.9 is false; see w28 below.
 
-Simulations ran at κ = 3, m ≤ 7, and check the window structure only.
+w18's simulations ran at κ = 3, m ≤ 7, and check the window structure only. The red-team's replay reached κ = 5 at level 0 and on a level-1 state, and κ = 3, 4 with nontrivial 𝒰; no run nests two certificate calls.
 
 The empirical background is [hardness.md](../docs/hardness.md): no family at n ≤ 300 made branch counts grow superpolynomially except projective planes through one heuristic ([details](Tried-and-Failed.md#practical-experiments)).
+
+## Removing HJ's σx channel (w28)
+
+Source: [w28-sigma](../docs/w28-sigma.md) (`27292f8`), **not yet red-teamed**. Everything assumes HJ correct; the Lean was not consulted; no claim is machine-checked. The brief: can HJ avoid paying for the σx channel that the PG(m−1,2) family exploits?
+
+* **The channel can be removed on the B1 family** by a small change, lazy Step 4 (LHJ), but the cost moves to the Q channel unless automorphism pruning is added. In the worst case Step 4 survives on a "uniform" residue that could not be eliminated.
+* **The per-phase exponent does not change.** No barrier is contradicted. Details and statuses: [Barriers](Math-Barriers.md#can-hj-avoid-the-σx-channel-w28-not-yet-red-teamed), [ledger](Results-Ledger.md#3-lower-bounds-for-specific-algorithms-and-barriers).
+* **Correction to w18 §2.9:** one switched block leaves |Aut| = 2^{m²−O(m)}. A rigid variant X_{m,R} deletes O(m) lines; it is not a barrier (rigid instances tested became discrete under bounded WL, m ≤ 9).
+* **Theorem U** (Ray-Chaudhuri–Wilson with variable blocks) and **Theorem L** (limitation for prefix-determined rules). The Uniform Prefix Conjecture is speculation.
+
+Experiments are small (m ≤ 9, no nesting) and check statuses, root windows and refinement only.
+
+## Complete-tree tanglegrams (w27)
+
+**In progress as of `1368fb6`:** `w27-tree` targets R1_c, the smallest open family. Nothing is folded in yet; see [Core problem](Math-Core-Problem.md).
 
 ## Practical moonshots
 

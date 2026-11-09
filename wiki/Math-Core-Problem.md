@@ -6,6 +6,8 @@ What remains when the group-theoretic machinery is stripped away. This is where 
 
 No FPT algorithm and no hardness result was found for any of these problems. All are in XP by Luks or GNS.
 
+**In progress as of `1368fb6`:** `w27-tree` attacks R1_c (complete-tree tanglegram isomorphism) and height-2 posets with large μ. Nothing from it is on this page yet.
+
 ## Definitions
 
 * **Tree group of degree b**: a subgroup G ≤ W(T) = Aut(T) of a rooted tree T with node degree ≤ b, acting on the leaves.
