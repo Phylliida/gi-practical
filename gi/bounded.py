@@ -93,6 +93,7 @@ from .group import PermGroup, ActionHom, OverBudget
 from .solver import Solver
 from .ea2 import SparseEA, EAAction, compose, is_ea2
 from .wl import refine as wl_refine
+from .kernel import ck as _ck
 
 
 class NotSimple(ValueError):
@@ -214,6 +215,10 @@ def class_plan(g, col, u0, u1):
     twin block of >= 3 vertices: then the colors are too coarse for this
     order to help (e.g. hypercubes, where class layers make big symmetric
     groups that BFS layers avoid). This also depends only on X."""
+    if _ck is not None:                 # (the compiled class_plan; None means BFS layers)
+        r = _ck.class_plan(g.nbr, col, u0, u1)
+        if r is not NotImplemented:
+            return r
     nbr = g.nbr
     n = g.n
     members = {}
@@ -1054,23 +1059,35 @@ def _truncated_profiles(g, edges, C, use_col):
         for v in range(n):
             masks[col[v]] = masks.get(col[v], 0) | (1 << v)
         cm = [m for _, m in sorted(masks.items())]
-    cur = [1 << v for v in range(n)]
+    balls = None
+    if _ck is not None:                 # (the compiled ball step; same counts)
+        colidx = None
+        if use_col:
+            order = {c: i for i, (c, _) in enumerate(sorted(masks.items()))}
+            colidx = [order[c] for c in col]
+        balls = _ck.balls_new(nbr, colidx, len(cm) if use_col else 0)
+    cur = [1 << v for v in range(n)] if balls is None else None
     key = list(col)
     k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
     while min(Counter(k1).values()) > STAGE1_SMALL:
-        nxt = []
-        for v in range(n):
-            b = cur[v]
-            for w in nbr[v]:
-                b |= cur[w]
-            nxt.append(b)
-        if nxt == cur:
-            break
-        if use_col:
-            counts = [tuple(((b ^ a) & m).bit_count() for m in cm) for a, b in zip(cur, nxt)]
+        if balls is not None:
+            counts = _ck.balls_step(balls)
+            if counts is None:
+                break
         else:
-            counts = [(b ^ a).bit_count() for a, b in zip(cur, nxt)]
-        cur = nxt
+            nxt = []
+            for v in range(n):
+                b = cur[v]
+                for w in nbr[v]:
+                    b |= cur[w]
+                nxt.append(b)
+            if nxt == cur:
+                break
+            if use_col:
+                counts = [tuple(((b ^ a) & m).bit_count() for m in cm) for a, b in zip(cur, nxt)]
+            else:
+                counts = [(b ^ a).bit_count() for a, b in zip(cur, nxt)]
+            cur = nxt
         sig = list(zip(key, counts))
         rank = {x: i for i, x in enumerate(sorted(set(sig)))}
         key = [rank[x] for x in sig]
