@@ -67,11 +67,10 @@ of graphs of maximum degree d, and (4) produced two draft papers and an animated
 
 ## Work still in progress
 
-This wiki was cut from master at `b1a2d03`. Master has since gained `w18-latin` (`860e782`, log `603bd7b`), whose results are on the relevant pages. The branches below were unfinished at that point. Pages that depend on
+This wiki was cut from master at `b1a2d03`. Master has since gained `w18-latin` (`860e782`) and `w24-video-review` (`6dad6a2`), whose results are on the relevant pages. The branches below were still unfinished. Pages that depend on
 them say so in place. See [Maintaining](Maintaining.md) for how to fold them in.
 
 | Branch | Commit | State | Area |
 |---|---|---|---|
 | `w22-speed` | `624be06` | one commit ahead of master's history (stage-loop speed); not merged | [Software](Software.md), [Benchmarks](Benchmarks.md) |
 | `w23-speed2` | `4742c66` | one commit (C versions of the bounded and canonical hot paths, per its message); not merged | [Software](Software.md) |
-| `w24-video-review` | `08fd28a` | no commits of its own yet (fact-check of the video); no `video/REVIEW.md` on master | [Reproduce](Reproduce.md#the-video) |

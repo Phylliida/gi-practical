@@ -103,7 +103,7 @@ Likewise for `exponent`. `paper/canon.pdf` was last built in `d6db110` and `pape
 * Headless checks use Firefox over Marionette: `video/tools/shoot.py` and `video/tools/ui_test.py`. Paths in `ui_test.py` assume the original worktree; adjust before running.
 * Claims and their sources: [CLAIMS.md](../video/CLAIMS.md). Script and teaching notes: [STORYBOARD.md](../video/STORYBOARD.md), [TEACHING-NOTES.md](../video/TEACHING-NOTES.md).
 
-**In progress:** branch `w24-video-review` at commit `08fd28a` (no `REVIEW.md` yet) is an independent fact-check of the script. Until it lands, treat the video as unreviewed by a second reader. Spoken narration was toggled in testing but never listened to.
+**Fact-check.** Branch `w24-video-review` (`4085217`, merged `6dad6a2`) applied an independent fact-check and copy-edit; see `video/REVIEW.md` on master (this wiki branch predates it). Running time is now about 65:31. Spoken narration was toggled in testing but never listened to.
 
 ## Check scripts
 

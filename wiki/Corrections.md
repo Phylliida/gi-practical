@@ -230,7 +230,7 @@ Also: the "main residual risk" named in round 4 was HJ's σ-budget; it is now ma
 
 ### The video
 
-Not yet fact-checked by a second reader ([in progress](Reproduce.md#the-video)). Known differences between the planning documents and the data:
+Fact-checked by `w24-video-review` (`4085217`), which fixed wrong and overclaimed statements in the narration, cards and code; `video/REVIEW.md` on master lists them with sources. Differences between planning documents and data, as of `b1a2d03`:
 [STORYBOARD.md](../video/STORYBOARD.md) still says CFI over K₄ has 28 vertices and the window run uses Alt(5); [CLAIMS.md](../video/CLAIMS.md), generated from the code, says 40 vertices (16 middle, 24 edge-end) and Alt(7) on 21 pairs. CLAIMS.md is the later, computed record.
 
 ### Cross-document inconsistencies resolved when the paper was assembled

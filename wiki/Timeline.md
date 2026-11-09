@@ -83,7 +83,7 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 21 | w21-eth | `b4d1322` | ETH preprint review | [w21-eth](../docs/w21-eth.md) |
 | 22 | w22-speed | `624be06` | stage-loop speed (**in progress**, unmerged) | [Software](Software.md) |
 | 23 | w23-speed2 | `4742c66` | bounded-path compilation (**in progress**, unmerged) | [Software](Software.md) |
-| 24 | w24-video-review | `08fd28a` | video fact-check (**in progress**) | [Reproduce](Reproduce.md#the-video) |
+| 24 | w24-video-review | `4085217` | video fact-check (merged `6dad6a2`) | [Reproduce](Reproduce.md#the-video) |
 | 25 | w25-wiki | this branch | this wiki | |
 
-This wiki was cut from master at `b1a2d03`; master later reached `603bd7b` with the w18 merge.
+This wiki was cut from master at `b1a2d03`; master later gained the w18 and w24 merges (`97b7a36`).
