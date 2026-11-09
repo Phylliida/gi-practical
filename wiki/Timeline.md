@@ -119,6 +119,7 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 52 | w52-redteam-conference | `ea41702` | red-team of w32: proven items sound, data claims corrected | [report](../docs/redteam-w32-conference.md) |
 | 53 | w53-redteam-gain | `2d97638` | red-team of w50: refutation stands, framing corrected | [report](../docs/redteam-w50-gain.md) |
 | 55 | w55-lean-h | | **running**: Theorem H's core in Lean | [Home](Home.md#work-still-in-progress) |
-| 54 | w54-lean-t2 | | **running**: T2 in Lean | [Home](Home.md#work-still-in-progress) |
+| 56 | w56-lean-cubic | | **running**: w35's cubic reductions in Lean | [Home](Home.md#work-still-in-progress) |
+| 54 | w54-lean-t2 | `4d3f14b` | T2 machine-checked in Lean, independently rebuilt (merged `dbf72cf`) | [w54-lean-t2](../docs/w54-lean-t2.md), [Lean audit](Lean-Audit.md#self-contained-results-machine-checked) |
 
-The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `5884b84`.
+The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `dbf72cf`.

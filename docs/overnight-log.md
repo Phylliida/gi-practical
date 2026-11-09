@@ -801,3 +801,12 @@ are red-teams, a LaTeX paper, and final integration.
 * Prior art: Matsushita (2017) has the parity map on π₁ modulo short cycles and the odd-graph case π₁ ≅ Z/2; pattern graphs are NEPS; the Cartesian case of Theorem A follows from weakly modular graph theory. New: the code coupling across coordinates and the refutation.
 * Surviving forms: W with c ≳ log log b; W allowing κ ≤ M extra walks (Theorem B′); k = Θ(log b); the memo's W*.
 * w55-lean-h: machine-check Theorem H's combinatorial core and threshold arithmetic in Lean.
+
+### w54-lean-t2 (done, commits 65340f2, 4d3f14b; merged dbf72cf; docs/w54-lean-t2.md, lean/STS/)
+* T2 MACHINE-CHECKED in full, as the memo states it, no hypothesis added: `T2_sts` (X_χ is a Steiner triple system on 2^{d+3} − 1 points, every d, every χ) and `T2_iso` (for non-constant χ, χ′: X_χ ≅ X_χ′ iff χ′∘A = χ on V∖0 for some A ∈ GL(d,2)).
+  Plain definitions in a 102-line statement file importing only Mathlib; X_χ is an explicit set-builder of the memo's three block kinds with the F¹ table copied verbatim. 1250 lines in 9 files.
+* Independently re-checked by me: fresh build of all 9 modules with the HJ toolchain (27 s, no warnings), `example : T2_sts := t2_sts` and `example : T2_iso := t2_iso` compile, axioms = 3 standard only, statement file read in full.
+  My own use of the theorem proves X_χ ≇ X_χ′ for weight-1 vs weight-2 colourings at d = 3. (A stray v4.35.0 toolchain downloaded by my first attempt was uninstalled.)
+* The memo was right. The proof uses property (b) through 3 of 28 pairs, (a) as one explicit path, non-constancy only in the character step; probably χ ≢ 0 suffices (numerical remark only).
+* Not covered: rank bound, running time and the n^{o(log n)} ⇒ 2^{o(d²)} arithmetic, constant χ, the gauge kernel, the rest of w30. The theorem covers the memo's specific F¹ table, not every table with properties (a), (b).
+* w56-lean-cubic: machine-check w35's exact cubic reductions (Theorems A–C).

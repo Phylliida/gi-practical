@@ -105,6 +105,16 @@ Estimated remaining work, from the memo: 5k–12k lines of Lean for a run-level 
 
 **What remains open.** `Script` and `luksOff` are classical terms, so "explicit" is a reader's check: the walk can miss an inlined copy of the definition of isomorphism. Choice picks and `Subgroup.closure` in `readStep` are unpriced. Γ̂_d holds along exact answers only. `e.total` counts recursion nodes, and there is still no program or machine model. So Theorem R\* is machine-checked only as a reduction with a node-count bound.
 
+## Self-contained results machine-checked
+
+These theorems need only mathlib, with no cited results and no axioms beyond the 3 standard ones. Each statement sits in a short file meant to be read.
+
+| Result | Lean | Statement | Re-checked |
+|---|---|---|---|
+| T2 of [w30-sts](../docs/w30-sts.md), the Steiner triple system reduction | `lean/STS/` (1250 lines; statement in `lean/STS/Statement.lean`, 102 lines), [w54-lean-t2](../docs/w54-lean-t2.md) | `T2_sts`: X_χ is a Steiner triple system on 2^{d+3} − 1 points, for every d and χ. `T2_iso`: for non-constant χ, χ′, X_χ ≅ X_χ′ iff χ′∘A = χ on V∖0 for some A ∈ GL(d,2) | fresh build of all 9 modules (27 s), axioms checked, statement read, and an independent use of the theorem at d = 3 |
+
+T2 is checked exactly as the memo states it, with no hypothesis added. It covers the memo's specific F¹ table. Not covered: the rank bound, running time and the n^{o(log n)} ⇒ 2^{o(d²)} arithmetic, constant colourings, and the gauge kernel.
+
 ## Disclosure
 
 The audit and build were carried out by AI agents; several runs were interrupted by rate limits and resumed. See [Disclosures](Disclosures.md).
