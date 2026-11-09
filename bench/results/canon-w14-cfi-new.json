@@ -1,0 +1,266 @@
+{
+ "label": "pair-cfi-new",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "CFIx20",
+   "family": "cfix",
+   "size": 20,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.034,
+    "t_x": 0.018,
+    "t_y": 0.016,
+    "same": true,
+    "ngens": 11,
+    "aut_order": "2048"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.02,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2048.0
+  },
+  {
+   "name": "CFIx20-twist",
+   "family": "cfix",
+   "size": 20,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.033,
+    "t_x": 0.016,
+    "t_y": 0.017,
+    "same": false,
+    "ngens": 11,
+    "aut_order": "2048"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.019,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2048.0
+  },
+  {
+   "name": "CFIx40",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.085,
+    "t_x": 0.047,
+    "t_y": 0.039,
+    "same": true,
+    "ngens": 21,
+    "aut_order": "2097152"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.042,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2097152.0
+  },
+  {
+   "name": "CFIx40-twist",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.078,
+    "t_x": 0.038,
+    "t_y": 0.04,
+    "same": false,
+    "ngens": 21,
+    "aut_order": "2097152"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.042,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2097152.0
+  },
+  {
+   "name": "CFIx80",
+   "family": "cfix",
+   "size": 80,
+   "n": 800,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1200,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.21,
+    "t_x": 0.108,
+    "t_y": 0.102,
+    "same": true,
+    "ngens": 41,
+    "aut_order": "2199023255552"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.101,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2199023255552.0
+  },
+  {
+   "name": "CFIx80-twist",
+   "family": "cfix",
+   "size": 80,
+   "n": 800,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1200,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.204,
+    "t_x": 0.106,
+    "t_y": 0.098,
+    "same": false,
+    "ngens": 41,
+    "aut_order": "2199023255552"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.098,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2199023255552.0
+  },
+  {
+   "name": "CFIx160",
+   "family": "cfix",
+   "size": 160,
+   "n": 1600,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 2400,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.501,
+    "t_x": 0.244,
+    "t_y": 0.256,
+    "same": true,
+    "ngens": 81,
+    "aut_order": "2417851639229258349412352"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.241,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2.4178516392292583e+24
+  },
+  {
+   "name": "CFIx160-twist",
+   "family": "cfix",
+   "size": 160,
+   "n": 1600,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 2400,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.501,
+    "t_x": 0.242,
+    "t_y": 0.259,
+    "same": false,
+    "ngens": 81,
+    "aut_order": "2417851639229258349412352"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.231,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2.4178516392292583e+24
+  },
+  {
+   "name": "CFIx320",
+   "family": "cfix",
+   "size": 320,
+   "n": 3200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4800,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 1.407,
+    "t_x": 0.693,
+    "t_y": 0.714,
+    "same": true,
+    "ngens": 161,
+    "aut_order": "2923003274661805836407369665432566039311865085952"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.636,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2.923003274661806e+48
+  },
+  {
+   "name": "CFIx320-twist",
+   "family": "cfix",
+   "size": 320,
+   "n": 3200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4800,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 1.414,
+    "t_x": 0.693,
+    "t_y": 0.721,
+    "same": false,
+    "ngens": 161,
+    "aut_order": "2923003274661805836407369665432566039311865085952"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.568,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2.923003274661806e+48
+  }
+ ]
+}

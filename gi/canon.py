@@ -94,11 +94,21 @@ follow gi.perm (mul(p, q) is p then q, x^g = act(x, g)).
      Gaussian elimination over F_2: orbit by orbit, the minimizers form an
      affine subspace, cut down by linear equations; no Schreier-Sims. This
      is the canonical counterpart of the isomorphism test of gi/ea2.py.
+   * phase 2 when H = U1 x prod Sym(blocks), U1 fixing every position that
+     holds a block (no generator moves a block): ir_canon, an
+     individualization-refinement canonical form of the inner-edge graph
+     colored by the blocks (a colored-graph canonization problem);
    * otherwise: perm_canon, the least image along positions 0, 1, ...: a
      depth-first search over a stabilizer chain with base 0, 1, ..., pruned
      by value, by invariance of a node's string under its stabilizer, and by
      the automorphisms found (as in individualization-refinement search).
      Exponential in the worst case, exact always.
+
+Elementary abelian layer groups are kept sparse (gi.ea2.SparseEA: dicts of
+moved points, extended in place layer by layer, with a point -> generators
+index), so a step only touches the generators that move its points. The
+choice among the canonizers above depends only on the group as a set
+(elementary abelian or not, H a direct product over the blocks or not).
 """
 from collections import Counter
 from math import factorial, prod

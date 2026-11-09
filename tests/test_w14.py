@@ -490,3 +490,41 @@ def test_discrete_certificates_rigid_graphs(seed):
         nbr3[v].append(u)
     res = bounded_iso_lists(nbr, nbr3, Solver(certificates=False))
     _check_iso_answer(A, matrix_of(nbr3), res)
+
+
+@pytest.mark.parametrize("seed", range(40))
+def test_dispatch_with_vertex_colors_and_components(seed):
+    """Vertex colors (any sortable values) and disconnected graphs through
+    method="auto": the answer against brute force, and the color map preserved."""
+    rng = random.Random(6000 + seed)
+    n = rng.randint(2, 7)
+    A = matrix_of(random_graph(n, rng))
+    pal = rng.choice(([0, 1], ["red", "blue", "green"], [(0, 1), (1, 0)]))
+    cx = [rng.choice(pal) for _ in range(n)]
+    p = list(range(n))
+    rng.shuffle(p)
+    B = matrix_of(relabeled_nbr(lists_matrix(A), p))
+    cy = [None] * n
+    for v in range(n):
+        cy[p[v]] = cx[v]
+    # a second coloring, usually not matching
+    cz = list(cx)
+    cz[0] = rng.choice(pal)
+    rng.shuffle(cz)
+
+    def brute(X, cX, Y, cY):
+        n = len(X)
+        return any(all(cY[q[i]] == cX[i] for i in range(n))
+                   and all(Y[q[i]][q[j]] == X[i][j] for i in range(n) for j in range(n))
+                   for q in itertools.permutations(range(n)))
+
+    for method in ("auto", "bounded", "hybrid"):
+        res = graph_iso(A, B, solver=Solver(certificates=False), vcolors_x=cx, vcolors_y=cy, method=method)
+        sigma, gens = res
+        assert all(cy[sigma[i]] == cx[i] for i in range(n))
+        assert all(B[sigma[i]][sigma[j]] == A[i][j] for i in range(n) for j in range(n))
+        for g in gens:
+            assert all(cx[g[i]] == cx[i] for i in range(n))
+            assert all(A[g[i]][g[j]] == A[i][j] for i in range(n) for j in range(n))
+        res2 = graph_iso(A, B, solver=Solver(certificates=False), vcolors_x=cx, vcolors_y=cz, method=method)
+        assert (res2 is not None) == brute(A, cx, B, cz)

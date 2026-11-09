@@ -1,0 +1,162 @@
+{
+ "label": "pair-reg4-base",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "4reg200",
+   "family": "reg4",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 400,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.011,
+    "t_x": 0.006,
+    "t_y": 0.005,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.033,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "4reg200-other",
+   "family": "reg4",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 400,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.011,
+    "t_x": 0.005,
+    "t_y": 0.005,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.02,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "4reg1000",
+   "family": "reg4",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 2000,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.066,
+    "t_x": 0.033,
+    "t_y": 0.033,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.195,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "4reg1000-other",
+   "family": "reg4",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 2000,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.066,
+    "t_x": 0.033,
+    "t_y": 0.032,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.163,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "4reg4000",
+   "family": "reg4",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 8000,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.399,
+    "t_x": 0.205,
+    "t_y": 0.194,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.167,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "4reg4000-other",
+   "family": "reg4",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 8000,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.382,
+    "t_x": 0.191,
+    "t_y": 0.191,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.054,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

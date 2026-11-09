@@ -102,7 +102,7 @@ def fam_cube(d, rng):
 
 
 FAMILIES = dict(ns=irhard.fam_ns, nsr=irhard.fam_nsr, nst=irhard.fam_nst, cfix=irhard.fam_cfix,
-                reg3=fam_reg(3), reg4=fam_reg(4), cube=fam_cube)
+                reg3=fam_reg(3), reg4=fam_reg(4), cube=fam_cube, mzgen=irhard.fam_mzgen)
 
 
 # -- the modes -------------------------------------------------------------------------------

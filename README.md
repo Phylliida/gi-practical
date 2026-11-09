@@ -37,9 +37,10 @@ the return value of `bounded_iso`. This is the canonical version of Luks's reduc
 labeling" below and docs/w9-canontool.md.
 
 `graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True, ir=3,
-ir_min=6, ir_max="auto", ir_budget=2.0)`: adjacency entries may be edge colors, graphs may be
-directed and have loops. The keyword arguments control the front end (below); `ir=0` hands every
-stage to the recursion.
+ir_min=6, ir_max="auto", ir_budget=2.0, method="auto")`: adjacency entries may be edge colors, graphs
+may be directed and have loops. The keyword arguments control the front end (below); `ir=0` hands every
+stage to the recursion. `method="auto"` picks the bounded (Luks) or hybrid pipeline by cheap features
+(`gi.graph.choose_pipeline`, `solver.stats["pipeline_*"]`; see docs/w14-solver.md).
 
 ## Layout
 

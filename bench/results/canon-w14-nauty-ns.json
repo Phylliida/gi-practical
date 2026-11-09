@@ -1,0 +1,350 @@
+{
+ "label": "nauty-ns",
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.19,
+    "t_x": 0.09,
+    "t_y": 0.1,
+    "same": true,
+    "aut": 1.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.19,
+    "t_x": 0.09,
+    "t_y": 0.1,
+    "same": false,
+    "aut": 1.0
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.12,
+    "t_x": 0.07,
+    "t_y": 0.05,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.05,
+    "t_x": 0.03,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 2.94,
+    "t_x": 1.68,
+    "t_y": 1.26,
+    "same": true,
+    "aut": 1.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.12,
+    "t_x": 0.07,
+    "t_y": 0.05,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.05,
+    "t_x": 0.03,
+    "t_y": 0.02,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 2.91,
+    "t_x": 1.68,
+    "t_y": 1.23,
+    "same": false,
+    "aut": 1.0
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 4.84,
+    "t_x": 3.46,
+    "t_y": 1.38,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 5.73,
+    "t_x": 3.43,
+    "t_y": 2.3,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "dns": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112-twist",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "dns": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns160",
+   "family": "ns",
+   "size": 160,
+   "n": 3520,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 7680,
+   "cert": "lemma",
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns160-twist",
+   "family": "ns",
+   "size": 160,
+   "n": 3520,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 7680,
+   "cert": "lemma",
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns256",
+   "family": "ns",
+   "size": 256,
+   "n": 5632,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 12288,
+   "cert": "lemma",
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns256-twist",
+   "family": "ns",
+   "size": 256,
+   "n": 5632,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 12288,
+   "cert": "lemma",
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

@@ -1,0 +1,214 @@
+{
+ "label": "pair-mz-new",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "mz25",
+   "family": "mzgen",
+   "size": 25,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.131,
+    "t_x": 0.066,
+    "t_y": 0.066,
+    "same": true,
+    "ngens": 54,
+    "aut_order": "9007199254740992"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.06,
+    "same": true
+   },
+   "iso": true,
+   "aut": 9007199254740992.0
+  },
+  {
+   "name": "mz25-twist",
+   "family": "mzgen",
+   "size": 25,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.129,
+    "t_x": 0.064,
+    "t_y": 0.066,
+    "same": false,
+    "ngens": 54,
+    "aut_order": "9007199254740992"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.051,
+    "same": false
+   },
+   "iso": false,
+   "aut": 9007199254740992.0
+  },
+  {
+   "name": "mz50",
+   "family": "mzgen",
+   "size": 50,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.271,
+    "t_x": 0.159,
+    "t_y": 0.112,
+    "same": true,
+    "ngens": 104,
+    "aut_order": "10141204801825835211973625643008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.124,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0141204801825835e+31
+  },
+  {
+   "name": "mz50-twist",
+   "family": "mzgen",
+   "size": 50,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.267,
+    "t_x": 0.154,
+    "t_y": 0.113,
+    "same": false,
+    "ngens": 104,
+    "aut_order": "10141204801825835211973625643008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.118,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0141204801825835e+31
+  },
+  {
+   "name": "mz100",
+   "family": "mzgen",
+   "size": 100,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.804,
+    "t_x": 0.46,
+    "t_y": 0.344,
+    "same": true,
+    "ngens": 204,
+    "aut_order": "12855504354071922204335696738729300820177623950262342682411008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.31,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.2855504354071922e+61
+  },
+  {
+   "name": "mz100-twist",
+   "family": "mzgen",
+   "size": 100,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.921,
+    "t_x": 0.447,
+    "t_y": 0.474,
+    "same": false,
+    "ngens": 204,
+    "aut_order": "12855504354071922204335696738729300820177623950262342682411008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.272,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.2855504354071922e+61
+  },
+  {
+   "name": "mz150",
+   "family": "mzgen",
+   "size": 150,
+   "n": 3000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4500,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 1.861,
+    "t_x": 0.873,
+    "t_y": 0.987,
+    "same": true,
+    "ngens": 304,
+    "aut_order": "16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.557,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.629628781067589e+91
+  },
+  {
+   "name": "mz150-twist",
+   "family": "mzgen",
+   "size": 150,
+   "n": 3000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4500,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 1.523,
+    "t_x": 0.834,
+    "t_y": 0.689,
+    "same": false,
+    "ngens": 304,
+    "aut_order": "16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.458,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.629628781067589e+91
+  }
+ ]
+}
