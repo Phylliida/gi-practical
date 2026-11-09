@@ -7,6 +7,8 @@ isomorphism from x to y exactly when act(x, g) == y.
 """
 from operator import itemgetter
 
+from .kernel import ck as _ck
+
 
 def identity(n):
     return tuple(range(n))
@@ -90,3 +92,15 @@ def sym_gens(n, pts):
     if len(pts) > 2:
         gens.append(cycle(n, pts))
     return gens
+
+
+# The compiled kernel, if built (gi/kernel.py), replaces the four hottest
+# functions. They stay above as the reference: the C code handles only exact
+# tuples of ints in range and calls them for anything else, so behavior on
+# unusual and invalid input is theirs.
+if _ck is not None:
+    _ck.set_fallbacks(mul, inv, act, maps)
+    py_mul, py_inv, py_act, py_maps = mul, inv, act, maps
+    mul, inv, act, maps = _ck.mul, _ck.inv, _ck.act, _ck.maps
+else:
+    py_mul, py_inv, py_act, py_maps = mul, inv, act, maps

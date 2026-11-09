@@ -1,0 +1,48 @@
+{
+ "label": "w16-reg3-off",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "3reg500",
+   "family": "reg3",
+   "size": 500,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.033,
+    "t_x": 0.017,
+    "t_y": 0.016,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg500-other",
+   "family": "reg3",
+   "size": 500,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.032,
+    "t_x": 0.016,
+    "t_y": 0.016,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

@@ -1,0 +1,198 @@
+{
+ "label": "w16-ns-off",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "gen_time": 0.03,
+   "new": {
+    "status": "ok",
+    "time": 0.096,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 152,
+     "luks_ea_layers": 56,
+     "luks_layers_max": 28,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 60,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 3,
+     "luks_group_max_log2_order": 3,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "gen_time": 0.03,
+   "new": {
+    "status": "ok",
+    "time": 0.144,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 196,
+     "luks_ea_layers": 99,
+     "luks_layers_max": 28,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 60,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 3,
+     "luks_group_max_log2_order": 3,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "gen_time": 0.06,
+   "new": {
+    "status": "ok",
+    "time": 0.282,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 7,
+     "luks_steps": 280,
+     "luks_ea_layers": 127,
+     "luks_layers_max": 45,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 3,
+     "luks_phase1_max_degree": 96,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 5,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "gen_time": 0.06,
+   "new": {
+    "status": "ok",
+    "time": 0.303,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 311,
+     "luks_ea_layers": 156,
+     "luks_layers_max": 45,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 96,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 5,
+     "luks_group_max_log2_order": 5,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "gen_time": 0.22,
+   "new": {
+    "status": "ok",
+    "time": 0.573,
+    "note": "",
+    "iso": true,
+    "stats": {
+     "luks_runs": 6,
+     "luks_steps": 476,
+     "luks_ea_layers": 168,
+     "luks_layers_max": 84,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 2,
+     "luks_phase1_max_degree": 168,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": true,
+   "aut": 1
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "gen_time": 0.22,
+   "new": {
+    "status": "ok",
+    "time": 0.713,
+    "note": "",
+    "iso": false,
+    "stats": {
+     "luks_runs": 8,
+     "luks_steps": 619,
+     "luks_ea_layers": 309,
+     "luks_layers_max": 84,
+     "luks_aut_tests": 3,
+     "luks_iso_tests": 4,
+     "luks_phase1_max_degree": 168,
+     "luks_phase2_max_degree": 8,
+     "luks_phase2_max_log2_order": 10,
+     "luks_group_max_log2_order": 10,
+     "luks_twin_max": 5
+    }
+   },
+   "iso": false,
+   "aut": 1
+  }
+ ]
+}

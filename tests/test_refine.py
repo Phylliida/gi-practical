@@ -197,6 +197,7 @@ def test_wl2_interleaved_1wl(monkeypatch):
     import gi.refine as refine
     rounds = []
     real = refine._wl2_keys
+    monkeypatch.setattr(refine, "_ck", None)    # counts the rounds of the Python path
     monkeypatch.setattr(refine, "_wl2_keys", lambda *a: rounds.append(1) or real(*a))
     rng = random.Random(41)
     one = 0

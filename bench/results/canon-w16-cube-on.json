@@ -1,0 +1,27 @@
+{
+ "label": "w16-cube-on",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "Q8",
+   "family": "cube",
+   "size": 8,
+   "n": 256,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1024,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.208,
+    "t_x": 0.101,
+    "t_y": 0.107,
+    "same": true,
+    "ngens": 9,
+    "aut_order": "10321920"
+   },
+   "iso": true,
+   "aut": 10321920.0
+  }
+ ]
+}

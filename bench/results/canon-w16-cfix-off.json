@@ -1,0 +1,48 @@
+{
+ "label": "w16-cfix-off",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "CFIx40",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.181,
+    "t_x": 0.09,
+    "t_y": 0.091,
+    "same": true,
+    "ngens": 21,
+    "aut_order": "2097152"
+   },
+   "iso": true,
+   "aut": 2097152.0
+  },
+  {
+   "name": "CFIx40-twist",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "canon": {
+    "status": "ok",
+    "time": 0.179,
+    "t_x": 0.089,
+    "t_y": 0.09,
+    "same": false,
+    "ngens": 21,
+    "aut_order": "2097152"
+   },
+   "iso": false,
+   "aut": 2097152.0
+  }
+ ]
+}
