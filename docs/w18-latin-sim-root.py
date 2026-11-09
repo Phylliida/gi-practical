@@ -1,41 +1,46 @@
 #!/usr/bin/env python
-"""Sampled exact simulation of HJ LocalCertificate windows on PG(m-1,2).
-Each window step: for every position type pair, nauty-compute stabilizer images
-on samples; then either V = affected positions, or (no affected) test step 3 and
-step 4 visibility.  Compares actual windows with Theorem B's prediction.
-Usage: sim2.py root m kappa [samples] | level1 m kappa [samples]
+"""Simulate HJ's LocalCertificate window procedure exactly (via nauty) on the
+point-line incidence graph of PG(m-1,2), for small test size kappa.
+
+Root: G = Sym(vertices) on ordered pairs, T subset of points.
+Level 1: G = Sym(Wt) x H_1 on Wt x P_1, T subset of Q_1 (cosets of D_1).
+Reports the sequence of window updates and compares with the theorem.
+Usage: hjsim.py root m kappa | level1 m kappa
 """
-import sys, time, math, random
+import sys, itertools, time, math
 from pynauty import Graph, autgrp
-random.seed(1)
 
 
-def span(vs):
+def span(vecs):
     S = {0}
-    for v in vs:
+    for v in vecs:
         S |= {s ^ v for s in S}
     return S
 
 
-def perm_closure(gens, k):
-    idn = tuple(range(k))
+def independent(vecs):
+    return len(span(vecs)) == 1 << len(vecs)
+
+
+def perm_closure(gens):
+    idn = tuple(range(len(gens[0]))) if gens else None
     if not gens:
-        return {idn}
+        return None
     seen = {idn}
-    fr = [idn]
-    while fr:
-        nx = []
-        for a in fr:
+    frontier = [idn]
+    while frontier:
+        nxt = []
+        for a in frontier:
             for g in gens:
                 b = tuple(g[x] for x in a)
                 if b not in seen:
                     seen.add(b)
-                    nx.append(b)
-        fr = nx
+                    nxt.append(b)
+        frontier = nxt
     return seen
 
 
-def even(p):
+def parity(p):
     n = len(p)
     seen = [False] * n
     s = 1
@@ -49,135 +54,23 @@ def even(p):
                 l += 1
             if l % 2 == 0:
                 s = -s
-    return s == 1
+    return s
 
 
-def alt_size(k):
-    return math.factorial(k) // 2
+def contains_alt(group, k):
+    if group is None:
+        return k <= 2
+    alt = math.factorial(k) // 2
+    return sum(1 for p in group if parity(p) == 1) >= alt
 
 
-class Sim:
-    """Vertices 0..N-1 each doubled in 2 layers; extra gadget vertices appended."""
-
-    def __init__(self, N, adj, gadget_edges, extra_classes, kappa, phi_fn):
-        self.N = N
-        self.adj = adj  # dict ordered pair -> True (adjacency)
-        self.gadget = gadget_edges  # list of (a,b) arcs on vertices in layer0/extra
-        self.extra_classes = extra_classes
-        self.kappa = kappa
-        self.phi_fn = phi_fn
-        self.window = set()
-
-    def auto(self, base_classes, indiv=()):
-        indiv = list(indiv)
-        s = set(indiv)
-        N = self.N
-        extra_n = sum(len(c) for c in self.extra_classes)
-        nv = 2 * N + extra_n
-        adjd = {u: [] for u in range(nv)}
-        for u in range(N):
-            adjd[u].append(u + N)
-        for (u, v) in self.window:
-            adjd[N + u].append(N + v)
-            if (u, v) in self.adj:
-                adjd[u].append(v)
-        for (a, b) in self.gadget:
-            adjd[a].append(b)
-        cols = []
-        for c in base_classes:
-            r = [x for x in c if x not in s]
-            if r:
-                cols.append(set(r))
-        for v in indiv:
-            cols.append({v})
-        k = len(cols)
-        for i in range(k):
-            cols.append({x + N for x in cols[i]})
-        for c in self.extra_classes:
-            cols.append(set(c))
-        g = Graph(nv, directed=True, adjacency_dict=adjd, vertex_coloring=cols)
-        res = autgrp(g)
-        return res[0], res[1], res[2]
-
-    def phi(self, gens):
-        ims = [self.phi_fn(g) for g in gens]
-        return perm_closure(ims, self.kappa)
-
-    def image_contains_alt(self, gens):
-        im = self.phi(gens)
-        return sum(1 for p in im if even(p)) >= alt_size(self.kappa)
+class Pos:
+    def __init__(self, pairs):
+        self.pairs = pairs
 
 
-def run_steps(sim, base_classes, allpos, vtype, posdesc, samples, predicted_kinds=None):
-    N = sim.N
-    t0 = time.time()
-    step = 0
-    while step < 12:
-        gens, g1, g2 = sim.auto(base_classes)
-        full = sim.image_contains_alt(gens)
-        print(f"step {step}: |A|~{g1:.3g}e{g2} imageAlt={full} |W|={len(sim.window)} (t={time.time()-t0:.1f})", flush=True)
-        if not full:
-            print("NONFULL")
-            return
-        rest = [p for p in allpos if p not in sim.window]
-        if not rest:
-            print("window complete: FULL")
-            return
-        # group positions by type signature
-        bytype = {}
-        for p in rest:
-            bytype.setdefault(posdesc(p), []).append(p)
-        affected = {}
-        for key, plist in sorted(bytype.items()):
-            sample = random.sample(plist, min(samples, len(plist)))
-            aff = []
-            for (u, v) in sample:
-                sg, _, _ = sim.auto(base_classes, (u, v))
-                aff.append(not sim.image_contains_alt(sg))
-            if all(aff):
-                affected[key] = True
-            elif any(aff):
-                affected[key] = "mixed"
-        E = [k for k, v in affected.items() if v]
-        if E:
-            V = []
-            for k in E:
-                V += bytype[k]
-            print(f"  V[affected] types: {[(k, len(bytype[k]), affected[k]) for k in E]}", flush=True)
-            sim.window |= set(V)
-            step += 1
-            continue
-        # step 3: K image?
-        Uv = set()
-        for (u, v) in rest:
-            Uv.add(u)
-            Uv.add(v)
-        sg, _, _ = sim.auto(base_classes, sorted(Uv))
-        if sim.image_contains_alt(sg):
-            print("FULL at step 3 (K onto Alt(T))")
-            return
-        # step 4
-        print("  step4: testing visible orbits per type")
-        vis = {}
-        for key, plist in sorted(bytype.items()):
-            # treat type as union of orbits; test pointwise stabilizer of whole type
-            Dv = set()
-            for (u, v) in plist:
-                Dv.add(u)
-                Dv.add(v)
-            sg, _, _ = sim.auto(base_classes, sorted(Dv))
-            im = sim.phi(sg)
-            vis[key] = (len(im) == 1)
-        V = []
-        names = [k for k, b in vis.items() if b]
-        for k in names:
-            V += bytype[k]
-        print(f"  V[VISIBLE] types: {[(k, len(bytype[k])) for k in names]}; not visible: {[k for k,b in vis.items() if not b]}", flush=True)
-        if not V:
-            print("no visible orbit")
-            return
-        sim.window |= set(V)
-        step += 1
+def pts(m):
+    return list(range(1, 1 << m))
 
 
 def lines(m):
@@ -188,152 +81,175 @@ def lines(m):
     return sorted(L)
 
 
-def root(m, kappa, samples):
-    P = list(range(1, 1 << m))
+# ------- root simulation --------
+def root(m, kappa):
+    P = pts(m)
     B = lines(m)
+    n = len(P) + len(B)
     pid = {p: i for i, p in enumerate(P)}
     bid = {b: len(P) + i for i, b in enumerate(B)}
-    N = len(P) + len(B)
-    adj = {}
+    adj = set()
     for b in B:
         for p in b:
-            adj[(pid[p], bid[b])] = True
-            adj[(bid[b], pid[p])] = True
+            adj.add((pid[p], bid[b]))
+            adj.add((bid[b], pid[p]))
     T = [1 << i for i in range(kappa)]
-    Tset = {pid[t] for t in T}
+    Tid = [pid[t] for t in T]
+    Tset = set(Tid)
     D = span(T)
     Sigma = 0
     for t in T:
         Sigma ^= t
-    Tid = [pid[t] for t in T]
-    idxT = {t: i for i, t in enumerate(Tid)}
+    print(f"root: m={m} n={n} kappa={kappa}, D dim {kappa}, |D|={len(D)}")
 
-    def phi(g):
-        return tuple(idxT[g[t]] for t in Tid)
-
-    sim = Sim(N, adj, [], [], kappa, phi)
-
-    def ptype(p):
-        if pid[p] in Tset:
-            return "T"
-        if p == Sigma:
-            return "S"
-        if p in D:
-            return "D*"
-        return "P1"
-
-    def btype(b):
-        s = set(b)
-        if s & set(T):
-            return "bT"
-        o = {x for x in s & D if x != Sigma}
+    def blocktype(b):
+        pts_ = set(b)
+        if pts_ & set(T):
+            return "Btouch(T)"
+        o = pts_ & D
+        ostar = {x for x in o if x not in (0, Sigma)}
+        if ostar:
+            return "Btouch(D*)"
         if o:
-            return "bD*"
-        if s & D:
-            return "bS"
-        return "bF"
+            return "Btouch(Sigma)"
+        return "Bfree"
 
-    vt = {}
+    vtype = {}
     for p in P:
-        vt[pid[p]] = ptype(p)
+        if pid[p] in Tset:
+            vtype[pid[p]] = "T"
+        elif p == Sigma:
+            vtype[pid[p]] = "Sigma"
+        elif p in D:
+            vtype[pid[p]] = "D*"
+        else:
+            vtype[pid[p]] = "P1"
     for b in B:
-        vt[bid[b]] = btype(b)
+        vtype[bid[b]] = blocktype(b)
 
-    def posdesc(pos):
-        u, v = pos
-        return (vt[u], vt[v])
+    N = n
+    window = set()
+    allpairs = [(u, v) for u in range(N) for v in range(N) if u != v]
 
-    allpos = [(u, v) for u in range(N) for v in range(N) if u != v]
-    base = [sorted(Tset), sorted(set(range(N)) - Tset)]
-    print(f"root m={m} n={N} kappa={kappa} k={2**m} |P1|={2**m-2**kappa}", flush=True)
-    run_steps(sim, base, allpos, vt, posdesc, samples)
+    def auto(colorclasses):
+        """Aut of (adj, window) arcs preserving vertex classes."""
+        nv = 2 * N
+        adjd = {u: [] for u in range(nv)}
+        # vertical
+        for u in range(N):
+            adjd[u].append(u + N)
+        # layer0: window and adj; layer1: window
+        for (u, v) in window:
+            adjd[N + u].append(N + v)
+            if (u, v) in adj:
+                adjd[u].append(v)
+        cols = []
+        for c in colorclasses:
+            cols.append(set(c))
+        for c in colorclasses:
+            cols.append({x + N for x in c})
+        g = Graph(nv, directed=True, adjacency_dict=adjd, vertex_coloring=cols)
+        res = autgrp(g)
+        gens = [g2[:N] for g2 in res[0]]
+        return gens, res[1], res[2]
 
+    def phi(gens):
+        idx = {t: i for i, t in enumerate(Tid)}
+        return [tuple(idx[g[t]] for t in Tid) for g in gens]
 
-def level1(m, kappa, samples):
-    B = lines(m)
-    D1 = span([1 << i for i in range(kappa)])
-    Sigma0 = (1 << kappa) - 1
-    Z1 = {Sigma0}
-    Wt = [b for b in B if not (set(b) & (D1 - Z1 - {0}))]
-    P1 = [p for p in range(1, 1 << m) if p not in D1]
-    wid = {b: i for i, b in enumerate(Wt)}
-    pid = {p: len(Wt) + i for i, p in enumerate(P1)}
-    N = len(Wt) + len(P1)
-    T1 = [1 << (kappa + i) for i in range(kappa)]
-    D2 = span([1 << i for i in range(2 * kappa)])
-    coset = {}
-    for i, t in enumerate(T1):
-        for d in D1:
-            coset[t ^ d] = i
-    Sigma1 = 0
-    for t in T1:
-        Sigma1 ^= t
-    SigmaSet = {Sigma1 ^ d for d in D1}
-    adj = {}
-    for b in Wt:
-        for p in b:
-            if p in pid:
-                adj[(wid[b], pid[p])] = True
-    # translation gadget: for each basis d of D1, arcs p -> p^d colored midpoint
-    gadget = []
-    extra_classes = []
-    idx = 0
-    nextra_start = 2 * N
-    for i in range(kappa):
-        d = 1 << i
-        cls = []
-        for p in P1:
-            mid = nextra_start + idx
-            idx += 1
-            cls.append(mid)
-            gadget.append((pid[p], mid))
-            gadget.append((mid, pid[p ^ d]))
-        extra_classes.append(cls)
-    tcosVerts = {pid[p] for p in coset}
+    def classes(indiv=()):
+        indiv = list(indiv)
+        s = set(indiv)
+        base = [sorted(Tset - s), sorted(set(range(N)) - Tset - s)]
+        res = [c for c in base if c]
+        res += [[v] for v in indiv]
+        return res
 
-    def phi(g):
-        return tuple(coset[P1[g[pid[T1[i]]] - len(Wt)]] for i in range(kappa))
+    t0 = time.time()
+    step = 0
+    while True:
+        gens, gs1, gs2 = auto(classes())
+        img = perm_closure(phi(gens))
+        full = contains_alt(img, kappa)
+        print(f"step {step}: |A|={gs1:.3g}e{gs2} imageAlt={full} |W|={len(window)}  t={time.time()-t0:.1f}")
+        if not full:
+            print("NONFULL")
+            break
+        rest = [p for p in allpairs if p not in window]
+        # orbits on remaining positions
+        parent = {}
 
-    # careful: gens from nauty are on 2N+extra; g[pid[..]] index in layer0 ok
-    sim = Sim(N, adj, gadget, extra_classes, kappa, phi)
+        def find(x):
+            while parent.setdefault(x, x) != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
 
-    def ptype(p):
-        if p in coset:
-            return "pTD"
-        if p in SigmaSet:
-            return "pS"
-        if p in D2:
-            return "pD*"
-        return "P2"
+        def union(a, b):
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
 
-    def btype(b):
-        s = set(b)
-        o = s & (set(coset))
-        if o:
-            return "bTD"
-        o = {x for x in s & D2 if x not in SigmaSet and x != Sigma0}
-        if o:
-            return "bD*"
-        if s & (SigmaSet | {Sigma0}):
-            return "bS"
-        return "bF"
-
-    vt = {}
-    for b in Wt:
-        vt[wid[b]] = btype(b)
-    for p in P1:
-        vt[pid[p]] = ptype(p)
-
-    def posdesc(pos):
-        return (vt[pos[0]], vt[pos[1]])
-
-    allpos = [(wid[b], pid[p]) for b in Wt for p in P1]
-    base = [sorted(wid.values()), sorted(tcosVerts), sorted(set(pid.values()) - tcosVerts)]
-    print(f"level1 m={m} kappa={kappa} |Wt|={len(Wt)} |P1|={len(P1)} |Omega|={len(allpos)} |D2|={len(D2)}", flush=True)
-    run_steps(sim, base, allpos, vt, posdesc, samples)
+        for g in gens:
+            for (u, v) in rest:
+                union((u, v), (g[u], g[v]))
+        orbs = {}
+        for p in rest:
+            orbs.setdefault(find(p), []).append(p)
+        # affected test
+        E = []
+        for rep, orb in orbs.items():
+            u, v = orb[0]
+            sg, _, _ = auto(classes((u, v)))
+            im = perm_closure(phi(sg)) if sg else {tuple(range(kappa))}
+            if not contains_alt(im, kappa):
+                E.append(orb)
+        V = []
+        if E:
+            for o in E:
+                V += o
+            kind = "affected"
+        else:
+            # K: pointwise stabilizer of U
+            Uv = set()
+            for (u, v) in rest:
+                Uv.add(u)
+                Uv.add(v)
+            sg, _, _ = auto(classes(Uv))
+            im = perm_closure(phi(sg)) if sg else {tuple(range(kappa))}
+            if contains_alt(im, kappa):
+                print("FULL (K maps onto Alt(T))")
+                break
+            for rep, orb in orbs.items():
+                Dv = set()
+                for (u, v) in orb:
+                    Dv.add(u)
+                    Dv.add(v)
+                sg, _, _ = auto(classes(Dv))
+                im = perm_closure(phi(sg)) if sg else {tuple(range(kappa))}
+                if contains_alt(im, kappa):
+                    continue
+                triv = len(im) == 1
+                if triv:
+                    V += orb
+            kind = "VISIBLE"
+            if not V:
+                print("step4: no visible orbit")
+                break
+        # classify V
+        hist = {}
+        for (u, v) in V:
+            key = (vtype[u], vtype[v])
+            hist[key] = hist.get(key, 0) + 1
+        print(f"  V[{kind}] size {len(V)}: " + ", ".join(f"{k[0]}x{k[1]}:{c}" for k, c in sorted(hist.items())))
+        window |= set(V)
+        step += 1
+        if step > 12:
+            print("step limit")
+            break
 
 
 if __name__ == "__main__":
-    mode, m, kappa = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
-    samples = int(sys.argv[4]) if len(sys.argv) > 4 else 2
-    (root if mode == "root" else level1)(m, kappa, samples)
+    mode = sys.argv[1]
+    if mode == "root":
+        root(int(sys.argv[2]), int(sys.argv[3]))

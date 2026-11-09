@@ -29,7 +29,7 @@ genuine polynomial time on a structurally defined subclass of rank-$\Theta(\log 
 
 ## 1. State of the art (literature pass, 2026-11-08)
 
-Tags: **[V]** statement read in abstract/source; **[S]** via citing text only (original not read).
+Tags: **[V]** statement read in abstract/source; **[S]** via citing text only (original not read). The survey was done by a delegated agent (sources in `scratchpad/w18-src/`); I read Rosenbaum §§1–3 and the Gill et al. bounds myself, and took the rest from its report.
 
 **Latin squares / quasigroups / Latin-square graphs.**
 * Miller, STOC 1978: $n^{\log n+O(1)}$ (generator enumeration); still the best general bound. [S]
@@ -134,7 +134,8 @@ Neither enumeration nor product refinement applies ($\mathrm{Sym}(q_j)$, $q_j>q_
 `docs/w18-latin-sim.py` runs the actual window loop (exact group images via nauty; affected tests sampled per position-type, stable across samples). Levels and windows match Lemma 1 exactly:
 
 ```
-PG, root, m=4,5, k=3 (hjsim/w18-latin-sim-root.py; V_0,V_1 at m=5, through V_3 at m=4): matches Lemma 2
+PG, root, k=3 (w18-latin-sim-root.py, all orbits, no sampling): V_0,V_1 at m=5 (timed out in V_2);
+                        V_0..V_3 at m=4, including the 48 point pairs (p,p+d) of Lemma 2. Step 4 not reached at root.
 PG, level 0, m=5, k=3:  V: (b,T+D)→(bT,*)→(bFree∪bS∪bD*,pD*)→(bD*,P+∪pS)
                         step 3 proper; step 4 VISIBLE: (bF∪bS)×P+ ; invisible: (bF∪bS)×pS
                         |A| at step 4 = 3.48e115 = 6·8^3·3!·76!  (predicted)
@@ -170,7 +171,7 @@ Reading across §2: **the chain needs partial-automorphism groups that realize $
 
 ### 3.1 A1: bidirectional collision for quasigroups [PROVEN]
 
-**Theorem A1.** Isomorphism of two quasigroups of order $n$ given by Cayley tables, in deterministic time and space $n^{(1/2)\log_2 n+O(1)}$. Same for Latin-square isotopy, paratopy (and Latin-square graphs of order $k$ above a constant, recovering the net via Bruck's theorem, in $N^{(1/4)\log_2 N+O(1)}$ for $N=k^2$ vertices), and STS isomorphism (Steiner quasigroup).
+**Theorem A1.** Isomorphism of two quasigroups of order $n$ given by Cayley tables, in deterministic time and space $n^{(1/2)\log_2 n+O(1)}$. Same for Latin-square isotopy, paratopy (and Latin-square graphs of order $k$ above a constant, recovering the net via Bruck's theorem (from memory), in $N^{(1/4)\log_2 N+O(1)}$ for $N=k^2$ vertices), and STS isomorphism (Steiner quasigroup).
 
 *Proof.* (Adapting Rosenbaum 2013, §§2–3, which is stated for groups.) (i) A finite subset closed under the product is a subquasigroup. Proper subquasigroups have order $\le n/2$: for $x\notin S$, $xS\cap S=\emptyset$. So a sequence $x_1,x_2,\dots$ with $x_{i+1}\notin\langle x_1,\dots,x_i\rangle$ has length $\le \log_2 n+1$. (ii) An ordered generating tuple $g$ determines a canonical labelled Cayley table $\Phi_Q(g)$ (close under products in a fixed order) in polynomial time, and $\Phi_Q(g)=\Phi_{Q'}(h)$ iff $g_i\mapsto h_i$ extends to an isomorphism. (iii) Let $d=\lceil\frac12(\log_2 n+1)\rceil$. If $Q$ has a generating set of size $\le d$ (checkable in $n^{d}$), enumerate as in Miller. Otherwise, Alice lists all strictly increasing chains of length $d$ in $Q$ and extends each to a generating tuple arbitrarily; Bob fixes one strictly increasing chain of length $d$ in $Q'$ and lists all its strictly increasing extensions to generating tuples. If $\varphi:Q\to Q'$ is an isomorphism, the preimage of Bob's chain is one of Alice's chains, and $\varphi$ of her extension is one of Bob's. Sorting $\{\Phi_Q(\cdot)\}$ and $\{\Phi_{Q'}(\cdot)\}$ and testing for a collision gives the bound $n^{d}+n^{\log_2n+1-d}$. For isotopy/paratopy: use the three-sorted closure (a closed triple $(R,C,S)$ has $|R|=|C|=|S|$, and a proper one has order $\le n/2$), generators drawn from $\le3n$ elements, $3^{O(\log n)}=n^{O(1)}$. ∎
 
@@ -184,7 +185,7 @@ The group-specific fourth-root speedup does not transfer: it uses Luks' composit
 
 *Proof.* Enumerate $\mathcal S(Q)$ by repeatedly closing $\langle S,x\rangle$; this finds every subquasigroup (build it by generators) in $\mathrm{poly}(n,M)$. For each pair $(S,S')$, $|S|=|S'|$, in increasing size, compute the list $I(S,S')$ of isomorphisms. If $S=\langle x\rangle$, try $x\mapsto x'$. Otherwise pick a maximal proper $T<S$ and $x\in S\setminus T$, so $S=\langle T,x\rangle$. Every isomorphism $S\to S'$ maps $T$ to a maximal $T'<S'$ and is determined by its restriction $\psi\in I(T,T')$ and $x'=\varphi(x)$: test all $(T',\psi,x')$ by closure. Since $I(S,S')$ is a coset of $\mathrm{Aut}(S)$, $|I|\le A$. ∎
 
-Combined with $r:=d(Q)\le\log_2 M$ (Lemma A3a), Miller gives $n^{\log_2M}$; A2 improves this to polynomial when $A$ and $M$ are polynomial. The bound is in $M$ and $A$, not in rank: e.g. a direct product $Q=Q_1\times\dots\times Q_t$ of pairwise non-isomorphic rigid loops with no proper nontrivial subloops has exactly $2^t$ subloops (Goursat for loops), $A=1$, rank $t$. It is polynomial under A2, while Miller is $n^{t}$; since pairwise non-isomorphic factors must have slowly growing order, $t=o(\log n)$ here, so this separates A2 from Miller only as "polynomial versus superpolynomial $n^{o(\log n)}$" [CONDITIONAL on the existence of such loop families, not checked].
+Combined with $r:=d(Q)\le\log_2 M$ (Lemma A3a), Miller gives $n^{\log_2M}$; A2 improves this to polynomial when $A$ and $M$ are polynomial. The bound is in $M$ and $A$, not in rank: e.g. a direct product $Q=Q_1\times\dots\times Q_t$ of pairwise non-isomorphic rigid loops with no proper nontrivial subloops has exactly $2^t$ subloops (Goursat's lemma in the Mal'cev variety of loops, from memory), $A=1$, rank $t$. It is polynomial under A2, while Miller is $n^{t}$; since pairwise non-isomorphic factors must have slowly growing order, $t=o(\log n)$ here, so this separates A2 from Miller only as "polynomial versus superpolynomial $n^{o(\log n)}$" [CONDITIONAL on the existence of such loop families, not checked].
 
 ### 3.3 A3: structural lemmas [PROVEN]
 
@@ -224,9 +225,11 @@ nice -n 19 $PY docs/w18-latin-sim.py 0 5 3 2     # PG, level 0, m=5, kappa=3
 nice -n 19 $PY docs/w18-latin-sim.py 1 7 3 1     # PG, level 1, m=7, kappa=3 (~4 min)
 nice -n 19 $PY docs/w18-latin-sim.py ls 5 3 1    # LS(Z_2^5), level 0
 nice -n 19 $PY docs/w18-latin-sim.py stsb 6 3    # STS block graph, level 0
+timeout 170 nice -n 19 $PY docs/w18-latin-sim-root.py root 5 3   # root model, stops by timeout in V_2
+timeout 60  nice -n 19 $PY docs/w18-latin-sim-root.py root 4 3   # root model, through V_3
 ```
 
-Sampled tests: affected status is tested on 1–2 random positions per position-type; only the group/image computations are exact.
+In `w18-latin-sim.py`, affected status is tested on 1–2 random positions per position-type; the group and image computations are exact. All runs use $\kappa=3$ and $m\le7$, far below $\kappa=64$: they check the window structure of Lemmas 1–2 and cannot check the asymptotic count. The level-0 run at $m=5$ prints $|A|=3.48\cdot10^{115}$ at step 4, against the predicted $6\cdot8^3\cdot3!\cdot76!=3.475\cdot10^{115}$.
 
 ## 6. Leads for follow-up
 
