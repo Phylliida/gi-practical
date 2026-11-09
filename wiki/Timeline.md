@@ -96,7 +96,7 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 29 | w29-wiki-refresh | `43f3843` | refresh of the wiki to `1368fb6` (merged `c8cb697`) | |
 | 30 | w30-sts | `ffda3f4` | Steiner triple systems; T1, T2 (merged `142aa6f`; red-teamed by w33) | [w30-sts](../docs/w30-sts.md) |
 | 31 | w31-redteam-w27w28 | `894cc10` | red-team of w27 and w28; on master | [report](../docs/redteam-w27-w28.md) |
-| 32 | w32-conference | `49fec8a` | conference graphs (merged `2b54de7`); **not red-teamed** | [w32-conference](../docs/w32-conference.md) |
+| 32 | w32-conference | `49fec8a` | conference graphs (merged `2b54de7`); red-teamed by w52 | [w32-conference](../docs/w32-conference.md) |
 | 33 | w33-redteam-sts | `a6d1fcc` | red-team of w30 (merged `20b2451`) | [report](../docs/redteam-w30-sts.md) |
 | 34 | w34-vc | `005ca3c` | VC bounds for conference graphs (merged `12ab032`; red-teamed by w37) | [w34-vc](../docs/w34-vc.md) |
 | 35 | w35-cubic | `8fb152f` | exact reduction of cubic Boolean equivalence to quadratic-form spaces (merged `0ed8fd3`; red-teamed by w37) | [w35-cubic](../docs/w35-cubic.md) |
@@ -115,7 +115,9 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 48 | w48-redteam-mu | `2138e9a` | red-team of w47: Theorem A survives, Theorem C broken as stated | [report](../docs/redteam-w47-mu.md) |
 | 49 | w49-pruned | `f4134a2` | enumeration surviving one-sided pruning; red-teamed by w51 | [w49-pruned](../docs/w49-pruned.md) |
 | 51 | w51-redteam-pruned | `8c97f8e` | red-team of w49: T survives, P broken for two-sided pruning | [report](../docs/redteam-w49-pruned.md) |
-| 52 | w52-redteam-conference | | **running**: red-team of w32 | [Home](Home.md#work-still-in-progress) |
-| 50 | w50-gain | | **running**: the height-2 gain-graph core of TreeCI | [Home](Home.md#work-still-in-progress) |
+| 50 | w50-gain | `befa126` | gain-graph core: w27 lead 1 refuted once sharpened; **not yet red-teamed** (w53 running) | [w50-gain](../docs/w50-gain.md) |
+| 52 | w52-redteam-conference | `ea41702` | red-team of w32: proven items sound, data claims corrected | [report](../docs/redteam-w32-conference.md) |
+| 53 | w53-redteam-gain | | **running**: red-team of w50 | [Home](Home.md#work-still-in-progress) |
+| 54 | w54-lean-t2 | | **running**: T2 in Lean | [Home](Home.md#work-still-in-progress) |
 
-The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `8c97f8e`.
+The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `1a4c1cb`.

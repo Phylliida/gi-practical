@@ -94,7 +94,7 @@ So nobody repeats it. Each item says where the attempt stopped. Sources are in t
 
 | Idea | Where it stopped | Source |
 |---|---|---|
-| Uniform anti-concentration: p(v,w) ≤ exp(−ω(n)) for all pairs | **false**: iterated Turyn products keep collision probability ≥ 0.049 for all n (Thm 4.2; w32 is not red-teamed) | [w32-conference](../docs/w32-conference.md) §4 |
+| Uniform anti-concentration: p(v,w) ≤ exp(−ω(n)) for all pairs | **false**: iterated Turyn products keep collision probability ≥ 0.049 for all n (Thm 4.2; AI red-teamed by w52) | [w32-conference](../docs/w32-conference.md) §4 |
 | Structure of large cliques in B_c | no inverse theorem at hypothesis p ≥ n^{−c}; Turyn shows the structured side must include tensor products | same §4.3 |
 | Approximate F₂-linearity of rows | a Hamming-noise 1%-regime problem; polynomial Freiman–Ruzsa could not be made to apply | same §4.4 |
 | Moment methods on T | L² gives Lemma 2.1; L⁴/Hausdorff–Young is extremal for characters | same §7 |

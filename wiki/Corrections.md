@@ -229,7 +229,7 @@ Same report, which found no claim broken. [w28-sigma](../docs/w28-sigma.md) was 
 
 ### Conference graphs and cubics (w34, w35, w37)
 
-[redteam-w35-w34](../docs/redteam-w35-w34.md) found no break in either memo. Neither memo was edited afterwards. **[w32-conference](../docs/w32-conference.md) has not been red-teamed.**
+[redteam-w35-w34](../docs/redteam-w35-w34.md) found no break in either memo. Neither memo was edited afterwards. [w32-conference](../docs/w32-conference.md) was red-teamed later by [redteam-w32-conference](../docs/redteam-w32-conference.md); see the table below.
 
 | Item | Correction | Source |
 |---|---|---|
@@ -310,6 +310,9 @@ The earlier statement that nothing of the project's own accounting is machine-ch
 | w14 profiles and slowdowns | corrected against measurements in `ef6f8ab` | [w14-solver](../docs/w14-solver.md) |
 | README table of canonical times | README's "CFI n = 3200 … 13 s" was w9; w14 reached 1.41 s and w23 0.43 s for canonical forms, and the README now says so. Later numbers in [Benchmarks](Benchmarks.md) win | [README](../README.md), [w23-speed2](../docs/w23-speed2.md) §3 |
 | "The kernel does not help bounded or canonical paths" (1.00–1.15×) | true of w16, when that code was off limits; w23 compiled it | [w16-ckernel](../docs/w16-ckernel.md), [w23-speed2](../docs/w23-speed2.md) §2–3 |
+| w32 "p reaches 0.28 at n = 6561", "0.24 at 625", "33057 pairs p ≥ 0.2" | S = 300 sampling artefacts. Exact maxima are 0.1867 and 0.1597, and no pair reaches 0.2 (at 6561, the top 200 pairs exact, the rest estimated ≤ 0.058) | [redteam-w32-conference](../docs/redteam-w32-conference.md) |
+| w32 "all available" Spence graphs; "only P(25), P(49) have depth 3" | a sample (30/412 at n = 49, 50/1022 at 45, 16/106 at 41, 400/6760 at 37); P*(49) also has depth 3 | same |
+| w32 "structure must include tensor products" | does not follow from Thm 4.2, which gives only bounded B_c cliques; the report's Prop R1 gives cliques of size n^{0.23c} | same |
 | Traces gaps at w14 (CFI 10–23×, Miyazaki 30–90×, Q12 about 250×, 3-regular about 13×) | narrowed by w23 to about 7×, 23×, 14–29× and 3–6×; Traces is still ahead on every family except multipedes | [w23-speed2](../docs/w23-speed2.md) §3, §6 |
 
 ### Lean statements, the small-degree guarantee and quartics (w42, w44, w46)

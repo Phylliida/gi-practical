@@ -786,3 +786,10 @@ are red-teams, a LaTeX paper, and final integration.
 * Computations homology-level only, small b, M. The superpolynomial bound on invariant cycle-vector families is SPECULATION.
 * Height 2 still open: the family survives G, G+, C and Prop N; its abelian case is easy, its non-abelian case open. No implication for TreeCI or GI.
 * w53-redteam-gain: adversarial check of w50.
+
+### w52-redteam-conference (done, commit ea41702; docs/redteam-w32-conference.md)
+* Every [PROVEN] item of w32 is sound by hand re-derivation (Lemmas 2.1–2.4, Prop 2.5, Thm 3.2, Lemma 4.1, Thm 4.2); c = 0.0493 correct; Levet Q6.5 quoted accurately. Thm 5.1 remains a sketch.
+* Corrections (medium): "p reaches 0.28 at n = 6561", "0.24 at 625" and "33057 pairs p ≥ 0.2" are S = 300 sampling artefacts; exact maxima are 0.1867 and 0.1597 and no pair reaches 0.2 (at 6561: top 200 pairs exact, rest estimated ≤ 0.058). "All available" Spence graphs was a sample (30/412 at n = 49, 50/1022 at 45, 16/106 at 41, 400/6760 at 37); P*(49) also has depth 3. Thm 4.2 gives only bounded B_c cliques, so "structure must include tensor products" does not follow; the report's Prop R1 gives cliques of size n^{0.23c}.
+* New: |Aut W_{L+1}| ≥ 2|Aut W_L|² is provable, so depth ≥ 3 holds at every level of the P(9) chain. Complete run over Spence's lists and two-graph descendants to n = 49 and all 103 prime-power Paley q ≤ 1097: depth always 2 or 3.
+* Not reached: Babai 1980 and BCSTW unread; no k = 3 exhaustion at n ≥ 625; nothing beyond 6561; Spence's lists are themselves non-exhaustive at n ≥ 37.
+* w54-lean-t2: machine-check T2, the Steiner triple system reduction, in Lean (mathlib only).

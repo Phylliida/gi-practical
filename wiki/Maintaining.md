@@ -13,8 +13,7 @@
 
 | Branch | When it lands, update |
 |---|---|
-| `w50-gain` (running) | [Barriers](Math-Barriers.md) or [Core problem](Math-Core-Problem.md), [Results ledger](Results-Ledger.md), [Timeline](Timeline.md), and the table on [Home](Home.md); red-team anything that looks like a result first |
-| `w32-conference` (on master, `49fec8a`, not red-teamed) | when a red-team lands: [Moonshots](Moonshots.md), [Results ledger](Results-Ledger.md), [Corrections](Corrections.md), and the row on [Home](Home.md) |
+| `w53-redteam-gain`, `w54-lean-t2` (running) | [Barriers](Math-Barriers.md) or [Core problem](Math-Core-Problem.md), [Results ledger](Results-Ledger.md), [Timeline](Timeline.md), and the table on [Home](Home.md); red-team anything that looks like a result first |
 
 After merging: search this directory for "in progress" and "as of", and update the "Work still in progress" table.
 

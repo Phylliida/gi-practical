@@ -8,7 +8,7 @@
 2. **Before writing to them, read the unread sources**: the SICOMP 2023 text of GNS, especially Lemma 7.2, and Neuen's dissertation (the unseen Lemma 6.1.17). Accessing them was blocked; see [Disclosures](Disclosures.md#literature-that-was-not-read).
 3. **Ask as questions, not error claims,** about GNS Lemma 7.2 and Neuen 2020 Thm 4.17(G).
 4. Decide about publishing [exponent.tex](../paper/exponent.tex). Theorem G should be regarded as provisional until a human checks it; Theorem X is the fallback.
-5. Fold in `w38-lean-stage1` when it lands, and red-team [w32-conference](../docs/w32-conference.md), the one recent memo without a red-team ([Maintaining](Maintaining.md)).
+5. Machine-check the self-contained theorems, starting with T2 and Theorem H ([Maintaining](Maintaining.md)).
 6. Apply the fixes the red-teams list to the memos they reviewed, none of which was edited afterwards: [w27-tree](../docs/w27-tree.md), [w28-sigma](../docs/w28-sigma.md), [w30-sts](../docs/w30-sts.md), [w34-vc](../docs/w34-vc.md), [w35-cubic](../docs/w35-cubic.md); and the remaining items of [redteam-w18-latin](../docs/redteam-w18-latin.md) §5 in [w18-latin](../docs/w18-latin.md) (its q₁ and exponent fixes are done).
 
 ## Core questions
