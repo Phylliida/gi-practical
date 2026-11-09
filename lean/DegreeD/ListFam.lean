@@ -310,6 +310,35 @@ theorem toFin {L : List ℕ} {M B : ℕ} (h : ListFam L M B) :
         by_cases hb : b = j <;> simp [hb]
   exact key L labs hl
 
+/-- `toFin` for a list given as a `map`: a labelling of the indices of `bs`. -/
+theorem toFin_map {β : Type*} (bs : List β) (f : β → ℕ) {M B : ℕ} (h : ListFam (bs.map f) M B) :
+    ∃ fam : Fin bs.length → Fin M, ∀ j : Fin M,
+      ∑ i ∈ Finset.univ.filter (fun i => fam i = j), f (bs.get i) ≤ B := by
+  classical
+  obtain ⟨labs, hl, h1⟩ := h
+  have hlen : labs.length = bs.length := by simpa using hl
+  refine ⟨fun i => labs[(i : ℕ)]'(by rw [hlen]; exact i.2), fun j => le_trans ?_ (h1 j)⟩
+  apply le_of_eq
+  have key : ∀ (bs : List β) (labs : List (Fin M)) (hl : labs.length = bs.length),
+      ∑ i ∈ Finset.univ.filter
+          (fun i : Fin bs.length => (labs[(i : ℕ)]'(by rw [hl]; exact i.2)) = j), f (bs.get i) =
+        zsum (bs.map f) labs (fun l => decide (l = j)) := by
+    intro bs labs hl
+    induction bs generalizing labs with
+    | nil => simp [zsum]
+    | cons a bs ih =>
+      cases labs with
+      | nil => simp at hl
+      | cons l labs =>
+        simp only [List.length_cons, Nat.add_right_cancel_iff] at hl
+        rw [Finset.sum_filter]
+        refine (Fin.sum_univ_succ _).trans ?_
+        rw [List.map_cons, zsum_cons, ← ih labs hl, Finset.sum_filter]
+        simp only [Fin.val_zero, List.getElem_cons_zero, List.get_cons_zero, Fin.val_succ,
+          List.getElem_cons_succ, List.get_cons_succ]
+        by_cases hb : l = j <;> simp [hb]
+  exact key bs labs hlen
+
 end ListFam
 
 end GI.DegreeD
