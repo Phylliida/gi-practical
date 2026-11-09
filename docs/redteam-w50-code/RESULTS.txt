@@ -1,0 +1,40 @@
+# Outputs of the referee harness (pure Python, nice -n 19, one process at a time). Copied from the runs of 2026-11-09.
+
+## r1_thmA.py  (Theorem A: every invariant graph of prod N_j, N_j 2-transitive, is Gamma_F(K_b); all F up to coordinate permutation)
+hom [(3,2),(4,2),(5,2),(3,3),(4,3)] primes 2,3,5: homology pairs 279, least k = 3 in all (5 families at M=2, 39 at M=3, per b and p)
+hom [(5,3)] primes 2,3: 78 pairs, least k = 3 in all
+pi1 b=4 M=2 k=3: 5 collapsed to trivial group, 0 not
+pi1 b=5 M=2 k=3: 5 collapsed to trivial group, 0 not
+
+## r2_cert.py 3000  (referee's k=3 recolouring, every move checked)
+certified 3000 random closed walks (b in 3..9, M in 1..6, random F); 989351 elementary moves; all tiles closed walks of the graph with <=3 values
+per coordinate; final walks <=3 values per coordinate
+
+## r3_aprime.py  (Theorem A' constant: X = K_b x K_2, J = {1})
+b=4..10: cycle rank b^2-3b+1; rank of 3-narrow span = C(b-1,2) over F_2, F_3, F_5 and Z (no torsion); 4-narrow span = full. So 4 is sharp in A'.
+
+## r4_folded.py
+folded n=5 M=1: least k = 5 (p=2), 4 (p=3,5); n=3: 3
+folded n=5 M=1 <=4 walks: coranks {2:1,3:0,5:0}; H_1/B = Z/2 (integer Smith); pi_1/<<<=4 walks>> = <x | x^2>
+folded n=7 M=1 <=4 walks: coranks {2:1,3:0,5:0}; H_1/B = Z/2; pi_1/<<<=4 walks>> = <x | x^2>
+folded n=5 M=2 (corank of <=4 walks, F_2 / F_3; rk D): cartesian 2/0 (2); tensor 1/0 (1); mix 2/0 (2); three(dependent) 2/0 (2); every <=4 walk has r=0
+odd t=2 (Petersen) <=6 walks: H_1/B = 0; least k = 5 (p=2,3)
+odd t=3 (O_4) <=6 walks: coranks {2:1,3:0,5:0}; H_1/B = Z/2
+odd t=4 (O_5) <=6 walks: coranks {2:1,3:0,5:0}; H_1/B = Z/2
+O_4 M=2 cartesian: corank (rect/cross/<=4 walks + lifted 6-cycles) 2 at F_2, 0 at F_3, rk D = 2
+O_4 M=2 tensor:    corank 1 at F_2, 0 at F_3, rk D = 1
+
+## r5_misc.py
+dc:    double cover walk of length 10, parity (1,1), values per side-coordinate (3,3) on both coordinates, odd girth 5
+padic: p=3, n=4, pattern {0,1}: coordinate nets [1,1,1,1] and [0,0,0,0], obstruction vector (1,0) of weight 1
+dep:   pentagon F (n=5, M=5): dim C_0 = 101, rank(rect+cross) = 100, + one pattern-relation walk (length 5, 2 values/coord) = 101
+gap:   K_4, S_3 gains: 792 ordered pairs with all four triangle holonomies conjugate but not switching-isomorphic under any t in S_4;
+       e.g. x = (t,t,t), y = (t,t,s) with t=(12), s=(01): holonomy groups Z_2 versus S_3
+rank3: S_6 on 15 pairs: T(6) and K(6,2), M=1 and M=2 Cartesian: triangles + 4-cycles span the cycle space over F_2 and F_3
+mH:    n=5: exact max |Stab_H(z)| over odd cycle vectors z = 10 (8464 fixed odd vectors examined), m_H = 192
+propE2: 30 instances with C' >= T: delta nonzero in 30/30, coset-of-ker-delta structure verified in all 20 solvable instances
+bound: log_b|H| = 2.727 (n=5), 3.050 (7), 3.309 (9), 3.875 (15), 4.755 (31)
+
+## r6_pi1.py
+folded n=5 M=2 cartesian: pi_1/<<<=4 walks>> = <x,y | x^2, y^2, [x,y]> = Z_2^2
+S_6 on pairs, T(6) and K(6,2), M=1: pi_1/<<triangles, 4-cycles>> trivial
