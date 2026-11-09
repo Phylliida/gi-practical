@@ -63,10 +63,10 @@ theorem card_om (n q : ℕ) :
   simp [Nat.card_eq_fintype_card, Fintype.card_sum, Fintype.card_prod, Fintype.card_fin]
 
 /-- The cost arithmetic. -/
-theorem final_bound {C₀ : ℝ} (hC₀ : 0 ≤ C₀) (n d q : ℕ) (hq : q ≤ n) :
+theorem final_bound {C₀ : ℝ} (hC₀ : 0 ≤ C₀) (n d q N : ℕ) (hq : q ≤ n) (hN : N ≤ (n + 2) ^ 5) :
     let B := n + (n * q + n * q * (n * q))
-    ((n ^ 3 : ℕ) : ℝ) * Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) ≤
-      Real.exp ((6 + 30 * C₀) * (Real.log ((d : ℝ) + 2) * Real.log ((n : ℝ) + 2))) := by
+    (N : ℝ) * Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) ≤
+      Real.exp ((10 + 30 * C₀) * (Real.log ((d : ℝ) + 2) * Real.log ((n : ℝ) + 2))) := by
   intro B
   have hB : B + 2 ≤ (n + 2) ^ 5 := by
     have h1 : n * q ≤ n * n := Nat.mul_le_mul_left _ hq
@@ -108,20 +108,18 @@ theorem final_bound {C₀ : ℝ} (hC₀ : 0 ≤ C₀) (n d q : ℕ) (hq : q ≤ 
       mul_le_mul hlam hlogB hlogB0 (by linarith)
     have := mul_le_mul_of_nonneg_left h1 hC₀
     nlinarith
-  have hn3 : ((n ^ 3 : ℕ) : ℝ) ≤ Real.exp (3 * L) := by
+  have hn3 : (N : ℝ) ≤ Real.exp (5 * L) := by
     have hexp : Real.exp L = (n : ℝ) + 2 := Real.exp_log (by linarith)
-    have h3 : Real.exp (3 * L) = ((n : ℝ) + 2) ^ 3 := by
+    have h3 : Real.exp (5 * L) = ((n : ℝ) + 2) ^ 5 := by
       rw [← hexp, ← Real.exp_nat_mul]
       norm_num
     rw [h3]
-    push_cast
-    have h0 : (0 : ℝ) ≤ n := Nat.cast_nonneg _
-    exact pow_le_pow_left₀ h0 (by linarith) 3
-  calc ((n ^ 3 : ℕ) : ℝ) * Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2)))
-      ≤ Real.exp (3 * L) * Real.exp (30 * C₀ * (M * L)) := by
+    exact_mod_cast hN
+  calc (N : ℝ) * Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2)))
+      ≤ Real.exp (5 * L) * Real.exp (30 * C₀ * (M * L)) := by
         apply mul_le_mul hn3 (Real.exp_le_exp.2 hmain) (Real.exp_pos _).le (Real.exp_pos _).le
-    _ = Real.exp (3 * L + 30 * C₀ * (M * L)) := (Real.exp_add _ _).symm
-    _ ≤ Real.exp ((6 + 30 * C₀) * (M * L)) := by
+    _ = Real.exp (5 * L + 30 * C₀ * (M * L)) := (Real.exp_add _ _).symm
+    _ ≤ Real.exp ((10 + 30 * C₀) * (M * L)) := by
         apply Real.exp_le_exp.2
         have hMl : (1 / 2 : ℝ) ≤ M := by linarith
         nlinarith [mul_nonneg hM0 hL0, mul_nonneg (by linarith : (0 : ℝ) ≤ M - 1 / 2) hL0]
@@ -145,7 +143,7 @@ theorem graphIso_connected (h : Stage1Conclusion P w) :
         e.total w ≤ Real.exp (C * (Real.log ((d : ℝ) + 2) * Real.log ((n : ℝ) + 2))) := by
   obtain ⟨cσ, C', hcσ, hS⟩ := h
   set C₀ := max C' 0
-  refine ⟨6 + 30 * C₀, by have := le_max_right C' 0; simp only [C₀]; linarith, ?_⟩
+  refine ⟨10 + 30 * C₀, by have := le_max_right C' 0; simp only [C₀]; linarith, ?_⟩
   intro n d X Y hXc hYc hXd hYd
   by_cases hE : ∃ u v, X.Adj u v
   · obtain ⟨u, v, huv⟩ := hE
@@ -211,35 +209,41 @@ theorem graphIso_connected (h : Stage1Conclusion P w) :
       fun S hg => (hS d S hg).1
     obtain ⟨e, he⟩ := exec_of_calls (d := d) (D := max d 6) (le_max_left _ _) hruns s B hcalls_d
     refine ⟨s, e, hval, ?_, ?_⟩
-    · exact hcalls_d.mono fun m T ⟨hm, _, hg, hs⟩ => ⟨hm, hg, by rw [hs]; exact hsz⟩
-    · set K := Real.exp (C' * (lam d * Real.log ((B : ℝ) + 2))) with hK
-      have hKle : K ≤ Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) := by
-        apply Real.exp_le_exp.2
-        have h0 : 0 ≤ lam d * Real.log ((B : ℝ) + 2) := by
-          have h1 : 0 < lam d := lam_pos d
-          have h2 : 0 ≤ Real.log ((B : ℝ) + 2) :=
-            Real.log_nonneg (by have : (0 : ℝ) ≤ B := Nat.cast_nonneg _; linarith)
-          positivity
-        exact mul_le_mul_of_nonneg_right (le_max_left _ _) h0
+    · exact hcalls_d.mono fun m T ⟨hm, _, hg, hs⟩ => ⟨hm, hg, le_trans (by exact_mod_cast hs) hsz⟩
+    · set K := Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) with hK
       have hbound := exec_total_le (K := K) (p := CallOK d B) (cσ := cσ) (D := max d 6)
         (w := w) ?_ s e he hcalls_d
       · have hK0 : 0 ≤ K := (Real.exp_pos _).le
-        have hfb := final_bound (C₀ := C₀) (le_max_right _ _) n d q hqn
+        have hfb := final_bound (C₀ := C₀) (le_max_right _ _) n d q (n ^ 5) hqn
+          (Nat.pow_le_pow_left (by omega) 5)
         simp only at hfb
         rw [← hBval] at hfb
+        have hle35 : n ^ 3 ≤ n ^ 5 := by
+          rcases Nat.eq_zero_or_pos n with h0 | h0
+          · subst h0; simp
+          · exact Nat.pow_le_pow_right h0 (by norm_num)
         calc e.total w ≤ (s.numCalls : ℝ) * K := hbound
-          _ ≤ ((n ^ 3 : ℕ) : ℝ) * K := by
+          _ ≤ ((n ^ 5 : ℕ) : ℝ) * K := by
             apply mul_le_mul_of_nonneg_right _ hK0
-            exact_mod_cast hnum
-          _ ≤ ((n ^ 3 : ℕ) : ℝ) * Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) := by
-            apply mul_le_mul_of_nonneg_left hKle (Nat.cast_nonneg _)
+            exact_mod_cast hnum.trans hle35
           _ ≤ _ := hfb
-      · intro Ω' C' m T r hp hr
+      · intro Ω' Cc m T r hp hr
         obtain ⟨rfl, hf, hg, hs⟩ := hp
         haveI := hf
-        have := (hS d T hg).2 r hr
-        rw [hs] at this
-        exact this.2
+        have h1 := (hS d T hg).2 r hr
+        refine h1.2.trans (Real.exp_le_exp.2 ?_)
+        have hl0 : 0 ≤ Real.log ((T.size : ℝ) + 2) :=
+          Real.log_nonneg (by have : (0 : ℝ) ≤ T.size := Nat.cast_nonneg _; linarith)
+        have hl1 : Real.log ((T.size : ℝ) + 2) ≤ Real.log ((B : ℝ) + 2) :=
+          Real.log_le_log (by have : (0 : ℝ) ≤ T.size := Nat.cast_nonneg _; linarith) (by
+            have : (T.size : ℝ) ≤ B := by exact_mod_cast hs
+            linarith)
+        have hlam := lam_pos d
+        calc C' * (lam d * Real.log ((T.size : ℝ) + 2))
+            ≤ C₀ * (lam d * Real.log ((T.size : ℝ) + 2)) :=
+              mul_le_mul_of_nonneg_right (le_max_left _ _) (mul_nonneg hlam.le hl0)
+          _ ≤ C₀ * (lam d * Real.log ((B : ℝ) + 2)) :=
+              mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hl1 hlam.le) (le_max_right _ _)
   · -- no edge: `n ≤ 1`, and the isomorphism set is computed directly
     refine ⟨Script.done {g | ∀ a b, X.Adj a b ↔ Y.Adj (g a) (g b)}, M.Exec.done _, rfl, trivial, ?_⟩
     exact le_trans (le_of_eq (M.Exec.total_done w _)) (Real.exp_pos _).le

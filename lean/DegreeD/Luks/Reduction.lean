@@ -33,9 +33,9 @@ noncomputable def layersScript (X : LG V q) (Y : LG W q) :
       | some d' => layersScript X Y f (r + 1) d'.1 d'.2
 
 /-- The properties of a call of the scripts: a `Solve` call, on a finite set, in `Γ̂_q`, with
-`B` positions. -/
+at most `B` positions. -/
 def CallOK (q : ℕ) (B : ℕ) {Ω' C' : Type} (m : Mode) (T : State Ω' C') : Prop :=
-  m = .solve ∧ Finite Ω' ∧ GammaHat q T.G ∧ T.size = B
+  m = .solve ∧ Finite Ω' ∧ GammaHat q T.G ∧ T.size ≤ B
 
 theorem layerState_size [Finite V] (X : LG V q) (Y : LG W q) (A : Subgroup (Perm V)) (τ : V → W)
     (r : ℕ) : (layerState X Y A τ r).size = Nat.card (Om V q) := by
@@ -57,7 +57,7 @@ theorem layersScript_spec [Finite V] {X : LG V q} {Y : LG W q} {f₀ : V → W} 
   | succ f ih =>
     intro r τ hτ
     have hcall : CallOK q (Nat.card (Om V q)) .solve (layerState X Y (X.aut r) τ r) :=
-      ⟨rfl, inferInstance, gammaHat_wreath _ (X.gammaHat_aut r), layerState_size _ _ _ _ _⟩
+      ⟨rfl, inferInstance, gammaHat_wreath _ (X.gammaHat_aut r), (layerState_size _ _ _ _ _).le⟩
     have hle : r + (f + 1) = r + 1 + f := by omega
     rcases hread : readStep X Y r τ (layerState X Y (X.aut r) τ r).answer with _ | ⟨A', τ'⟩
     · refine ⟨⟨hcall, ?_⟩, ?_, ?_⟩
