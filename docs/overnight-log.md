@@ -472,3 +472,13 @@ are red-teams, a LaTeX paper, and final integration.
 * All 9 proposed minor fixes applied. 52 pages.
 
 ### w13-redteam-canhyp: adversarial check of the new §10.9.
+
+### w13-redteam-canhyp (done, commit 9a8c61e; docs/redteam-canhyp.md)
+* CanHyp, canonicity, cosets, Lemmas E4/F2^set/W/B, complete occupancy: sound.
+* One break, repaired: the second half of (S4) and Neuen 2020 Thm 4.17(G) are claimed FALSE, with a small
+  counterexample (Γ=1, two blocks). Only the CanLC round bound and cost sum used it. New potential ŝ restores
+  (I4). Neuen's Thm 4.24 accounting would need the same repair. To be independently verified before
+  relying on it.
+* Test: 0 failures over 4868 toy calls; all mutants detected. Giant steps (k > 90) are not exercised.
+
+### w13-verify-neu417: independent check of the claimed counterexample to Neuen 2020 Thm 4.17(G).
