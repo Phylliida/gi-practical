@@ -779,3 +779,10 @@ are red-teams, a LaTeX paper, and final integration.
 * Not reachable: e ≥ 2κ, any HJ run, H0, direct Aut(x) at e ≥ 4 (non-affine automorphisms excluded by proof only), other orbitals at e ≥ 4, Lean's label map, Kantor's paper itself.
 * Line closed for now: even complete removal of enumeration leaves the x² and Q channels paying log N·log w (w28), so it cannot lower HJ's exponent.
 * w52-redteam-conference: the overdue red-team of w32.
+
+### w50-gain (done, commit befa126; docs/w50-gain.md), NOT yet red-teamed
+* w27 lead 1 is false once its quantifiers are made precise (conjecture W(k,c,s,g,f)). Theorem B [claimed PROVEN]: for Γ₁ H-invariant, non-bipartite, of odd girth g, and the pattern graph with patterns spanning a code D, length parity gives π₁ → D onto and C-trivial, so every normal generating set has ≥ dim D walks, each with ≥ g values on ≥ d(D) coordinates. Folded cubes and odd graphs (g ~ log b, |H| = b^{ω(1)}) refute W for all absolute k, c and all s, g, f.
+* Theorem A [claimed PROVEN]: C = ∏N_j with N_j 2-transitive: 4 values per coordinate suffice. Theorem B′: exact quotient for independent patterns on folded cubes. Prop E: abelian gains on this family are FPT (Cor E.1 mod S-W objects). Elementary gap: normal generation does not give invariants for non-abelian gains.
+* Computations homology-level only, small b, M. The superpolynomial bound on invariant cycle-vector families is SPECULATION.
+* Height 2 still open: the family survives G, G+, C and Prop N; its abelian case is easy, its non-abelian case open. No implication for TreeCI or GI.
+* w53-redteam-gain: adversarial check of w50.
