@@ -1,0 +1,149 @@
+Remark 4.4 worked example matches: True
+
+== Matrix checks (exact) ==
+  (r,Q,R)=(2, 2, 2) D=16 I=[0, 1] c^B=1 c/D=0.062 hoeff=1.558 eig=True support=True rank=1 rank<=c:True
+  (r,Q,R)=(2, 3, 2) D=64 I=[0, 1] c^B=10 c/D=0.156 hoeff=1.693 eig=True support=True rank=10 rank<=c:True
+  (r,Q,R)=(3, 2, 2) D=81 I=[0, 1] c^B=9 c/D=0.111 hoeff=1.558 eig=True support=True rank=9 rank<=c:True
+  (r,Q,R)=(2, 4, 2) D=256 I=[0, 1] c^B=67 c/D=0.262 hoeff=1.765 eig=True support=True rank=- rank<=c:True
+  (r,Q,R)=(2, 4, 3) D=256 I=[0, 1, 2] c^B=13 c/D=0.051 hoeff=1.510 eig=True support=True rank=- rank<=c:True
+  BROKEN f_wrong (2, 3, 2): eig=False support=True
+  BROKEN f_wrong (2, 4, 3): eig=False support=True
+  BROKEN no_V0 (2, 3, 2): eig=False support=False
+  BROKEN no_V0 (2, 4, 3): eig=False support=False
+
+== Lemma 4.3 at array level (exact row-space membership) ==
+  (2, 2, 2) variant=correct: checked 32 failed 0
+  (2, 2, 2) variant=C_drop: checked 32 failed 8
+  (2, 2, 2) variant=C_empty: checked 32 failed 8
+  (2, 2, 2) variant=phi_drop: checked 32 failed 16
+  (2, 2, 2) variant=f_wrong: checked 32 failed 16
+  (2, 2, 2) variant=no_V0: checked 32 failed 16
+  (2, 3, 2) variant=correct: checked 192 failed 0
+  (2, 3, 2) variant=C_drop: checked 192 failed 8
+  (2, 3, 2) variant=C_empty: checked 192 failed 72
+  (2, 3, 2) variant=phi_drop: checked 192 failed 96
+  (2, 3, 2) variant=f_wrong: checked 192 failed 96
+  (2, 3, 2) variant=no_V0: checked 192 failed 96
+  (3, 2, 2) variant=correct: checked 256 failed 0
+  (3, 2, 2) variant=C_drop: checked 256 failed 8
+  (3, 2, 2) variant=C_empty: checked 256 failed 56
+  (3, 2, 2) variant=phi_drop: checked 256 failed 86
+  (3, 2, 2) variant=f_wrong: checked 256 failed 86
+  (3, 2, 2) variant=no_V0: checked 256 failed 86
+
+== Correct construction, sparse instances ==
+  sparse-A (2, 3, 2) seed=0 n=6 M=13 h=3 q=4 degH=2/13 Tdep_rows=2/13 #F=22 H0=True deg=True design=(39, 0) sep=True taylor=True hermite=True (5.5s)
+  sparse-A (2, 3, 2) seed=1 n=6 M=13 h=2 q=4 degH=3/13 Tdep_rows=6/13 #F=30 H0=True deg=True design=(39, 0) sep=True taylor=True hermite=True (2.6s)
+  sparse-A (2, 3, 2) seed=2 n=6 M=13 h=3 q=4 degH=5/13 Tdep_rows=7/13 #F=18 H0=True deg=True design=(39, 0) sep=True taylor=True hermite=True (4.1s)
+  sparse-B (2, 4, 2) seed=0 n=6 M=11 h=1 q=2 degH=1/11 Tdep_rows=2/11 #F=26 H0=True deg=True design=(44, 0) sep=True taylor=True hermite=True (1.1s)
+  sparse-B (2, 4, 2) seed=1 n=6 M=11 h=1 q=2 degH=1/11 Tdep_rows=1/11 #F=30 H0=True deg=True design=(44, 0) sep=True taylor=True hermite=True (1.5s)
+  sparse-B (2, 4, 2) seed=2 n=6 M=10 h=2 q=2 degH=2/10 Tdep_rows=3/10 #F=22 H0=True deg=True design=(40, 0) sep=True taylor=True hermite=True (0.8s)
+  sparse-C (3, 2, 2) seed=0 n=6 M=11 h=2 q=5 degH=6/11 Tdep_rows=7/11 #F=26 H0=True deg=True design=(44, 0) sep=True taylor=True hermite=True (3.1s)
+  sparse-C (3, 2, 2) seed=1 n=6 M=11 h=3 q=5 degH=3/11 Tdep_rows=6/11 #F=30 H0=True deg=True design=(44, 0) sep=True taylor=True hermite=True (2.1s)
+  sparse-C (3, 2, 2) seed=2 n=6 M=10 h=2 q=5 degH=5/10 Tdep_rows=5/10 #F=22 H0=True deg=True design=(40, 0) sep=True taylor=True hermite=True (1.7s)
+  sparse-D (2, 4, 3) seed=0 n=5 M=10 h=1 q=5 degH=12/20 Tdep_rows=8/10 #F=13 H0=True deg=True design=(40, 0) sep=True taylor=True hermite=True (1.5s)
+  sparse-D (2, 4, 3) seed=1 n=5 M=10 h=1 q=5 degH=6/20 Tdep_rows=6/10 #F=19 H0=True deg=True design=(40, 0) sep=True taylor=True hermite=True (1.6s)
+  sparse-D (2, 4, 3) seed=2 n=5 M=10 h=2 q=5 degH=15/20 Tdep_rows=9/10 #F=12 H0=True deg=True design=(40, 0) sep=True taylor=True hermite=True (1.1s)
+
+== Correct construction, dense instances (arrays well filled) ==
+  dense-A (2, 3, 2) seed=0 n=5 M=21 h=8 q=7 degH=1/21 Tdep_rows=2/21 #F=7 H0=True deg=True design=(63, 0) sep=True taylor=True hermite=True (3.0s)
+  dense-A (2, 3, 2) seed=1 n=5 M=20 h=5 q=6 degH=10/20 Tdep_rows=11/20 #F=7 H0=True deg=True design=(60, 0) sep=True taylor=True hermite=True (2.6s)
+  dense-A (2, 3, 2) seed=2 n=5 M=21 h=2 q=7 degH=9/21 Tdep_rows=13/21 #F=6 H0=True deg=True design=(63, 0) sep=True taylor=True hermite=True (2.5s)
+  dense-B (3, 2, 2) seed=0 n=5 M=16 h=2 q=8 degH=5/16 Tdep_rows=8/16 #F=9 H0=True deg=True design=(64, 0) sep=True taylor=True hermite=True (1.7s)
+  dense-B (3, 2, 2) seed=1 n=5 M=15 h=3 q=7 degH=7/15 Tdep_rows=8/15 #F=11 H0=True deg=True design=(60, 0) sep=True taylor=True hermite=True (1.0s)
+  dense-B (3, 2, 2) seed=2 n=5 M=15 h=2 q=7 degH=6/15 Tdep_rows=9/15 #F=8 H0=True deg=True design=(60, 0) sep=True taylor=True hermite=True (0.7s)
+  ALL PASS: True
+
+== Correct, dense-C (q < n; reports minimal |E| truncation) ==
+  dense-C (2, 4, 2) seed=0 n=7 M=18 h=1 q=4 degH=3/18 Tdep_rows=5/18 #F=36 H0=True deg=True design=(72, 0) sep=True taylor=True hermite=True min_qE=3 (42.1s)
+  dense-C (2, 4, 2) seed=1 n=7 M=16 h=2 q=4 degH=1/16 Tdep_rows=3/16 #F=56 H0=True deg=True design=(64, 0) sep=True taylor=True hermite=True min_qE=1 (25.2s)
+
+== Broken variants, instances with many T-dependent rows ==
+  C_drop         caught 2/6 (n/a 0)  [none; design+sep+taylor+recover; none; design+sep+taylor+recover; none; none]
+  C_empty        caught 6/6 (n/a 0)  [design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover]
+  phi_drop       caught 4/6 (n/a 0)  [none; none; design+sep+taylor+recover; design; design+sep+taylor+recover; design+sep+taylor+recover]
+  sigma_split    caught 4/6 (n/a 0)  [design+sep+taylor+recover; none; design+sep+taylor+recover; none; design+sep+taylor+recover; design+taylor+recover]
+  measure_mod2   caught 1/6 (n/a 0)  [none; none; none; taylor+recover; none; none]
+  f_wrong        caught 4/6 (n/a 0)  [none; none; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover]
+  no_V0          caught 5/6 (n/a 0)  [none; sep+taylor; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover; design+sep+taylor+recover]
+  no_restore     caught 6/6 (n/a 0)  [recover+H0; recover+H0; recover+H0; recover+H0; recover+H0; recover+H0]
+  J_short        caught 6/6 (n/a 0)  [recover; recover; recover; recover; recover; recover]
+  E_short        caught 1/6 (n/a 0)  [none; none; none; none; taylor+recover; none]
+
+== Broken variants needing q<n: dense-C ==
+  E_short        caught 2/2 (n/a 0)  [taylor+recover; taylor+recover]
+  J_short        caught 0/0 (n/a 2)  [n/a; n/a]
+
+Total time 250.8s
+exit test_core: 0
+
+=== check_lift.py ===
+Lemma 5.1 (p_ell congruence, e_j decomposition): True
+Lemma 5.2 (truncated product congruence; degree <= m+2(ell-1) for y_i=Y): True
+  cfg=(2, 3, 2) seed=0 {'n': 4, 'm': 3, 'N': 2, 'ell': 5, 'u_mod': 2, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 2, 'h': 1, 'J': 8, 'q': 7, 'M': 6}  (0.7s)
+  cfg=(2, 3, 2) seed=1 {'n': 4, 'm': 3, 'N': 0, 'ell': 5, 'u_mod': 0, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 0, 'h': 1, 'J': 8, 'q': 7, 'M': 6}  (0.7s)
+  cfg=(2, 3, 2) seed=2 {'n': 4, 'm': 3, 'N': 0, 'ell': 5, 'u_mod': 0, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 0, 'h': 2, 'J': 8, 'q': 7, 'M': 5}  (0.4s)
+  cfg=(2, 3, 2) seed=3 {'n': 4, 'm': 3, 'N': 3, 'ell': 5, 'u_mod': 3, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 3, 'h': 1, 'J': 8, 'q': 7, 'M': 6}  (0.6s)
+  cfg=(2, 2, 2) seed=0 {'n': 4, 'm': 3, 'N': 2, 'ell': 5, 'u_mod': 2, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 2, 'h': 2, 'J': 12, 'q': 11, 'M': 6}  (0.6s)
+  cfg=(2, 2, 2) seed=1 {'n': 4, 'm': 3, 'N': 0, 'ell': 5, 'u_mod': 0, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 0, 'h': 2, 'J': 12, 'q': 11, 'M': 6}  (0.5s)
+  cfg=(2, 2, 2) seed=2 {'n': 4, 'm': 3, 'N': 0, 'ell': 5, 'u_mod': 0, 'h0_ok': True, 'deg_ok': True, 'sep_ok': True, 'tay_ok': True, 'rec_ok': True, 'rec_val': 0, 'h': 2, 'J': 12, 'q': 11, 'M': 5}  (0.4s)
+all lift checks pass, total 4.1s
+=== check_params.py ===
+first lam with r>=2, R>=32, 6R<=Q (beta=1): 10986260926  log2(lam)=33.4
+first lam where exponent (3.16) < 1: 72832059823  log2(lam)=36.1
+  lam=2^40: valid=True exponent/n=0.3860218865190029
+  lam=2^60: valid=True exponent/n=0.001375809039686801
+  lam=2^80: valid=True exponent/n=2.8655522698122585e-06
+  lam=2^100: valid=True exponent/n=4.82189056089698e-09
+  lam=2^150: valid=True exponent/n=3.6485376540792053e-16
+  lam=2^200: valid=True exponent/n=2.0471754805280038e-23
+  lam=2^400: valid=True exponent/n=7.0250928426636005e-53
+  lam=2^800: valid=True exponent/n=1.8237755193864816e-112
+=== check_appendix_d.py ===
+Lemma D.4 W(0)=I, integrality of W(t+alpha z): [True, True, True]
+  D.9 a=2 u=1 M=1 seed=0: match=True
+  D.9 a=2 u=1 M=1 seed=1: match=True
+  D.9 a=2 u=1 M=1 seed=2: match=True
+  D.9 a=2 u=2 M=2 seed=0: match=True
+  D.9 a=2 u=2 M=2 seed=1: match=True
+  D.9 a=2 u=2 M=2 seed=2: match=True
+  D.9 a=3 u=2 M=3 seed=0: match=True
+  D.9 a=3 u=2 M=3 seed=1: match=True
+  D.9 a=3 u=2 M=3 seed=2: match=True
+  D.9 a=3 u=3 M=2 seed=0: match=True
+  D.9 a=3 u=3 M=2 seed=1: match=True
+  D.9 a=3 u=3 M=2 seed=2: match=True
+D.9 all match: True
+(D.10) valuation identity and bound: True
+=== check_transfer.py ===
+--- control: bounded-occurrence 3-SAT at moderate n (the paper regime needs n > 2^(2^36)) ---
+3-SAT-3, n=2^20                          n=1.05e+06 M=3.15e+06 b=3 w=3 d=3.15e+06: infeasible (no r,Q,R with R<Q)
+3-SAT-3, n=2^60                          n=1.15e+18 M=3.46e+18 b=3 w=3 d=3.46e+18: best exponent/n=2.585 (r=2,Q=14,R=13,tau=1e-06,q=1.15292e+18)
+3-SAT-3, n=2^200                         n=1.61e+60 M=4.82e+60 b=3 w=3 d=4.82e+60: best exponent/n=1.937 (r=6,Q=18,R=17,tau=0.0001,q=1.60694e+60)
+3-SAT-3, n=2^1000                        n=1.07e+301 M=3.21e+301 b=3 w=3 d=3.21e+301: best exponent/n=1.594 (r=256,Q=31,R=30,tau=1e-06,q=1.07151e+301)
+
+--- 3-tensor isomorphism over F_2, witness 3k^2 bits ---
+TI direct, k=1e+03                       n=3.15e+06 M=3.3e+12 b=1.05e+06 w=3.07e+03 d=3.22e+09: infeasible (no r,Q,R with R<Q)
+TI compressed (optimistic), k=1e+03      n=3.15e+06 M=9.66e+09 b=1.43e+04 w=3.07e+03 d=2.83e+07: infeasible (no r,Q,R with R<Q)
+TI after copying (n=M), k=1e+03          n=9.66e+09 M=2.9e+10 b=3 w=3 d=2.9e+10: best exponent/n=2.905 (r=2,Q=7,R=6,tau=0.01,q=9.66368e+09)
+TI direct, k=1e+06                       n=3.3e+12 M=3.63e+24 b=1.1e+12 w=3.15e+06 d=3.46e+18: infeasible (no r,Q,R with R<Q)
+TI compressed (optimistic), k=1e+06      n=3.3e+12 M=1.04e+19 b=2.03e+07 w=3.15e+06 d=2.97e+13: infeasible (no r,Q,R with R<Q)
+TI after copying (n=M), k=1e+06          n=1.04e+19 M=3.11e+19 b=3 w=3 d=3.11e+19: best exponent/n=2.585 (r=2,Q=14,R=13,tau=1e-06,q=1.03763e+19)
+TI direct, k=1.1e+12                     n=3.63e+24 M=4.38e+48 b=1.21e+24 w=3.3e+12 d=3.99e+36: infeasible (no r,Q,R with R<Q)
+TI compressed (optimistic), k=1.1e+12    n=3.63e+24 M=1.2e+37 b=2.98e+13 w=3.3e+12 d=3.26e+25: infeasible (no r,Q,R with R<Q)
+TI after copying (n=M), k=1.1e+12        n=1.2e+37 M=3.59e+37 b=3 w=3 d=3.59e+37: best exponent/n=2.193 (r=4,Q=13,R=12,tau=0.001,q=1.19631e+37)
+TI direct, k=1.2e+24                     n=4.38e+48 M=6.41e+96 b=1.46e+48 w=3.63e+24 d=5.3e+72: infeasible (no r,Q,R with R<Q)
+TI compressed (optimistic), k=1.2e+24    n=4.38e+48 M=1.59e+73 b=4.61e+25 w=3.63e+24 d=3.95e+49: infeasible (no r,Q,R with R<Q)
+TI after copying (n=M), k=1.2e+24        n=1.59e+73 M=4.77e+73 b=3 w=3 d=4.77e+73: best exponent/n=1.858 (r=8,Q=19,R=18,tau=0.0001,q=1.59016e+73)
+
+--- AGL(k,2) string isomorphism, witness k^2+k bits ---
+AGL direct, k=20                         n=420 M=2.1e+08 b=1.05e+06 w=400 d=2.1e+07: infeasible (no r,Q,R with R<Q)
+AGL after copying (n=Nk), k=20           n=2.1e+07 M=6.29e+07 b=3 w=3 d=6.29e+07: best exponent/n=4.985 (r=2,Q=5,R=4,tau=0.1,q=2.09715e+07)
+AGL direct, k=40                         n=1.64e+03 M=8.8e+14 b=1.1e+12 w=1.6e+03 d=4.4e+13: infeasible (no r,Q,R with R<Q)
+AGL after copying (n=Nk), k=40           n=4.4e+13 M=1.32e+14 b=3 w=3 d=1.32e+14: best exponent/n=2.625 (r=2,Q=9,R=8,tau=0.001,q=4.39805e+13)
+AGL direct, k=80                         n=6.48e+03 M=3.87e+27 b=1.21e+24 w=6.4e+03 d=9.67e+25: infeasible (no r,Q,R with R<Q)
+AGL after copying (n=Nk), k=80           n=9.67e+25 M=2.9e+26 b=3 w=3 d=2.9e+26: best exponent/n=2.332 (r=3,Q=12,R=11,tau=0.001,q=9.67141e+25)
+AGL direct, k=160                        n=2.58e+04 M=1.87e+52 b=1.46e+48 w=2.56e+04 d=2.34e+50: infeasible (no r,Q,R with R<Q)
+AGL after copying (n=Nk), k=160          n=2.34e+50 M=7.02e+50 b=3 w=3 d=7.02e+50: best exponent/n=2.077 (r=6,Q=15,R=14,tau=0.001,q=2.3384e+50)
+AGL direct, k=500                        n=2.5e+05 M=4.09e+155 b=3.27e+150 w=2.5e+05 d=1.64e+153: infeasible (no r,Q,R with R<Q)
+AGL after copying (n=Nk), k=500          n=1.64e+153 M=4.91e+153 b=3 w=3 d=4.91e+153: best exponent/n=1.653 (r=32,Q=25,R=24,tau=1e-05,q=1.6367e+153)
