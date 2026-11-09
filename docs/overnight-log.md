@@ -632,3 +632,10 @@ are red-teams, a LaTeX paper, and final integration.
   for T2 Thm A and W8 Prop H. Theorem G is XP in ρ, not FPT in (b, ρ). Theorem C needs Pálfy–Wolf. LHJ escalates at ≥ ¾.
   P3's missing existence proof closed with an explicit R of O(κ²) lines.
 * w32-conference: conference graphs below n^{log n} (pseudorandom-versus-algebraic dichotomy).
+
+### w30-sts (done, commit ffda3f4; docs/w30-sts.md), NOT yet red-teamed
+* No n^{o(log n)} for STS. T1: structure dichotomy at the top of the rank range only (rank ≥ 0.947 log2(n+1)).
+* T2 [claimed PROVEN]: linear equivalence of Boolean functions on F_2^d reduces to STS isomorphism with n = 2^{d+3}−1, so
+  n^{o(log n)} for STS gives 2^{o(d²)} string isomorphism under GL(d,2). Links the STS barrier to the affine / tensor barrier.
+* T5: STS within n^{o(1)} blocks of a projective space in n^{o(log n)}. w18's "locally algebraic" lead refuted.
+* w33-redteam-sts: adversarial check of T1, T2, T3, T5.
