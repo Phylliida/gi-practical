@@ -60,6 +60,7 @@ stage to the recursion.
   and a least-image search over a stabilizer chain (`perm_canon`) for the rest.
 * `gi/refine.py`: joint canonical color refinement of two graphs (1-WL and 2-WL), with colors named
   by one content-based rule for both graphs.
+* `gi/_ckernel.c`, `gi/kernel.py`: the optional compiled kernel (see "Compiled kernel" below).
 * `gi/graph.py`: the graph wrapper (paper Algorithm 1). Positions are the ordered vertex pairs and
   the group acts on both coordinates. Front end: refinement, then a staged orbit chain over
   vertex-class factors with refinement between stages, and optional bounded-depth
@@ -364,10 +365,28 @@ n = 2464 on. Traces remains far ahead elsewhere (random 3-regular n = 4000: 0.01
 0.24 s; CFI n = 3200: 0.06 s per pair against 13 s), and sparse nauty and Traces on hypercubes. See
 docs/w9-canontool.md, including §3.4 on where it loses; `bench/canon.py` reproduces the tables.
 
+## Compiled kernel (optional)
+
+`gi/_ckernel.c` compiles the hottest primitives (2-WL refinement, permutation multiply and inverse,
+sifting, orbits). Build it with the Python you will run:
+
+```sh
+python3 build_ckernel.py            # needs only gcc (or $CC); writes gi/_ckernel*.so (git-ignored)
+python3 build_ckernel.py --clean    # remove it
+GI_NO_CKERNEL=1 python3 ...         # disable it for one run
+```
+
+The script takes the headers and the extension suffix from the interpreter running it, not from
+`python3-config` on PATH (on NixOS that may belong to a different Python). If gcc is missing, use
+`nix shell nixpkgs#gcc -c python3 build_ckernel.py`. Without the build, or with a stale one (a
+warning is issued), everything runs in pure Python with identical outputs. The kernel makes the
+default hybrid 2.0–2.4× faster; the bounded-degree pipeline and canonical forms are unchanged
+(1.00–1.15×), since their hot code is still Python. See docs/w16-ckernel.md.
+
 ## Benchmark protocol
 
 ```sh
-python3 -m pytest -q tests                                   # must pass
+python3 -m pytest -q tests                                   # must pass, with the kernel on and off
 python3 bench/run.py --tiers tiny,small --timeout 60 --label NAME
 python3 bench/run.py --tiers large,xl --only "J(8,3)|PG(2,5)"     # names may contain commas
 python3 bench/run.py --tiers medium --timeout 120 --label NAME --solver-args '{"certificates": false}'

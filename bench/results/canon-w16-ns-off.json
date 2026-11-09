@@ -1,0 +1,48 @@
+{
+ "label": "w16-ns-off",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.234,
+    "t_x": 0.116,
+    "t_y": 0.118,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.235,
+    "t_x": 0.115,
+    "t_y": 0.12,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}
