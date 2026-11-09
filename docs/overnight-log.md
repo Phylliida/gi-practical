@@ -609,3 +609,11 @@ are red-teams, a LaTeX paper, and final integration.
   q₁ = 486290 at Lean's parameters, not q₀). It bounds HJ, not GI. Simulations support the window shape only.
 * A1 sound after four repairs; routine application of Rosenbaum. Latin-square-graph exponent should be (1/8) log2 N.
 * w28-sigma: attack the sigma channel that the PG(m-1,2) family exploits.
+
+### w28-sigma (done, commit 27292f8; docs/w28-sigma.md), NOT yet red-teamed
+* Lazy Step 4 (LHJ) removes the σ channel on the B1 family, but the exponent does not change: x² and Q still pay
+  log N·log w, and unpruned LHJ pays 2^{Ω(m²)} on X_m through anchors in the Q channel [SKETCH], i.e. Miller's
+  generator enumeration. No barrier contradicted.
+* Correction to w18 §2.9: one switched block leaves |Aut| = 2^{m²−O(m)}. A rigid variant X_{m,R} deletes O(m) lines.
+  It is not a barrier: rigid instances tested became discrete under 1-WL (m ≤ 9).
+* Theorem U (Ray-Chaudhuri–Wilson with variable blocks) and Theorem L (limitation for prefix-determined rules).
