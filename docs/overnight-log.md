@@ -647,3 +647,12 @@ are red-teams, a LaTeX paper, and final integration.
 * Experiments to n = 49 (Spence), Paley to 1097, Turyn to 6561: minimum 1-WL depth always 2 or 3. Cannot separate O(1) from
   slow growth; large examples are all algebraic or products.
 * w34-vc: follow up with VC/ε-net bounds, 2-WL grid detection, and a growth lemma for the stable algebra.
+
+### w33-redteam-sts (done, commit a6d1fcc; docs/redteam-w30-sts.md)
+* T2 SOUND: exact checks agree with GL-orbit equality (d=3 all 8256 pairs; d=4 1035 representative pairs; d=5 samples). So
+  n^{o(log n)} for STS would give 2^{o(d²)} string isomorphism under GL(d,2). Isomorphisms surject onto linear equivalences,
+  with a gauge kernel. Quasigroup isomorphism follows; Latin-square isotopy now proved with one extra gadget condition.
+* T1 sound and improved: λ < (log2 10)/3, r > 0.9031ℓ, sharp at AG(2,3). T3, T5 sound.
+* Overclaims to fix: "hardest instances are PG-fibred", "exactly the barrier". The fibration form is Jungnickel–Tonchev
+  Thm 2.8/2.9; no reduction to STS isomorphism found in prior art.
+* w35-cubic: cubic Boolean equivalence over F_2 in 2^{Õ(d^{1.5})}.
