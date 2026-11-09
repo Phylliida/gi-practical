@@ -107,8 +107,9 @@ from operator import itemgetter
 from .perm import identity, mul, inv, sym_gens
 from .group import PermGroup, ActionHom
 from .ea2 import EA2, EAAction, is_ea2
-from .bounded import (_Graph, _Rooted, class_plan, refine_1wl, _components, _induced,
-                      _check_lists, _neighbours, edge_invariants)
+from .bounded import (_Graph, _Rooted, class_plan, _components, _induced,
+                      _check_lists, _neighbours, root_class)
+from .wl import refine as wl_refine
 
 __all__ = ["canonical_form", "canonical_form_lists", "canonical_labeling",
            "canonical_labeling_lists", "canon_iso", "canon_iso_lists", "perm_canon",
@@ -297,22 +298,10 @@ def _pair_image(g, e):
 
 # -- rooted canonical forms ----------------------------------------------------------------
 def canon_rooted_colors(g, u0, u1):
-    """1-WL colors of g with u0, u1 individualized, named canonically: in each
-    round a color is the rank of its signature (old color, sorted neighbour
-    colors) among the round's signatures, so the names depend only on the
-    rooted isomorphism type of (g, u0, u1) (g.col must be canonical too).
-    Iterated until the number of classes stops growing."""
-    nbr, n = g.nbr, g.n
-    col = [c + 2 for c in g.col]
-    col[u0], col[u1] = 0, 1
-    k = len(set(col))
-    while True:
-        sig = [(col[v], tuple(sorted([col[w] for w in nbr[v]]))) for v in range(n)]
-        rank = {s: i for i, s in enumerate(sorted(set(sig)))}
-        col = [rank[s] for s in sig]
-        if len(rank) == k:
-            return col
-        k = len(rank)
+    """1-WL colors of g with u0, u1 individualized (gi.wl.refine, starting
+    from the equitable canonical coloring g.col), named canonically: the names
+    depend only on the rooted isomorphism type of (g, u0, u1)."""
+    return wl_refine(g.nbr, g.col, (u0, u1), True)
 
 
 class RootedCanon:
@@ -503,45 +492,8 @@ def _form(g, L):
 
 def _root_class(G, edges):
     """The candidate root edges (indices into edges): an isomorphism-invariant
-    class. Stage 1: the class of (profile(u), profile(v)) minimizing (size,
-    key), where profile(v) = (color, the sizes of the spheres around v, by
-    color when there are at most 4 colors); stage 2: within it, the class of
-    gi.bounded.edge_invariants minimizing (size, invariant). Both keys are
-    isomorphism invariants of oriented edges (G.col canonical), so every
-    isomorphism maps the class of X onto the class of Y."""
-    n, nbr, col = G.n, G.nbr, G.col
-    cur = [1 << v for v in range(n)]
-    spheres = [cur]
-    while True:
-        nxt = []
-        for v in range(n):
-            b = cur[v]
-            for w in nbr[v]:
-                b |= cur[w]
-            nxt.append(b)
-        if nxt == cur:
-            break
-        spheres.append([b ^ a for a, b in zip(cur, nxt)])
-        cur = nxt
-    masks = {}
-    for v in range(n):
-        masks[col[v]] = masks.get(col[v], 0) | (1 << v)
-    cm = [m for _, m in sorted(masks.items())]
-    if 1 < len(cm) <= 4:
-        prof = [(col[v], tuple(tuple((s[v] & m).bit_count() for m in cm) for s in spheres))
-                for v in range(n)]
-    else:
-        prof = [(col[v], tuple(s[v].bit_count() for s in spheres)) for v in range(n)]
-    k1 = [(prof[u], prof[v]) for u, v in edges]
-    cnt = Counter(k1)
-    key = min(cnt, key=lambda k: (cnt[k], k))
-    C1 = [f for f, k in enumerate(k1) if k == key]
-    if len(C1) <= 1:
-        return C1
-    inv2 = edge_invariants(G, [edges[f] for f in C1])
-    cnt = Counter(inv2)
-    key = min(cnt, key=lambda k: (cnt[k], k))
-    return [f for f, k in zip(C1, inv2) if k == key]
+    class (gi.bounded.root_class; G.col canonical)."""
+    return root_class(G, edges)[0]
 
 
 def canon_connected(g, stats, layers="class"):
@@ -551,12 +503,13 @@ def canon_connected(g, stats, layers="class"):
     n = g.n
     if n == 1:
         return ((g.col[0],), ()), [0], []
-    gc = refine_1wl(g.nbr, g.nbr, list(g.col), list(g.col))[0]
+    gc = wl_refine(g.nbr, g.col)        # canonical: g.col is canonical
     G = _Graph(g.nbr, gc)
     edges = [(u, v) for u in range(n) for v in g.nbr[u]]
     eidx = {e: i for i, e in enumerate(edges)}
     cand = _root_class(G, edges)
-    parent = list(range(len(edges)))
+    pos = {f: i for i, f in enumerate(cand)}
+    parent = list(range(len(cand)))
 
     def find(v):
         while parent[v] != v:
@@ -565,18 +518,19 @@ def canon_connected(g, stats, layers="class"):
         return v
 
     def absorb(a):
-        for i, (u, v) in enumerate(edges):
-            p, q = find(i), find(eidx[(a[u], a[v])])
+        for i, f in enumerate(cand):    # (automorphisms map the class K onto itself)
+            u, v = edges[f]
+            p, q = find(i), find(pos[eidx[(a[u], a[v])]])
             if p != q:
                 parent[max(p, q)] = min(p, q)
 
     best = None                         # (keys, L, Linv)
     auts, done = [], []
-    for f in cand:
-        rf = find(f)
+    for fi, f in enumerate(cand):
+        rf = find(fi)
         if any(find(e) == rf for e in done):
             continue
-        done.append(f)
+        done.append(fi)
         stats["canon_roots"] += 1
         u0, u1 = edges[f]
         rc = RootedCanon(G, u0, u1, g.col, stats, layers)

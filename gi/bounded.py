@@ -90,6 +90,7 @@ from .perm import mul, identity, sym_gens
 from .group import PermGroup, ActionHom
 from .solver import Solver
 from .ea2 import EA2, EAAction, is_ea2
+from .wl import refine as wl_refine
 
 
 class NotSimple(ValueError):
@@ -132,22 +133,18 @@ def _joint_names(cx, cy):
 
 
 def refine_1wl(nx, ny, cx, cy):
-    """Joint color refinement of two graphs (neighbour lists nx, ny, int
-    colors cx, cy). New colors are ranks of (old color, sorted neighbour
-    colors) in the union of both graphs' signatures, so every isomorphism
-    maps the refined x-colors onto the refined y-colors. None if the color
-    histograms differ."""
-    k = len(set(cx) | set(cy))
-    while True:
-        if Counter(cx) != Counter(cy):
-            return None
-        sx = [(cx[v], tuple(sorted(cx[w] for w in nx[v]))) for v in range(len(nx))]
-        sy = [(cy[v], tuple(sorted(cy[w] for w in ny[v]))) for v in range(len(ny))]
-        cx, cy = _joint_names(sx, sy)
-        k2 = len(set(cx) | set(cy))
-        if k2 == k:
-            return (cx, cy) if Counter(cx) == Counter(cy) else None
-        k = k2
+    """Joint 1-WL of two graphs (neighbour lists nx, ny, int colors cx, cy)
+    by gi.wl.refine on the disjoint union, so a color name means the same in
+    both: every isomorphism X -> Y (extended by its inverse) is an
+    automorphism of the union, hence maps the refined x-colors onto the
+    refined y-colors. None if the color histograms differ."""
+    n = len(nx)
+    if Counter(cx) != Counter(cy):
+        return None
+    union = nx + [[v + n for v in r] for r in ny]
+    c = wl_refine(union, list(cx) + list(cy))
+    cx2, cy2 = c[:n], c[n:]
+    return (cx2, cy2) if Counter(cx2) == Counter(cy2) else None
 
 
 def _components(nbr):
@@ -174,35 +171,14 @@ def _induced(g, part):
 
 
 # -- the layered structure from an oriented edge ---------------------------------
-def rooted_colors(g, u0, u1, names):
-    """1-WL colors of g with u0 and u1 individualized, named canonically:
-    names is a dict shared by all rooted graphs compared with each other, and a
-    color is the index of its signature (old color, sorted neighbour colors)
-    in it. Iterated until the number of classes stops growing. Every
+def rooted_colors(g, u0, u1, stable=False):
+    """1-WL colors of g with u0 and u1 individualized (gi.wl.refine): the
+    color names are a function of the rooted isomorphism type, so every
     isomorphism (X, (u0, u1)) -> (Z, (u0', u1')) maps the colors of X onto
-    those of Z (induction on the rounds: the names are one function of the
-    signature, and isomorphic graphs stop after the same round), so these
-    colors can be added to the rooted graphs without changing their rooted
-    isomorphisms. They are in general finer than distances from the root
-    (1-WL computes those)."""
-    nbr = g.nbr
-
-    def name(sig):
-        c = names.get(sig)
-        if c is None:
-            c = names[sig] = len(names)
-        return c
-
-    col = [name((-1, c)) for c in g.col]
-    col[u0] = name((-2, g.col[u0]))
-    col[u1] = name((-3, g.col[u1]))
-    k = len(set(col))
-    while True:
-        col = [name((col[v], tuple(sorted([col[w] for w in nbr[v]])))) for v in range(g.n)]
-        k2 = len(set(col))
-        if k2 == k:
-            return col
-        k = k2
+    those of Z, and they can be added to the rooted graphs without changing
+    their rooted isomorphisms. They are in general finer than distances from
+    the root (1-WL computes those). stable: g.col is equitable."""
+    return wl_refine(g.nbr, g.col, (u0, u1), stable)
 
 
 class _Seed:
@@ -890,31 +866,255 @@ def edge_invariants(g, edges):
     return out
 
 
-class _Connected:
-    """A connected graph with its oriented-edge invariants; with aut=True also
-    Aut(X), the orbits of Aut(X) on oriented edges and the chains used."""
+# -- the class of candidate root edges ----------------------------------------------
+BFS_ENDS = 64                           # at most this many BFS runs per stage
 
-    def __init__(self, g, solver, aut=True, root="class", names=None, rooted_wl=True, ea=True,
+
+def _bfs_dist(g, s):
+    """Distances from s in the connected graph g (a list)."""
+    n, nbr = g.n, g.nbr
+    dist = [-1] * n
+    dist[s] = 0
+    cur = [s]
+    d = 0
+    while cur:
+        d += 1
+        nxt = []
+        for v in cur:
+            for w in nbr[v]:
+                if dist[w] < 0:
+                    dist[w] = d
+                    nxt.append(w)
+        cur = nxt
+    return dist
+
+
+def _nc(g):
+    """Number of colors of g (1 or more than 4 colors: invariants ignore colors)."""
+    return len(set(g.col))
+
+
+def _profile_keys(g, ends, use_col):
+    """{v: the profile of v} for v in ends: (color of v, sphere sizes around v, by color
+    if use_col). By BFS when there are at most BFS_ENDS ends, else by
+    bit-parallel balls (cur[v] = ball of radius t around v, as int bitmasks).
+    The two forms are not equal, but the choice depends only on len(ends)."""
+    col = g.col
+    if len(ends) <= BFS_ENDS:
+        out = {}
+        for v in ends:
+            d = _bfs_dist(g, v)
+            if use_col:
+                out[v] = (col[v], tuple(sorted(Counter(zip(d, col)).items())))
+            else:
+                out[v] = (col[v], tuple(sorted(Counter(d).items())))
+        return out
+    spheres = _spheres(g)
+    if use_col:
+        masks = {}
+        for v in range(g.n):
+            masks[col[v]] = masks.get(col[v], 0) | (1 << v)
+        cm = [m for _, m in sorted(masks.items())]
+        return {v: (col[v], tuple(tuple((s[v] & m).bit_count() for m in cm) for s in spheres))
+                for v in ends}
+    return {v: (col[v], tuple(s[v].bit_count() for s in spheres)) for v in ends}
+
+
+def _spheres(g):
+    """[S_0, S_1, ..., S_D]: S_t[v] is the bitmask of the vertices at distance
+    exactly t from v (bit-parallel balls)."""
+    n, nbr = g.n, g.nbr
+    cur = [1 << v for v in range(n)]
+    spheres = [cur]
+    while True:
+        nxt = []
+        for v in range(n):
+            b = cur[v]
+            for w in nbr[v]:
+                b |= cur[w]
+            nxt.append(b)
+        if nxt == cur:
+            return spheres
+        spheres.append([b ^ a for a, b in zip(cur, nxt)])
+        cur = nxt
+
+
+STAGE1_SMALL = 8                         # stop refining stage 1 at a class of this size
+
+
+def _truncated_profiles(g, edges, C, use_col):
+    """Stage-1 keys of the edges C by sphere sizes, radius by radius, stopped
+    as soon as the smallest class of the edges of C has at most STAGE1_SMALL
+    members (or the balls have stopped growing): the profile up to radius t
+    (with t determined by the profiles themselves) is an isomorphism
+    invariant, and the radius needed is usually far below the diameter
+    (Miyazaki graphs: diameter ~ n/3). Each round costs one bit-parallel
+    ball step over all vertices. The ranks are canonical (sorted values)."""
+    n, nbr, col = g.n, g.nbr, g.col
+    if use_col:
+        masks = {}
+        for v in range(n):
+            masks[col[v]] = masks.get(col[v], 0) | (1 << v)
+        cm = [m for _, m in sorted(masks.items())]
+    cur = [1 << v for v in range(n)]
+    key = list(col)
+    k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
+    while min(Counter(k1).values()) > STAGE1_SMALL:
+        nxt = []
+        for v in range(n):
+            b = cur[v]
+            for w in nbr[v]:
+                b |= cur[w]
+            nxt.append(b)
+        if nxt == cur:
+            break
+        if use_col:
+            counts = [tuple(((b ^ a) & m).bit_count() for m in cm) for a, b in zip(cur, nxt)]
+        else:
+            counts = [(b ^ a).bit_count() for a, b in zip(cur, nxt)]
+        cur = nxt
+        sig = list(zip(key, counts))
+        rank = {x: i for i, x in enumerate(sorted(set(sig)))}
+        key = [rank[x] for x in sig]
+        k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
+    return k1
+
+
+def _inv_bfs(g, edges, use_col):
+    """Edge invariants of the oriented edges (u, v) (the color pair and the
+    multiset of (d(u, w), d(v, w), color of w if use_col) over all w) by BFS.
+    Equal in content to edge_invariants (in another form, and only used in place
+    of it when the number of edges is at most BFS_ENDS)."""
+    col = g.col
+    cache = {}
+
+    def dist(s):
+        d = cache.get(s)
+        if d is None:
+            d = cache[s] = _bfs_dist(g, s)
+        return d
+
+    out = []
+    for u, v in edges:
+        du, dv = dist(u), dist(v)
+        if use_col:
+            c = Counter(zip(du, dv, col))
+        else:
+            c = Counter(zip(du, dv))
+        out.append((col[u], col[v], tuple(sorted(c.items()))))
+    return out
+
+
+def root_class(g, edges, keys=None, stats=None):
+    """A class of oriented edges (indices into edges) that every isomorphism
+    respects, chosen in stages, each stage narrowing the previous one to its
+    class minimizing (size, key):
+
+      0. the pair of 1-WL colors of the ends (g.col must be canonical: colors
+         that a graph isomorphism preserves);
+      1. the pair of sphere-size profiles of the ends;
+      2. the edge invariants of gi.bounded (end colors and the multiset of
+         (d(u, w), d(v, w), color of w)); skipped when the class is so large
+         that it would cost more than trying more roots (rule below).
+
+    keys is None: choose the classes and return (C, keys), with keys the
+    (key, class size) per stage. keys given: select the classes of the
+    same keys instead (for the other graph); returns None if a class does
+    not have the same size. The stage rules depend only on the class sizes
+    and on n, so two isomorphic graphs go through the same stages."""
+    n, col = g.n, g.col
+    ncol = _nc(g)
+    use_col = 1 < ncol <= 4
+    k0 = [(col[u], col[v]) for u, v in edges]
+    cnt = Counter(k0)
+    if keys is None:
+        best = min(cnt, key=lambda k: (cnt[k], k))
+    else:
+        best = keys[0][0]
+    C = [f for f, k in enumerate(k0) if k == best]
+    out = [(best, len(C))]
+    if keys is not None and len(C) != keys[0][1]:
+        return None
+    if stats is not None:
+        stats["luks_root_stage0"] = max(stats["luks_root_stage0"], len(C))
+    if len(C) <= 1:
+        return C, out
+    ends = sorted(set(v for f in C for v in edges[f]))
+    if len(ends) <= BFS_ENDS:
+        prof = _profile_keys(g, ends, use_col)
+        k1 = [(prof[edges[f][0]], prof[edges[f][1]]) for f in C]
+    else:
+        k1 = _truncated_profiles(g, edges, C, use_col)
+    cnt = Counter(k1)
+    if keys is None:
+        best = min(cnt, key=lambda k: (cnt[k], k))
+    else:
+        best = keys[1][0]
+    C2 = [f for f, k in zip(C, k1) if k == best]
+    out.append((best, len(C2)))
+    if keys is not None and (len(keys) < 2 or len(C2) != keys[1][1]):
+        return None
+    C = C2
+    if stats is not None:
+        stats["luks_root_stage1"] = max(stats["luks_root_stage1"], len(C))
+    if len(C) <= 1:
+        return C, out
+    # stage 2 only when it is cheap compared with trying the edges as roots: the
+    # bit-parallel invariant costs about len(C) * diameter big-int operations
+    if len(C) > BFS_ENDS:
+        spheres_cost = len(C) * n
+        if spheres_cost > ROOT_STAGE2_BUDGET * n * n:
+            return C, out
+    pairs = [edges[f] for f in C]
+    k2 = _inv_bfs(g, pairs, use_col) if len(C) <= BFS_ENDS else edge_invariants(g, pairs)
+    cnt = Counter(k2)
+    if keys is None:
+        best = min(cnt, key=lambda k: (cnt[k], k))
+    else:
+        if len(keys) < 3:
+            return None
+        best = keys[2][0]
+    C2 = [f for f, k in zip(C, k2) if k == best]
+    out.append((best, len(C2)))
+    if keys is not None and len(C2) != keys[2][1]:
+        return None
+    if stats is not None:
+        stats["luks_root_stage2"] = max(stats["luks_root_stage2"], len(C2))
+    return C2, out
+
+
+ROOT_STAGE2_BUDGET = 2                  # see root_class
+
+
+class _Connected:
+    """A connected graph with the class of root edges (root_class) or, with
+    root="degree", the invariants of all oriented edges; with aut=True also
+    Aut(X), the orbits of Aut(X) on the root class and the chains used."""
+
+    def __init__(self, g, solver, aut=True, root="class", stable=False, rooted_wl=True, ea=True,
                  layers="class"):
-        self.g, self.solver, self.root, self.ea = g, solver, root, ea
+        self.g, self.solver, self.root, self.ea, self.stable = g, solver, root, ea, stable
         self.layers = layers if rooted_wl else "bfs"
-        self.names = {} if names is None else names
         self.rooted_wl = rooted_wl
         n = g.n
         self.edges = [(u, v) for u in range(n) for v in g.nbr[u]]
         self.eidx = {e: i for i, e in enumerate(self.edges)}
-        self.invs = self.invariants()
+        self.invs = None
+        self.cls = None
+        self.keys = None
         self.chains = {}
         self.gens = None
         if aut and self.edges:
             self.compute_aut()
 
     def invariants(self):
-        return edge_invariants(self.g, self.edges)
+        if self.invs is None:
+            self.invs = edge_invariants(self.g, self.edges)
+        return self.invs
 
     def rooted(self, f):
         u0, u1 = self.edges[f]
-        col = rooted_colors(self.g, u0, u1, self.names) if self.rooted_wl else self.g.col
+        col = rooted_colors(self.g, u0, u1, self.stable) if self.rooted_wl else self.g.col
         return _Seed(self.g, u0, u1, col)
 
     def chain(self, f):
@@ -934,21 +1134,31 @@ class _Connected:
             out[X.order[i]] = Z.order[s]
         return tuple(out)
 
-    def compute_aut(self):
-        cls = Counter(self.invs)
-        if self.root == "degree":       # an edge between two vertices of maximum degree sum
+    def _class(self):
+        """The class of oriented edges the root is taken from: root_class,
+        or with root="degree" the invariant class of an edge of maximum degree
+        sum. Returns (f0, the class as a list of edge indices)."""
+        if self.root == "degree":
+            invs = self.invariants()
+            cls = Counter(invs)
             deg = [len(x) for x in self.g.nbr]
             f0 = min(range(len(self.edges)), key=lambda i: (
-                -deg[self.edges[i][0]] - deg[self.edges[i][1]], cls[self.invs[i]], i))
-        else:                           # the smallest invariant class (fewest tests)
-            f0 = min(range(len(self.edges)), key=lambda i: (cls[self.invs[i]], i))
+                -deg[self.edges[i][0]] - deg[self.edges[i][1]], cls[invs[i]], i))
+            return f0, [f for f in range(len(self.edges)) if invs[f] == invs[f0]]
+        self.cls, self.keys = root_class(self.g, self.edges, stats=self.solver.stats)
+        return self.cls[0], self.cls
+
+    def compute_aut(self):
+        f0, C = self._class()
         self.f0 = f0
+        self.cls = C
         ch = self.chain(f0)
         X = ch.X
         if ch.run(X) is None:           # (X, f0) -> (X, f0) always exists
             raise AssertionError("no automorphism found for the root")
         gens = [self.vertex_map(X, X, g) for g in ch.aut()]
-        parent = list(range(len(self.edges)))
+        pos = {f: i for i, f in enumerate(C)}
+        parent = list(range(len(C)))
 
         def find(v):
             while parent[v] != v:
@@ -957,20 +1167,21 @@ class _Connected:
             return v
 
         def absorb(g):
-            for i, (u, v) in enumerate(self.edges):
-                a, b = find(i), find(self.eidx[(g[u], g[v])])
+            for i, f in enumerate(C):   # (Aut(X) maps the class onto itself)
+                u, v = self.edges[f]
+                a, b = find(i), find(pos[self.eidx[(g[u], g[v])]])
                 if a != b:
                     parent[max(a, b)] = min(a, b)
 
         for g in gens:
             absorb(g)
         failed = []
-        inv0 = self.invs[f0]
-        for f in range(len(self.edges)):
-            if f == f0 or self.invs[f] != inv0:
+        i0 = pos[f0]
+        for f in C:
+            if f == f0:
                 continue
-            rf = find(f)
-            if rf == find(f0) or any(find(e) == rf for e in failed):
+            rf = find(pos[f])
+            if rf == find(i0) or any(find(pos[e]) == rf for e in failed):
                 continue
             self.solver.stats["luks_aut_tests"] += 1
             Z = ch.target(self.rooted(f))
@@ -982,20 +1193,28 @@ class _Connected:
             gens.append(g)
             absorb(g)
         self.gens = gens
-        self.find = find
+        self.find = lambda f: find(pos[f])
 
     def iso(self, other):
         """A vertex map self -> other (connected, same color names), or None."""
         if self.g.n != other.g.n or len(self.edges) != len(other.edges):
             return None
-        if Counter(self.invs) != Counter(other.invs):
-            return None
-        inv0 = self.invs[self.f0]
-        e1 = next(i for i, v in enumerate(other.invs) if v == inv0)
+        if self.root == "degree":
+            if Counter(self.invariants()) != Counter(other.invariants()):
+                return None
+            inv0 = self.invs[self.f0]
+            e1 = next((i for i, v in enumerate(other.invs) if v == inv0), None)
+            if e1 is None:
+                return None
+        else:
+            res = root_class(other.g, other.edges, self.keys)
+            if res is None:
+                return None
+            e1 = res[0][0]
         seed = other.rooted(e1)
         reps, seen = [self.f0], {self.find(self.f0)}
-        for f in range(len(self.edges)):
-            if self.invs[f] == inv0 and self.find(f) not in seen:
+        for f in self.cls:
+            if self.find(f) not in seen:
                 seen.add(self.find(f))
                 reps.append(f)
         for f in reps:
@@ -1097,7 +1316,8 @@ def bounded_iso_lists(nx, ny, solver=None, vcolors_x=None, vcolors_y=None, refin
                     C[1].append((part, t))
                     break
         else:
-            rep = (_Connected(sub, solver, root=root, rooted_wl=rooted_wl, ea=ea, layers=layers)
+            rep = (_Connected(sub, solver, root=root, stable=refine, rooted_wl=rooted_wl, ea=ea,
+                              layers=layers)
                    if len(part) > 1 else _Single(sub))
             classes.append([rep, [(part, tuple(range(len(part))))], k])
     matches = [[] for _ in classes]
@@ -1151,5 +1371,5 @@ def _component_iso(rep, sub, solver):
     color multiset), or None."""
     if isinstance(rep, _Single):
         return (0,) if rep.g.col == sub.col else None
-    return rep.iso(_Connected(sub, solver, aut=False, names=rep.names, rooted_wl=rep.rooted_wl,
+    return rep.iso(_Connected(sub, solver, aut=False, stable=rep.stable, rooted_wl=rep.rooted_wl,
                               ea=rep.ea, layers=rep.layers))
