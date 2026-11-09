@@ -683,3 +683,6 @@ are red-teams, a LaTeX paper, and final integration.
 * Prior art: Sun, arXiv:2611.05920 (4 Nov 2026, unrefereed) covers alternating tuple isometry over Z/p^τ, so E(i)'s tuple case is no
   longer new as a statement; it gives a second conditional route to cubics in 2^{O(n^{51/26} log n)}.
 * w39-wiki-refresh: fold w27–w37 into the wiki and repair docs/w18-latin.md.
+
+## Next
+* w40-solvable: worst-case polynomial canonical forms at bounded degree (replace the exponential searches with Luks / Babai-Luks group recursion).
