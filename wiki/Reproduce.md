@@ -18,7 +18,7 @@ GI_NO_CKERNEL=1 python3 -m pytest -q tests  # pure Python; extra skips
 GI_REQUIRE_CKERNEL=1 python3 -m pytest -q tests/test_ckernel.py
 ```
 
-At `b1a2d03`, 1039 tests are collected. Tests compare against brute force on small graphs, VF2 and known orders, in both kernel modes.
+On master after the w22 and w23 merges: 2679 passed with the kernel on, 1910 passed with `GI_NO_CKERNEL=1` ([overnight log](../docs/overnight-log.md)). `GI_STAGE_CHECK=1 python3 bench/run.py` audits the stage loop's cached verdicts at every scan ([w22-speed](../docs/w22-speed.md) §1). Tests compare against brute force on small graphs, VF2 and known orders, in both kernel modes.
 
 ## The compiled kernel
 
@@ -50,6 +50,8 @@ Other runners (see each memo's "Reproduce" section):
 | [bench/bounded.py](../bench/bounded.py) | Luks pipeline against `graph_iso` and nauty | [bounded-degree](../docs/bounded-degree.md) |
 | [bench/hardness.py](../bench/hardness.py) | growth tables and fits; `list`, `run`, `table`, `fit` | [hardness](../docs/hardness.md) |
 | [bench/ckernel.py](../bench/ckernel.py) | paired kernel on/off timings | [w16-ckernel](../docs/w16-ckernel.md) |
+| [bench/paired.py](../bench/paired.py) | paired before/after timings of two checkouts, with output digests | [w22-speed](../docs/w22-speed.md) §5 |
+| [bench/w23.py](../bench/w23.py) | paired bounded and canonical timings of two checkouts | [w23-speed2](../docs/w23-speed2.md) §7 |
 | [bench/reference.py](../bench/reference.py), [bench/nauty_check.py](../bench/nauty_check.py) | VF2 and pynauty reference; cross-check of `graph_iso` | [README](../README.md) |
 
 Example, the multipede headline:
@@ -93,17 +95,17 @@ nix shell nixpkgs#texlive.combined.scheme-medium -c bash -c \
   'pdflatex -interaction=nonstopmode canon && bibtex canon && pdflatex -interaction=nonstopmode canon && pdflatex -interaction=nonstopmode canon'
 ```
 
-Likewise for `exponent`. `paper/canon.pdf` was last built in `d6db110` and `paper/exponent.pdf` in `9cd1433`. Both are current with their `.tex` at master `b1a2d03`. Texlive is a large download; check `df -h` first.
+Likewise for `exponent`. `paper/canon.pdf` was last built in `d6db110` and `paper/exponent.pdf` in `9cd1433`. Both are current with their `.tex` at master `1368fb6` (no file under `paper/` has changed since `b1a2d03`). Texlive is a large download; check `df -h` first.
 
 ## The video
 
 *The Third Logarithm* is plain HTML, CSS and JavaScript and runs offline: open [video/index.html](../video/index.html) in a browser (`file://` works). It has chapters, captions, and optional speech.
 
 * Data shown on screen is generated: `python3 video/tools/gen_data.py` writes `video/js/data.js` from the repository's `gi` package.
-* Headless checks use Firefox over Marionette: `video/tools/shoot.py` and `video/tools/ui_test.py`. Paths in `ui_test.py` assume the original worktree; adjust before running.
+* Headless checks use Firefox over Marionette: `video/tools/shoot.py` and `video/tools/ui_test.py`.
 * Claims and their sources: [CLAIMS.md](../video/CLAIMS.md). Script and teaching notes: [STORYBOARD.md](../video/STORYBOARD.md), [TEACHING-NOTES.md](../video/TEACHING-NOTES.md).
 
-**Fact-check.** Branch `w24-video-review` (`4085217`, merged `6dad6a2`) applied an independent fact-check and copy-edit; see `video/REVIEW.md` on master (this wiki branch predates it). Running time is now about 65:31. Spoken narration was toggled in testing but never listened to.
+**Fact-check.** Branch `w24-video-review` (`4085217`, merged `6dad6a2`) applied an independent fact-check and copy-edit: 31 errors found and fixed (10 wrong, 12 misleading, 9 minor), each with its source, in [REVIEW.md](../video/REVIEW.md). Running time is now 65:31 (about 64:00 before). Spoken narration was toggled in testing but never listened to.
 
 ## Check scripts
 
@@ -120,5 +122,8 @@ Several memos have an executable check, listed here with what each exercises. Ea
 | [w10-blackbox-check.py](../docs/w10-blackbox-check.py), [redteam-w10-blackbox-check.py](../docs/redteam-w10-blackbox-check.py) | exponent arithmetic, Prop 1.3 instance |
 | [w12-theoremg-check.py](../docs/w12-theoremg-check.py), [redteam-theoremg-check.py](../docs/redteam-theoremg-check.py) | Theorem G combinatorics, recurrence |
 | [redteam-w17-affine-check.py](../docs/redteam-w17-affine-check.py) | Theorem A, B, C on small k |
+| [w18-latin-sim.py](../docs/w18-latin-sim.py), [w18-latin-sim-root.py](../docs/w18-latin-sim-root.py) | w18 window structure at κ = 3, m ≤ 7; needs pynauty; [w18-latin](../docs/w18-latin.md) §5 |
+| [redteam-w18-latin-check.py](../docs/redteam-w18-latin-check.py) | exact replay of the B1 windows, count arithmetic, A1 on small cases; up to about 20 min per run; [redteam-w18-latin](../docs/redteam-w18-latin.md) §7 |
+| [w28-sigma-check.py](../docs/w28-sigma-check.py) | w28 statuses, windows at the root, rigid variants under refinement, m ≤ 9; [w28-sigma](../docs/w28-sigma.md) §13 |
 
 The directories [docs/w8-poset-code](../docs/w8-poset-code/), [docs/w17-affine-code](../docs/w17-affine-code/), [docs/w21-eth-code](../docs/w21-eth-code/) hold experiment code.

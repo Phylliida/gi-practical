@@ -73,7 +73,7 @@ are correct, unless the row says otherwise.
 ## 3. Lower bounds for specific algorithms, and barriers
 
 These are about what particular algorithms do, or about implications; none is a general lower bound for
-GI. The string-isomorphism bounds of w1 have not been transferred to graphs; the graph bound of w18 is a separate one, through a different channel.
+GI. The string-isomorphism bounds of w1 have not been transferred to graphs; the graph bound of w18 (Theorem B1) is a separate one, through a different channel.
 
 | Result | Statement | Status | Assumes | Checked by | Source |
 |---|---|---|---|---|---|
@@ -81,7 +81,20 @@ GI. The string-isomorphism bounds of w1 have not been transferred to graphs; the
 | Prop 3.1, Cor 3.2 (w1-fpt) | for odd D ≥ 3, G = (F₂^{D−1} ⋊ S_D) ≀ C_m (m = 2^j) is primitive, affine, in Γ̂_D; HJ and HJ+(M′) create ≥ \|G\| ≥ N^{log₂D − 0.443} children on every instance; GNS 3.13's exponent is sharp at fixed d | proven | HJ pseudocode only (not (H0)) | AI red-team | [w1-fpt](../docs/w1-fpt.md) §3.1, [redteam](../docs/redteam-w1-fpt.md) §1 |
 | Prop 4.2 (w1-structure) | on G_{r,L} and AGL(r,2)^L, HJ+(M′) makes ≥ N^{r+1−1.8/r−o(1)} branches | proven from pseudocode; independent of (H0) | — | AI red-team | [w1-structure](../docs/w1-structure.md) §4.6, [redteam](../docs/redteam-w1-structure.md) §5 |
 | Group-iso and combinatorial barriers | n^{o(log n)} GI would give n^{o(log n)} for group, quasigroup, Steiner triple, conference-graph isomorphism, and 2^{o(k²)} for AGL(k,2) string isomorphism | proven reductions | — | author only | [moonshot-theory](../docs/moonshot-theory.md) §3 |
-| Theorem B1 (w18) | on the point–line incidence graph of PG(m−1,2), HJ creates ≥ n^{(1/8)log₂ n − O_κ(1)} recursive calls, for every fixed κ; through the σx channel, not enumeration | proven, given HJ as written; **not yet red-teamed** | HJ as written | author only; window structure checked by exact computation at κ = 3, m ≤ 7 (cannot check the asymptotic count) | `docs/w18-latin.md` (on master from `860e782`; this wiki branch was cut at `b1a2d03`, so the file is not linked here) |
+| Theorem B1 (w18) | on the point–line incidence graph of PG(m−1,2), HJ as written (every κ-subset tested, no pruning or memoization) has a recursion tree of at least 2^{m²/2−O_κ(m)} = n^{(1/8)log₂ n − O_κ(1)} nodes, for every fixed κ ≥ 5 and m ≥ m₀(κ, a, N₀); through the σx channel, not enumeration. **Asymptotic only:** at κ = 64 and Lean's parameters (enumeration cutoff q₁ = 486290, not q₀) there are no levels below m = 150 and no nesting below m = 214 (n ≈ 2^425), so it says nothing about feasible inputs or about GI. A pruning or memoizing variant is not covered | proven, given HJ as written; sound as a statement about HJ as written, after correcting that constant | HJ as written; exact answers from recursive calls | AI red-team (hand-check of Lemmas 1, 2, the dispatcher and the count; exact replay of windows at κ = 3, 4, 5, m ≤ 7; no run nests two certificate calls). Simulations support the window shape only | [w18-latin](../docs/w18-latin.md) §2, [redteam](../docs/redteam-w18-latin.md) §2, §6 |
+| B4 (w18) | HJ is n^{Θ(log n)} on graphs | sound as an implication: the lower half is B1, the upper half is HJ's unrefereed theorem | (H0) for the upper half | AI red-team | same §0 |
+| M1, M2 (w28) | exact memoization by kernel state saves only n^{O_κ(1)} on X_m; any memo key determining D_j still has 2^{m²/4−O_κ(m)} values, so at best n^{(1/8)log n} → n^{(1/16)log n} | proven; **not yet red-teamed** | HJ as written | author only | [w28-sigma](../docs/w28-sigma.md) §3 |
+| P1, P3 (w28) | pruning tests and aggregation branches by *certified* automorphisms preserves every aggregation input; pruning by equality of prefix comparisons is unsound | proven; **not yet red-teamed** | HJ as written | author only | same §4 |
+| P2 (w28) | that pruning collapses X_m to n^{O_κ(1)} nodes (needs pruning of Case 2b branches too) | sketch; **not yet red-teamed** | | author only | same §4 |
+| C1 (w28) | any Aut-invariant test rule on X_m is all-or-none on independent T at each level | proven; **not yet red-teamed** | | author only | same §5 |
+| L1 (w28), lazy HJ (LHJ) | stopping certificates before Step 4 and escalating only on a large uniform class is correct; its children are a subset of HJ's types, so Lemma 7.1 holds | proven, given HJ; **not yet red-teamed** | (H0) | author only | same §5 |
+| L2 (w28) | on X_m, at the root and every chain state, LHJ has no twin class of size ≥ 2, so the B1 chain is not created | proven at the root and chain states; whole tree a sketch; **not yet red-teamed** | | author only; root-model replay at m = 5, 6 | same §5 |
+| Q1 (w28) | unpruned LHJ on X_m still pays 2^{Ω(m²)}, through anchors in the Q channel (Miller's generator enumeration) | sketch; **not yet red-teamed** | | author only | same §6 |
+| Lemma R, Theorem U (w28) | variable-block Ray-Chaudhuri–Wilson; a uniform first window on C forces \|B\| ≥ binom(\|C\|, ⌊κ/2⌋) or a Sym(C)-symmetric window | proven, product states only; routine by the author's assessment; **not yet red-teamed** | | author only | same §7 |
+| R1 (w28; not the tanglegram R1) | corrected rigid variant X_{m,R} (O(m) deleted lines): HJ makes n^{(1/8)log₂ n − O(log log n)} calls | proven given HJ for the level steps; root entry and "P1 pruning removes nothing" are sketches; **not yet red-teamed** | (H0) | author only | same §8 |
+| R2 (w28; not the tanglegram R2) | the rigid variant is not a barrier: 1-WL makes deletion variants discrete in ≤ 5 rounds in every rigid instance tested (m ≤ 9); Pasch-switched variants fall to one bounded-WL invariant | experiment only; the correction of w18 §2.9 is proven; **not yet red-teamed** | | small random instances | same §8 |
+| Theorem L (w28; not w1-structure's) | prefix-determined Step-4 rules on X_m: the recursive branch pays B1, the lazy branch pays Q1; on X_{m,R} only the recursive branch is bounded | recursive proven, lazy a sketch; **not yet red-teamed** | | author only | same §9 |
+| Per-phase exponent without σx (w28) | removing σx leaves O(log N(log w + μ + log log N)), because x² and Q also pay log N·log w | as the per-phase exponent above (sketch); **not yet red-teamed** | (H0) | author only | same §10 |
 | Prop 3 (moonshot) | AGL(k,2) string isomorphism reduces to GI on Θ(N³) vertices | proven | — | author only | same §3.3 |
 | c < 2 barrier | an unconditional n^{O(log^c d)} with c < 2 for all d would beat exp(O(log³ n)) for general GI | proven (state-of-the-art statement, not a lower bound) | — | AI red-team | [w8-gnsexp](../docs/w8-gnsexp.md) §2.7, [redteam](../docs/redteam-w8-gnsexp.md) §5 |
 | c = 3 floor of GNS's architecture | K·log N accounting cannot go below L³ | sketch; a heuristic about the accounting | — | AI red-team (heuristic) | same |
@@ -164,7 +177,7 @@ See [Math: core problem](Math-Core-Problem.md). None of these gives FPT for degr
 | Prop H (w8-poset) | SI over all posets ≡ R1_c ≡ C_h ⊔ C_h ≡ coloured coordinate tanglegrams | proven modulo w4-t2 Theorem A | | E3 32/32 | same §3 |
 | Prop B (w8-poset) | a complete-tree tanglegram is coordinate iff its partition lattice is a poset block structure | proven modulo BPRS/AMBC | | E6 | same §5.1 |
 
-## 7. Moonshots: affine equivalence and ETH
+## 7. Moonshots: affine equivalence, ETH, Latin squares
 
 | Result | Statement | Status | Assumes | Checked by | Source |
 |---|---|---|---|---|---|
@@ -175,10 +188,11 @@ See [Math: core problem](Math-Core-Problem.md). None of these gives FPT for degr
 | Prop D (w17) | T(f,g) ≤ 2^{(sep(g)+1)k}poly(N); random g: 2^{k log k+O(k)} | proven | | AI red-team | same §6 |
 | Prop E (w17) | vectorial quadratic colourings in 2^{O((m+k)^{1.5})} (decision) | proven modulo arXiv:2610.00874 (unrefereed) | GIQS Thm 1.3 | AI red-team (citation) | same §6 |
 | Prop G (w17) | Sylow enumeration at classical nodes costs \|P\|_{2′}; "λ coefficient halved" | Sylow count sketch; **"λ coefficient halved" withdrawn as unsupported** | | AI red-team | same §5 |
-| Theorem A1 (w18) | quasigroup, Latin-square isotopy, paratopy and STS isomorphism in n^{(1/2)log₂ n + O(1)} time and space | proven; an immediate extension of Rosenbaum's bidirectional collision, not found stated for quasigroups; **not yet red-teamed** | | author only | `docs/w18-latin.md` |
-| Theorem A2, Lemma A3 (w18) | quasigroup isomorphism in poly(n, M, A) (M subquasigroups, A their automorphism groups); structural lemmas | proven; not found in the literature; **not yet red-teamed** | | author only | same |
-| Latin-square graphs of Z₂^m; STS block graphs (w18) | same 2^{Ω(m²)} chain | sketch | | window pattern simulated | same |
-| Paley graphs polynomial for HJ (w18) | no chain, since Aut is solvable | sketch | | author only | same |
+| Theorem A1 (w18) | quasigroup, Latin-square isotopy, paratopy and STS isomorphism in n^{(1/2)log₂ n + O(1)} time and space; Latin-square graphs on N vertices of large order in N^{(1/8)log₂ N + O(1)}, assuming recovery of the net (not the memo's 1/4) | proven; sound after four repairs; a routine application of Rosenbaum's bidirectional collision, not found stated for quasigroups | net recovery from memory (Bruck/Bose) | AI red-team; small machine sanity check | [w18-latin](../docs/w18-latin.md) §3.1, [redteam](../docs/redteam-w18-latin.md) §3, §6 |
+| Theorem A2, Lemma A3 (w18) | quasigroup isomorphism in poly(n, M, A) (M subquasigroups, A their automorphism groups); structural lemmas | proven; A2 sound, A3 sound after two wording fixes; not found in the literature | | AI red-team | same §3 |
+| Latin-square graphs of Z₂^m; STS block graphs (w18, B2) | same 2^{Ω(m²)} chain | sketch; red-team found the gap as labelled (root entry unverified; small replays neither exhibit nor refute the chain) | | AI red-team; window pattern simulated | [redteam](../docs/redteam-w18-latin.md) §4 |
+| Paley graphs polynomial for HJ (w18, B3) | no chain, since Aut is solvable | sketch; gap as labelled (the polynomial claim needs unwritten aggregation accounting) | | AI red-team; Paley(101) nonfull at the second iteration | same §4 |
+| Rigid variant of X_m (w18 §2.9) | a single switched block kills Aut | **withdrawn**: false (w28); see Theorem R1 (w28) in section 3 for the corrected variant | | | [w28-sigma](../docs/w28-sigma.md) §8 |
 | ETH preprint review | no flaw found in the core checked; no transfer to GI | review only; not a verification | | one AI review, exact small-case tests | [w21-eth](../docs/w21-eth.md) |
 | Prop (feasibility bound, w21) | Lemma 4.7's hypotheses force M ≥ 32 b²(b+w), excluding AGL and TI as written | proven | | author only; `check_transfer.py` | [w21-eth](../docs/w21-eth.md) §B.2 |
 
@@ -189,11 +203,14 @@ See [Benchmarks](Benchmarks.md) for tables and caveats. All timings are one mach
 | Claim | Status | Checked by | Source |
 |---|---|---|---|
 | Every benchmark answer of `bench/run.py`, `irhard.py`, `canon.py`, `bounded.py`, `hardness.py` verified (decision, σ, generators, \|Aut\|) | as implemented | run-time verification; no wrong answer recorded | [Software](Software.md#correctness-checks) |
-| On `ns` multipedes (n = 2464), dense nauty, sparse nauty and Traces exceed 600 s; ours under 1.5 s | measured; answers from NS Lemma 2.3 re-proved and checked per instance; seed 0 for headline, seeds 1–2 for robustness | audit script | [w1-scale](../docs/w1-scale.md) §3 |
-| Canonical forms on `ns` to n = 5632 in about 4 s; nauty modes > 600 s from n = 2464 | measured, seed 0 | as above | [w9-canontool](../docs/w9-canontool.md) §3.1 |
-| Traces wins every non-multipede family | measured | | [w14-solver](../docs/w14-solver.md) §3 |
+| On `ns` multipedes (n = 2464), dense nauty, sparse nauty and Traces exceed 600 s (w1); ours 0.34 s (w23, biso; 1.41 s at w1) | measured; answers from NS Lemma 2.3 re-proved and checked per instance; seed 0 for headline, seeds 1–2 for robustness | audit script | [w1-scale](../docs/w1-scale.md) §3, [w23-speed2](../docs/w23-speed2.md) §3 |
+| Canonical forms on `ns` to n = 5632 in 1.43 s (w23); nauty modes > 600 s from n = 2464 (w9, not rerun for that long since) | measured, seed 0 | as above | [w23-speed2](../docs/w23-speed2.md) §3, [w9-canontool](../docs/w9-canontool.md) §3.1 |
+| Traces wins every family except multipedes (about 7× CFI, 23× Miyazaki, 14–29× Q12, 3–6× 3-regular) | measured | | [w23-speed2](../docs/w23-speed2.md) §3, §6 |
 | `gi.canon` polynomial guarantee at d ≤ 5 | **not achieved**: `perm_canon`/`ir_canon` exponential in the worst case | | [w14-solver](../docs/w14-solver.md) §1 |
-| Compiled kernel: default hybrid 2.0–2.4×, `ir=0` 1.5×, bounded and canonical 1.00–1.15× | measured, paired | identical output digests; ASan/UBSan clean | [w16-ckernel](../docs/w16-ckernel.md) |
+| Compiled kernel at w16: default hybrid 2.0–2.4×, `ir=0` 1.5×, bounded and canonical 1.00–1.15× (the last superseded by w23) | measured, paired | identical output digests; ASan/UBSan clean | [w16-ckernel](../docs/w16-ckernel.md) |
+| Stage loop and cheaper Schreier–Sims (w22): xl hybrid 4.85 → 3.07 s, xl `ir=0` 55.0 → 37.5 s | measured, paired; 112 outputs identical | identical digests; audit mode; mutation checks | [w22-speed](../docs/w22-speed.md) |
+| Bounded and canonical paths compiled (w23): canon 1.7–8.4× faster, biso 1.1–2.5×, no slowdown with the kernel on | measured, paired | forms and labellings identical on all paired rows; ASan/UBSan; `bench/run.py` 56/56 | [w23-speed2](../docs/w23-speed2.md) |
+| Test suite and benchmark on master after the w22 and w23 merges: 2679 passed (kernel on), 1910 passed (off); `bench/run.py` 56/56 in 3.3 s | measured | | [overnight log](../docs/overnight-log.md) |
 | HJ's local certificates never reduced branching in practice (cost about 10–60×) | measured in round 1 | | [Tried and failed](Tried-and-Failed.md) |
 
 ## 9. Not achieved (explicitly)

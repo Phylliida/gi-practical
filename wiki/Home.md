@@ -32,8 +32,9 @@ of graphs of maximum degree d, and (4) produced two draft papers and an animated
 | Hypergraphs, treewidth | Theorem H (time only sketched), Theorem TW (sketch) | see ledger | [Canonization](Math-Canonization.md) |
 | Exponent c, no HJ | c ≤ 10/3 for all d (Theorem X); c = 3 for all d (Theorem G) | X: AI red-teamed. G: one AI red-team pass, provisional | [Exponent](Math-Exponent.md) |
 | Where hardness lives | reduction to TreeCI and tanglegram isomorphism (R1); R1 remains open | reductions proven; no algorithm, no hardness | [Core problem](Math-Core-Problem.md) |
-| Limits of HJ's method | HJ needs ≥ N^{log₂ D − 0.45} branches on an explicit string-isomorphism family; separately, n^{(1/8)log₂ n − O(1)} calls on the PG(m−1,2) incidence graphs (w18, **not yet red-teamed**) | proven from HJ as written; the string bound AI red-teamed. A bound on HJ, not on GI | [Barriers](Math-Barriers.md) |
-| Practice | on Neuen–Schweitzer multipedes we beat nauty and Traces (n = 2464: under 1.5 s vs > 600 s) | measured; answers proved by a lemma checked per instance; Traces wins on most other families | [Benchmarks](Benchmarks.md) |
+| Limits of HJ's method | HJ needs ≥ N^{log₂ D − 0.45} branches on an explicit string-isomorphism family; separately, n^{(1/8)log₂ n − O_κ(1)} calls on the PG(m−1,2) incidence graphs (w18, Theorem B1) | proven from HJ as written; both AI red-teamed. B1 is asymptotic only: at κ = 64 it has no nested level below m ≈ 214 (n ≈ 2^425). A bound on HJ, not on GI | [Barriers](Math-Barriers.md) |
+| Avoiding HJ's σ channel | a lazy Step 4 removes the B1 chain, but the cost reappears in the Q channel; the per-phase exponent does not change (w28) | **not yet red-teamed**; several parts are sketches | [Barriers](Math-Barriers.md) |
+| Practice | on Neuen–Schweitzer multipedes we beat nauty and Traces from n ≈ 1100 (n = 2464: 0.34 s; nauty and Traces exceed 120 s in the latest run and exceeded 600 s in the earlier w1 run) | measured; answers proved by a lemma checked per instance; Traces wins on every other family, about 3–29× | [Benchmarks](Benchmarks.md) |
 
 ## Pages
 
@@ -50,7 +51,7 @@ of graphs of maximum degree d, and (4) produced two draft papers and an animated
 * [The exponent c](Math-Exponent.md)
 * [The core problem: TreeCI and tanglegrams](Math-Core-Problem.md)
 * [Barriers](Math-Barriers.md)
-* [Moonshots: affine equivalence, ETH, Latin squares](Moonshots.md)
+* [Moonshots: affine equivalence, ETH, Latin squares, the σ channel](Moonshots.md)
 * [What we tried that did not work](Tried-and-Failed.md)
 
 **Software**
@@ -67,10 +68,8 @@ of graphs of maximum degree d, and (4) produced two draft papers and an animated
 
 ## Work still in progress
 
-This wiki was cut from master at `b1a2d03`. Master has since gained `w18-latin` (`860e782`) and `w24-video-review` (`6dad6a2`), whose results are on the relevant pages. The branches below were still unfinished. Pages that depend on
-them say so in place. See [Maintaining](Maintaining.md) for how to fold them in.
+This wiki is current to master `1368fb6`. `w18-latin`, `w22-speed`, `w23-speed2`, `w24-video-review`, `w26-redteam-pg` and `w28-sigma` are on master and folded in; `w28-sigma` is on master but has **not been red-teamed**. The branch below is the only unfinished one. Pages that depend on it say so in place. See [Maintaining](Maintaining.md) for how to fold it in.
 
 | Branch | Commit | State | Area |
 |---|---|---|---|
-| `w22-speed` | `624be06` | one commit ahead of master's history (stage-loop speed); not merged | [Software](Software.md), [Benchmarks](Benchmarks.md) |
-| `w23-speed2` | `4742c66` | one commit (C versions of the bounded and canonical hot paths, per its message); not merged | [Software](Software.md) |
+| `w27-tree` | `63372b5` | tanglegram moonshot (complete-tree tanglegram isomorphism R1_c, in progress). No commits of its own yet: the tip is a master commit, and its work is uncommitted in its worktree | [Core problem](Math-Core-Problem.md), [Open problems](Open-Problems.md) |

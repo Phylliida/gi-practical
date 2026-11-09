@@ -158,7 +158,24 @@ bijection, not a lower bound on reductions. Natural fixed-width encodings have a
 
 ### Speculation that HJ's σx channel is never tight
 
-[moonshot-theory](../docs/moonshot-theory.md) §5 listed as speculation that the x² and σx channels are never tight, and §2.3 knew no instance. Theorem B1 of w18 (given HJ as written, not yet red-teamed) attains the σx channel on the PG(m−1,2) incidence graphs: "visible unaffected steps with polynomial-degree giants" occur there. See `docs/w18-latin.md`.
+[moonshot-theory](../docs/moonshot-theory.md) §5 listed as speculation that the x² and σx channels are never tight, and §2.3 knew no instance. Theorem B1 of [w18-latin](../docs/w18-latin.md) (given HJ as written; AI red-teamed by [w26](../docs/redteam-w18-latin.md), asymptotic only) attains the σx channel on the PG(m−1,2) incidence graphs: "visible unaffected steps with polynomial-degree giants" occur there.
+
+### Latin squares and HJ on graphs (w18, w26, w28)
+
+[redteam-w18-latin](../docs/redteam-w18-latin.md) found no claim broken and corrected the items below. **[w18-latin](../docs/w18-latin.md) itself was not edited afterwards**: its text still has q₀ as the cutoff, the (1/4) exponent and the single-block rigid variant, so read it together with the red-team's §5. The last three rows come from [w28-sigma](../docs/w28-sigma.md), which is **not yet red-teamed**.
+
+| Item | Correction | Source |
+|---|---|---|
+| B1 enumeration cutoff | the cutoff is not q₀ but q₁, the largest degree accepted by HJ's enumeration test; q₁ = 486290 at Lean's parameters (a = 36000, q₀ = 2064), hence c about 86 at κ = 64. Asymptotics unchanged | [redteam-w18-latin](../docs/redteam-w18-latin.md) §2.4 |
+| B1 hypotheses | needs m ≥ m₀(κ, a, N₀), and "fixed κ ≥ 5" must be read as a family of algorithms HJ_κ; it says nothing about automorphism-pruning or memoizing variants | same §2.4, §6 |
+| B1 at feasible sizes | at κ = 64 the chain has no levels below m = 150 (n ≈ 2^297) and no nesting below m = 214 (n ≈ 2^425). It is an asymptotic statement about the recursion and says nothing about feasible inputs | same §2.5 |
+| Lemma 1, V₃ step | the written argument needs κ ≥ 5 and is false at κ = 3, so the memo's κ = 3 simulations are not exact instances of Lemma 1 and "windows match Lemma 1 exactly" needs that caveat | same §2.2 |
+| Theorem A1 proof | four repairs: chains must be extended strictly increasingly; exhausting Q′ before length d certifies non-isomorphism; the three-sorted closure sentence is false for degenerate triples (start each chain with a pair); the Latin-square-graph exponent is (1/8)log₂ N, not (1/4) | same §3 |
+| Lemma A3 | wording: count or exclude ∅ (M ≥ 2^r vs 2^r − 1); "index" is a size ratio | same §3 |
+| A1 novelty | "not found" stands, but it is a routine one-paragraph application of Rosenbaum's framework | same §3 |
+| w18 §2.9 rigid variant | "switching a single block kills Aut" is false: the stabilizer of a line in GL(m,2) still has order 2^{m²−O(m)}. A corrected variant X_{m,R} deletes O(m) lines. Status of the correction: proven in the memo, not red-teamed | [w28-sigma](../docs/w28-sigma.md) §8 |
+| w18 §2.9: "pruning collapses the chain" | true about the chain only: without also pruning HJ's Case 2b branches, q^{O(1)} continuation branches remain per cap contraction and the tree is again 2^{Ω(m²)} (P2, a sketch) | same §4 |
+| w18 lead: canonically chosen test sets | on X_m any Aut-invariant rule selects all independent T or none (C1), so no sparse canonical family exists there; the lead is revised, not settled | same §5 |
 
 ### Status of the Lean formalization
 
@@ -226,11 +243,13 @@ Also: the "main residual risk" named in round 4 was HJ's σ-budget; it is now ma
 | Hypercube regression in `class_plan` | class layers made Q8 > 200 s; plan now falls back to BFS on a twin block ≥ 3 | [w1-scale](../docs/w1-scale.md) §1.6 |
 | `gi.canon` | no polynomial guarantee at d ≤ 5; solvable layers not done | [w14-solver](../docs/w14-solver.md) |
 | w14 profiles and slowdowns | corrected against measurements in `ef6f8ab` | [w14-solver](../docs/w14-solver.md) |
-| README table of canonical times | README's "CFI n = 3200 … 13 s" is w9; w14 reached 1.41 s for canonical forms. Later numbers in [Benchmarks](Benchmarks.md) win | [README](../README.md) |
+| README table of canonical times | README's "CFI n = 3200 … 13 s" was w9; w14 reached 1.41 s and w23 0.43 s for canonical forms, and the README now says so. Later numbers in [Benchmarks](Benchmarks.md) win | [README](../README.md), [w23-speed2](../docs/w23-speed2.md) §3 |
+| "The kernel does not help bounded or canonical paths" (1.00–1.15×) | true of w16, when that code was off limits; w23 compiled it | [w16-ckernel](../docs/w16-ckernel.md), [w23-speed2](../docs/w23-speed2.md) §2–3 |
+| Traces gaps at w14 (CFI 10–23×, Miyazaki 30–90×, Q12 about 250×, 3-regular about 13×) | narrowed by w23 to about 7×, 23×, 14–29× and 3–6×; Traces is still ahead on every family except multipedes | [w23-speed2](../docs/w23-speed2.md) §3, §6 |
 
 ### The video
 
-Fact-checked by `w24-video-review` (`4085217`), which fixed wrong and overclaimed statements in the narration, cards and code; `video/REVIEW.md` on master lists them with sources. Differences between planning documents and data, as of `b1a2d03`:
+Fact-checked by `w24-video-review` (`4085217`, merged `6dad6a2`), which fixed 31 errors (10 wrong, 12 misleading, 9 minor) in the narration, cards and code; [REVIEW.md](../video/REVIEW.md) lists each with its source, and what could not be verified. Running time 65:31. Differences between planning documents and data, as of `b1a2d03` (not changed by the fact-check, which left STORYBOARD.md alone):
 [STORYBOARD.md](../video/STORYBOARD.md) still says CFI over K₄ has 28 vertices and the window run uses Alt(5); [CLAIMS.md](../video/CLAIMS.md), generated from the code, says 40 vertices (16 middle, 24 edge-end) and Alt(7) on 21 pairs. CLAIMS.md is the later, computed record.
 
 ### Cross-document inconsistencies resolved when the paper was assembled

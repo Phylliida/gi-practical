@@ -2,7 +2,7 @@
 
 Why n^{O(log n)} for GI and n^{O(log d)} for degree-d GI are hard to beat. Nothing here is a general lower bound for GI.
 
-[Home](Home.md) · Sources: [moonshot-theory](../docs/moonshot-theory.md), [w1-fpt](../docs/w1-fpt.md), [w1-structure](../docs/w1-structure.md), [w21-eth](../docs/w21-eth.md) · Ledger: [section 3](Results-Ledger.md#3-lower-bounds-for-specific-algorithms-and-barriers)
+[Home](Home.md) · Sources: [moonshot-theory](../docs/moonshot-theory.md), [w1-fpt](../docs/w1-fpt.md), [w1-structure](../docs/w1-structure.md), [w21-eth](../docs/w21-eth.md), [w18-latin](../docs/w18-latin.md), [redteam-w18-latin](../docs/redteam-w18-latin.md), [w28-sigma](../docs/w28-sigma.md) · Ledger: [section 3](Results-Ledger.md#3-lower-bounds-for-specific-algorithms-and-barriers)
 
 ## HJ is tight on string isomorphism
 
@@ -14,9 +14,26 @@ These are proofs about what the algorithm does (read from HJ's pseudocode and Le
 
 ## HJ is tight on graphs too (w18)
 
-**Theorem B1** (w18, given HJ as written; **not yet red-teamed**): on the point–line incidence graph X_m of PG(m−1,2), with n ≈ 2^{2m}/6, HJ creates at least n^{(1/8)log₂ n − O_κ(1)} recursive calls for every fixed certificate size κ, by a chain of nested certificate calls through the visible unaffected orbit (σx) term, not the Maróti enumeration channel. Source: `docs/w18-latin.md` (on master from `860e782`; this wiki branch was cut at `b1a2d03`, so the file is not linked here).
+**Theorem B1** ([w18-latin](../docs/w18-latin.md), given HJ as written; AI red-teamed by [w26](../docs/redteam-w18-latin.md)): on the point–line incidence graph X_m of PG(m−1,2), with n ≈ 2^{2m}/6, HJ as written (every κ-subset tested, no pruning or memoization) creates at least n^{(1/8)log₂ n − O_κ(1)} recursive calls for every fixed certificate size κ ≥ 5, by a chain of nested certificate calls through the visible unaffected orbit (σx) term, not the Maróti enumeration channel.
 
-So the n^{Θ(log n)} behaviour of HJ is not confined to string isomorphism. It is **not a lower bound for GI**: X_m is a fixed geometry, easily solved by other means. It implies that a better potential cannot improve HJ; any improvement must change the certificate recursion (or prune tests). The chain was simulated exactly at κ = 3 and m ≤ 7 for its window structure only.
+The red-team found it **sound as a statement about HJ as written**, with one constant wrong. Its caveats matter:
+
+* **Asymptotic only.** The theorem needs m ≥ m₀(κ, a, N₀). With κ = 64 and Lean's parameters, the enumeration cutoff is q₁ = 486290 (not q₀), there are no levels below m = 150 (n ≈ 2^297), and nesting needs m ≥ 214 (n ≈ 2^425). It says nothing about feasible inputs.
+* **It bounds HJ, not GI.** X_m is a fixed geometry, easily solved by other means. It is **not a lower bound for GI**, and it assumes every recursive call of HJ answers exactly.
+* **What was checked.** Hand-check of Lemmas 1 and 2, the dispatcher path and the count; exact replay of windows at κ = 3, 4, 5 with m ≤ 7. No run nests two certificate calls. The memo's own κ = 3 simulations are not exact instances of Lemma 1, and support the window shape only.
+
+So the n^{Θ(log n)} behaviour of HJ is not confined to string isomorphism (the upper half being HJ's unrefereed theorem). It implies that a better potential cannot improve HJ; any improvement must change the certificate recursion (or prune tests).
+
+## Can HJ avoid the σx channel? (w28, not yet red-teamed)
+
+[w28-sigma](../docs/w28-sigma.md) attacks the σx channel that B1 exploits. **Not yet red-teamed**; everything assumes HJ correct, and nothing is machine-checked.
+
+* **Lazy Step 4 (LHJ)** removes the channel on the B1 family: correctness and Lemma 7.1 survive (L1), and on X_m no chain is created (L2 at the root and chain states; the whole tree is a sketch).
+* **The cost moves rather than vanishes.** Unpruned LHJ on X_m still pays 2^{Ω(m²)} through anchors in the Q channel (Q1, a sketch), which is Miller's generator enumeration. Only automorphism pruning removes it on X_m (P1 proven, P2 a sketch).
+* **The per-phase exponent does not change:** O(log N(log w + μ + log log N)), because x² and Q also pay log N·log w. No barrier is contradicted.
+* **Memoization and canonical tests fail on X_m** (M1, M2, C1). A prefix-determined rule either pays B1 or, on the lazy branch, Q1 (Theorem L; the lazy half is a sketch).
+* **The rigid variant is not a barrier.** A single switched block does not kill Aut (correcting w18 §2.9). The corrected variant X_{m,R} still forces n^{(1/8)log₂ n − O(log log n)} calls on HJ (R1, root entry a sketch), but its rigid instances tested fell to bounded WL (m ≤ 9; experiment only).
+* **Sharpest open statement:** the Uniform Prefix Conjecture (§7.3, speculation). It would make Step 4 polynomial in total under LHJ, and would still not change the exponent.
 
 ## Classical barriers for n^{o(log n)}
 

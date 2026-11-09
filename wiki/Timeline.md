@@ -1,6 +1,6 @@
 # Project timeline
 
-All dates are 2026. Branches are in `git branch -a`; worktrees are at `~/math/gi-practical-wt/<branch>`. Commit is the branch tip. "Rounds" are the Python implementation work (r1–r4), "waves" the campaign (w1–w24). Wave numbers follow the branch names; [overnight-log.md](../docs/overnight-log.md) groups a few of them differently.
+All dates are 2026. Branches are in `git branch -a`; worktrees are at `~/math/gi-practical-wt/<branch>`. Commit is the branch tip. "Rounds" are the Python implementation work (r1–r4), "waves" the campaign (w1–w28). Wave numbers follow the branch names; [overnight-log.md](../docs/overnight-log.md) groups a few of them differently.
 
 [Home](Home.md)
 
@@ -77,13 +77,17 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 15 | w15-redteam-theoremg | `df12b78` | red-team | [report](../docs/redteam-theoremg.md) |
 | 16 | w16-ckernel | `87745ce` | C kernel | [w16-ckernel](../docs/w16-ckernel.md) |
 | 17 | w17-affine | `6f28e9a` | affine moonshot | [w17-affine](../docs/w17-affine.md) |
-| 18 | w18-latin | `8047173` | Latin-square moonshot; Theorem B1 (merged `860e782`; not yet red-teamed) | [Moonshots](Moonshots.md) |
+| 18 | w18-latin | `8047173` | Latin-square moonshot; Theorem B1 (merged `860e782`; red-teamed by w26) | [w18-latin](../docs/w18-latin.md), [Moonshots](Moonshots.md) |
 | 19 | w19-video | `ed3aa0b` | video | [CLAIMS](../video/CLAIMS.md) |
 | 20 | w20-redteam-affine | `361654e` | red-team | [report](../docs/redteam-w17-affine.md) |
 | 21 | w21-eth | `b4d1322` | ETH preprint review | [w21-eth](../docs/w21-eth.md) |
-| 22 | w22-speed | `624be06` | stage-loop speed (**in progress**, unmerged) | [Software](Software.md) |
-| 23 | w23-speed2 | `4742c66` | bounded-path compilation (**in progress**, unmerged) | [Software](Software.md) |
-| 24 | w24-video-review | `4085217` | video fact-check (merged `6dad6a2`) | [Reproduce](Reproduce.md#the-video) |
-| 25 | w25-wiki | this branch | this wiki | |
+| 22 | w22-speed | `2f79977` | stage-loop speed and cheaper Schreier–Sims (merged `66f11ee`) | [w22-speed](../docs/w22-speed.md) |
+| 23 | w23-speed2 | `e89e417` | bounded and canonical hot paths compiled (merged `04fb3ea`) | [w23-speed2](../docs/w23-speed2.md) |
+| 24 | w24-video-review | `4085217` | video fact-check, 31 errors fixed (merged `6dad6a2`) | [REVIEW](../video/REVIEW.md), [Reproduce](Reproduce.md#the-video) |
+| 25 | w25-wiki | `df455f8` | this wiki (merged `1645773`) | |
+| 26 | w26-redteam-pg | `b503900` | red-team of w18 (B1, A1–A3, sketches); merged `ad9c9ef` | [report](../docs/redteam-w18-latin.md) |
+| 27 | w27-tree | `63372b5` | complete-tree tanglegram moonshot R1_c (**in progress**; no commits of its own as of `1368fb6`) | [Core problem](Math-Core-Problem.md) |
+| 28 | w28-sigma | `27292f8` | attempts to remove HJ's σ channel; on master, **not yet red-teamed** (commit at 00:03 on 9 Nov) | [w28-sigma](../docs/w28-sigma.md) |
+| 29 | w29-wiki-refresh | this branch | this refresh of the wiki | |
 
-This wiki was cut from master at `b1a2d03`; master later gained the w18 and w24 merges (`97b7a36`).
+The wiki was first cut from master at `b1a2d03` (w25); this refresh (w29) is current to master `1368fb6`.
