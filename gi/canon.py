@@ -951,6 +951,54 @@ def _root_class(G, edges):
     return root_class(G, edges)[0]
 
 
+def _probe_automorphism(G, f0, f1, stats):
+    """Try to find an automorphism of the connected colored graph G mapping the
+    oriented edge f0 onto f1, by a parallel individualization-refinement descent
+    (G.col is equitable): individualize the roots, then repeatedly one vertex
+    of the same-named non-singleton cell on each side (the least-numbered one,
+    and the smallest non-singleton cell). Returns the permutation (verified to be an
+    automorphism preserving the colors, with f0 -> f1), or None. Never a false
+    positive; a None says nothing (the two sides simply did not stay in step)."""
+    nbr, col0, n = G.nbr, G.col, G.n
+    a = wl_refine(nbr, col0, f0, True)
+    b = wl_refine(nbr, col0, f1, True)
+    stats["canon_probe"] += 1
+    for _ in range(PROBE_MAX_DEPTH):
+        if sorted(a) != sorted(b):
+            return None
+        sizes = Counter(a)
+        if len(sizes) == n:
+            break
+        c = min(((k, name) for name, k in sizes.items() if k > 1))[1]
+        va, vb = a.index(c), b.index(c)
+        a = wl_refine(nbr, a, (va,), True)
+        b = wl_refine(nbr, b, (vb,), True)
+    else:                               # (too deep: give up)
+        return None
+    byb = [0] * n
+    for v, c in enumerate(b):
+        byb[c] = v
+    phi = [byb[c] for c in a]
+    if phi[f0[0]] != f1[0] or phi[f0[1]] != f1[1]:
+        return None
+    for v in range(n):
+        if col0[v] != col0[phi[v]]:
+            return None
+    nset = [set(r) for r in nbr]
+    for v in range(n):
+        pv = nset[phi[v]]
+        for w in nbr[v]:
+            if phi[w] not in pv:
+                return None
+    stats["canon_probe_ok"] += 1
+    return tuple(phi)
+
+
+PROBE_MIN_ROOTS = 16                    # root class sizes at which a probe is tried
+PROBE_MAX_DEPTH = 64                    # refinements per probe
+PROBE_MAX_FAILS = 3                     # failed probes before giving up on a graph
+
+
 def canon_connected(g, stats, layers="class"):
     """(form, L, auts) for a connected _Graph g with canonical int colors:
     L[v] the label of v, form = _form(g, L) (a function of the isomorphism
@@ -991,6 +1039,8 @@ def canon_connected(g, stats, layers="class"):
                 comps[0] -= 1
 
     best = None                         # (keys, L, Linv)
+    fbest = None                        # the root edge of best
+    fails = 0                           # failed probes (see _probe_automorphism)
     auts, done = [], []
     for fi, f in enumerate(cand):
         if done and comps[0] == 1:      # K is one orbit: every edge is an image of a tried one
@@ -998,6 +1048,18 @@ def canon_connected(g, stats, layers="class"):
         rf = find(fi)
         if any(find(e) == rf for e in done):
             continue
+        if fbest is not None and len(cand) >= PROBE_MIN_ROOTS and fails < PROBE_MAX_FAILS:
+            # a cheap attempt to show that f is an image of the best root: then its
+            # rooted form equals the best one and it need not be computed
+            phi = _probe_automorphism(G, fbest, edges[f], stats)
+            if phi is None:
+                fails += 1
+            else:
+                absorb(phi)
+                auts.append(phi)
+                rf = find(fi)
+                if any(find(e) == rf for e in done):
+                    continue
         done.append(fi)
         stats["canon_roots"] += 1
         u0, u1 = edges[f]
@@ -1027,6 +1089,7 @@ def canon_connected(g, stats, layers="class"):
             new = [tuple([Linv[a[L[v]]] for v in range(n)]) for a in A.gens]
         if better:
             best = (keys, L, Linv)
+            fbest = (u0, u1)
         else:                           # equal keys, so equal forms: an automorphism
             Bi = best[2]
             new.append(tuple([Bi[L[v]] for v in range(n)]))

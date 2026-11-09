@@ -429,6 +429,10 @@ class EAAction:
         minimizers of an invariant set's restriction are a coset of its
         stabilizer), so the new minimizer set is c + U intersected with
         m0 + D + K_O, added as linear equations (the annihilator of D + K_O)."""
+        if _ck is not None:             # (word-parallel; the same orbits and bases)
+            r = _ck.ea_canon(self.k, self.act, self.m, x)
+            if r is not None:
+                return r
         k = self.k
         eqs = XorBasis()
         c, U = 0, [1 << i for i in range(k)]

@@ -3307,6 +3307,622 @@ static PyObject *ck_ea_who_remove(PyObject *m_, PyObject *const *args, Py_ssize_
 }
 /* ===== end of w23-speed2 block (4) ===== */
 
+/* EAAction.canon on word-parallel bit vectors (gi/ea2.py): exactly the same
+ * computation (same order of the orbits, of the kernel vectors, of the
+ * candidates), so the same (c, N). ea_canon(k, act, m, x) -> (c, N) or None. */
+
+typedef struct {
+    Py_ssize_t W, r;
+    uint64_t *pool;
+    uint8_t *rhs;
+    int32_t *idx;       /* pivot -> row or -1 */
+    int32_t *piv;
+    int sorted;
+} xb_t;
+
+static int xb_init(xb_t *b, Py_ssize_t k, Py_ssize_t W)
+{
+    b->W = W;
+    b->r = 0;
+    b->sorted = 1;
+    b->pool = malloc((size_t)(k ? k : 1) * (size_t)W * sizeof(uint64_t));
+    b->rhs = malloc((size_t)(k ? k : 1));
+    b->idx = malloc((size_t)(k ? k : 1) * sizeof(int32_t));
+    b->piv = malloc((size_t)(k ? k : 1) * sizeof(int32_t));
+    if (!b->pool || !b->rhs || !b->idx || !b->piv)
+        return 0;
+    memset(b->idx, 0xff, (size_t)(k ? k : 1) * sizeof(int32_t));
+    return 1;
+}
+
+static void xb_free(xb_t *b)
+{
+    free(b->pool); free(b->rhs); free(b->idx); free(b->piv);
+}
+
+static void xb_reset(xb_t *b)
+{
+    Py_ssize_t i;
+    for (i = 0; i < b->r; i++)
+        b->idx[b->piv[i]] = -1;
+    b->r = 0;
+    b->sorted = 1;
+}
+
+/* b := a copy of a (same k, W) */
+static void xb_copy(xb_t *b, const xb_t *a)
+{
+    Py_ssize_t i;
+    xb_reset(b);
+    memcpy(b->pool, a->pool, (size_t)a->r * (size_t)a->W * sizeof(uint64_t));
+    memcpy(b->rhs, a->rhs, (size_t)a->r);
+    memcpy(b->piv, a->piv, (size_t)a->r * sizeof(int32_t));
+    for (i = 0; i < a->r; i++)
+        b->idx[a->piv[i]] = a->idx[a->piv[i]];
+    b->r = a->r;
+    b->sorted = a->sorted;
+}
+
+static inline Py_ssize_t hbit(const uint64_t *v, Py_ssize_t W)
+{
+    Py_ssize_t w;
+    for (w = W - 1; w >= 0; w--)
+        if (v[w])
+            return w * 64 + 63 - __builtin_clzll(v[w]);
+    return -1;
+}
+
+/* XorBasis.add; row is clobbered. Returns 1 for True (added or consistent), 0 for False. */
+static int xb_add(xb_t *b, uint64_t *row, int rhs)
+{
+    Py_ssize_t W = b->W, p, w;
+    for (;;) {
+        int32_t e;
+        p = hbit(row, W);
+        if (p < 0)
+            return rhs == 0;
+        e = b->idx[p];
+        if (e < 0) {
+            memcpy(b->pool + b->r * W, row, (size_t)W * sizeof(uint64_t));
+            b->rhs[b->r] = (uint8_t)rhs;
+            b->idx[p] = (int32_t)b->r;
+            b->piv[b->r] = (int32_t)p;
+            b->r++;
+            b->sorted = 0;
+            return 1;
+        }
+        for (w = 0; w < W; w++)
+            row[w] ^= b->pool[(Py_ssize_t)e * W + w];
+        rhs ^= b->rhs[e];
+    }
+}
+
+/* XorBasis.reduce: v := reduced v; returns whether v != 0. */
+static int xb_reduce(const xb_t *b, uint64_t *v)
+{
+    Py_ssize_t W = b->W, w;
+    for (;;) {
+        Py_ssize_t p = hbit(v, W);
+        int32_t e;
+        if (p < 0)
+            return 0;
+        e = b->idx[p];
+        if (e < 0)
+            return 1;
+        for (w = 0; w < W; w++)
+            v[w] ^= b->pool[(Py_ssize_t)e * W + w];
+    }
+}
+
+static void xb_sort(xb_t *b)
+{
+    if (!b->sorted) {
+        /* insertion sort of the pivots (ranks are small) */
+        Py_ssize_t i, j;
+        for (i = 1; i < b->r; i++) {
+            int32_t x = b->piv[i];
+            for (j = i; j > 0 && b->piv[j - 1] > x; j--)
+                b->piv[j] = b->piv[j - 1];
+            b->piv[j] = x;
+        }
+        b->sorted = 1;
+    }
+}
+
+/* XorBasis.full_reduce */
+static void xb_full_reduce(xb_t *b, uint64_t *v)
+{
+    Py_ssize_t W = b->W, i, w;
+    xb_sort(b);
+    for (i = b->r - 1; i >= 0; i--) {
+        int32_t p = b->piv[i];
+        if ((v[p / 64] >> (p % 64)) & 1) {
+            int32_t e = b->idx[p];
+            for (w = 0; w < W; w++)
+                v[w] ^= b->pool[(Py_ssize_t)e * W + w];
+        }
+    }
+}
+
+static inline int parity_masked(const uint64_t *r, const uint64_t *a, Py_ssize_t W, Py_ssize_t p)
+{
+    Py_ssize_t w;
+    uint64_t acc = 0;
+    for (w = 0; w < W; w++) {
+        uint64_t x = r[w] & a[w];
+        if (w == p / 64)
+            x &= ~((uint64_t)1 << (p % 64));
+        acc ^= x;
+    }
+    return __builtin_parityll(acc);
+}
+
+/* XorBasis.solution(k) into out (W words). */
+static void xb_solution(xb_t *b, uint64_t *out)
+{
+    Py_ssize_t W = b->W, i;
+    xb_sort(b);
+    memset(out, 0, (size_t)W * sizeof(uint64_t));
+    for (i = 0; i < b->r; i++) {
+        int32_t p = b->piv[i], e = b->idx[p];
+        if ((int)b->rhs[e] ^ parity_masked(b->pool + (Py_ssize_t)e * W, out, W, p))
+            out[p / 64] |= (uint64_t)1 << (p % 64);
+    }
+}
+
+/* XorBasis.kernel(k) into out (one W-word vector per free variable, in the
+ * order of the free variables); returns the number of vectors. */
+static Py_ssize_t xb_kernel(xb_t *b, Py_ssize_t k, uint64_t *out)
+{
+    Py_ssize_t W = b->W, f, i, n = 0;
+    xb_sort(b);
+    for (f = 0; f < k; f++) {
+        uint64_t *a;
+        if (b->idx[f] >= 0)
+            continue;
+        a = out + n * W;
+        memset(a, 0, (size_t)W * sizeof(uint64_t));
+        a[f / 64] |= (uint64_t)1 << (f % 64);
+        for (i = 0; i < b->r; i++) {
+            int32_t p = b->piv[i], e = b->idx[p];
+            if (parity_masked(b->pool + (Py_ssize_t)e * W, a, W, p))
+                a[p / 64] |= (uint64_t)1 << (p % 64);
+        }
+        n++;
+    }
+    return n;
+}
+
+/* Python int from W words. */
+static PyObject *words_to_int(const uint64_t *v, Py_ssize_t W)
+{
+    PyObject *acc = PyLong_FromLong(0), *t, *s;
+    Py_ssize_t w;
+    if (acc == NULL)
+        return NULL;
+    for (w = W - 1; w >= 0; w--) {
+        if (acc != NULL && PyObject_IsTrue(acc) == 0 && v[w] == 0)
+            continue;
+        s = PyLong_FromLong(64);
+        if (!s) { Py_DECREF(acc); return NULL; }
+        t = PyNumber_Lshift(acc, s);
+        Py_DECREF(s);
+        Py_DECREF(acc);
+        if (!t)
+            return NULL;
+        s = PyLong_FromUnsignedLongLong(v[w]);
+        if (!s) { Py_DECREF(t); return NULL; }
+        acc = PyNumber_Or(t, s);
+        Py_DECREF(t);
+        Py_DECREF(s);
+        if (!acc)
+            return NULL;
+    }
+    return acc;
+}
+
+/* A map from W-word labels to point indices: a small open-addressing table
+ * over an array of labels. */
+typedef struct {
+    Py_ssize_t W, mask;
+    int32_t *slot;      /* -1 or an index in labels */
+} lmap_t;
+
+static inline uint64_t words_hash(const uint64_t *v, Py_ssize_t W)
+{
+    uint64_t h = 0x9e3779b97f4a7c15ULL;
+    Py_ssize_t w;
+    for (w = 0; w < W; w++) {
+        h ^= v[w];
+        h *= 0x100000001b3ULL;
+        h ^= h >> 31;
+    }
+    return h;
+}
+
+#define EA_FAIL(label) do { goto label; } while (0)
+
+static PyObject *ck_ea_canon(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    Py_ssize_t k, m, W, i, j, q, nu;
+    PyObject *actobj, *xobj, *res = NULL;
+    int32_t *act = NULL, *pts = NULL, *ostart = NULL, *srt = NULL, *slot = NULL, *srttmp = NULL;
+    int64_t *x = NULL;
+    uint64_t *lam = NULL, *rl = NULL, *U = NULL, *basis = NULL, *cands = NULL, *keep = NULL,
+             *ctmp = NULL, *tmp2 = NULL, *c = NULL, *N = NULL;
+    uint8_t *seen = NULL;
+    xb_t K, D, Wb, eqs;
+    int k_ok = 0, d_ok = 0, wb_ok = 0, eqs_ok = 0;
+    Py_ssize_t norb = 0, cap_cands = 0;
+    (void)m_;
+    memset(&K, 0, sizeof(K));
+    memset(&D, 0, sizeof(D));
+    memset(&Wb, 0, sizeof(Wb));
+    memset(&eqs, 0, sizeof(eqs));
+    if (nargs != 4 || !read_small(args[0], &k) || k < 0 || !read_small(args[2], &m) || m < 0)
+        Py_RETURN_NONE;
+    actobj = args[1];
+    xobj = args[3];
+    if (!PyList_CheckExact(actobj) || PyList_GET_SIZE(actobj) != k)
+        Py_RETURN_NONE;
+    if ((!PyTuple_CheckExact(xobj) && !PyList_CheckExact(xobj))
+        || PySequence_Fast_GET_SIZE(xobj) != m)
+        Py_RETURN_NONE;
+    W = (k + 63) / 64;
+    if (W == 0)
+        W = 1;
+    if (k > 0 && (size_t)m > SIZE_MAX / sizeof(int32_t) / (size_t)k)
+        Py_RETURN_NONE;
+    act = malloc((size_t)(k * m + 1) * sizeof(int32_t));
+    x = malloc((size_t)(m + 1) * sizeof(int64_t));
+    if (!act || !x) {
+        PyErr_NoMemory();
+        goto done;
+    }
+    for (i = 0; i < k; i++) {
+        PyObject *t = PyList_GET_ITEM(actobj, i);
+        if (!PyTuple_CheckExact(t) || PyTuple_GET_SIZE(t) != m)
+            goto use_python;
+        for (j = 0; j < m; j++) {
+            Py_ssize_t v;
+            if (!read_index(PyTuple_GET_ITEM(t, j), m, &v))
+                goto use_python;
+            act[i * m + j] = (int32_t)v;
+        }
+    }
+    for (j = 0; j < m; j++) {
+        Py_ssize_t v;
+        if (!read_small(PySequence_Fast_GET_ITEM(xobj, j), &v))
+            goto use_python;
+        x[j] = v;
+    }
+    if ((size_t)m > SIZE_MAX / sizeof(uint64_t) / (size_t)W) {
+        res = Py_None;
+        Py_INCREF(res);
+        goto done;
+    }
+    lam = malloc((size_t)(m + 1) * (size_t)W * sizeof(uint64_t));
+    rl = malloc((size_t)(m + 1) * (size_t)W * sizeof(uint64_t));
+    pts = malloc((size_t)(m + 1) * sizeof(int32_t));
+    ostart = malloc((size_t)(m + 2) * sizeof(int32_t));
+    seen = calloc((size_t)(m + 1), 1);
+    srt = malloc((size_t)(m + 1) * sizeof(int32_t));
+    srttmp = malloc((size_t)(m + 1) * sizeof(int32_t));
+    U = malloc((size_t)(k + 1) * (size_t)W * sizeof(uint64_t));
+    basis = malloc((size_t)(k + 1) * (size_t)W * sizeof(uint64_t));
+    tmp2 = malloc((size_t)W * 2 * sizeof(uint64_t));
+    c = calloc((size_t)W, sizeof(uint64_t));
+    N = malloc((size_t)(k + 1) * (size_t)W * sizeof(uint64_t));
+    if (!lam || !rl || !pts || !ostart || !seen || !srt || !srttmp || !U || !basis || !tmp2 || !c || !N) {
+        PyErr_NoMemory();
+        goto done;
+    }
+    /* the orbits, as in EAAction.orbits */
+    {
+        Py_ssize_t head = 0, tail = 0, p0;
+        memset(lam, 0, (size_t)(m + 1) * (size_t)W * sizeof(uint64_t));
+        for (p0 = 0; p0 < m; p0++) {
+            if (seen[p0])
+                continue;
+            seen[p0] = 1;
+            ostart[norb++] = (int32_t)tail;
+            pts[tail++] = (int32_t)p0;
+            head = ostart[norb - 1];
+            while (head < tail) {
+                int32_t q0 = pts[head++];
+                for (i = 0; i < k; i++) {
+                    int32_t u = act[i * m + q0];
+                    if (!seen[u]) {
+                        Py_ssize_t w;
+                        seen[u] = 1;
+                        for (w = 0; w < W; w++)
+                            lam[(Py_ssize_t)u * W + w] = lam[(Py_ssize_t)q0 * W + w];
+                        lam[(Py_ssize_t)u * W + i / 64] ^= (uint64_t)1 << (i % 64);
+                        pts[tail++] = u;
+                    }
+                }
+            }
+        }
+        ostart[norb] = (int32_t)tail;
+    }
+    if (!xb_init(&K, k, W) || !(k_ok = 1) || !xb_init(&D, k, W) || !(d_ok = 1)
+        || !xb_init(&Wb, k, W) || !(wb_ok = 1) || !xb_init(&eqs, k, W) || !(eqs_ok = 1)) {
+        PyErr_NoMemory();
+        goto done;
+    }
+    /* c, U = 0, unit vectors */
+    nu = k;
+    memset(U, 0, (size_t)(k + 1) * (size_t)W * sizeof(uint64_t));
+    for (i = 0; i < k; i++)
+        U[i * W + i / 64] = (uint64_t)1 << (i % 64);
+    {
+        Py_ssize_t o;
+        for (o = 0; o < norb; o++) {
+            Py_ssize_t os = ostart[o], oe = ostart[o + 1], osz = oe - os, nb = 0, ncand, r0, target;
+            int constant = 1;
+            int64_t x0;
+            if (osz == 1 || nu == 0)
+                continue;
+            x0 = x[pts[os]];
+            for (q = os; q < oe; q++)
+                if (x[pts[q]] != x0) {
+                    constant = 0;
+                    break;
+                }
+            if (constant)
+                continue;
+            /* the kernel K of the orbit: as EAAction._kernel */
+            xb_reset(&K);
+            target = k - (Py_ssize_t)(63 - __builtin_clzll((uint64_t)osz));
+            {
+                int stop = 0;
+                for (q = os; q < oe && !stop; q++) {
+                    const uint64_t *lq;
+                    if (K.r >= target)
+                        break;
+                    lq = lam + (Py_ssize_t)pts[q] * W;
+                    for (i = 0; i < k; i++) {
+                        const uint64_t *lu = lam + (Py_ssize_t)act[i * m + pts[q]] * W;
+                        Py_ssize_t w;
+                        int nz = 0;
+                        for (w = 0; w < W; w++) {
+                            tmp2[w] = lq[w] ^ lu[w];
+                        }
+                        tmp2[i / 64] ^= (uint64_t)1 << (i % 64);
+                        for (w = 0; w < W; w++)
+                            if (tmp2[w]) {
+                                nz = 1;
+                                break;
+                            }
+                        if (nz) {
+                            (void)xb_add(&K, tmp2, 0);
+                        }
+                    }
+                    if (K.r >= target)
+                        stop = 1;
+                }
+            }
+            if (K.r != target)
+                goto use_python;        /* (the reference raises) */
+            /* D, basis: the images of U modulo K */
+            xb_reset(&D);
+            for (i = 0; i < nu; i++) {
+                Py_ssize_t w;
+                memcpy(tmp2, U + i * W, (size_t)W * sizeof(uint64_t));
+                xb_full_reduce(&K, tmp2);
+                memcpy(tmp2 + W, tmp2, (size_t)W * sizeof(uint64_t));
+                /* D.reduce(v) on a copy, then D.add(v) */
+                if (xb_reduce(&D, tmp2)) {
+                    memcpy(tmp2, tmp2 + W, (size_t)W * sizeof(uint64_t));
+                    memcpy(basis + nb * W, tmp2, (size_t)W * sizeof(uint64_t));
+                    nb++;
+                    (void)xb_add(&D, tmp2, 0);
+                }
+                (void)w;
+            }
+            if (nb == 0)
+                continue;               /* one translate only */
+            /* _reduced: the sorted points, reduced labels and the map label -> point */
+            for (q = os; q < oe; q++)
+                srt[q - os] = pts[q];
+            {
+                Py_ssize_t cap2 = 0;
+                int32_t *scratch = NULL;
+                sort_i32(srt, osz, &srttmp, &cap2);
+                (void)scratch;
+                if (cap2 < 0) {
+                    PyErr_NoMemory();
+                    goto done;
+                }
+            }
+            for (q = os; q < oe; q++) {
+                memcpy(rl + (Py_ssize_t)pts[q] * W, lam + (Py_ssize_t)pts[q] * W,
+                       (size_t)W * sizeof(uint64_t));
+                xb_full_reduce(&K, rl + (Py_ssize_t)pts[q] * W);
+            }
+            {
+                Py_ssize_t mask = 15, ins;
+                while (mask + 1 < osz * 2 + 2)
+                    mask = mask * 2 + 1;
+                free(slot);
+                slot = malloc((size_t)(mask + 1) * sizeof(int32_t));
+                if (!slot) {
+                    PyErr_NoMemory();
+                    goto done;
+                }
+                memset(slot, 0xff, (size_t)(mask + 1) * sizeof(int32_t));
+                for (ins = os; ins < oe; ins++) {
+                    int32_t pnt = pts[ins];
+                    Py_ssize_t h = (Py_ssize_t)(words_hash(rl + (Py_ssize_t)pnt * W, W)
+                                                & (uint64_t)mask);
+                    for (;;) {
+                        int32_t e = slot[h];
+                        if (e < 0) {
+                            slot[h] = pnt;
+                            break;
+                        }
+                        if (memcmp(rl + (Py_ssize_t)e * W, rl + (Py_ssize_t)pnt * W,
+                                   (size_t)W * sizeof(uint64_t)) == 0) {
+                            slot[h] = pnt;     /* (as the dict: the last one wins) */
+                            break;
+                        }
+                        h = (h + 1) & mask;
+                    }
+                }
+                /* the candidates: all combinations of basis with c reduced */
+                ncand = (Py_ssize_t)1 << nb;
+                if (nb > 62 || ncand > osz)
+                    goto use_python;
+                if (ncand > cap_cands) {
+                    uint64_t *nc2, *nk;
+                    cap_cands = ncand * 2;
+                    nc2 = realloc(cands, (size_t)cap_cands * (size_t)W * sizeof(uint64_t));
+                    if (!nc2) {
+                        PyErr_NoMemory();
+                        goto done;
+                    }
+                    cands = nc2;
+                    nk = realloc(keep, (size_t)cap_cands * (size_t)W * sizeof(uint64_t));
+                    if (!nk) {
+                        PyErr_NoMemory();
+                        goto done;
+                    }
+                    keep = nk;
+                }
+                memcpy(cands, c, (size_t)W * sizeof(uint64_t));
+                xb_full_reduce(&K, cands);
+                ncand = 1;
+                for (i = 0; i < nb; i++) {
+                    Py_ssize_t t, w;
+                    for (t = 0; t < ncand; t++)
+                        for (w = 0; w < W; w++)
+                            cands[(t + ncand) * W + w] = cands[t * W + w] ^ basis[i * W + w];
+                    ncand *= 2;
+                }
+                {
+                    Py_ssize_t si;
+                    for (si = 0; si < osz && ncand > 1; si++) {
+                        const uint64_t *rq = rl + (Py_ssize_t)srt[si] * W;
+                        Py_ssize_t t, nkeep = 0, w;
+                        int64_t best = 0;
+                        int have = 0;
+                        uint64_t *lbl = tmp2;
+                        for (t = 0; t < ncand; t++) {
+                            Py_ssize_t h;
+                            int64_t val;
+                            int32_t e;
+                            for (w = 0; w < W; w++)
+                                lbl[w] = cands[t * W + w] ^ rq[w];
+                            h = (Py_ssize_t)(words_hash(lbl, W) & (uint64_t)mask);
+                            for (;;) {
+                                e = slot[h];
+                                if (e < 0)
+                                    goto use_python;    /* (the reference raises KeyError) */
+                                if (memcmp(rl + (Py_ssize_t)e * W, lbl,
+                                           (size_t)W * sizeof(uint64_t)) == 0)
+                                    break;
+                                h = (h + 1) & mask;
+                            }
+                            val = x[e];
+                            if (!have || val < best) {
+                                have = 1;
+                                best = val;
+                                nkeep = 0;
+                                memcpy(keep, cands + t * W, (size_t)W * sizeof(uint64_t));
+                                nkeep = 1;
+                            } else if (val == best) {
+                                memcpy(keep + nkeep * W, cands + t * W, (size_t)W * sizeof(uint64_t));
+                                nkeep++;
+                            }
+                        }
+                        {
+                            uint64_t *sw = cands;
+                            cands = keep;
+                            keep = sw;
+                        }
+                        ncand = nkeep;
+                    }
+                }
+                ctmp = realloc(ctmp, (size_t)W * sizeof(uint64_t));
+                if (!ctmp) {
+                    PyErr_NoMemory();
+                    goto done;
+                }
+                memcpy(ctmp, cands, (size_t)W * sizeof(uint64_t));    /* m0 */
+                xb_copy(&Wb, &K);
+                for (i = 1; i < ncand; i++) {
+                    Py_ssize_t w;
+                    for (w = 0; w < W; w++)
+                        tmp2[w] = cands[i * W + w] ^ ctmp[w];
+                    (void)xb_add(&Wb, tmp2, 0);
+                }
+                if (Wb.r == k)
+                    continue;
+                /* Wb.kernel(k): one vector per free variable; each an equation */
+                {
+                    Py_ssize_t nr = xb_kernel(&Wb, k, N), ri;
+                    for (ri = 0; ri < nr; ri++) {
+                        const uint64_t *rvec = N + ri * W;
+                        Py_ssize_t w;
+                        uint64_t acc = 0;
+                        for (w = 0; w < W; w++)
+                            acc ^= rvec[w] & ctmp[w];
+                        memcpy(tmp2, rvec, (size_t)W * sizeof(uint64_t));
+                        if (!xb_add(&eqs, tmp2, __builtin_parityll(acc)))
+                            goto use_python;
+                    }
+                    xb_solution(&eqs, c);
+                    nu = xb_kernel(&eqs, k, U);
+                }
+                r0 = 0;
+                (void)r0;
+            }
+        }
+    }
+    /* the result */
+    {
+        PyObject *cobj = words_to_int(c, W), *lst;
+        if (!cobj)
+            goto done;
+        lst = PyList_New(nu);
+        if (!lst) {
+            Py_DECREF(cobj);
+            goto done;
+        }
+        for (i = 0; i < nu; i++) {
+            PyObject *o = words_to_int(U + i * W, W);
+            if (!o) {
+                Py_DECREF(cobj);
+                Py_DECREF(lst);
+                goto done;
+            }
+            PyList_SET_ITEM(lst, i, o);
+        }
+        res = PyTuple_New(2);
+        if (!res) {
+            Py_DECREF(cobj);
+            Py_DECREF(lst);
+            goto done;
+        }
+        PyTuple_SET_ITEM(res, 0, cobj);
+        PyTuple_SET_ITEM(res, 1, lst);
+        goto done;
+    }
+use_python:
+    res = Py_None;
+    Py_INCREF(res);
+done:
+    if (k_ok) xb_free(&K);
+    if (d_ok) xb_free(&D);
+    if (wb_ok) xb_free(&Wb);
+    if (eqs_ok) xb_free(&eqs);
+    free(act); free(x); free(lam); free(rl); free(pts); free(ostart); free(seen); free(srt);
+    free(srttmp); free(U); free(basis); free(cands); free(keep); free(ctmp); free(tmp2); free(c);
+    free(N); free(slot);
+    return res;
+}
+/* ===== end of w23-speed2 block (5) ===== */
+
 #define FAST(name) {#name, (PyCFunction)(void (*)(void))ck_##name, METH_FASTCALL, NULL}
 static PyMethodDef methods[] = {
     FAST(set_fallbacks), FAST(mul), FAST(inv), FAST(act), FAST(maps), FAST(orbits),
@@ -3317,6 +3933,7 @@ static PyMethodDef methods[] = {
     FAST(closure_dense),
     FAST(closure_sparse),
     FAST(ea_compose), FAST(ea_who_add), FAST(ea_who_remove),
+    FAST(ea_canon),
     {NULL, NULL, 0, NULL}
 };
 
