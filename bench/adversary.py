@@ -15,20 +15,39 @@ answer, checked by bench/canon.py):
               triple, which makes the layer group non-elementary-abelian from
               the hub on (degree 4); iso and twist pairs as CFI.
   nst3   [k]  a shrunken multipede (bench/irhard.py) with the same hub.
+  mpi    [k]  the multipede of bench/irhard.py hung under a balanced tree whose
+              siblings are told apart by pendant paths: every foot pair and the
+              4 middles of every row are twins of a tree leaf, with the same hub
+              (degree 9). Built to put the multipede in one phase-2 layer, but
+              gi.canon picks its root edge elsewhere and the layers split it: what
+              this family actually attacks is perm_canon (iso and twist pairs
+              follow the multipede lemma). ir_canon's own exponential growth is
+              measured by "irdirect" below, on the multipede as a colored graph.
 
     python3 bench/adversary.py paired --base DIR --family tm --sizes 3,4,5,6 --timeout 60 --label NAME
 
 runs the two source trees alternately on the same instances (a fresh process per
 instance and tree, one at a time, under `nice`); a timeout is reported as such.
 Results go to bench/results/adversary-NAME.json.
+
+    python3 bench/adversary.py handoff [--budget 50000] [--copies 8]
+
+shows that a node budget handing off from perm_canon to the Luks canonizer is not
+canonical: relabelled copies of one graph (tb4, depth 2) get different forms.
+
+    python3 bench/adversary.py irdirect --sizes 4,8,16,32,64 --timeout 90
+
+counts the search nodes of ir_canon called directly on rigid multipedes colored by
+foot pair and by row.
 """
 import argparse
-import hashlib
+import inspect
 import itertools
 import json
 import os
 import random
 import re
+import signal
 import subprocess
 import sys
 import time
@@ -160,7 +179,84 @@ def fam_nst3(k, rng):
     return [dict(name=f"nst3-{k}", X=X, Y=relabeled(X, rng), claim=True, aut=None, cert="relabel")]
 
 
-FAMILIES = dict(cfi3=fam_cfi3, tm=_fam_tree(2), tb3=_fam_tree(3), tb4=_fam_tree(4), cfit=fam_cfit, nst3=fam_nst3)
+def multipede_under_tree(rows, nw, rhs):
+    """The multipede R(B, rhs) (bench/irhard.py) hung under a balanced binary
+    tree: each foot pair and each row's four middles are the children of a tree
+    leaf, siblings of the tree differ by pendant paths, and the root carries
+    a tail of length 6; the hub with a twin triple is added by the caller.
+    All feet and middles have the same distance from the root."""
+    nbr = [[] for _ in range(2 * nw)]
+    blocks = [[2 * w, 2 * w + 1] for w in range(nw)]
+    for r, ws in zip(rhs, rows):
+        mids = []
+        for bits in itertools.product((0, 1), repeat=len(ws)):
+            if sum(bits) % 2 != r:
+                continue
+            m = len(nbr)
+            nbr.append([2 * w + b for w, b in zip(ws, bits)])
+            for f in nbr[m]:
+                nbr[f].append(m)
+            mids.append(m)
+        blocks.append(mids)
+    level = []
+    D = 1
+    while (1 << D) < len(blocks):
+        D += 1
+    for i in range(1 << D):
+        v = len(nbr)
+        nbr.append([])
+        if i < len(blocks):
+            for b in blocks[i]:
+                nbr[v].append(b)
+                nbr[b].append(v)
+        level.append(v)
+    while len(level) > 1:
+        nxt = []
+        for i in range(0, len(level), 2):
+            v = len(nbr)
+            nbr.append([])
+            for j, c in enumerate(level[i:i + 2]):
+                nbr[v].append(c)
+                nbr[c].append(v)
+                prev = c
+                for _ in range(1 + j):
+                    u = len(nbr)
+                    nbr.append([prev])
+                    nbr[prev].append(u)
+                    prev = u
+            nxt.append(v)
+        level = nxt
+    root = level[0]
+    prev = root
+    for _ in range(6):
+        u = len(nbr)
+        nbr.append([prev])
+        nbr[prev].append(u)
+        prev = u
+    return nbr, root
+
+
+def fam_mpi(k, rng):
+    while True:
+        rows, nw = irhard.ns_base(k, rng)
+        if not irhard.check_ns_lemma(rows, nw):
+            break
+    nv = len(rows)
+    cs, cols = irhard.col_space(rows, nw)
+    x = [rng.randrange(2) for _ in range(nw)]
+    r_iso = [sum(x[w] for w in r) % 2 for r in rows]
+    cand = [v for v in range(nv) if irhard._reduce(cs, 1 << v)]
+    g = lambda rhs: add_triple(*multipede_under_tree(rows, nw, rhs))
+    X = g([0] * nv)
+    out = [dict(name=f"mpi{k}", X=X, Y=relabeled(g(r_iso), rng), claim=True, aut=None, cert="lemma")]
+    if cand:
+        v = rng.choice(cand)
+        out.append(dict(name=f"mpi{k}-twist", X=X, Y=relabeled(g([int(i == v) for i in range(nv)]), rng), claim=False,
+                        aut=None, cert="lemma"))
+    return out
+
+
+FAMILIES = dict(cfi3=fam_cfi3, tm=_fam_tree(2), tb3=_fam_tree(3), tb4=_fam_tree(4), cfit=fam_cfit, nst3=fam_nst3, mpi=fam_mpi)
 
 
 WORKER = r"""
@@ -231,6 +327,86 @@ def cmd_paired(args):
                 json.dump(dict(label=args.label, timeout=args.timeout, rows=rows), fh, indent=1)
 
 
+def _patched(fn, old, new, **extra):
+    """fn recompiled with old replaced by new in its source, in its module's
+    namespace plus extra (for counting and limiting its search nodes)."""
+    src = inspect.getsource(fn)
+    if old not in src:
+        raise SystemExit("the source of %s changed" % fn.__name__)
+    ns = dict(vars(sys.modules[fn.__module__]))
+    ns.update(extra)
+    exec(src.replace(old, new, 1), ns)
+    return ns[fn.__name__]
+
+
+def cmd_handoff(args):
+    import gi.canon as C
+    from gi.group import PermGroup
+
+    class Over(Exception):
+        pass
+
+    budget = [0]
+    search = _patched(C.perm_canon, "nodes[0] += 1", "nodes[0] += 1\n        if nodes[0] > BUDGET[0]:\n            raise Over()",
+                      BUDGET=budget, Over=Over)
+    luks = C.luks_canon_group
+    tally = [0, 0]
+
+    def hybrid(P, x, stats=None, limit=None):
+        try:
+            F, lam, gens = search(P, x, None)
+        except Over:
+            tally[1] += 1
+            return luks(P, x, stats, limit)
+        tally[0] += 1
+        return F, lam, (PermGroup(P.n, gens) if gens else PermGroup(P.n))
+
+    C.luks_canon_group = hybrid
+    rng = random.Random(3)
+    X = tree_matching(4, 2, rng)
+    copies = [X] + [relabeled(X, rng) for _ in range(args.copies - 1)]
+    for B in (0, args.budget, 10 ** 9):
+        budget[0] = B
+        tally[:] = [0, 0]
+        forms = [C.canonical_form_lists(g) for g in copies]
+        print(f"budget {B:>10d}: {tally[0]} searches finished, {tally[1]} handed off, "
+              f"{len(set(forms))} distinct forms among {args.copies} relabelled copies")
+
+
+def cmd_irdirect(args):
+    import gi.canon as C
+    nodes = [0]
+
+    class Stop(Exception):
+        pass
+
+    def stop(*a):
+        raise Stop()
+
+    search = _patched(C.ir_canon, "nodes = [0]", "nodes = NODES", NODES=nodes)
+    signal.signal(signal.SIGALRM, stop)
+    for k in [int(s) for s in args.sizes.split(",")]:
+        rng = random.Random(k)
+        while True:
+            rows, nw = irhard.ns_base(k, rng)
+            if not irhard.check_ns_lemma(rows, nw):
+                break
+        g = irhard.multipede(rows, nw, [0] * len(rows))
+        col = [w // 2 for w in range(2 * nw)]
+        for r in range(len(rows)):
+            col += [nw + r] * 4
+        nodes[0] = 0
+        t0 = time.perf_counter()
+        signal.setitimer(signal.ITIMER_REAL, args.timeout)
+        try:
+            search([list(r) for r in g], col)
+            status = "ok"
+        except Stop:
+            status = "timeout"
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        print(f"multipede {k:3d} n={len(g):5d}  {status:8s} {time.perf_counter() - t0:8.2f}s  ir_canon nodes {nodes[0]}", flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -243,8 +419,14 @@ def main():
     p.add_argument("--only", default="")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--rounds", type=int, default=1)
+    h = sub.add_parser("handoff")
+    h.add_argument("--budget", type=int, default=50000)
+    h.add_argument("--copies", type=int, default=8)
+    d = sub.add_parser("irdirect")
+    d.add_argument("--sizes", required=True)
+    d.add_argument("--timeout", type=float, default=90)
     args = ap.parse_args()
-    {"paired": cmd_paired}[args.cmd](args)
+    {"paired": cmd_paired, "handoff": cmd_handoff, "irdirect": cmd_irdirect}[args.cmd](args)
 
 
 if __name__ == "__main__":

@@ -11,9 +11,9 @@ and gens generate Aut_P(F); so Lambda_P(x) := {h in P : act(x, h) == F} equals
 lam Aut_P(F) (Definition 2.1 / Lemma 2.2 of
 docs/canonization-bounded-degree.md).
 
-The function has the interface of gi.canon.perm_canon. It is NOT the least
-image: the least image of a string under a permutation group is NP-hard to
-compute in general, which is why Luks's form is defined by the recursion below.
+The function has the interface of gi.canon.perm_canon, but F is in general NOT
+the least image of x: it is the form defined by the recursion below, which is
+what makes it computable within the bounds of docs/w40-solvable.md.
 
 Definition of the canonizer C(G, x), for a group G on range(w) and a string x
 of length w, returning (lam, U), lam in G, U = Aut_G(act(x, lam)):
@@ -25,7 +25,9 @@ of length w, returning (lam, U), lam in G, U = Aut_G(act(x, lam)):
  (4) G intransitive, with orbits O_1, ..., O_t ordered by least point (chain
      rule): C is applied to the restriction of the current group to O_1, then
      the group becomes the stabilizer of the result in the current group, x
-     moves along, and the next orbit is treated.
+     moves along, and the next orbit is treated. (If every generator moves only
+     one orbit, G is the direct product of its restrictions and the orbits are
+     treated independently: the same function, computed faster.)
  (5) G transitive on w >= 2 points, with the canonical block system with
      primitive quotient P = G/N on k blocks (gi.group.top_block_system; for a
      primitive G it is the system of points, N = 1):
@@ -79,10 +81,12 @@ gives |U| = t |U_best|.
 
 Why no work counter. A hand-off from a fast search to this canonizer based on
 a node count of the search would have to be the same for all strings in an
-orbit; perm_canon's node count is not (a string and a relabelled copy can
-differ by 8x in nodes; docs/w40-solvable.md Sec. 2). Instead every decision
-that selects a method is a function of (G as a set, orbit of x); these are
-the predicates of the list above and SMALL and enum_limit.
+orbit; perm_canon's node count is not (relabelled copies of one graph differ
+by more than 10x in nodes, and a budgeted hand-off really does give them
+different forms: docs/w40-solvable.md Sec. 2). Instead every decision that
+selects a method is a function of (G as a set, orbit of x): the predicates of
+the list above, SMALL and enum_limit. The memo of _solve and the product test
+of _chain only save work: they do not change the result.
 """
 from math import factorial
 from operator import itemgetter
@@ -93,7 +97,7 @@ from .ea2 import EAAction, EA2, is_ea2
 
 __all__ = ["luks_canon", "luks_canon_group", "enum_limit_default", "SMALL", "LimitExceeded"]
 
-SMALL = 64                              # groups of at most this order are listed
+SMALL = 256                             # groups of at most this order are listed
 
 
 class LimitExceeded(Exception):

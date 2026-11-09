@@ -1,0 +1,154 @@
+{
+ "label": "w40-tb4-check",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "tb4-2",
+   "family": "tb4",
+   "size": 2,
+   "n": 24,
+   "seed": 0,
+   "maxdeg": 5,
+   "edges": 31,
+   "cert": "relabel",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 16.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 16.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.046,
+    "t_x": 0.031,
+    "t_y": 0.015,
+    "same": true,
+    "ngens": 3,
+    "aut_order": "16"
+   },
+   "iso": true,
+   "aut": 16.0
+  },
+  {
+   "name": "tb4-2-other",
+   "family": "tb4",
+   "size": 2,
+   "n": 24,
+   "seed": 0,
+   "maxdeg": 5,
+   "edges": 31,
+   "cert": "nauty",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 16.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 16.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.018,
+    "t_x": 0.006,
+    "t_y": 0.012,
+    "same": false,
+    "ngens": 3,
+    "aut_order": "16"
+   },
+   "iso": false,
+   "aut": 16.0
+  },
+  {
+   "name": "tb4-3",
+   "family": "tb4",
+   "size": 3,
+   "n": 88,
+   "seed": 0,
+   "maxdeg": 5,
+   "edges": 119,
+   "cert": "relabel",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 64.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 64.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.784,
+    "t_x": 1.063,
+    "t_y": 0.721,
+    "same": true,
+    "ngens": 6,
+    "aut_order": "64"
+   },
+   "iso": true,
+   "aut": 64.0
+  },
+  {
+   "name": "tb4-3-other",
+   "family": "tb4",
+   "size": 3,
+   "n": 88,
+   "seed": 0,
+   "maxdeg": 5,
+   "edges": 119,
+   "cert": "nauty",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 64.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 64.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.931,
+    "t_x": 0.699,
+    "t_y": 1.232,
+    "same": false,
+    "ngens": 6,
+    "aut_order": "64"
+   },
+   "iso": false,
+   "aut": 64.0
+  }
+ ]
+}

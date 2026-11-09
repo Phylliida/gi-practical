@@ -1,0 +1,154 @@
+{
+ "label": "w40-cfit-check",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "cfit-20",
+   "family": "cfit",
+   "size": 20,
+   "n": 204,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 304,
+   "cert": "cfi",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 6144.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 6144.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.078,
+    "t_x": 0.041,
+    "t_y": 0.036,
+    "same": true,
+    "ngens": 12,
+    "aut_order": "6144"
+   },
+   "iso": true,
+   "aut": 6144.0
+  },
+  {
+   "name": "cfit-20-twist",
+   "family": "cfit",
+   "size": 20,
+   "n": 204,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 304,
+   "cert": "cfi",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 6144.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 6144.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.033,
+    "t_x": 0.01,
+    "t_y": 0.024,
+    "same": false,
+    "ngens": 12,
+    "aut_order": "6144"
+   },
+   "iso": false,
+   "aut": 6144.0
+  },
+  {
+   "name": "cfit-40",
+   "family": "cfit",
+   "size": 40,
+   "n": 404,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 604,
+   "cert": "cfi",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 6291456.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 6291456.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.428,
+    "t_x": 0.219,
+    "t_y": 0.209,
+    "same": true,
+    "ngens": 22,
+    "aut_order": "6291456"
+   },
+   "iso": true,
+   "aut": 6291456.0
+  },
+  {
+   "name": "cfit-40-twist",
+   "family": "cfit",
+   "size": 40,
+   "n": 404,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 604,
+   "cert": "cfi",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 6291456.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 6291456.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.264,
+    "t_x": 0.032,
+    "t_y": 0.232,
+    "same": false,
+    "ngens": 22,
+    "aut_order": "6291456"
+   },
+   "iso": false,
+   "aut": 6291456.0
+  }
+ ]
+}

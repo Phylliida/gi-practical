@@ -1,0 +1,376 @@
+{
+ "label": "w40-mpi-check",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "mpi4",
+   "family": "mpi",
+   "size": 4,
+   "n": 254,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 445,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 12.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 12.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.045,
+    "t_x": 0.03,
+    "t_y": 0.016,
+    "same": true,
+    "ngens": 3,
+    "aut_order": "12"
+   },
+   "iso": true,
+   "aut": 12.0
+  },
+  {
+   "name": "mpi4-twist",
+   "family": "mpi",
+   "size": 4,
+   "n": 254,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 445,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 12.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 12.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.038,
+    "t_x": 0.014,
+    "t_y": 0.025,
+    "same": false,
+    "ngens": 3,
+    "aut_order": "12"
+   },
+   "iso": false,
+   "aut": 12.0
+  },
+  {
+   "name": "mpi6",
+   "family": "mpi",
+   "size": 6,
+   "n": 458,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 745,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 384.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 384.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.061,
+    "t_x": 0.033,
+    "t_y": 0.028,
+    "same": true,
+    "ngens": 8,
+    "aut_order": "384"
+   },
+   "iso": true,
+   "aut": 384.0
+  },
+  {
+   "name": "mpi6-twist",
+   "family": "mpi",
+   "size": 6,
+   "n": 458,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 745,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 384.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 384.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.047,
+    "t_x": 0.016,
+    "t_y": 0.031,
+    "same": false,
+    "ngens": 8,
+    "aut_order": "384"
+   },
+   "iso": false,
+   "aut": 384.0
+  },
+  {
+   "name": "mpi8",
+   "family": "mpi",
+   "size": 8,
+   "n": 502,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 885,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 24.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 24.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.099,
+    "t_x": 0.053,
+    "t_y": 0.046,
+    "same": true,
+    "ngens": 4,
+    "aut_order": "24"
+   },
+   "iso": true,
+   "aut": 24.0
+  },
+  {
+   "name": "mpi8-twist",
+   "family": "mpi",
+   "size": 8,
+   "n": 502,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 885,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 24.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 24.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.081,
+    "t_x": 0.024,
+    "t_y": 0.057,
+    "same": false,
+    "ngens": 4,
+    "aut_order": "24"
+   },
+   "iso": false,
+   "aut": 24.0
+  },
+  {
+   "name": "mpi10",
+   "family": "mpi",
+   "size": 10,
+   "n": 866,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 1345,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 196608.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 196608.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.62,
+    "t_x": 0.37,
+    "t_y": 0.25,
+    "same": true,
+    "ngens": 17,
+    "aut_order": "196608"
+   },
+   "iso": true,
+   "aut": 196608.0
+  },
+  {
+   "name": "mpi10-twist",
+   "family": "mpi",
+   "size": 10,
+   "n": 866,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 1345,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 196608.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 196608.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.47,
+    "t_x": 0.126,
+    "t_y": 0.344,
+    "same": false,
+    "ngens": 17,
+    "aut_order": "196608"
+   },
+   "iso": false,
+   "aut": 196608.0
+  },
+  {
+   "name": "mpi12",
+   "family": "mpi",
+   "size": 12,
+   "n": 910,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 1485,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 12288.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 12288.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.235,
+    "t_x": 0.125,
+    "t_y": 0.111,
+    "same": true,
+    "ngens": 13,
+    "aut_order": "12288"
+   },
+   "iso": true,
+   "aut": 12288.0
+  },
+  {
+   "name": "mpi12-twist",
+   "family": "mpi",
+   "size": 12,
+   "n": 910,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 1485,
+   "cert": "lemma",
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 12288.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 12288.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.178,
+    "t_x": 0.047,
+    "t_y": 0.131,
+    "same": false,
+    "ngens": 13,
+    "aut_order": "12288"
+   },
+   "iso": false,
+   "aut": 12288.0
+  }
+ ]
+}

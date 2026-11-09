@@ -1,0 +1,132 @@
+{
+ "label": "w40-reg3",
+ "timeout": 100.0,
+ "rows": [
+  {
+   "name": "3reg200",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.004,
+    "t_x": 0.003,
+    "t_y": 0.002,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg200-other",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.004,
+    "t_x": 0.002,
+    "t_y": 0.002,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg1000",
+   "family": "reg3",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.033,
+    "t_x": 0.022,
+    "t_y": 0.011,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg1000-other",
+   "family": "reg3",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.022,
+    "t_x": 0.012,
+    "t_y": 0.01,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg4000",
+   "family": "reg3",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 6000,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 0.121,
+    "t_x": 0.073,
+    "t_y": 0.048,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg4000-other",
+   "family": "reg3",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 6000,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 0.116,
+    "t_x": 0.07,
+    "t_y": 0.046,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

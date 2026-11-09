@@ -1,0 +1,186 @@
+{
+ "label": "w40-nst3",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "nst3-8",
+   "family": "nst3",
+   "size": 8,
+   "n": 180,
+   "maxdeg": 9,
+   "claim": true,
+   "cert": "relabel",
+   "before": {
+    "time": 0.26578597602201626,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 12,
+     "canon_phase1_max_degree": 517,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 33,
+     "canon_perm_p1": 6,
+     "canon_perm_calls": 6,
+     "canon_perm_nodes": 14921,
+     "canon_perm_max_degree": 517,
+     "canon_invariant": 4
+    },
+    "form": "fd8eb1deeca6",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.18121440202230588,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 12,
+     "canon_phase1_max_degree": 517,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 33,
+     "canon_perm_p1": 6,
+     "canon_luks_calls": 6,
+     "canon_luks_max_degree": 517,
+     "canon_luks_nodes": 42,
+     "canon_luks_listed": 34,
+     "canon_invariant": 4,
+     "canon_luks_cosets": 4
+    },
+    "form": "fd8eb1deeca6",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "nst3-12",
+   "family": "nst3",
+   "size": 12,
+   "n": 268,
+   "maxdeg": 9,
+   "claim": true,
+   "cert": "relabel",
+   "before": {
+    "time": 0.26365267200162634,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 12,
+     "canon_phase1_max_degree": 436,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 38,
+     "canon_invariant": 4,
+     "canon_perm_p1": 6,
+     "canon_perm_calls": 6,
+     "canon_perm_nodes": 11207,
+     "canon_perm_max_degree": 436
+    },
+    "form": "4fa3ffbaf47e",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.2273346949950792,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 12,
+     "canon_phase1_max_degree": 436,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 38,
+     "canon_invariant": 4,
+     "canon_perm_p1": 6,
+     "canon_luks_calls": 6,
+     "canon_luks_max_degree": 436,
+     "canon_luks_nodes": 56,
+     "canon_luks_listed": 40
+    },
+    "form": "4fa3ffbaf47e",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "nst3-16",
+   "family": "nst3",
+   "size": 16,
+   "n": 356,
+   "maxdeg": 9,
+   "claim": true,
+   "cert": "relabel",
+   "before": {
+    "time": 2.066693140019197,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 14,
+     "canon_phase1_max_degree": 593,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 54,
+     "canon_invariant": 6,
+     "canon_perm_p1": 6,
+     "canon_perm_calls": 6,
+     "canon_perm_nodes": 65235,
+     "canon_perm_max_degree": 593
+    },
+    "form": "cd238d530df3",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.5770656889653765,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 14,
+     "canon_phase1_max_degree": 593,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 54,
+     "canon_invariant": 6,
+     "canon_perm_p1": 6,
+     "canon_luks_calls": 6,
+     "canon_luks_max_degree": 593,
+     "canon_luks_nodes": 62,
+     "canon_luks_listed": 40,
+     "canon_luks_ea": 4
+    },
+    "form": "56197e64e9b9",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "nst3-24",
+   "family": "nst3",
+   "size": 24,
+   "n": 532,
+   "maxdeg": 9,
+   "claim": true,
+   "cert": "relabel",
+   "before": {
+    "status": "timeout",
+    "time": 60.0
+   },
+   "after": {
+    "time": 3.0524329059990123,
+    "same": true,
+    "ngens": 2,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 14,
+     "canon_phase1_max_degree": 1256,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 71,
+     "canon_invariant": 6,
+     "canon_perm_p1": 6,
+     "canon_luks_calls": 6,
+     "canon_luks_max_degree": 1256,
+     "canon_luks_nodes": 116,
+     "canon_luks_listed": 82,
+     "canon_luks_ea": 2
+    },
+    "form": "24a1bb1f598e",
+    "status": "ok"
+   }
+  }
+ ]
+}

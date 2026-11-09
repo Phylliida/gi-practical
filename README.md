@@ -58,7 +58,9 @@ stage to the recursion. `method="auto"` picks the bounded (Luks) or hybrid pipel
   string over the group (orbit-major order), by the same linear algebra.
 * `gi/canon.py`: canonical labeling of bounded-degree graphs (components, edge rooting, layers),
   with string canonizers per layer: invariant strings, elementary abelian groups (`EAAction.canon`)
-  and a least-image search over a stabilizer chain (`perm_canon`) for the rest.
+  and Luks's recursion (`gi/luks.py`) for the rest.
+* `gi/luks.py`: canonical forms of strings under permutation groups by orbits and block systems
+  with primitive quotients enumerated (Luks 1982, Babai-Luks 1983); see docs/w40-solvable.md.
 * `gi/refine.py`: joint canonical color refinement of two graphs (1-WL and 2-WL), with colors named
   by one content-based rule for both graphs.
 * `gi/_ckernel.c`, `gi/kernel.py`: the optional compiled kernel (see "Compiled kernel" below).
@@ -356,9 +358,12 @@ database or deduplication key. The method is the canonical version of Luks's red
 1983; docs/canonization-bounded-degree.md §8): components sorted by form, the least rooted form over
 a canonical class of oriented edges, and per layer two string canonizations on the label side.
 Strings fixed by the layer group need no work, elementary abelian layers take the least image over
-an affine F_2 coset by Gaussian elimination (`EAAction.canon`), and other groups a least-image search
-over a stabilizer chain with automorphism pruning (`perm_canon`, exact but exponential in the worst
-case).
+an affine F_2 coset by Gaussian elimination (`EAAction.canon`), and other groups go through Luks's
+recursion (`gi/luks.py`). At maximum degree at most 5 this is a polynomial-time guarantee, with no
+exponential fallback. `canonical_labeling_lists(..., guarantee=True)` removes the two remaining
+exponential paths for every degree (`ir_canon` on layers with a twin block of at least 5, and the
+least-image search `perm_canon` for very large primitive sections), at a large cost in speed on
+hypercube-like graphs. Bounds and triggers: docs/w40-solvable.md.
 
 On Neuen–Schweitzer's rigid multipedes, computing both forms of a pair takes 0.34 s at n = 2464 and
 1.4 s at n = 5632 with the compiled kernel (docs/w23-speed2.md), while pynauty, dense nauty, sparse nauty and Traces

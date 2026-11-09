@@ -1,0 +1,174 @@
+{
+ "label": "w40-ns",
+ "timeout": 100.0,
+ "rows": [
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.032,
+    "t_x": 0.016,
+    "t_y": 0.016,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.031,
+    "t_x": 0.015,
+    "t_y": 0.015,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.06,
+    "t_x": 0.03,
+    "t_y": 0.03,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.061,
+    "t_x": 0.029,
+    "t_y": 0.032,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.173,
+    "t_x": 0.092,
+    "t_y": 0.082,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.167,
+    "t_x": 0.088,
+    "t_y": 0.079,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.337,
+    "t_x": 0.159,
+    "t_y": 0.177,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112-twist",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.339,
+    "t_x": 0.17,
+    "t_y": 0.169,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}
