@@ -1,0 +1,3 @@
+W3(skew3) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound 214990848, n^2=43046721, sampled: [(3, 4, 60, [0, 5201, 1243])] [160s]
+W2(P9) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound 214990848, n^2=43046721, sampled: [(3, 4, 60, [0, 5201, 1243])] [111s]
+done

@@ -1,0 +1,20 @@
+pi = 0.07407, C0 = 0.66566, n=6561
+  J=(0, 0, 0, 1) weight 1: exact P(0,1) = 6379162/43046721 = 0.148192; exact p = 0.186684; bound (pi*C0)^w = 0.049308; ok=True
+  J=(0, 0, 1, 0) weight 1: exact P(0,9) = 6379162/43046721 = 0.148192; exact p = 0.186684; bound (pi*C0)^w = 0.049308; ok=True
+  J=(0, 0, 1, 1) weight 2: exact P(0,10) = 3234522/43046721 = 0.075140; exact p = 0.108242; bound (pi*C0)^w = 0.002431; ok=True
+  J=(0, 1, 0, 0) weight 1: exact P(0,81) = 6379162/43046721 = 0.148192; exact p = 0.186684; bound (pi*C0)^w = 0.049308; ok=True
+  J=(0, 1, 0, 1) weight 2: exact P(0,82) = 1498890/43046721 = 0.034820; exact p = 0.056816; bound (pi*C0)^w = 0.002431; ok=True
+  J=(0, 1, 1, 0) weight 2: exact P(0,90) = 1498890/43046721 = 0.034820; exact p = 0.056816; bound (pi*C0)^w = 0.002431; ok=True
+  J=(0, 1, 1, 1) weight 3: exact P(0,91) = 1025074/43046721 = 0.023813; exact p = 0.042607; bound (pi*C0)^w = 0.000120; ok=True
+  J=(1, 0, 0, 0) weight 1: exact P(0,729) = 6379162/43046721 = 0.148192; exact p = 0.186684; bound (pi*C0)^w = 0.049308; ok=True
+  J=(1, 0, 0, 1) weight 2: exact P(0,730) = 1498890/43046721 = 0.034820; exact p = 0.056816; bound (pi*C0)^w = 0.002431; ok=True
+  J=(1, 0, 1, 0) weight 2: exact P(0,738) = 1498890/43046721 = 0.034820; exact p = 0.056816; bound (pi*C0)^w = 0.002431; ok=True
+  J=(1, 0, 1, 1) weight 3: exact P(0,739) = 1023074/43046721 = 0.023767; exact p = 0.042393; bound (pi*C0)^w = 0.000120; ok=True
+  J=(1, 1, 0, 0) weight 2: exact P(0,810) = 3234522/43046721 = 0.075140; exact p = 0.108242; bound (pi*C0)^w = 0.002431; ok=True
+  J=(1, 1, 0, 1) weight 3: exact P(0,811) = 1023074/43046721 = 0.023767; exact p = 0.042393; bound (pi*C0)^w = 0.000120; ok=True
+  J=(1, 1, 1, 0) weight 3: exact P(0,819) = 1025074/43046721 = 0.023813; exact p = 0.042607; bound (pi*C0)^w = 0.000120; ok=True
+  J=(1, 1, 1, 1) weight 4: exact P(0,820) = 849010/43046721 = 0.019723; exact p = 0.036644; bound (pi*C0)^w = 0.000006; ok=True
+min over nonzero subcube elements of exact P(0,y) = 0.019723; c with n^(-c)=minP: 0.4467
+Every pair inside the subcube {0,1}^4 differs on a set J; by translation-type symmetry (x->x+g coordinatewise is not assumed) see report.
+all 120 pairs inside Q (|Q|=16): min exact P = 0.019723 at (0, 820); so Q is a clique of B_c (via p >= P) for every c >= 0.4467
+distinct exact P values on pairs of Q: [0.019723, 0.023767, 0.023813, 0.03482, 0.07514, 0.148192]

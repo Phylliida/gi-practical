@@ -1,0 +1,18 @@
+P5L2: n=625, v=25; building done [0s]
+Freivalds C^2 = nI - J (4 random vectors): True ; row sums zero: True
+stage1 S=4000 [0s]; max pc-est 0.1609, mean pc-est 0.0780; max P-est 0.1127
+  #y with pc-est >= 0.05: 624 (of 624)
+  #y with pc-est >= 0.1: 48 (of 624)
+  #y with pc-est >= 0.15: 31 (of 624)
+  #y with pc-est >= 0.2: 0 (of 624)
+  #y with pc-est >= 0.25: 0 (of 624)
+  #y with pc-est >= 0.3: 0 (of 624)
+  coords base 5^4: wt1: n=16 mean 0.1513 max 0.1604, wt2: n=96 mean 0.0983 max 0.1609, wt3: n=256 mean 0.0719 max 0.0827, wt4: n=256 mean 0.0720 max 0.0845
+  coords base 25^2: wt1: n=48 mean 0.1515 max 0.1609, wt2: n=576 mean 0.0719 max 0.0845
+  exact pair (0,350): p = 62365/390625 = 0.15965; pc = 59246/387506 = 0.15289; P = 40622/390625 = 0.10399; pc-est was 0.1609 [0s]
+  exact pair (0,250): p = 62365/390625 = 0.15965; pc = 59246/387506 = 0.15289; P = 40622/390625 = 0.10399; pc-est was 0.1604 [0s]
+  exact pair (0,15): p = 62365/390625 = 0.15965; pc = 59246/387506 = 0.15289; P = 40622/390625 = 0.10399; pc-est was 0.1594 [0s]
+  exact pair (0,300): p = 62365/390625 = 0.15965; pc = 59246/387506 = 0.15289; P = 40622/390625 = 0.10399; pc-est was 0.1585 [0s]
+  exact pair (0,375): p = 62365/390625 = 0.15965; pc = 59246/387506 = 0.15289; P = 40622/390625 = 0.10399; pc-est was 0.1583 [0s]
+  exact pair (0,400): p = 62365/390625 = 0.15965; pc = 59246/387506 = 0.15289; P = 40622/390625 = 0.10399; pc-est was 0.1579 [0s]
+max exact over top-K: p 0.1596544 pc 0.15289053588847656 P 0.10399232
