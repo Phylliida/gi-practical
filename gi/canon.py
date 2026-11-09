@@ -100,14 +100,20 @@ follow gi.perm (mul(p, q) is p then q, x^g = act(x, g)).
      affine subspace, cut down by linear equations; no Schreier-Sims. This
      is the canonical counterpart of the isomorphism test of gi/ea2.py.
    * phase 2 when H = U1 x prod Sym(blocks), U1 fixing every position that
-     holds a block (no generator moves a block): ir_canon, an
-     individualization-refinement canonical form of the inner-edge graph
-     colored by the blocks (a colored-graph canonization problem);
-   * otherwise: perm_canon, the least image along positions 0, 1, ...: a
-     depth-first search over a stabilizer chain with base 0, 1, ..., pruned
-     by value, by invariance of a node's string under its stabilizer, and by
-     the automorphisms found (as in individualization-refinement search).
-     Exponential in the worst case, exact always.
+     holds a block, and the layer has a twin block of >= IR_MIN_BLOCK = 5
+     (hence maximum degree >= 6): ir_canon, an individualization-refinement
+     canonical form of the inner-edge graph colored by the blocks
+     (a colored-graph canonization problem; exponential in the worst case,
+     skipped with guarantee=True);
+   * otherwise: gi/luks.py (luks_canon_group), Luks's recursion: orbit by
+     orbit, block systems with primitive quotients enumerated. Polynomial
+     when H is solvable (all layers at maximum degree <= 5); n^O(d) sized
+     sections in general. Only inside it, for a primitive section above
+     enum_limit_default, the exact least-image search perm_canon (below) is
+     used, at a cost that can be exponential; guarantee=True removes this
+     limit. docs/w40-solvable.md states the bounds and why every choice among
+     these methods depends only on H as a set and on the orbit of the string,
+     so that the output is canonical.
 
 Elementary abelian layer groups are kept sparse (gi.ea2.SparseEA: dicts of
 moved points, extended in place layer by layer, with a point -> generators
@@ -126,6 +132,7 @@ from .bounded import (_Graph, _Rooted, class_plan, _components, _induced,
                       _check_lists, _neighbours, root_class)
 from .wl import refine as wl_refine
 from .kernel import ck as _ck
+from .luks import luks_canon_group, enum_limit_default
 
 __all__ = ["canonical_form", "canonical_form_lists", "canonical_labeling",
            "canonical_labeling_lists", "canon_iso", "canon_iso_lists", "perm_canon",
@@ -329,7 +336,7 @@ def _orbit_index(acts, deg):
     return lab
 
 
-def canon_group(G, n, pos, pidx, x, image, stats, tag="", acts=None):
+def canon_group(G, n, pos, pidx, x, image, stats, tag="", acts=None, guarantee=False):
     """Canonize the string x on the positions pos (ordered; pidx: position ->
     index) under the action of G (an EA2 or PermGroup on range(n)), where
     image(g, p) is the image of position p under g. Returns (a, U): a in G
@@ -358,11 +365,10 @@ def canon_group(G, n, pos, pidx, x, image, stats, tag="", acts=None):
     stats["canon_perm" + tag] += 1
     phi = ActionHom(G, len(pos), lambda g: tuple([pidx[image(g, p)] for p in pos]))
     P = phi.image_group()
-    _, lamP, autsP = perm_canon(P, x, stats)
+    _, lamP, UP = luks_canon_group(P, x, stats, None if guarantee else enum_limit_default)
     a = phi.lift(lamP)
     K = phi.kernel()
-    order = (PermGroup(len(pos), autsP).order() if autsP else 1) * K.order()
-    U = PermGroup(n, [phi.lift(h) for h in autsP] + list(K.gens), order=order)
+    U = PermGroup(n, [phi.lift(h) for h in UP.gens] + list(K.gens), order=UP.order() * K.order())
     return (None if a == identity(n) else a), (_as_ea(U, n) or U)
 
 
@@ -602,13 +608,14 @@ class RootedCanon:
     keys of another root), run stops and returns None as soon as its prefix
     exceeds best; better says whether keys < best."""
 
-    def __init__(self, g, u0, u1, incol, stats, layers="class"):
+    def __init__(self, g, u0, u1, incol, stats, layers="class", guarantee=False):
         col = canon_rooted_colors(g, u0, u1)
         plan = class_plan(g, col, u0, u1) if layers == "class" else None
         self.R = _Rooted(g, u0, u1, col, plan)
         self.n = g.n
         self.incol = [incol[v] for v in self.R.order]
         self.stats = stats
+        self.guarantee = guarantee      # no exponential fast path (see luks_policy)
 
     def run(self, best=None):
         R = self.R
@@ -695,7 +702,7 @@ class RootedCanon:
             if restricted:
                 table = None            # (new generators: the table no longer applies)
         else:
-            a1, U1 = canon_group(A, b, pos, pidx, x, _set_image, st, "_p1", acts1)
+            a1, U1 = canon_group(A, b, pos, pidx, x, _set_image, st, "_p1", acts1, self.guarantee)
             same = U1 is A              # (x invariant: acts1 is still U1's action)
             U1 = _as_sparse_ea(U1, b) or U1
             if isinstance(U1, SparseEA):
@@ -747,6 +754,8 @@ class RootedCanon:
         # (ie H acts on the new labels as the product of the symmetric groups on
         # the blocks): the inner-edge string is a colored graph (see ir_canon)
         fixed = bool(sym) and bool(E2)
+        # the exponential path ir_canon is kept for layers with a twin block of >= 5 only
+        big = max((len(bl) for _, bl in sym), default=1) >= IR_MIN_BLOCK and not self.guarantee
         if sparse:
             if table is None:           # (U1 is new: its action on the positions with blocks)
                 table = {}
@@ -785,7 +794,7 @@ class RootedCanon:
                 for _, (l1, l2) in sym:
                     U1.add({l1: l2, l2: l1})
                 H = U1
-            elif fixed:
+            elif fixed and big:
                 return self._ir_layer(U1.tuples(b), U1.order(), b, c, E2, sym, lab, linv, st)
             else:
                 H = self._dense_H(U1, pos, pidx, blocks, sym, b, c)
@@ -795,7 +804,7 @@ class RootedCanon:
                          for u in U1.gens]
             if fixed and any(act[p] != p for act in acts1 for p in blocks):
                 fixed = False
-            if fixed:
+            if fixed and big:
                 return self._ir_layer(list(U1.gens), U1.order(), b, c, E2, sym, lab, linv, st)
             H = self._perm_H(U1, acts1, blocks, sym, b, c)
         st["canon_phase2_max_log2_order"] = max(st["canon_phase2_max_log2_order"],
@@ -830,7 +839,7 @@ class RootedCanon:
                 acts2 = _rows_to_pos(rows2, pl0, pidx2)
             x2 = [1 if e in E2 else 0 for e in pl]
             st["canon_phase2_max_degree"] = max(st["canon_phase2_max_degree"], len(pl))
-            h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2", acts2)
+            h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2", acts2, self.guarantee)
             if h0 is not None:
                 self._apply(lab, linv, h0, c, False)
             A2 = _as_sparse_ea(A2, c) or A2
@@ -1008,12 +1017,14 @@ def _probe_automorphism(G, f0, f1, stats):
     return phi
 
 
+IR_MIN_BLOCK = 5                        # ir_canon: only layers with a twin block at least this big
+
 PROBE_MIN_ROOTS = 16                    # root class sizes at which a probe is tried
 PROBE_MAX_DEPTH = 64                    # refinements per probe
 PROBE_MAX_FAILS = 3                     # failed probes before giving up on a graph
 
 
-def canon_connected(g, stats, layers="class"):
+def canon_connected(g, stats, layers="class", guarantee=False):
     """(form, L, auts) for a connected _Graph g with canonical int colors:
     L[v] the label of v, form = _form(g, L) (a function of the isomorphism
     type), auts generators of Aut(g) (vertex permutations)."""
@@ -1077,7 +1088,7 @@ def canon_connected(g, stats, layers="class"):
         done.append(fi)
         stats["canon_roots"] += 1
         u0, u1 = edges[f]
-        rc = RootedCanon(G, u0, u1, g.col, stats, layers)
+        rc = RootedCanon(G, u0, u1, g.col, stats, layers, guarantee)
         res = rc.run(best[0] if best is not None else None)
         if res is None:                 # its key exceeds the best one: not a least root
             continue
@@ -1126,14 +1137,18 @@ def _color_names(colors, n):
     return [rank[c] for c in colors]
 
 
-def canonical_labeling_lists(nbr, colors=None, stats=None, layers="class"):
+def canonical_labeling_lists(nbr, colors=None, stats=None, layers="class", guarantee=False):
     """(lab, aut_gens) for the graph with neighbour lists nbr (symmetric, no
     loops or repeats) and optional vertex colors: lab[v] is the canonical label
     of v, so relabel_lists(nbr, lab) (with colors moved along) is the
     canonical form, equal for two graphs iff they are isomorphic (colors
     respected); aut_gens generate Aut (vertex permutations, g[v] the image of
     v). stats: an optional Counter for the counters canon_*. layers: "class"
-    (gi.bounded.class_plan, BFS when it gives up) or "bfs"."""
+    (gi.bounded.class_plan, BFS when it gives up) or "bfs". guarantee: no
+    exponential fast path anywhere (Babai-Luks's bound for every degree, see
+    docs/w40-solvable.md); the default keeps ir_canon on layers with a twin
+    block of >= 5 and the least-image search above enum_limit_default, which
+    cannot occur at maximum degree <= 5."""
     n = len(nbr)
     stats = Counter() if stats is None else stats
     if n == 0:
@@ -1143,7 +1158,7 @@ def canonical_labeling_lists(nbr, colors=None, stats=None, layers="class"):
     gx = _Graph(nbr, names)
     comps = []
     for part in _components(nbr):
-        form, L, auts = canon_connected(_induced(gx, part), stats, layers)
+        form, L, auts = canon_connected(_induced(gx, part), stats, layers, guarantee)
         comps.append((len(part), form, part, L, auts))
     comps.sort(key=lambda t: (t[0], t[1]))
     lab = [0] * n
@@ -1180,10 +1195,10 @@ def canonical_labeling_lists(nbr, colors=None, stats=None, layers="class"):
     return tuple(lab), gens
 
 
-def canonical_labeling(X, colors=None, stats=None, layers="class"):
+def canonical_labeling(X, colors=None, stats=None, layers="class", guarantee=False):
     """canonical_labeling_lists for an adjacency matrix X (0/1 rows of an
     undirected loopless graph)."""
-    return canonical_labeling_lists(_neighbours(X), colors, stats, layers)
+    return canonical_labeling_lists(_neighbours(X), colors, stats, layers, guarantee)
 
 
 def relabel_lists(nbr, lab):
@@ -1215,18 +1230,18 @@ def _form_of(nbr, lab, colors):
     return (n, cl, tuple(es))
 
 
-def canonical_form_lists(nbr, colors=None, stats=None, layers="class"):
+def canonical_form_lists(nbr, colors=None, stats=None, layers="class", guarantee=False):
     """The canonical form of the graph (neighbour lists, optional colors): the
     hashable tuple (n, colors by label or None, sorted edge codes i * n + j for
     the edges {i, j}, i < j, of the relabelled graph). Two graphs have equal
     forms iff they are isomorphic (with colors)."""
-    lab, _ = canonical_labeling_lists(nbr, colors, stats, layers)
+    lab, _ = canonical_labeling_lists(nbr, colors, stats, layers, guarantee)
     return _form_of(nbr, lab, colors)
 
 
-def canonical_form(X, colors=None, stats=None, layers="class"):
+def canonical_form(X, colors=None, stats=None, layers="class", guarantee=False):
     """canonical_form_lists for an adjacency matrix."""
-    return canonical_form_lists(_neighbours(X), colors, stats, layers)
+    return canonical_form_lists(_neighbours(X), colors, stats, layers, guarantee)
 
 
 def canon_iso_lists(nx, ny, colors_x=None, colors_y=None, stats=None):

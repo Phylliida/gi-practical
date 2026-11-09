@@ -53,7 +53,7 @@ import networkx as nx
 from gi.canon import canonical_labeling_lists, _form_of
 from gi.bounded import bounded_iso_lists
 from gi.group import PermGroup
-from bench import irhard
+from bench import irhard, adversary
 
 RESULTS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
@@ -102,7 +102,8 @@ def fam_cube(d, rng):
 
 
 FAMILIES = dict(ns=irhard.fam_ns, nsr=irhard.fam_nsr, nst=irhard.fam_nst, cfix=irhard.fam_cfix,
-                reg3=fam_reg(3), reg4=fam_reg(4), cube=fam_cube, mzgen=irhard.fam_mzgen)
+                reg3=fam_reg(3), reg4=fam_reg(4), cube=fam_cube, mzgen=irhard.fam_mzgen,
+                **adversary.FAMILIES)           # (docs/w40-solvable.md)
 
 
 # -- the modes -------------------------------------------------------------------------------

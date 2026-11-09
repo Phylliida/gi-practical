@@ -479,6 +479,7 @@ def structured_graphs():
     G = nx.hypercube_graph(5)
     G.remove_edge(*sorted(G.edges())[0])
     out.append(("Q5-minus-edge", G))
+    out.append(("Q6", nx.hypercube_graph(6)))  # twin blocks of 5: the ir_canon path
     base = nx.random_regular_graph(4, 6, seed=3)
     out.append(("CFI(4reg6)", cfi(base)))
     out.append(("CFI(4reg6)-twist", cfi(base, True)))
@@ -511,7 +512,7 @@ def test_structured_graphs_exercise_all_paths():
     fa, Xa = forms["CFI(4reg6)"]
     fb, Xb = forms["CFI(4reg6)-twist"]
     assert fa != fb and bounded_iso_lists(Xa, Xb) is None
-    for key in ("canon_perm_p1", "canon_ir", "canon_invariant"):
+    for key in ("canon_perm_p1", "canon_ir", "canon_invariant", "canon_luks_nodes"):
         assert total[key] > 0, key
     # phase 2 through perm_canon: H with blocks moved by U1 (Johnson gadgets)
     st = Counter()
