@@ -106,7 +106,7 @@ from operator import itemgetter
 
 from .perm import identity, mul, inv, sym_gens
 from .group import PermGroup, ActionHom
-from .ea2 import EA2, EAAction, is_ea2
+from .ea2 import EA2, EAAction, SparseEA, compose, is_ea2
 from .bounded import (_Graph, _Rooted, class_plan, _components, _induced,
                       _check_lists, _neighbours, root_class)
 from .wl import refine as wl_refine
@@ -287,8 +287,60 @@ def canon_group(G, n, pos, pidx, x, image, stats, tag=""):
     return (None if a == identity(n) else a), (_as_ea(U, n) or U)
 
 
+def canon_sparse(G, pos, pidx, x, stats, tag, moved):
+    """canon_group for an elementary abelian G given by a SparseEA: the same
+    least image over the group. moved(g, p) is the image of position p
+    under the sparse generator g, and p's points are iterated by iter(p).
+    Generators moving no point of a position act trivially, so only the active
+    ones enter the linear algebra. Returns the sparse element a (a dict, or None
+    for the identity) with act(x, a) the canonical form; G is restricted in place to
+    Aut_G(act(x, a)) (and Aut_G(x) = Aut_G(F): G is abelian)."""
+    x = tuple(x)
+    pts = set()
+    for p in pos:
+        pts.update(p)
+    ids = G.active_on(pts)
+    if not ids:
+        stats["canon_trivial"] += 1
+        return None
+    gens = G.gens
+    acts = [tuple([pidx[moved(gens[gid], p)] for p in pos]) for gid in ids]
+    if _invariant(acts, x):
+        stats["canon_invariant"] += 1
+        return None
+    stats["canon_ea" + tag] += 1
+    c, N = EAAction(len(ids), acts, len(pos)).canon(x)
+    ds = []
+    u = c
+    while u:
+        b = u & -u
+        ds.append(gens[ids[b.bit_length() - 1]])
+        u ^= b
+    a = compose(ds) if c else None
+    G.restrict(ids, N)
+    return a
+
+
 def _set_image(g, S):
     return frozenset([g[i] for i in S])
+
+
+def _set_image_sparse(g, S):
+    return frozenset([g.get(i, i) for i in S])
+
+
+def _pair_image_sparse(g, e):
+    p, q = g.get(e[0], e[0]), g.get(e[1], e[1])
+    return (p, q) if p < q else (q, p)
+
+
+def _as_sparse_ea(G, n):
+    """G as a SparseEA if it is elementary abelian, else None."""
+    if isinstance(G, SparseEA):
+        return G
+    if is_ea2(G.gens, n):
+        return SparseEA.from_tuples(G.gens)
+    return None
 
 
 def _pair_image(g, e):
@@ -330,7 +382,7 @@ class RootedCanon:
 
     def run(self, best=None):
         R = self.R
-        lab, A = [0, 1], EA2(2, [])
+        lab, linv, A = [0, 1], [0, 1], SparseEA()
         keys = [(self.incol[0], self.incol[1])]
         state = 0 if best is not None else -1      # 0: equal to best so far; -1: smaller
         if state == 0:
@@ -339,7 +391,7 @@ class RootedCanon:
             if keys[0] < best[0]:
                 state = -1
         for r in range(len(R.start) - 2):
-            lab, A = self.step(r, lab, A)
+            A = self.step(r, lab, linv, A)
             keys.append(self.layer_key(r, lab))
             if state == 0:
                 b = best[r + 1] if r + 1 < len(best) else ()
@@ -365,25 +417,38 @@ class RootedCanon:
         es.sort()
         return (tuple(cl), tuple(es))
 
-    def step(self, r, lab, A):
+    def step(self, r, lab, linv, A):
+        """One layer: lab (index -> label) and linv (label -> index) are extended
+        in place and the group A_(r+1) is returned (SparseEA or PermGroup)."""
         R, st = self.R, self.stats
         st["canon_layers"] += 1
         b, c = R.start[r + 1], R.start[r + 2]
         col = R.col
         att = R.attachments(r)
+        sparse = isinstance(A, SparseEA)
         # phase 1: the label sets of the up-sets under A
         occ = {}
         for U, ts in att.items():
             occ[frozenset([lab[i] for i in U])] = ts
-        gens = A.gens
         S_list = list(occ)
         seen = set(S_list)
-        for S in S_list:                # (the list grows: closure under A)
-            for g in gens:
-                S2 = frozenset([g[i] for i in S])
-                if S2 not in seen:
-                    seen.add(S2)
-                    S_list.append(S2)
+        if sparse:
+            gens = A.gens
+            for S in S_list:            # (the list grows: closure under A)
+                for gid in A.active_on(S):
+                    g = gens[gid]
+                    S2 = frozenset([g.get(i, i) for i in S])
+                    if S2 not in seen:
+                        seen.add(S2)
+                        S_list.append(S2)
+        else:
+            gens = A.gens
+            for S in S_list:
+                for g in gens:
+                    S2 = frozenset([g[i] for i in S])
+                    if S2 not in seen:
+                        seen.add(S2)
+                        S_list.append(S2)
         pos = sorted(S_list, key=lambda S: tuple(sorted(S)))
         pidx = {S: i for i, S in enumerate(pos)}
         vt = {S: tuple([col[t] for t in ts]) for S, ts in occ.items()}
@@ -392,12 +457,17 @@ class RootedCanon:
         for S, v in vt.items():
             x[pidx[S]] = code[v]
         st["canon_phase1_max_degree"] = max(st["canon_phase1_max_degree"], len(pos))
-        a1, U1 = canon_group(A, b, pos, pidx, x, _set_image, st, "_p1")
-        if not isinstance(U1, EA2):
-            U1 = _as_ea(U1, b) or U1
-        lab1 = list(lab) if a1 is None else [a1[i] for i in lab]
+        if sparse:
+            a1 = canon_sparse(A, pos, pidx, x, st, "_p1", _set_image_sparse)
+            U1 = A
+        else:
+            a1, U1 = canon_group(A, b, pos, pidx, x, _set_image, st, "_p1")
+            U1 = _as_sparse_ea(U1, b) or U1
+        if a1 is not None:
+            self._apply(lab, linv, a1, b, sparse)
+        sparse = isinstance(U1, SparseEA)
         # phase 2: new labels by the block rule; H = rho(U1) x| prod Sym(blocks)
-        cls = {frozenset([lab1[i] for i in U]): ts for U, ts in att.items()}
+        cls = {frozenset([lab[i] for i in U]): ts for U, ts in att.items()}
         newlab = [0] * (c - b)
         blocks, sym = {}, []
         nxt = b
@@ -420,28 +490,49 @@ class RootedCanon:
             nxt += len(ts)
         if nxt != c:
             raise AssertionError("RootedCanon: twin classes do not cover the layer")
-        labfull = lab1 + newlab
-        hU = []
-        for u in U1.gens:
-            full = list(u) + [0] * (c - b)
-            for p, labs in blocks.items():
-                q = pidx[frozenset([u[i] for i in pos[p]])]
-                for l, l2 in zip(labs, blocks[q]):
-                    full[l] = l2
-            hU.append(tuple(full))
-        ea = isinstance(U1, EA2) and all(len(bl) == 2 for _, bl in sym) and all(
-            pidx[frozenset([u[i] for i in pos[p]])] == p for p, _ in sym for u in U1.gens)
-        if ea:
-            sw = []
-            for _, (l1, l2) in sym:
-                s = list(range(c))
-                s[l1], s[l2] = l2, l1
-                sw.append(tuple(s))
-            H = EA2(c, hU + sw)
+        lab.extend(newlab)
+        linv.extend([0] * (c - b))
+        for t, l in zip(range(b, c), newlab):
+            linv[l] = t
+        if sparse:
+            # is H elementary abelian? (a property of the group: U1 elementary abelian,
+            # every block <= 2, U1 fixes the positions holding a block of 2.)
+            ea = all(len(bl) == 2 for _, bl in sym)
+            if ea:
+                gens = U1.gens
+                for p, _ in sym:
+                    S = pos[p]
+                    for gid in U1.active_on(S):
+                        g = gens[gid]
+                        if pidx[frozenset([g.get(i, i) for i in S])] != p:
+                            ea = False
+                            break
+                    if not ea:
+                        break
+            if ea:
+                # extend U1 in place by the rank-wise maps of the blocks, add the swaps
+                gens = U1.gens
+                pts = set()
+                for p in blocks:
+                    pts.update(pos[p])
+                for gid in U1.active_on(pts):
+                    g = gens[gid]
+                    e = {}
+                    for p, labs in blocks.items():
+                        S = pos[p]
+                        q = pidx[frozenset([g.get(i, i) for i in S])]
+                        if q != p:
+                            for l, l2 in zip(labs, blocks[q]):
+                                e[l] = l2
+                    if e:
+                        U1.extend(gid, e)
+                for _, (l1, l2) in sym:
+                    U1.add({l1: l2, l2: l1})
+                H = U1
+            else:
+                H = self._dense_H(U1, pos, pidx, blocks, sym, b, c)
         else:
-            order = U1.order() * prod(factorial(len(bl)) for _, bl in sym)
-            sg = [tuple(range(b)) + tuple(h[b:]) for _, bl in sym for h in sym_gens(c, bl)]
-            H = PermGroup(c, hU + sg, order=order)
+            H = self._perm_H(U1, pos, pidx, blocks, sym, b, c)
         st["canon_phase2_max_log2_order"] = max(st["canon_phase2_max_log2_order"],
                                                 H.order().bit_length() - 1)
         # inner edges of layer r + 1
@@ -452,23 +543,80 @@ class RootedCanon:
                     l1, l2 = newlab[t - b], newlab[w - b]
                     E2.add((l1, l2) if l1 < l2 else (l2, l1))
         if not E2:
-            return labfull, H
+            return H
         pl = list(E2)
         seen = set(pl)
-        for e in pl:
-            for h in H.gens:
-                e2 = _pair_image(h, e)
-                if e2 not in seen:
-                    seen.add(e2)
-                    pl.append(e2)
+        if isinstance(H, SparseEA):
+            gens = H.gens
+            for e in pl:
+                for gid in H.active_on(e):
+                    e2 = _pair_image_sparse(gens[gid], e)
+                    if e2 not in seen:
+                        seen.add(e2)
+                        pl.append(e2)
+        else:
+            for e in pl:
+                for h in H.gens:
+                    e2 = _pair_image(h, e)
+                    if e2 not in seen:
+                        seen.add(e2)
+                        pl.append(e2)
         pl.sort()
         pidx2 = {e: i for i, e in enumerate(pl)}
         x2 = [1 if e in E2 else 0 for e in pl]
         st["canon_phase2_max_degree"] = max(st["canon_phase2_max_degree"], len(pl))
-        h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2")
-        if h0 is not None:
-            labfull = [h0[l] for l in labfull]
-        return labfull, A2
+        if isinstance(H, SparseEA):
+            h0 = canon_sparse(H, pl, pidx2, x2, st, "_p2", _pair_image_sparse)
+            A2 = H
+            if h0 is not None:
+                self._apply(lab, linv, h0, c, True)
+        else:
+            h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2")
+            if h0 is not None:
+                self._apply(lab, linv, h0, c, False)
+            A2 = _as_sparse_ea(A2, c) or A2
+        return A2
+
+    @staticmethod
+    def _apply(lab, linv, a, n, sparse):
+        """Replace lab by lab a (labels moved by a): lab[t] = a(old lab[t]);
+        linv follows. sparse: a is a dict of the moved labels (< n),
+        else a tuple."""
+        items = a.items() if sparse else ((l, a[l]) for l in range(n) if a[l] != l)
+        ups = [(linv[l], l2) for l, l2 in items if l < n]
+        for t, l2 in ups:
+            lab[t] = l2
+            linv[l2] = t
+
+    @staticmethod
+    def _dense_H(U1, pos, pidx, blocks, sym, b, c):
+        """H as a PermGroup, from a SparseEA U1 (a layer where H is not
+        elementary abelian)."""
+        hU = []
+        for u in U1.tuples(b):
+            full = list(u) + [0] * (c - b)
+            for p, labs in blocks.items():
+                q = pidx[frozenset([u[i] for i in pos[p]])]
+                for l, l2 in zip(labs, blocks[q]):
+                    full[l] = l2
+            hU.append(tuple(full))
+        order = U1.order() * prod(factorial(len(bl)) for _, bl in sym)
+        sg = [tuple(range(b)) + tuple(h[b:]) for _, bl in sym for h in sym_gens(c, bl)]
+        return PermGroup(c, hU + sg, order=order)
+
+    @staticmethod
+    def _perm_H(U1, pos, pidx, blocks, sym, b, c):
+        hU = []
+        for u in U1.gens:
+            full = list(u) + [0] * (c - b)
+            for p, labs in blocks.items():
+                q = pidx[frozenset([u[i] for i in pos[p]])]
+                for l, l2 in zip(labs, blocks[q]):
+                    full[l] = l2
+            hU.append(tuple(full))
+        order = U1.order() * prod(factorial(len(bl)) for _, bl in sym)
+        sg = [tuple(range(b)) + tuple(h[b:]) for _, bl in sym for h in sym_gens(c, bl)]
+        return PermGroup(c, hU + sg, order=order)
 
 
 # -- connected graphs and whole graphs -----------------------------------------------------
@@ -544,7 +692,8 @@ def canon_connected(g, stats, layers="class"):
         Linv = [0] * n
         for v, l in enumerate(L):
             Linv[l] = v
-        new = [tuple([Linv[a[L[v]]] for v in range(n)]) for a in A.gens]
+        gs = A.tuples(n) if isinstance(A, SparseEA) else A.gens
+        new = [tuple([Linv[a[L[v]]] for v in range(n)]) for a in gs]
         if better:
             best = (keys, L, Linv)
         else:                           # equal keys, so equal forms: an automorphism

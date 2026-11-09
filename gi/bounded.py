@@ -89,7 +89,7 @@ from itertools import combinations
 from .perm import mul, identity, sym_gens
 from .group import PermGroup, ActionHom
 from .solver import Solver
-from .ea2 import EA2, EAAction, is_ea2
+from .ea2 import SparseEA, EAAction, compose, is_ea2
 from .wl import refine as wl_refine
 
 
@@ -371,9 +371,13 @@ class _Layer:
 
 
 class _LayerEA:
-    """The X-side data of one step on the elementary abelian path."""
-    __slots__ = ("r", "b", "c", "A", "aidx", "T", "slot", "S", "sidx", "xS", "act1", "Gpp", "nG",
-                 "hgens", "Hfull", "act2", "pairs", "x2")
+    """The X-side data of one step on the elementary abelian path. act_dicts,
+    h_dicts: the generators (sparse dicts) acting on the positions of phase 1
+    and on the inner-edge positions of phase 2 (parallel to EAAction's
+    coordinates; the dicts keep their images of old points even after the
+    chain's group has moved on)."""
+    __slots__ = ("r", "b", "c", "A", "aidx", "T", "slot", "S", "sidx", "xS", "act1", "act_ids",
+                 "act_dicts", "Gpp", "h_ids", "h_dicts", "act2", "pairs", "x2")
 
 
 _FALLBACK = object()
@@ -385,9 +389,12 @@ class _Chain:
 
     def __init__(self, X, solver, ea=True, plan=None):
         self.X, self.solver, self.ea, self.plan = X, solver, ea, plan
-        # G[r] = G_r on range(start[r + 1]): an EA2 (elementary abelian, by a
-        # basis) while that holds and ea is on, else a PermGroup
-        self.G = [EA2(2, []) if ea else PermGroup(2)]
+        # G[r] = G_r on range(start[r + 1]): a PermGroup, or None while it is
+        # elementary abelian and ea is on: then the group of the newest
+        # stage is self.cur (a SparseEA advanced in place, generators extended
+        # to new points), and older stages live on in the layers' data
+        self.G = [None if ea else PermGroup(2)]
+        self.cur = SparseEA()
         self.L = []                     # L[r] = _Layer of step r
         self.codes = {(): 0}            # color multisets of twin classes -> ints
         self.hist = None                # color histogram of X
@@ -423,13 +430,12 @@ class _Chain:
             self.hist = Counter(X.col)
         if Counter(Z.col) != self.hist:
             return None
-        sigma = (0, 1)
+        sigma, sinv = [0, 1], [0, 1]    # the coset representative and its inverse
         for r in range(self.steps()):
             st["luks_steps"] += 1
-            sigma = self.step(r, Z, sigma)
-            if sigma is None:
+            if not self.step(r, Z, sigma, sinv):
                 return None
-        return sigma
+        return tuple(sigma)
 
     # -- phase 1: attachment sets under G_r ---------------------------------------
     def layer1(self, r):
@@ -542,27 +548,31 @@ class _Chain:
         L.x2 = tuple([0] * nV + [1] * ne + [0] * (len(pairs) - ne))
         st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], M)
 
-    def step(self, r, Z, sigma):
-        if isinstance(self.G[r], EA2):
-            out = self.step_ea(r, Z, sigma)
+    def step(self, r, Z, sigma, sinv):
+        """One layer: sigma (X_r -> Z_r, a list) and sinv (its inverse) are
+        extended in place to the next layer; False if there is no isomorphism."""
+        if self.G[r] is None:
+            out = self.step_ea(r, Z, sigma, sinv)
             if out is not _FALLBACK:
                 return out
             # H of this layer is not elementary abelian: permutation groups from here
             self.solver.stats["luks_ea_fallback"] += 1
-            G = self.G[r]
             assert len(self.L) == r + 1 and len(self.G) == r + 1
             self.L.pop()
-            self.G[r] = PermGroup(G.n, G.gens, order=G.order())
-        return self._step_perm(r, Z, sigma)
+            self.G[r] = PermGroup(self.X.start[r + 1], self.cur.tuples(self.X.start[r + 1]),
+                                  order=self.cur.order())
+        return self._step_perm(r, Z, sigma, sinv)
 
     # -- the elementary abelian path (no Schreier-Sims) ------------------------------
     def layer1_ea(self, r):
-        """Phase-1 data of step r when G_r is an EA2: the same positions and
-        string as layer1, and the action of G_r's basis on the positions."""
+        """Phase-1 data of step r on the elementary abelian path: the same
+        positions and string as layer1, and the action on the positions of the
+        generators moving a point of an attachment set (the others fix every
+        position)."""
         if len(self.L) > r:
             return self.L[r]
         X, st = self.X, self.solver.stats
-        G = self.G[r]
+        G, gens, who = self.cur, self.cur.gens, self.cur.who
         L = _LayerEA()
         L.r, L.Gpp = r, None
         L.b, L.c = X.start[r + 1], X.start[r + 2]
@@ -577,8 +587,9 @@ class _Chain:
         S_list = list(L.A)
         sidx = dict(L.aidx)
         for S in S_list:
-            for g in G.gens:
-                S2 = frozenset(g[i] for i in S)
+            for gid in G.active_on(S):
+                g = gens[gid]
+                S2 = frozenset([g.get(i, i) for i in S])
                 if S2 not in sidx:
                     sidx[S2] = len(S_list)
                     S_list.append(S2)
@@ -587,27 +598,58 @@ class _Chain:
         for s, S in enumerate(L.A):
             xS[s] = self.code(tuple(X.col[t] for t in att[S]))
         L.xS = tuple(xS)
-        L.act1 = EAAction(len(G.gens), [tuple(sidx[frozenset(g[i] for i in S)] for S in S_list)
-                                        for g in G.gens], len(S_list))
+        act_ids = G.active_on(set().union(*S_list) if S_list else ())
+        L.act_ids = act_ids
+        L.act_dicts = [gens[g] for g in act_ids]
+        acts = []
+        for g in L.act_dicts:
+            acts.append(tuple([sidx[frozenset([g.get(i, i) for i in S])] for S in S_list]))
+        L.act1 = EAAction(len(act_ids), acts, len(S_list))
         st["luks_phase1_max_degree"] = max(st["luks_phase1_max_degree"], len(S_list))
         self.L.append(L)
         return L
 
-    def layer2_ea(self, L, Gpp):
-        """Phase-2 data from G'' (an EA2 on X_r): H = rho(G'') x| prod Sym(twin
-        class & color) is elementary abelian iff every color block of a twin
-        class has <= 2 members and G'' fixes each twin class holding a block
-        of 2 (then H = G''+ x Z_2^t, with g+ = (g, h_g), h_g mapping the k-th
-        member of T_S to the k-th of T_(S^g)). Returns False otherwise."""
-        X, st = self.X, self.solver.stats
+    def layer2_ea(self, L, N):
+        """Phase-2 data from G'' = the combinations N of the generators L.act_ids
+        (plus every generator acting trivially on the positions). H =
+        rho(G'') x| prod Sym(twin class & color) is elementary abelian iff
+        every color block of a twin class has <= 2 members and G'' fixes each
+        twin class holding a block of 2 (then H = G''+ x Z_2^t, g+ = (g, h_g) with
+        h_g mapping the k-th member of T_S to the k-th of T_(S^g)). Returns
+        False if not, without changing anything. Otherwise self.cur becomes H:
+        the generators are extended in place to layer r + 1 and the twin swaps
+        added."""
+        X, st, G = self.X, self.solver.stats, self.cur
         b, c = L.b, L.c
-        nV = c - b
         A, aidx, T, slot, col = L.A, L.aidx, L.T, L.slot, X.col
-        rho, hs = [], []
-        for g in Gpp.gens:
-            p = tuple(aidx[frozenset(g[i] for i in S)] for S in A)
-            rho.append(p)
-            hs.append(tuple(T[A[p[slot[t][0]]]][slot[t][1]] - b for t in range(b, c)))
+        nA = len(A)
+        # the elements of the new basis that move some attachment set, and their
+        # permutations of the sets; basis vectors with one bit keep the generator
+        gpp = []
+        for i, v in enumerate(N):
+            if v & (v - 1) == 0:
+                g = L.act_dicts[v.bit_length() - 1]
+            else:
+                ds, u = [], v
+                while u:
+                    b0 = u & -u
+                    ds.append(L.act_dicts[b0.bit_length() - 1])
+                    u ^= b0
+                g = compose(ds)
+            p = None
+            for s, S in enumerate(A):
+                q = None
+                for t in S:
+                    if t in g:
+                        q = aidx[frozenset([g.get(j, j) for j in S])]
+                        break
+                if q is not None and q != s:
+                    if p is None:
+                        p = list(range(nA))
+                    p[s] = q
+            if p is not None:
+                gpp.append((i, g, p))
+        # the check; then the extension data, computed before anything changes
         swaps = []
         for s, S in enumerate(A):
             ts = T[S]
@@ -619,156 +661,196 @@ class _Chain:
                 if j - i >= 3:
                     return False
                 if j - i == 2:
-                    if any(p[s] != s for p in rho):
+                    if any(p[s] != s for _, _, p in gpp):
                         return False
-                    sw = list(range(nV))
-                    sw[ts[i] - b], sw[ts[i + 1] - b] = ts[i + 1] - b, ts[i] - b
-                    swaps.append(tuple(sw))
+                    swaps.append({ts[i]: ts[i + 1], ts[i + 1]: ts[i]})
                 i = j
+        ext = {}                        # basis index i -> new entries on layer r + 1
+        for i, g, p in gpp:
+            e = {}
+            for s, S in enumerate(A):
+                if p[s] != s:
+                    img = T[A[p[s]]]
+                    for k, t in enumerate(T[S]):
+                        e[t] = img[k]
+            ext[i] = e
         st["luks_twin_max"] = max([st["luks_twin_max"]] + [len(ts) for ts in T.values()])
-        L.Gpp, L.nG = Gpp, len(Gpp.gens)
-        L.hgens = hs + swaps            # H's basis acting on layer r + 1
-        idb = tuple(range(b))
-        L.Hfull = EA2(c, [g + tuple(b + v for v in h) for g, h in zip(Gpp.gens, hs)]
-                      + [idb + tuple(b + v for v in sw) for sw in swaps])
-        st["luks_phase2_max_log2_order"] = max(st["luks_phase2_max_log2_order"],
-                                               len(L.hgens))
+        # commit: self.cur becomes H
+        newids = G.restrict(L.act_ids, N)
+        for i, e in ext.items():
+            G.extend(newids[i], e)
+        for sw in swaps:
+            G.add(sw)
+        L.Gpp = True
+        st["luks_phase2_max_log2_order"] = max(st["luks_phase2_max_log2_order"], len(G))
         L.act2 = None
+        L.h_ids = L.h_dicts = ()
         if not X.inner_edges(L.r):
             return True
         pairs, pidx = [], {}
         for t in range(b, c):
             for u in X.adj[t]:
                 if t < u < c:
-                    pidx[(t - b, u - b)] = len(pairs)
-                    pairs.append((t - b, u - b))
+                    pidx[(t, u)] = len(pairs)
+                    pairs.append((t, u))
         ne = len(pairs)
+        gens = G.gens
         for p, q in pairs:
-            for h in L.hgens:
-                hp, hq = h[p], h[q]
+            for gid in G.active_on((p, q)):
+                h = gens[gid]
+                hp, hq = h.get(p, p), h.get(q, q)
                 pq = (hp, hq) if hp < hq else (hq, hp)
                 if pq not in pidx:
                     pidx[pq] = len(pairs)
                     pairs.append(pq)
+        h_ids = G.active_on(set().union(*pairs))
+        L.h_ids = h_ids
+        L.h_dicts = [gens[g] for g in h_ids]
         act = []
-        for h in L.hgens:
+        for h in L.h_dicts:
             img = []
             for p, q in pairs:
-                hp, hq = h[p], h[q]
+                hp, hq = h.get(p, p), h.get(q, q)
                 img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
             act.append(tuple(img))
-        L.pairs, L.act2 = pairs, EAAction(len(L.hgens), act, len(pairs))
+        L.pairs, L.act2 = pairs, EAAction(len(h_ids), act, len(pairs))
         L.x2 = tuple([1] * ne + [0] * (len(pairs) - ne))
         st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], len(pairs))
         return True
 
-    def step_ea(self, r, Z, sigma):
-        X = self.X
+    def step_ea(self, r, Z, sigma, sinv):
         L = self.layer1_ea(r)
         b, c = L.b, L.c
-        sinv = [0] * b
-        for i, j in enumerate(sigma):
-            sinv[j] = i
         attZ = Z.attachments(r)
         yS = [0] * len(L.S)
         for SZ, ts in attZ.items():
-            s = L.sidx.get(frozenset(sinv[j] for j in SZ))
+            s = L.sidx.get(frozenset([sinv[j] for j in SZ]))
             if s is None:
-                return None
-            yS[s] = self.code(tuple(Z.col[t] for t in ts))
+                return False
+            yS[s] = self.code(tuple([Z.col[t] for t in ts]))
         sol = L.act1.iso(L.xS, yS)
         if sol is None:
-            return None
+            return False
         a0, N = sol
-        G = self.G[r]
         if L.Gpp is None:
-            if not self.layer2_ea(L, EA2(b, [G.elem(v) for v in N])):
+            if not self.layer2_ea(L, N):
                 return _FALLBACK
         if a0:
-            sigma = mul(G.elem(a0), sigma)
+            self._apply_left(sigma, sinv, self._prod(L.act_dicts, a0), b)
         psi = [0] * (c - b)
         for Sx, ts in L.T.items():
-            tz = attZ.get(frozenset(sigma[i] for i in Sx))
+            tz = attZ.get(frozenset([sigma[i] for i in Sx]))
             if tz is None or len(tz) != len(ts):
                 raise AssertionError("phase 1 left twin classes unmatched")
             for t, u in zip(ts, tz):
                 psi[t - b] = u
         if L.act2 is None:
             if Z.inner_edges(r):
-                return None
-            if len(self.G) == r + 1:
-                self._push_group(L.Hfull)
-            return tuple(sigma) + tuple(psi)
-        y2 = []
-        for p, q in L.pairs:
-            y2.append(1 if psi[q] in Z.adj[psi[p]] else 0)
+                return False
+            self._push_group(r, None)
+            self._append(sigma, sinv, psi, b)
+            return True
+        y2 = [1 if psi[q - b] in Z.adj[psi[p - b]] else 0 for p, q in L.pairs]
         if sum(y2) != Z.inner_edges(r):
-            return None
+            return False
         sol = L.act2.iso(L.x2, y2)
         if sol is None:
-            return None
+            return False
         a2, N2 = sol
-        if len(self.G) == r + 1:
-            H = L.Hfull
-            self._push_group(EA2(c, [H.elem(v) for v in N2]))
-        if not a2:
-            return tuple(sigma) + tuple(psi)
-        h = L.Hfull.elem(a2)            # (g0 on X_r, h0 on layer r + 1)
-        return tuple(mul(h[:b], sigma)) + tuple(psi[h[t] - b] for t in range(b, c))
+        self._push_group(r, N2)
+        if a2:
+            h = self._prod(L.h_dicts, a2)  # (g0 on X_r, h0 on layer r + 1)
+            self._apply_left(sigma, sinv, h, b)
+            psi = [psi[h.get(t, t) - b] for t in range(b, c)]
+        self._append(sigma, sinv, psi, b)
+        return True
 
-    def _push_group(self, G1):
-        self.G.append(G1)
+    @staticmethod
+    def _prod(dicts, a):
+        """The product of the generators with bits in a."""
+        ds = []
+        while a:
+            b = a & -a
+            ds.append(dicts[b.bit_length() - 1])
+            a ^= b
+        return compose(ds)
+
+    @staticmethod
+    def _apply_left(sigma, sinv, g, b):
+        """sigma[i] = old sigma[g[i]] for i < b (g on the old points only: g
+        may also move later points, which sigma does not see yet)."""
+        ups = [(p, sigma[q]) for p, q in g.items() if p < b]
+        for p, v in ups:
+            sigma[p] = v
+            sinv[v] = p
+
+    @staticmethod
+    def _append(sigma, sinv, psi, b):
+        c = b + len(psi)
+        if len(sinv) < c:
+            sinv.extend([0] * (c - len(sinv)))
+        for t, u in zip(range(b, c), psi):
+            sinv[u] = t
+        sigma.extend(psi)
+
+    def _push_group(self, r, N2):
+        """G_{r+1}: self.cur restricted to Aut_H(x2) (the combinations N2 of
+        the generators L.h_ids, or all of H when N2 is None), once per layer."""
+        if len(self.G) != r + 1:
+            return
+        G = self.cur
+        if N2 is not None:
+            G.restrict(self.L[r].h_ids, N2)
+        self.G.append(None)
         st = self.solver.stats
         st["luks_ea_layers"] += 1
-        st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"], len(G1.gens))
+        st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"], len(G))
 
-    def _step_perm(self, r, Z, sigma):
+    def _step_perm(self, r, Z, sigma, sinv):
         X, S = self.X, self.solver
         L = self.layer1(r)
         b, c = L.b, L.c
         # (1) attachment sets of Z, pulled back to X's indices by sigma
-        sinv = [0] * b
-        for i, j in enumerate(sigma):
-            sinv[j] = i
         attZ = Z.attachments(r)
         yS = [0] * len(L.S)
         for SZ, ts in attZ.items():
             s = L.sidx.get(frozenset(sinv[j] for j in SZ))
             if s is None:               # x is 0 on the whole G_r-orbit closure
-                return None
+                return False
             yS[s] = self.code(tuple(Z.col[t] for t in ts))
         yS = tuple(yS)
         first = L.Gpp is None
+        sig = sigma
         if L.P1 is None:
             if yS != L.xS:
-                return None
+                return False
             rep = None
             if first:
                 L.Gpp = self.G[r]
         else:
             res = S.solve(L.P1, range(len(L.S)), L.xS, yS)
             if res is None:
-                return None
+                return False
             if first:
                 phi = L.phi1
                 L.Gpp = PermGroup(b, [phi.lift(h) for h in res.gens] + phi.kernel().gens,
                                   ambient_base=self.G[r].short_base())
             rep = L.phi1.lift(res.rep)
         if rep is not None:
-            sigma = mul(rep, sigma)
+            sig = list(mul(rep, sigma))
         if first:
             self.layer2(L)
         # (2) psi: X's twin classes onto Z's (by rank: colors agree after (1))
         psi = [0] * (c - b)
         for Sx, ts in L.T.items():
-            tz = attZ.get(frozenset(sigma[i] for i in Sx))
+            tz = attZ.get(frozenset(sig[i] for i in Sx))
             if tz is None or len(tz) != len(ts):
                 raise AssertionError("phase 1 left twin classes unmatched")
             for t, u in zip(ts, tz):
                 psi[t - b] = u
         if L.H2 is None:
             if Z.inner_edges(r):
-                return None
+                return False
             h0, auts = None, L.gens2
         else:
             pairs, nV = L.pairs, c - b
@@ -779,23 +861,32 @@ class _Chain:
                     y2[nV + j] = 1
                     ones += 1
             if ones != Z.inner_edges(r):  # an edge of Z outside the positions
-                return None
+                return False
             res = S.solve(L.H2, range(len(y2)), L.x2, tuple(y2))
             if res is None:
-                return None
+                return False
             h0, auts = res.rep, res.gens
         if len(self.G) == r + 1:
             G1 = PermGroup(c, [self.extend(L, h) for h in auts] + L.kernel_ext)
-            if self.ea and is_ea2(G1.gens, c):    # (G1.gens is irredundant: a basis)
-                G1 = EA2(c, G1.gens)
-            self.G.append(G1)
             st = S.stats
             st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"],
                                                   round(math.log2(G1.order())))
+            if self.ea and is_ea2(G1.gens, c):    # (G1.gens is irredundant: a basis)
+                self.cur = SparseEA.from_tuples(G1.gens)
+                self.G.append(None)
+            else:
+                self.G.append(G1)
         if h0 is None:
-            return tuple(sigma) + tuple(psi)
-        g0 = self.lift2(L, h0)
-        return tuple(mul(g0, sigma)) + tuple(psi[h0[t - b]] for t in range(b, c))
+            new = list(sig) + psi
+        else:
+            g0 = self.lift2(L, h0)
+            new = list(mul(g0, sig)) + [psi[h0[t - b]] for t in range(b, c)]
+        sigma[:] = new
+        if len(sinv) < c:
+            sinv.extend([0] * (c - len(sinv)))
+        for i, v in enumerate(new):
+            sinv[v] = i
+        return True
 
     def lift2(self, L, h):
         """g in G'' inducing on the attachment sets of X what h (a permutation
@@ -815,7 +906,10 @@ class _Chain:
         """Generators of G_R = Aut_f(X) as index permutations (the chain must
         be complete)."""
         assert len(self.G) == self.steps() + 1
-        return list(self.G[-1].gens)
+        G = self.G[-1]
+        if G is None:
+            return self.cur.tuples(self.X.start[-1])
+        return list(G.gens)
 
 
 # -- connected graphs -------------------------------------------------------------
