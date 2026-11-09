@@ -540,7 +540,7 @@ with `C₁` independent of `N`, `K`, `Λ`. -/
 theorem fresh_phase_boundL (C : ChargingConstants) {cσ : ℝ} (hcσ : 0 ≤ cσ) :
     ∃ C₁ : ℝ, 0 ≤ C₁ ∧ ∀ (N : ℕ) (K Λ : ℝ), 0 ≤ K → xZero ≤ Λ → 6 ≤ (N : ℝ) ^ C.γ →
       2 ≤ (N : ℝ) ^ (C.γ * C.D - C.a) →
-      ∀ {V : Type} (T : PhaseTree V), T.HypL C (fun _ => Λ) N K →
+      ∀ {V : Type*} (T : PhaseTree V), T.HypL C (fun _ => Λ) N K →
       ∀ (roots : List V) (phaseCost : ℝ),
         (∀ v ∈ roots, RootBoundsL cσ Λ N (T.state v)) →
         (roots.map fun v => (T.state v).s).sum ≤ N →
