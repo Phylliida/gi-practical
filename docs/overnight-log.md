@@ -763,3 +763,11 @@ are red-teams, a LaTeX paper, and final integration.
   Filter scripts are not excluded by the null oracle alone; irrelevant to the theorem, which names its script.
 * Theorem R* is therefore machine-checked only as a reduction with a node-count bound, modulo the two axioms and six cited hypotheses. Not at machine level.
 * w50-gain: the height-2 gain-graph core of TreeCI.
+
+### w49-pruned (done, commit f4134a2; docs/w49-pruned.md), NOT yet red-teamed
+* Claimed counterexample to w47's §5.3 conjecture as stated. V = F₂^d, U = F₂^e, d > e even; x = Cay(V⊗U, R₁ ∪ H), R₁ the pure tensors, H = Q⁻¹(1) for the tensor quadratic form polarizing to ω⊗ω′.
+  First rectangle has Aut(B) = GL(V)×GL(U); Aut(x) = N:(Sp(V)×Sp(U)). Theorem T [claimed PROVEN given H0, HJ as written]: for e ≥ 2κ, d ≥ max(2e+3,d₀), an ADMISSIBLE run reaches a post-rectangle Continue node enumerating P ≅ GL(d,2).
+  Theorem P: automorphisms cover at most Sp(d,2) in P, so any automorphism pruning leaves ≥ [GL:Sp] = N^{(1/8e²)log₂N−O(1)} children at that node.
+* Needs two choices the paper leaves free (source orbital R₁, rectangle colours). Lean's rectangle colour rule not traced. Needs n ≥ 2^33152 at κ = 64.
+* The gap exploits HJ's Case 2b refining one F-orbital where Helfgott uses the Schurian configuration. Repair R1 removes this node on this family (effect PROVEN, soundness SKETCH). So not evidence of a real Lie-type obstacle, and nothing about GI: the family looks easy by linear algebra [SKETCH]. No whole-tree bound.
+* w51-redteam-pruned: adversarial check of w49.
