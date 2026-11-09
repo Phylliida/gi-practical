@@ -1,0 +1,7 @@
+# e3 n=5 exact climb
+b 16 edges 40
+building group...
+|H| = 1920
+best order 5 gens 1 t=0
+best order 10 gens 2 t=2
+n=5: max subgroup fixing an odd cycle found: order 10; |H|=1920; m_H<=192; good subgroups visited 115; t=2s stack_left=0
