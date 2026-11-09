@@ -1,0 +1,122 @@
+# Summaries of runs (conf.c; see docs/w32-conference.md). MIN = exact minimal number of individualized vertices for 1-WL discreteness.
+
+## Paley, q<=197 (ind1, exact, reps=0 then {1,g}):
+paley5 n=5;paley9 n=9;paley13 n=13;paley17 n=17;paley25 n=25;paley29 n=29;paley37 n=37;paley41 n=41;paley49 n=49;paley53 n=53;paley61 n=61;paley73 n=73;paley81 n=81;paley89 n=89;paley97 n=97;paley101 n=101;paley109 n=109;paley113 n=113;paley121 n=121;paley125 n=125;paley137 n=137;paley149 n=149;paley157 n=157;paley169 n=169;paley173 n=173;paley181 n=181;paley193 n=193;paley197 n=197;
+(full lines: )
+IND1 paley5 n=5 (log2 n=2.32): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=5.0] MIN=2
+IND1 paley9 n=9 (log2 n=3.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=6.0] k=3[visited=10,discrete=10,meancells=9.0] MIN=3
+IND1 paley13 n=13 (log2 n=3.70): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=13.0] MIN=2
+IND1 paley17 n=17 (log2 n=4.09): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=17.0] MIN=2
+IND1 paley25 n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=15.0] k=3[visited=36,discrete=36,meancells=25.0] MIN
+IND1 paley29 n=29 (log2 n=4.86): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=29.0] MIN=2
+IND1 paley37 n=37 (log2 n=5.21): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=37.0] MIN=2
+IND1 paley41 n=41 (log2 n=5.36): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=41.0] MIN=2
+IND1 paley49 n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=28.0] k=3[visited=78,discrete=78,meancells=49.0] MIN
+IND1 paley53 n=53 (log2 n=5.73): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=53.0] MIN=2
+IND1 paley61 n=61 (log2 n=5.93): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=61.0] MIN=2
+IND1 paley73 n=73 (log2 n=6.19): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=73.0] MIN=2
+IND1 paley81 n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=24.0] k=3[visited=154,discrete=142,meancells=78.2] M
+IND1 paley89 n=89 (log2 n=6.48): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=89.0] MIN=2
+IND1 paley97 n=97 (log2 n=6.60): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=97.0] MIN=2
+IND1 paley101 n=101 (log2 n=6.66): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=101.0] MIN=2
+IND1 paley109 n=109 (log2 n=6.77): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=109.0] MIN=2
+IND1 paley113 n=113 (log2 n=6.82): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=113.0] MIN=2
+IND1 paley121 n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=66.0] k=3[visited=210,discrete=210,meancells=121.0
+IND1 paley125 n=125 (log2 n=6.97): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=45.0] k=3[visited=236,discrete=236,meancells=125.0
+IND1 paley137 n=137 (log2 n=7.10): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=137.0] MIN=2
+IND1 paley149 n=149 (log2 n=7.22): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=149.0] MIN=2
+IND1 paley157 n=157 (log2 n=7.29): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=157.0] MIN=2
+IND1 paley169 n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=91.0] k=3[visited=300,discrete=300,meancells=169.0
+IND1 paley173 n=173 (log2 n=7.43): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=173.0] MIN=2
+IND1 paley181 n=181 (log2 n=7.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=181.0] MIN=2
+IND1 paley193 n=193 (log2 n=7.59): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=193.0] MIN=2
+IND1 paley197 n=197 (log2 n=7.62): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=197.0] MIN=2
+## Paley 313<=q<=1097:
+IND1 paley313 n=313 (log2 n=8.29): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley317 n=317 (log2 n=8.31): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley337 n=337 (log2 n=8.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley349 n=349 (log2 n=8.45): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley353 n=353 (log2 n=8.46): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley361 n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley373 n=373 (log2 n=8.54): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley389 n=389 (log2 n=8.60): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley397 n=397 (log2 n=8.63): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley401 n=401 (log2 n=8.65): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley409 n=409 (log2 n=8.68): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley421 n=421 (log2 n=8.72): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley433 n=433 (log2 n=8.76): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley449 n=449 (log2 n=8.81): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley457 n=457 (log2 n=8.84): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley461 n=461 (log2 n=8.85): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley509 n=509 (log2 n=8.99): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley521 n=521 (log2 n=9.03): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley529 n=529 (log2 n=9.05): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley541 n=541 (log2 n=9.08): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley557 n=557 (log2 n=9.12): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley569 n=569 (log2 n=9.15): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley577 n=577 (log2 n=9.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley593 n=593 (log2 n=9.21): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley601 n=601 (log2 n=9.23): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley613 n=613 (log2 n=9.26): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley617 n=617 (log2 n=9.27): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley625 n=625 (log2 n=9.29): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley641 n=641 (log2 n=9.32): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley653 n=653 (log2 n=9.35): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley661 n=661 (log2 n=9.37): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley673 n=673 (log2 n=9.39): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley677 n=677 (log2 n=9.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley701 n=701 (log2 n=9.45): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley709 n=709 (log2 n=9.47): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley729 n=729 (log2 n=9.51): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley733 n=733 (log2 n=9.52): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley757 n=757 (log2 n=9.56): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley761 n=761 (log2 n=9.57): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley769 n=769 (log2 n=9.59): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley773 n=773 (log2 n=9.59): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley797 n=797 (log2 n=9.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley809 n=809 (log2 n=9.66): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley821 n=821 (log2 n=9.68): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley829 n=829 (log2 n=9.70): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley841 n=841 (log2 n=9.72): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley853 n=853 (log2 n=9.74): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley857 n=857 (log2 n=9.74): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley877 n=877 (log2 n=9.78): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley881 n=881 (log2 n=9.78): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley929 n=929 (log2 n=9.86): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley937 n=937 (log2 n=9.87): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley941 n=941 (log2 n=9.88): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley953 n=953 (log2 n=9.90): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley961 n=961 (log2 n=9.91): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley977 n=977 (log2 n=9.93): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley997 n=997 (log2 n=9.96): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley1009 n=1009 (log2 n=9.98): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancell
+IND1 paley1013 n=1013 (log2 n=9.98): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancell
+IND1 paley1021 n=1021 (log2 n=10.00): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+IND1 paley1033 n=1033 (log2 n=10.01): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+IND1 paley1049 n=1049 (log2 n=10.03): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+IND1 paley1061 n=1061 (log2 n=10.05): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+IND1 paley1069 n=1069 (log2 n=10.06): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+IND1 paley1093 n=1093 (log2 n=10.09): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+IND1 paley1097 n=1097 (log2 n=10.10): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancel
+## Spence n=25: MIN distribution
+     14 MIN=2
+      1 MIN=3
+## Spence n=29: MIN distribution
+     41 MIN=2
+## Spence n=37: MIN distribution
+    400 MIN=2
+## Spence n=41: MIN distribution
+     16 MIN=2
+## Spence n=45: MIN distribution
+     50 MIN=2
+## Spence n=49: MIN distribution
+     29 MIN=2
+IND1 paley229 n=229 (log2 n=7.84): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley233 n=233 (log2 n=7.86): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley241 n=241 (log2 n=7.91): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley257 n=257 (log2 n=8.01): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley269 n=269 (log2 n=8.07): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley277 n=277 (log2 n=8.11): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley281 n=281 (log2 n=8.13): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=
+IND1 paley289 n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=
+IND1 paley293 n=293 (log2 n=8.19): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=

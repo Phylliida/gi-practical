@@ -1,0 +1,33 @@
+paley13 n=13: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=12, rank2(A+I)=13, (n-1)/2=6
+paley17 n=17: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=8, rank2(A+I)=9, (n-1)/2=8
+paley25 n=25: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=12, rank2(A+I)=13, (n-1)/2=12
+paley29 n=29: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=28, rank2(A+I)=29, (n-1)/2=14
+paley37 n=37: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=36, rank2(A+I)=37, (n-1)/2=18
+paley49 n=49: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=24, rank2(A+I)=25, (n-1)/2=24
+spence25 n=25: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=12, rank2(A+I)=13, (n-1)/2=12
+spence25 n=25: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=12, rank2(A+I)=13, (n-1)/2=12
+spence25 n=25: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=12, rank2(A+I)=13, (n-1)/2=12
+spence29 n=29: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=28, rank2(A+I)=29, (n-1)/2=14
+spence29 n=29: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=28, rank2(A+I)=29, (n-1)/2=14
+spence29 n=29: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=28, rank2(A+I)=29, (n-1)/2=14
+spence41 n=41: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=20, rank2(A+I)=21, (n-1)/2=20
+spence41 n=41: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=20, rank2(A+I)=21, (n-1)/2=20
+spence41 n=41: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=20, rank2(A+I)=21, (n-1)/2=20
+spence45 n=45: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=44, rank2(A+I)=45, (n-1)/2=22
+spence45 n=45: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=44, rank2(A+I)=45, (n-1)/2=22
+spence45 n=45: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=44, rank2(A+I)=45, (n-1)/2=22
+spence49 n=49: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=24, rank2(A+I)=25, (n-1)/2=24
+spence49 n=49: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=24, rank2(A+I)=25, (n-1)/2=24
+spence49 n=49: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=24, rank2(A+I)=25, (n-1)/2=24
+turyn5 n=25: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=12, rank2(A+I)=13, (n-1)/2=12
+turyn9 n=81: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=40, rank2(A+I)=41, (n-1)/2=40
+turyn13 n=169: L2 violations=0, mod8 violations=0, mod4 violations=0, rank2(A)=84, rank2(A+I)=85, (n-1)/2=84
+Turyn formula v=5: 0 mismatches of 200
+Turyn formula v=9: 0 mismatches of 300
+Turyn formula v=13: 0 mismatches of 500
+lift (T-collision in W minus sign-matched V-collision) mean=0.0822 min=0.0495 (should be >= 0 up to sampling)
+lift (T-collision in W minus sign-matched V-collision) mean=0.0903 min=0.0603 (should be >= 0 up to sampling)
+
+real	0m58.961s
+user	0m58.559s
+sys	0m0.028s

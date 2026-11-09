@@ -1,0 +1,121 @@
+## Peisert (ind1):
+IND1 peisert9|aut=72.0 n=9 (log2 n=3.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=8,discrete=0,meancells=6.0] k=3[visited=24,discrete=24,meancells=9.0] MIN=3
+IND1 peisert49|aut=3528.0 n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=21.0] k=3[visited=1008,discrete=1008,meancells=4
+IND1 peisert81|aut=38880.0 n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=14.0] k=3[visited=3120,discrete=1920,meancells=
+IND1 peisert121|aut=7260.0 n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=120,meancells=121.0] MIN=2
+IND1 peisert361|aut=64980.0 n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancells=361.0] MIN=2
+
+## Peisert-type line unions in F_q^2, random (q+1)/2 lines (ind1, 4 graphs per q):
+IND1 lines5_0|aut=600.0 n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,discrete=240,meancells=25.0]
+IND1 lines5_1|aut=600.0 n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,discrete=240,meancells=25.0]
+IND1 lines5_2|aut=600.0 n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,discrete=240,meancells=25.0]
+IND1 lines5_3|aut=600.0 n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,discrete=240,meancells=25.0]
+IND1 lines7_0|aut=3528.0 n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=21.0] k=3[visited=1008,discrete=1008,meancells=49
+IND1 lines7_1|aut=2352.0 n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] k=3[visited=1008,discrete=1008,meancells=49
+IND1 lines7_2|aut=2352.0 n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] k=3[visited=1008,discrete=1008,meancells=49
+IND1 lines7_3|aut=2352.0 n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] k=3[visited=1008,discrete=1008,meancells=49
+IND1 lines9_0|aut=10368.0 n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visited=2910,discrete=1152,meancells=6
+IND1 lines9_1|aut=10368.0 n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visited=2904,discrete=1152,meancells=6
+IND1 lines9_2|aut=10368.0 n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visited=2988,discrete=1152,meancells=6
+IND1 lines9_3|aut=10368.0 n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visited=2913,discrete=1152,meancells=6
+IND1 lines11_0|aut=4840.0 n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=80,meancells=102.7] MIN=2
+IND1 lines11_1|aut=6050.0 n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=100,meancells=106.3] MIN=2
+IND1 lines11_2|aut=4840.0 n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=80,meancells=102.7] MIN=2
+IND1 lines11_3|aut=7260.0 n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=120,meancells=121.0] MIN=2
+IND1 lines13_0|aut=4056.0 n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=157.9] MIN=2
+IND1 lines13_1|aut=6084.0 n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=154.1] MIN=2
+IND1 lines13_2|aut=6084.0 n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=154.1] MIN=2
+IND1 lines13_3|aut=4056.0 n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=157.9] MIN=2
+IND1 lines17_0|aut=4624.0 n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=288,meancells=289.0] MIN=2
+IND1 lines17_1|aut=4624.0 n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=288,meancells=289.0] MIN=2
+IND1 lines17_2|aut=9248.0 n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=256,meancells=273.9] MIN=2
+IND1 lines17_3|aut=27744.0 n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=192,meancells=243.7] MIN=2
+IND1 lines19_0|aut=6498.0 n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancells=361.0] MIN=2
+IND1 lines19_1|aut=6498.0 n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancells=361.0] MIN=2
+IND1 lines19_2|aut=6498.0 n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancells=361.0] MIN=2
+IND1 lines19_3|aut=6498.0 n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancells=361.0] MIN=2
+
+## Uniform cyclotomic unions (ind1):
+IND1 cyclo25_N6_c1-4-5|aut=600.0|orbits=1|conf=True n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,
+IND1 cyclo25_N6_c2-3-4|aut=600.0|orbits=1|conf=True n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,
+IND1 cyclo25_N6_c0-4-5|aut=600.0|orbits=1|conf=True n=25 (log2 n=4.64): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] k=3[visited=240,
+IND1 cyclo49_N8_c0-2-3-6|aut=3528.0|orbits=1|conf=True n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=21.0] k=3[visited=1
+IND1 cyclo49_N8_c1-3-5-7|aut=2352.0|orbits=1|conf=True n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] k=3[visited=1
+IND1 cyclo49_N8_c1-3-5-7|aut=2352.0|orbits=1|conf=True n=49 (log2 n=5.61): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] k=3[visited=1
+IND1 cyclo121_N12_c2-3-5-6-8-10|aut=4840.0|orbits=1|conf=True n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=80,meancells=102.7] MI
+IND1 cyclo121_N12_c0-1-2-8-10-11|aut=4840.0|orbits=1|conf=True n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=80,meancells=102.7] M
+IND1 cyclo121_N12_c0-3-4-6-7-8|aut=14520.0|orbits=1|conf=True n=121 (log2 n=6.92): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=120,discrete=0,meancells=66.0] k=3[
+IND1 cyclo169_N14_c1-2-5-7-9-11-12|aut=12168.0|orbits=1|conf=True n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=150.
+IND1 cyclo169_N14_c0-2-3-4-6-7-9|aut=4056.0|orbits=1|conf=True n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=157.9] 
+IND1 cyclo169_N14_c5-6-8-9-11-12-13|aut=4056.0|orbits=1|conf=True n=169 (log2 n=7.40): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=168,discrete=144,meancells=157.
+IND1 cyclo289_N18_c0-2-4-5-7-9-10-13-16|aut=13872.0|orbits=1|conf=None n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=288,meancells
+IND1 cyclo289_N18_c1-3-4-6-9-10-11-13-17|aut=9248.0|orbits=1|conf=None n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=256,meancells
+IND1 cyclo289_N18_c1-2-5-6-12-14-15-16-17|aut=9248.0|orbits=1|conf=None n=289 (log2 n=8.17): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=288,discrete=256,meancell
+IND1 cyclo81_N10_c0-3-4-6-7|aut=10368.0|orbits=1|conf=True n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visit
+IND1 cyclo81_N10_c0-1-3-5-8|aut=10368.0|orbits=1|conf=True n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visit
+IND1 cyclo81_N10_c1-4-5-7-9|aut=10368.0|orbits=1|conf=True n=81 (log2 n=6.34): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=80,discrete=0,meancells=32.4] k=3[visit
+IND1 cyclo361_N20_c0-1-2-3-6-8-9-15-17-18|aut=6498.0|orbits=1|conf=None n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancell
+IND1 cyclo361_N20_c1-2-4-5-6-8-9-10-11-14|aut=6498.0|orbits=1|conf=None n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=360,meancell
+IND1 cyclo361_N20_c3-6-8-10-11-12-14-16-17-18|aut=25992.0|orbits=1|conf=None n=361 (log2 n=8.50): k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=360,discrete=288,mea
+
+## Turyn iterates: random k-subsets (samp1, 30-40 samples per k):
+SAMP1 turyn_skew3_L1|aut=72.0|orbits=1 n=9 (log2 n=3.17): k=1[disc=0/30,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=0/30,meancells=6.0,min=6,max=6,meanrounds=2.0] k=3[disc=27/30,meancells=8.7,min=6,max=9,meanrounds=2.0] k=4[disc=30/30,meancells=9.0,min=9,max=9,meanrounds=2.0]
+SAMP1 turyn_skew3_L2|aut=10368.0|orbits=1 n=81 (log2 n=6.34): k=1[disc=0/30,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=0/30,meancells=33.0,min=18,max=36,meanrounds=4.0] k=3[disc=16/30,meancells=65.4,min=18,max=81,meanrounds=4.0] k=4[disc=24/30,meancells=75.0,min=36,max=81,meanrounds=3.1] k=5[disc=29/30,meancells=80.1,min=54,max=81,meanrounds=3.0] k=6[disc=29/30,meancells=80.1,min=54,max=81,meanrounds=3.0]
+SAMP1 turyn_skew3_L3|aut=214990848.0|orbits=1 n=6561 (log2 n=12.68): k=1[disc=0/30,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=0/30,meancells=1006.2,min=54,max=1296,meanrounds=4.0] k=3[disc=4/30,meancells=3515.4,min=1458,max=6561,meanrounds=4.0] k=4[disc=15/30,meancells=5273.1,min=2916,max=6561,meanrounds=3.3] k=5[disc=27/30,meancells=6342.3,min=4374,max=6561,meanrounds=3.0] k=6[disc=29/30,meancells=6488.1,min=4374,max=6561,meanrounds=3.0]
+SAMP1 turyn_5_L1|aut=600.0|orbits=1 n=25 (log2 n=4.64): k=1[disc=0/40,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=0/40,meancells=15.0,min=15,max=15,meanrounds=4.0] k=3[disc=37/40,meancells=24.2,min=15,max=25,meanrounds=3.2] k=4[disc=38/40,meancells=24.5,min=15,max=25,meanrounds=3.0] k=5[disc=40/40,meancells=25.0,min=25,max=25,meanrounds=2.8]
+SAMP1 turyn_5_L2|aut=720000.0|orbits=1 n=625 (log2 n=9.29): k=1[disc=0/40,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=0/40,meancells=220.5,min=45,max=225,meanrounds=4.0] k=3[disc=21/40,meancells=498.8,min=225,max=625,meanrounds=4.0] k=4[disc=38/40,meancells=612.5,min=375,max=625,meanrounds=3.2] k=5[disc=37/40,meancells=606.2,min=375,max=625,meanrounds=3.0]
+SAMP1 turyn_9_L1|aut=10368.0|orbits=1 n=81 (log2 n=6.34): k=1[disc=0/40,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=0/40,meancells=31.9,min=18,max=36,meanrounds=4.0] k=3[disc=10/40,meancells=57.8,min=27,max=81,meanrounds=4.0] k=4[disc=33/40,meancells=76.3,min=54,max=81,meanrounds=3.1] k=5[disc=38/40,meancells=79.7,min=54,max=81,meanrounds=3.0]
+SAMP1 turyn_13_L1|aut=12168.0|orbits=1 n=169 (log2 n=7.40): k=1[disc=0/40,meancells=3.0,min=3,max=3,meanrounds=2.0] k=2[disc=30/40,meancells=136.5,min=39,max=169,meanrounds=5.0] k=3[disc=40/40,meancells=169.0,min=169,max=169,meanrounds=4.5]
+
+## 2-WL after one individualization, cells (Turyn: rows/columns visible):
+CELLS2 turyn_9_L1|aut=10368.0|orbits=1 k=1: ncells=5 sizes: 1 8 8 32 32
+CELLS2 turyn_13_L1|aut=12168.0|orbits=1 k=1: ncells=5 sizes: 1 12 12 72 72
+CELLS2 turyn_5_L1|aut=600.0|orbits=1 k=1: ncells=3 sizes: 1 12 12
+CELLS2 turyn_5_L2|aut=720000.0|orbits=1 k=1: ncells=5 sizes: 1 24 24 288 288
+
+## 2-WL individualization depth (ind2, exact):
+IND2 paley5 n=5: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=5.0] MIN=2
+IND2 paley9 n=9: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=6.0] MIN>2
+IND2 paley13 n=13: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=13.0] MIN=2
+IND2 paley17 n=17: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=17.0] MIN=2
+IND2 paley25 n=25: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=15.0] MIN>2
+IND2 paley29 n=29: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=29.0] MIN=2
+IND2 paley37 n=37: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=37.0] MIN=2
+IND2 paley41 n=41: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=41.0] MIN=2
+IND2 paley49 n=49: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=28.0] MIN>2
+IND2 paley53 n=53: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=53.0] MIN=2
+IND2 paley61 n=61: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=61.0] MIN=2
+IND2 paley73 n=73: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=73.0] MIN=2
+IND2 paley81 n=81: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=0,meancells=24.0] MIN>2
+IND2 paley89 n=89: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=89.0] MIN=2
+IND2 paley97 n=97: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=97.0] MIN=2
+IND2 paley101 n=101: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=2,discrete=2,meancells=101.0] MIN=2
+IND2 sp25_0|aut=2.0|orbits=15 n=25: k=1[visited=15,discrete=10,meancells=21.7] MIN=1
+IND2 sp25_1|aut=1.0|orbits=25 n=25: k=1[visited=25,discrete=25,meancells=25.0] MIN=1
+IND2 sp25_2|aut=3.0|orbits=9 n=25: k=1[visited=9,discrete=8,meancells=23.2] MIN=1
+IND2 sp29_0|aut=3.0|orbits=13 n=29: k=1[visited=13,discrete=8,meancells=22.8] MIN=1
+IND2 sp29_1|aut=2.0|orbits=17 n=29: k=1[visited=17,discrete=12,meancells=25.5] MIN=1
+IND2 sp29_2|aut=2.0|orbits=17 n=29: k=1[visited=17,discrete=12,meancells=25.5] MIN=1
+IND2 sp37_0|aut=1.0|orbits=37 n=37: k=1[visited=37,discrete=37,meancells=37.0] MIN=1
+IND2 sp37_1|aut=1.0|orbits=37 n=37: k=1[visited=37,discrete=37,meancells=37.0] MIN=1
+IND2 sp37_2|aut=1.0|orbits=37 n=37: k=1[visited=37,discrete=37,meancells=37.0] MIN=1
+IND2 sp37_3|aut=1.0|orbits=37 n=37: k=1[visited=37,discrete=37,meancells=37.0] MIN=1
+IND2 sp37_4|aut=1.0|orbits=37 n=37: k=1[visited=37,discrete=37,meancells=37.0] MIN=1
+IND2 sp45_0|aut=1.0|orbits=45 n=45: k=1[visited=45,discrete=45,meancells=45.0] MIN=1
+IND2 sp45_1|aut=1.0|orbits=45 n=45: k=1[visited=45,discrete=45,meancells=45.0] MIN=1
+IND2 sp45_2|aut=1.0|orbits=45 n=45: k=1[visited=45,discrete=45,meancells=45.0] MIN=1
+IND2 sp49_0|aut=2352.0|orbits=1 n=49: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] MIN>2
+IND2 sp49_1|aut=3.0|orbits=19 n=49: k=1[visited=19,discrete=15,meancells=42.7] MIN=1
+IND2 sp49_2|aut=3.0|orbits=21 n=49: k=1[visited=21,discrete=14,meancells=39.7] MIN=1
+IND2 turyn_9_L1|aut=10368.0|orbits=1 n=81: k=1[visited=1,discrete=0,meancells=5.0] k=2[visited=80,discrete=0,meancells=32.4] MIN>2
+IND2 turyn_skew3_L1|aut=72.0|orbits=1 n=9: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=8,discrete=0,meancells=6.0] MIN>2
+IND2 turyn_skew3_L2|aut=10368.0|orbits=1 n=81: k=1[visited=1,discrete=0,meancells=5.0] k=2[visited=80,discrete=0,meancells=32.4] MIN>2
+IND2 turyn_13_L1|aut=12168.0|orbits=1 n=169: k=1[visited=1,discrete=0,meancells=5.0] k=2[visited=168,discrete=144,meancells=150.4] MIN=2
+IND2 lines5_0|aut=600.0 n=25: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] MIN>2
+IND2 lines5_1|aut=600.0 n=25: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] MIN>2
+IND2 lines5_2|aut=600.0 n=25: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] MIN>2
+IND2 lines5_3|aut=600.0 n=25: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=24,discrete=0,meancells=15.0] MIN>2
+IND2 lines7_0|aut=3528.0 n=49: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=21.0] MIN>2
+IND2 lines7_1|aut=2352.0 n=49: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] MIN>2
+IND2 lines7_2|aut=2352.0 n=49: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] MIN>2
+IND2 lines7_3|aut=2352.0 n=49: k=1[visited=1,discrete=0,meancells=3.0] k=2[visited=48,discrete=0,meancells=28.0] MIN>2
