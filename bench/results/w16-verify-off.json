@@ -420,7 +420,7 @@
    "tier": "hard",
    "n": 40,
    "status": "ok",
-   "time": 0.064,
+   "time": 0.063,
    "note": "",
    "stats": {
     "ir_branch": 10,
@@ -448,7 +448,7 @@
    "tier": "large",
    "n": 80,
    "status": "ok",
-   "time": 0.684,
+   "time": 0.683,
    "note": "|Aut|=512",
    "stats": {
     "ir_branch": 11,
@@ -466,7 +466,7 @@
    "tier": "large",
    "n": 80,
    "status": "ok",
-   "time": 0.37,
+   "time": 0.368,
    "note": "",
    "stats": {
     "ir_branch": 11,
@@ -509,7 +509,7 @@
    "tier": "large",
    "n": 62,
    "status": "ok",
-   "time": 0.455,
+   "time": 0.456,
    "note": "|Aut|=744000",
    "stats": {
     "ir_branch": 26,
@@ -578,7 +578,7 @@
    "tier": "large",
    "n": 70,
    "status": "ok",
-   "time": 0.404,
+   "time": 0.403,
    "note": "|Aut|=80640",
    "stats": {
     "ir_branch": 13,
@@ -603,7 +603,7 @@
    "tier": "large",
    "n": 56,
    "status": "ok",
-   "time": 0.226,
+   "time": 0.225,
    "note": "|Aut|=40320",
    "stats": {
     "ir_branch": 13,
@@ -628,7 +628,7 @@
    "tier": "large",
    "n": 36,
    "status": "ok",
-   "time": 0.115,
+   "time": 0.116,
    "note": "|Aut|=1036800",
    "stats": {
     "ir_branch": 24,
@@ -653,7 +653,7 @@
    "tier": "large",
    "n": 64,
    "status": "ok",
-   "time": 0.302,
+   "time": 0.301,
    "note": "|Aut|=46080",
    "stats": {
     "ir_branch": 12,
@@ -678,7 +678,7 @@
    "tier": "large",
    "n": 45,
    "status": "ok",
-   "time": 0.234,
+   "time": 0.235,
    "note": "|Aut|=3628800",
    "stats": {
     "ir_branch": 14,
@@ -776,7 +776,7 @@
    "tier": "large",
    "n": 64,
    "status": "ok",
-   "time": 0.256,
+   "time": 0.255,
    "note": "",
    "stats": {
     "ir_branch": 7,
@@ -795,7 +795,7 @@
    "tier": "large",
    "n": 70,
    "status": "ok",
-   "time": 0.013,
+   "time": 0.012,
    "note": "|Aut|=1",
    "stats": {}
   },
@@ -813,7 +813,7 @@
    "tier": "xl",
    "n": 140,
    "status": "ok",
-   "time": 2.089,
+   "time": 2.084,
    "note": "|Aut|=512",
    "stats": {
     "stage": 297,
@@ -832,7 +832,7 @@
    "tier": "xl",
    "n": 140,
    "status": "ok",
-   "time": 1.305,
+   "time": 1.306,
    "note": "",
    "stats": {
     "stage": 297,
@@ -851,7 +851,7 @@
    "tier": "xl",
    "n": 114,
    "status": "ok",
-   "time": 1.756,
+   "time": 1.754,
    "note": "|Aut|=11261376",
    "stats": {
     "ir_branch": 29,
@@ -876,7 +876,7 @@
    "tier": "xl",
    "n": 101,
    "status": "ok",
-   "time": 0.287,
+   "time": 0.283,
    "note": "|Aut|=5050",
    "stats": {
     "ir_branch": 8,
@@ -889,7 +889,7 @@
    "tier": "xl",
    "n": 128,
    "status": "ok",
-   "time": 1.434,
+   "time": 1.439,
    "note": "|Aut|=645120",
    "stats": {
     "ir_branch": 13,
@@ -949,7 +949,7 @@
    "tier": "xl",
    "n": 100,
    "status": "ok",
-   "time": 1.974,
+   "time": 1.996,
    "note": "|Aut|=26336378880000",
    "stats": {
     "ir_branch": 48,
@@ -984,7 +984,7 @@
    "tier": "xl",
    "n": 200,
    "status": "ok",
-   "time": 0.108,
+   "time": 0.109,
    "note": "|Aut|=1",
    "stats": {}
   },
@@ -993,7 +993,7 @@
    "tier": "xl",
    "n": 200,
    "status": "ok",
-   "time": 0.175,
+   "time": 0.174,
    "note": "|Aut|=1",
    "stats": {}
   }

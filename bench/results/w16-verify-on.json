@@ -56,7 +56,7 @@
    "tier": "tiny",
    "n": 8,
    "status": "ok",
-   "time": 0.002,
+   "time": 0.001,
    "note": "|Aut|=2",
    "stats": {
     "stage": 2,
@@ -110,7 +110,7 @@
    "tier": "small",
    "n": 12,
    "status": "ok",
-   "time": 0.004,
+   "time": 0.003,
    "note": "|Aut|=24",
    "stats": {
     "ir_branch": 3,
@@ -206,7 +206,7 @@
    "tier": "medium",
    "n": 16,
    "status": "ok",
-   "time": 0.038,
+   "time": 0.036,
    "note": "|Aut|=1152",
    "stats": {
     "ir_branch": 15,
@@ -346,7 +346,7 @@
    "tier": "hard",
    "n": 28,
    "status": "ok",
-   "time": 0.033,
+   "time": 0.032,
    "note": "|Aut|=40320",
    "stats": {
     "ir_branch": 14,
@@ -402,7 +402,7 @@
    "tier": "hard",
    "n": 40,
    "status": "ok",
-   "time": 0.051,
+   "time": 0.05,
    "note": "|Aut|=192",
    "stats": {
     "ir_branch": 10,
@@ -420,7 +420,7 @@
    "tier": "hard",
    "n": 40,
    "status": "ok",
-   "time": 0.041,
+   "time": 0.038,
    "note": "",
    "stats": {
     "ir_branch": 10,
@@ -439,7 +439,7 @@
    "tier": "hard",
    "n": 40,
    "status": "ok",
-   "time": 0.002,
+   "time": 0.001,
    "note": "|Aut|=1",
    "stats": {}
   },
@@ -448,7 +448,7 @@
    "tier": "large",
    "n": 80,
    "status": "ok",
-   "time": 0.279,
+   "time": 0.274,
    "note": "|Aut|=512",
    "stats": {
     "ir_branch": 11,
@@ -578,7 +578,7 @@
    "tier": "large",
    "n": 70,
    "status": "ok",
-   "time": 0.187,
+   "time": 0.189,
    "note": "|Aut|=80640",
    "stats": {
     "ir_branch": 13,
@@ -603,7 +603,7 @@
    "tier": "large",
    "n": 56,
    "status": "ok",
-   "time": 0.119,
+   "time": 0.117,
    "note": "|Aut|=40320",
    "stats": {
     "ir_branch": 13,
@@ -628,7 +628,7 @@
    "tier": "large",
    "n": 36,
    "status": "ok",
-   "time": 0.061,
+   "time": 0.06,
    "note": "|Aut|=1036800",
    "stats": {
     "ir_branch": 24,
@@ -678,7 +678,7 @@
    "tier": "large",
    "n": 45,
    "status": "ok",
-   "time": 0.16,
+   "time": 0.153,
    "note": "|Aut|=3628800",
    "stats": {
     "ir_branch": 14,
@@ -757,7 +757,7 @@
    "tier": "large",
    "n": 28,
    "status": "ok",
-   "time": 0.024,
+   "time": 0.025,
    "note": "",
    "stats": {
     "ir_branch": 33,
@@ -776,7 +776,7 @@
    "tier": "large",
    "n": 64,
    "status": "ok",
-   "time": 0.114,
+   "time": 0.111,
    "note": "",
    "stats": {
     "ir_branch": 7,
@@ -813,7 +813,7 @@
    "tier": "xl",
    "n": 140,
    "status": "ok",
-   "time": 0.992,
+   "time": 0.983,
    "note": "|Aut|=512",
    "stats": {
     "stage": 297,
@@ -832,7 +832,7 @@
    "tier": "xl",
    "n": 140,
    "status": "ok",
-   "time": 0.917,
+   "time": 0.913,
    "note": "",
    "stats": {
     "stage": 297,
@@ -851,7 +851,7 @@
    "tier": "xl",
    "n": 114,
    "status": "ok",
-   "time": 0.216,
+   "time": 0.225,
    "note": "|Aut|=11261376",
    "stats": {
     "ir_branch": 29,
@@ -876,7 +876,7 @@
    "tier": "xl",
    "n": 101,
    "status": "ok",
-   "time": 0.045,
+   "time": 0.046,
    "note": "|Aut|=5050",
    "stats": {
     "ir_branch": 8,
@@ -889,7 +889,7 @@
    "tier": "xl",
    "n": 128,
    "status": "ok",
-   "time": 0.79,
+   "time": 0.799,
    "note": "|Aut|=645120",
    "stats": {
     "ir_branch": 13,
@@ -919,7 +919,7 @@
    "tier": "xl",
    "n": 120,
    "status": "ok",
-   "time": 0.891,
+   "time": 0.893,
    "note": "|Aut|=3628800",
    "stats": {
     "ir_branch": 15,
@@ -949,7 +949,7 @@
    "tier": "xl",
    "n": 100,
    "status": "ok",
-   "time": 1.161,
+   "time": 1.182,
    "note": "|Aut|=26336378880000",
    "stats": {
     "ir_branch": 48,

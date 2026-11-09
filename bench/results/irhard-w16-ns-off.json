@@ -46,7 +46,7 @@
    "gen_time": 0.03,
    "new": {
     "status": "ok",
-    "time": 0.139,
+    "time": 0.144,
     "note": "",
     "iso": false,
     "stats": {
@@ -78,7 +78,7 @@
    "gen_time": 0.06,
    "new": {
     "status": "ok",
-    "time": 0.286,
+    "time": 0.282,
     "note": "",
     "iso": true,
     "stats": {
@@ -110,7 +110,7 @@
    "gen_time": 0.06,
    "new": {
     "status": "ok",
-    "time": 0.307,
+    "time": 0.303,
     "note": "",
     "iso": false,
     "stats": {
@@ -139,10 +139,10 @@
    "maxdeg": 8,
    "edges": 3072,
    "cert": "lemma",
-   "gen_time": 0.21,
+   "gen_time": 0.22,
    "new": {
     "status": "ok",
-    "time": 0.58,
+    "time": 0.573,
     "note": "",
     "iso": true,
     "stats": {
@@ -171,10 +171,10 @@
    "maxdeg": 8,
    "edges": 3072,
    "cert": "lemma",
-   "gen_time": 0.21,
+   "gen_time": 0.22,
    "new": {
     "status": "ok",
-    "time": 0.716,
+    "time": 0.713,
     "note": "",
     "iso": false,
     "stats": {

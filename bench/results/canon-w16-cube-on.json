@@ -13,7 +13,7 @@
    "cert": "formula",
    "canon": {
     "status": "ok",
-    "time": 0.209,
+    "time": 0.208,
     "t_x": 0.101,
     "t_y": 0.107,
     "same": true,

@@ -46,7 +46,7 @@
    "gen_time": 0.0,
    "new": {
     "status": "ok",
-    "time": 0.054,
+    "time": 0.052,
     "note": "",
     "iso": false,
     "stats": {
@@ -78,7 +78,7 @@
    "gen_time": 0.0,
    "new": {
     "status": "ok",
-    "time": 0.151,
+    "time": 0.149,
     "note": "",
     "iso": true,
     "stats": {
@@ -110,7 +110,7 @@
    "gen_time": 0.0,
    "new": {
     "status": "ok",
-    "time": 0.143,
+    "time": 0.144,
     "note": "",
     "iso": false,
     "stats": {
@@ -139,10 +139,10 @@
    "maxdeg": 3,
    "edges": 1200,
    "cert": "cfi",
-   "gen_time": 0.0,
+   "gen_time": 0.01,
    "new": {
     "status": "ok",
-    "time": 0.456,
+    "time": 0.464,
     "note": "",
     "iso": true,
     "stats": {
@@ -171,10 +171,10 @@
    "maxdeg": 3,
    "edges": 1200,
    "cert": "cfi",
-   "gen_time": 0.0,
+   "gen_time": 0.01,
    "new": {
     "status": "ok",
-    "time": 0.44,
+    "time": 0.436,
     "note": "",
     "iso": false,
     "stats": {

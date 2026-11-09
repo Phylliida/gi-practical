@@ -13,9 +13,9 @@
    "cert": "cfi",
    "canon": {
     "status": "ok",
-    "time": 0.185,
-    "t_x": 0.093,
-    "t_y": 0.093,
+    "time": 0.181,
+    "t_x": 0.09,
+    "t_y": 0.091,
     "same": true,
     "ngens": 21,
     "aut_order": "2097152"
@@ -36,7 +36,7 @@
     "status": "ok",
     "time": 0.179,
     "t_x": 0.089,
-    "t_y": 0.091,
+    "t_y": 0.09,
     "same": false,
     "ngens": 21,
     "aut_order": "2097152"
