@@ -44,6 +44,7 @@ of graphs of maximum degree d, (4) produced two draft papers and an animated exp
 | Cubic Boolean equivalence | decided in 2^{Õ(n^{1.5})} (w35), or 2^{O(n^{51/26} log n)} by a second route | **conditional** on an unrefereed preprint (arXiv:2610.00874; second route arXiv:2611.05920); the reductions are proven by hand and AI red-teamed | [Moonshots](Moonshots.md#cubic-boolean-equivalence-w35-w37) |
 | Quartic Boolean equivalence | no 2^{o(d²)} algorithm for general quartics and no CFI-style barrier. With s the minimum pair-contraction rank, Theorem H decides equivalence in 2^{(2√2+o(1))d²/√min(s,d/2)} poly(d), which beats 2^{d²/4} from s = 132 with the printed parameters (w45) | AI red-teamed by w46: threshold repaired, nothing else broken. No experiment reaches the regime where H wins | [Moonshots](Moonshots.md#quartic-equivalence-and-4-tensors-w45-w46) |
 | Polynomial canonization at small degree | deterministic polynomial canonical forms at every fixed d ≤ 5 (`gi/luks.py`, w40); n^{O(d²)} with `guarantee=True` | hand proof, AI red-teamed by w44. Needs d fixed; the exponent about 53 is an estimate | [Software](Software.md) |
+| Height-2 gain-graph core | the low-support generation conjecture (w27 lead 1) is false once sharpened; 2-transitive coordinate groups need only 3 values per coordinate (w50) | AI red-teamed by w53: refutation stands, framing corrected. Height 2 still open, but only a log log b exponent on this family | [Core problem](Math-Core-Problem.md) |
 | Practice | on Neuen–Schweitzer multipedes we beat nauty and Traces from n ≈ 1100 (n = 2464: 0.34 s; nauty and Traces exceed 120 s in the latest run and exceeded 600 s in the earlier w1 run) | measured; answers proved by a lemma checked per instance; Traces wins on every other family, about 3–29× | [Benchmarks](Benchmarks.md) |
 
 ## Pages
@@ -78,9 +79,9 @@ of graphs of maximum degree d, (4) produced two draft papers and an animated exp
 
 ## Work still in progress
 
-This wiki is current to master `1a4c1cb`. Every branch through `w52-redteam-conference` is on master and folded in, except `w50-gain`, which is on master but **not yet red-teamed**. Nothing in this wiki depends on the branches below. See [Maintaining](Maintaining.md) for how to fold them in.
+This wiki is current to master `5884b84`. Every branch through `w53-redteam-gain` is on master and folded in; every result memo has had a red-team. Nothing in this wiki depends on the branches below. See [Maintaining](Maintaining.md) for how to fold them in.
 
 | Branch | State | Area |
 |---|---|---|
-| `w53-redteam-gain` | running: adversarial check of w50's refutation of the gain-graph conjecture | [Core problem](Math-Core-Problem.md) |
+| `w55-lean-h` | running: machine-checking Theorem H's combinatorial core and threshold | [Moonshots](Moonshots.md#quartic-equivalence-and-4-tensors-w45-w46), [Lean audit](Lean-Audit.md) |
 | `w54-lean-t2` | running: machine-checking T2, the Steiner triple system reduction | [Moonshots](Moonshots.md#steiner-triple-systems-and-the-gl-barrier-w30-w33), [Lean audit](Lean-Audit.md) |

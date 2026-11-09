@@ -793,3 +793,11 @@ are red-teams, a LaTeX paper, and final integration.
 * New: |Aut W_{L+1}| ≥ 2|Aut W_L|² is provable, so depth ≥ 3 holds at every level of the P(9) chain. Complete run over Spence's lists and two-graph descendants to n = 49 and all 103 prime-power Paley q ≤ 1097: depth always 2 or 3.
 * Not reached: Babai 1980 and BCSTW unread; no k = 3 exhaustion at n ≥ 625; nothing beyond 6561; Spence's lists are themselves non-exhaustive at n ≥ 37.
 * w54-lean-t2: machine-check T2, the Steiner triple system reduction, in Lean (mathlib only).
+
+### w53-redteam-gain (done, commit 2d97638; docs/redteam-w50-gain.md)
+* The refutation of w27 lead 1 stands; no main theorem broken. W is a fair (more generous) sharpening, not a strawman. Theorem A's constant improves to 3, optimal (new proof; checked on all invariant graphs for b ≤ 5, M ≤ 3); A′'s 4 is sharp for b ≥ 4.
+* Fixes: survival framing (medium): H is tiny and |C| = N^{Θ(log log b)}, so every gain problem on the family, non-abelian included, takes f(b)·N^{O(log log b)}; "open" only means removing a log log b exponent. Cor E.1 proved only for folded cubes, not odd graphs (low–medium).
+  "Narrow generation holds exactly when kernels are 2-transitive" is false (S₆ on pairs); say "suffices". Double-cover remark: ⌈g/2⌉ values suffice, not g. Odd-p remark gives only d = 1 obstructions.
+* Prior art: Matsushita (2017) has the parity map on π₁ modulo short cycles and the odd-graph case π₁ ≅ Z/2; pattern graphs are NEPS; the Cartesian case of Theorem A follows from weakly modular graph theory. New: the code coupling across coordinates and the refutation.
+* Surviving forms: W with c ≳ log log b; W allowing κ ≤ M extra walks (Theorem B′); k = Θ(log b); the memo's W*.
+* w55-lean-h: machine-check Theorem H's combinatorial core and threshold arithmetic in Lean.

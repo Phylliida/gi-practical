@@ -270,6 +270,14 @@ See [Math: core problem](Math-Core-Problem.md). None of these gives FPT for degr
 | T3, T3′ (w45) | a quartic subclass; T3′ needs f_i(0) = 0 | conditional | AI red-team w46 | same |
 | Theorem H (w45) | quartic equivalence in 2^{(2√2+o(1))d²/√min(s,d/2)} poly(d); beats 2^{d²/4} from s = 132 as printed | proven, threshold repaired | AI red-team w46 | same §1 |
 
+### Gain-graph core (w50, w53)
+
+| Claim | Statement | Status | Checked by | Source |
+|---|---|---|---|---|
+| Theorem B (w50) | parity map π₁ → 𝒟 onto; normal generating sets need ≥ dim 𝒟 walks with ≥ g values on ≥ d(𝒟) coordinates; refutes W for absolute k, c | proven; parity map on π₁ is in Matsushita 2017, the code coupling appears new | AI red-team w53 | [w50](../docs/w50-gain.md), [w53](../docs/redteam-w50-gain.md) |
+| Theorem A (w50) | coordinate groups 2-transitive: 3 values per coordinate suffice (4 in the memo), optimal | proven | AI red-team w53, exhaustive for b ≤ 5, M ≤ 3 | same |
+| Prop E, Cor E.1 (w50) | abelian gains on folded-cube family FPT | proven, Cor E.1 modulo Schweitzer–Wiebking; not proved for odd graphs | AI red-team w53 | same |
+
 ## 8. Practical claims
 
 See [Benchmarks](Benchmarks.md) for tables and caveats. All timings are one machine.

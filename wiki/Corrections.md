@@ -341,6 +341,16 @@ The earlier statement that nothing of the project's own accounting is machine-ch
 | Theorem T of w49 | holds for a resolution whose Case 2b orbital is R₁; the Lean fixes this by label order, so it is a worst-case labelling. d must be even, n ≥ 2^33280 | same |
 | w47 §5.3 conjecture | false as literally worded; the two-sided form is not refuted | same |
 
+### Gain-graph core (w50, w53)
+
+| Item | Correction | Source |
+|---|---|---|
+| "H non-enumerable", "non-abelian gains on the family open" | H is tiny and \|C\| = N^{Θ(log log b)}: every gain problem on the family takes f(b)·N^{O(log log b)} | [redteam-w50-gain](../docs/redteam-w50-gain.md) |
+| Cor E.1 "on the Theorem-B family" | proved for folded cubes only | same |
+| "narrow generation holds exactly when kernels are 2-transitive" | false (S₆ on pairs); 2-transitivity suffices | same |
+| double-cover remark | ⌈g/2⌉ values per side-coordinate suffice, not g | same |
+| Theorem A constant 4 | improves to 3, optimal | same |
+
 ### The video
 
 Fact-checked by `w24-video-review` (`4085217`, merged `6dad6a2`), which fixed 31 errors (10 wrong, 12 misleading, 9 minor) in the narration, cards and code; [REVIEW.md](../video/REVIEW.md) lists each with its source, and what could not be verified. Running time 65:31. Differences between planning documents and data, as of `b1a2d03` (not changed by the fact-check, which left STORYBOARD.md alone):
