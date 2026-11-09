@@ -20,6 +20,7 @@ correct or the run fails or times out; heuristics affect only speed.
 | [gi/bounded.py](../gi/bounded.py) | Luks's reduction: bounded degree to string isomorphism, layer by layer from an edge |
 | [gi/ea2.py](../gi/ea2.py) | elementary abelian 2-groups by a basis; SI and least-image canonization by Gaussian elimination on bitmasks; `SparseEA` for sparse generators |
 | [gi/canon.py](../gi/canon.py) | canonical labeling of bounded-degree graphs; verified-automorphism probe `_probe_automorphism` and `_LazyGroup` (w23) |
+| [gi/luks.py](../gi/luks.py) | canonical forms of strings under permutation groups by Luks's recursion (w40) |
 | [gi/_ckernel.c](../gi/_ckernel.c), [gi/kernel.py](../gi/kernel.py) | optional compiled kernel and loader |
 | [build_ckernel.py](../build_ckernel.py) | builds the kernel, including an ASan/UBSan mode |
 
@@ -83,11 +84,11 @@ For connected X, Y and an oriented root edge, Luks's step extends G_r = Aut_f(X_
 
 ### Canonical labeling
 
-[gi/canon.py](../gi/canon.py) is the canonical version of Luks's reduction (Babai–Luks 1983). Components sorted by form; least rooted form over a canonical class of edges; per layer two string canonizations. Layer canonizers: invariant strings (no work), elementary abelian least image (`EAAction.canon`), `ir_canon` for phase-2 layers that are coloured-graph problems, and `perm_canon`, a least-image search over a stabilizer chain with automorphism pruning, for the rest.
+[gi/canon.py](../gi/canon.py) is the canonical version of Luks's reduction (Babai–Luks 1983). Components sorted by form; least rooted form over a canonical class of edges; per layer two string canonizations. Layer canonizers: invariant strings (no work), elementary abelian least image (`EAAction.canon`), `ir_canon` for phase-2 coloured-graph layers with a twin block of at least 5, and Luks's recursion ([gi/luks.py](../gi/luks.py), w40) for the rest.
 
 **Automorphism probe and lazy layer groups (w23).** Before a root edge is computed, a parallel individualization-refinement descent from the best root and from that edge proposes a bijection. It counts only if it is verified to be a color-preserving automorphism, so the probe cannot change the form. The probe is capped at 64 refinements and 3 failures per graph and tried only when |K| ≥ 16. `_perm_H` returns a `_LazyGroup`, so a layer's group H gets a stabilizer chain only if its string is not invariant. Reasons and data: [w23-speed2](../docs/w23-speed2.md) §1, §4.
 
-**No polynomial guarantee.** `perm_canon` and `ir_canon` are exponential in the worst case; the probe does not change this; no adversarial family was tried. Theorem A or BL83's canonical Luks recursion would be the polynomial replacement; neither is implemented ([w9-canontool](../docs/w9-canontool.md) §4, [w14-solver](../docs/w14-solver.md)).
+**Polynomial guarantee at degree at most 5 (w40).** Since w40 the non-abelian layers go through Luks's recursion, which is polynomial when all twin blocks have size at most 4, in particular at maximum degree at most 5. Two exponential paths remain by default and only for larger twin blocks: `ir_canon`, and `perm_canon` above a limit on the primitive sections; `guarantee=True` removes them. The adversarial families that break the old search are in [bench/adversary.py](../bench/adversary.py); the argument is in [w40-solvable](../docs/w40-solvable.md).
 
 ## The compiled kernel
 

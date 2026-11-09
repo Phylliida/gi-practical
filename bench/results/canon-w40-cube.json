@@ -1,0 +1,90 @@
+{
+ "label": "w40-cube",
+ "timeout": 100.0,
+ "rows": [
+  {
+   "name": "Q6",
+   "family": "cube",
+   "size": 6,
+   "n": 64,
+   "seed": 0,
+   "maxdeg": 6,
+   "edges": 192,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.007,
+    "t_x": 0.004,
+    "t_y": 0.003,
+    "same": true,
+    "ngens": 6,
+    "aut_order": "46080"
+   },
+   "iso": true,
+   "aut": 46080.0
+  },
+  {
+   "name": "Q8",
+   "family": "cube",
+   "size": 8,
+   "n": 256,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1024,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.021,
+    "t_x": 0.011,
+    "t_y": 0.01,
+    "same": true,
+    "ngens": 8,
+    "aut_order": "10321920"
+   },
+   "iso": true,
+   "aut": 10321920.0
+  },
+  {
+   "name": "Q10",
+   "family": "cube",
+   "size": 10,
+   "n": 1024,
+   "seed": 0,
+   "maxdeg": 10,
+   "edges": 5120,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.117,
+    "t_x": 0.052,
+    "t_y": 0.065,
+    "same": true,
+    "ngens": 10,
+    "aut_order": "3715891200"
+   },
+   "iso": true,
+   "aut": 3715891200.0
+  },
+  {
+   "name": "Q12",
+   "family": "cube",
+   "size": 12,
+   "n": 4096,
+   "seed": 0,
+   "maxdeg": 12,
+   "edges": 24576,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.629,
+    "t_x": 0.307,
+    "t_y": 0.321,
+    "same": true,
+    "ngens": 12,
+    "aut_order": "1961990553600"
+   },
+   "iso": true,
+   "aut": 1961990553600.0
+  }
+ ]
+}

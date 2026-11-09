@@ -1,0 +1,428 @@
+{
+ "label": "w40-cfit",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "cfit-20",
+   "family": "cfit",
+   "size": 20,
+   "n": 204,
+   "maxdeg": 4,
+   "claim": true,
+   "cert": "cfi",
+   "before": {
+    "time": 0.061213702021632344,
+    "same": true,
+    "ngens": 12,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 30,
+     "canon_phase1_max_degree": 26,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 16,
+     "canon_invariant": 14,
+     "canon_perm_p1": 14,
+     "canon_perm_calls": 20,
+     "canon_perm_nodes": 324,
+     "canon_perm_max_degree": 26,
+     "canon_phase2_max_degree": 16,
+     "canon_perm_p2": 6
+    },
+    "form": "a0f964a65bfb",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.07868814200628549,
+    "same": true,
+    "ngens": 12,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 30,
+     "canon_phase1_max_degree": 26,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 16,
+     "canon_invariant": 14,
+     "canon_perm_p1": 14,
+     "canon_luks_calls": 20,
+     "canon_luks_max_degree": 26,
+     "canon_luks_nodes": 40,
+     "canon_luks_listed": 32,
+     "canon_phase2_max_degree": 16,
+     "canon_perm_p2": 6
+    },
+    "form": "a0f964a65bfb",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-20-twist",
+   "family": "cfit",
+   "size": 20,
+   "n": 204,
+   "maxdeg": 4,
+   "claim": false,
+   "cert": "cfi",
+   "before": {
+    "time": 0.06970535696018487,
+    "same": false,
+    "ngens": 12,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 30,
+     "canon_phase1_max_degree": 26,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 16,
+     "canon_invariant": 14,
+     "canon_perm_p1": 14,
+     "canon_perm_calls": 20,
+     "canon_perm_nodes": 321,
+     "canon_perm_max_degree": 26,
+     "canon_phase2_max_degree": 16,
+     "canon_perm_p2": 6
+    },
+    "form": "b13b544f04fc",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.07766494702082127,
+    "same": false,
+    "ngens": 12,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 30,
+     "canon_phase1_max_degree": 26,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 16,
+     "canon_invariant": 14,
+     "canon_perm_p1": 14,
+     "canon_luks_calls": 20,
+     "canon_luks_max_degree": 26,
+     "canon_luks_nodes": 40,
+     "canon_luks_listed": 32,
+     "canon_phase2_max_degree": 16,
+     "canon_perm_p2": 6
+    },
+    "form": "b13b544f04fc",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-40",
+   "family": "cfit",
+   "size": 40,
+   "n": 404,
+   "maxdeg": 4,
+   "claim": true,
+   "cert": "cfi",
+   "before": {
+    "time": 0.38936869002645835,
+    "same": true,
+    "ngens": 22,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 36,
+     "canon_phase1_max_degree": 54,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 33,
+     "canon_invariant": 14,
+     "canon_perm_p1": 20,
+     "canon_perm_calls": 34,
+     "canon_perm_nodes": 1327,
+     "canon_perm_max_degree": 54,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 14
+    },
+    "form": "caf817972116",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.4276868059532717,
+    "same": true,
+    "ngens": 22,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 36,
+     "canon_phase1_max_degree": 54,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 33,
+     "canon_invariant": 14,
+     "canon_perm_p1": 20,
+     "canon_luks_calls": 34,
+     "canon_luks_max_degree": 54,
+     "canon_luks_nodes": 96,
+     "canon_luks_listed": 74,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 14
+    },
+    "form": "caf817972116",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-40-twist",
+   "family": "cfit",
+   "size": 40,
+   "n": 404,
+   "maxdeg": 4,
+   "claim": false,
+   "cert": "cfi",
+   "before": {
+    "time": 0.3918765829876065,
+    "same": false,
+    "ngens": 22,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 36,
+     "canon_phase1_max_degree": 54,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 33,
+     "canon_invariant": 14,
+     "canon_perm_p1": 20,
+     "canon_perm_calls": 34,
+     "canon_perm_nodes": 1293,
+     "canon_perm_max_degree": 54,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 14
+    },
+    "form": "717998a8c0c5",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.4299111620057374,
+    "same": false,
+    "ngens": 22,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 36,
+     "canon_phase1_max_degree": 54,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 33,
+     "canon_invariant": 14,
+     "canon_perm_p1": 20,
+     "canon_luks_calls": 34,
+     "canon_luks_max_degree": 54,
+     "canon_luks_nodes": 96,
+     "canon_luks_listed": 74,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 14
+    },
+    "form": "717998a8c0c5",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-80",
+   "family": "cfit",
+   "size": 80,
+   "n": 804,
+   "maxdeg": 4,
+   "claim": true,
+   "cert": "cfi",
+   "before": {
+    "time": 2.3737660120241344,
+    "same": true,
+    "ngens": 42,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 42,
+     "canon_phase1_max_degree": 90,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 64,
+     "canon_invariant": 16,
+     "canon_perm_p1": 26,
+     "canon_perm_calls": 42,
+     "canon_perm_nodes": 4786,
+     "canon_perm_max_degree": 90,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 16
+    },
+    "form": "df58e146c2ea",
+    "status": "ok"
+   },
+   "after": {
+    "time": 2.8500498550129123,
+    "same": true,
+    "ngens": 42,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 42,
+     "canon_phase1_max_degree": 90,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 64,
+     "canon_invariant": 16,
+     "canon_perm_p1": 26,
+     "canon_luks_calls": 42,
+     "canon_luks_max_degree": 90,
+     "canon_luks_nodes": 174,
+     "canon_luks_listed": 138,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 16,
+     "canon_luks_ea": 2
+    },
+    "form": "df58e146c2ea",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-80-twist",
+   "family": "cfit",
+   "size": 80,
+   "n": 804,
+   "maxdeg": 4,
+   "claim": false,
+   "cert": "cfi",
+   "before": {
+    "time": 2.3694833390181884,
+    "same": false,
+    "ngens": 42,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 42,
+     "canon_phase1_max_degree": 90,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 64,
+     "canon_invariant": 16,
+     "canon_perm_p1": 26,
+     "canon_perm_calls": 42,
+     "canon_perm_nodes": 4773,
+     "canon_perm_max_degree": 90,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 16
+    },
+    "form": "df11c4dd83ee",
+    "status": "ok"
+   },
+   "after": {
+    "time": 2.838361016998533,
+    "same": false,
+    "ngens": 42,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 42,
+     "canon_phase1_max_degree": 90,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 64,
+     "canon_invariant": 16,
+     "canon_perm_p1": 26,
+     "canon_luks_calls": 42,
+     "canon_luks_max_degree": 90,
+     "canon_luks_nodes": 174,
+     "canon_luks_listed": 138,
+     "canon_phase2_max_degree": 24,
+     "canon_perm_p2": 16,
+     "canon_luks_ea": 2
+    },
+    "form": "df11c4dd83ee",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-160",
+   "family": "cfit",
+   "size": 160,
+   "n": 1604,
+   "maxdeg": 4,
+   "claim": true,
+   "cert": "cfi",
+   "before": {
+    "time": 17.841072393988725,
+    "same": true,
+    "ngens": 82,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 54,
+     "canon_phase1_max_degree": 142,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 109,
+     "canon_invariant": 18,
+     "canon_perm_p1": 34,
+     "canon_perm_calls": 60,
+     "canon_perm_nodes": 16085,
+     "canon_perm_max_degree": 142,
+     "canon_phase2_max_degree": 48,
+     "canon_perm_p2": 26
+    },
+    "form": "b2e1da5822be",
+    "status": "ok"
+   },
+   "after": {
+    "time": 21.264600728987716,
+    "same": true,
+    "ngens": 82,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 54,
+     "canon_phase1_max_degree": 142,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 109,
+     "canon_invariant": 18,
+     "canon_perm_p1": 34,
+     "canon_luks_calls": 60,
+     "canon_luks_max_degree": 142,
+     "canon_luks_nodes": 372,
+     "canon_luks_listed": 308,
+     "canon_phase2_max_degree": 48,
+     "canon_perm_p2": 26,
+     "canon_luks_ea": 8,
+     "canon_luks_products": 2
+    },
+    "form": "b2e1da5822be",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "cfit-160-twist",
+   "family": "cfit",
+   "size": 160,
+   "n": 1604,
+   "maxdeg": 4,
+   "claim": false,
+   "cert": "cfi",
+   "before": {
+    "time": 17.82079657004215,
+    "same": false,
+    "ngens": 82,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 54,
+     "canon_phase1_max_degree": 142,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 109,
+     "canon_invariant": 18,
+     "canon_perm_p1": 34,
+     "canon_perm_calls": 60,
+     "canon_perm_nodes": 15979,
+     "canon_perm_max_degree": 142,
+     "canon_phase2_max_degree": 48,
+     "canon_perm_p2": 26
+    },
+    "form": "214e4dfb902e",
+    "status": "ok"
+   },
+   "after": {
+    "time": 21.27137892501196,
+    "same": false,
+    "ngens": 82,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 54,
+     "canon_phase1_max_degree": 142,
+     "canon_trivial": 2,
+     "canon_phase2_max_log2_order": 109,
+     "canon_invariant": 18,
+     "canon_perm_p1": 34,
+     "canon_luks_calls": 60,
+     "canon_luks_max_degree": 142,
+     "canon_luks_nodes": 372,
+     "canon_luks_listed": 308,
+     "canon_phase2_max_degree": 48,
+     "canon_perm_p2": 26,
+     "canon_luks_ea": 8,
+     "canon_luks_products": 2
+    },
+    "form": "214e4dfb902e",
+    "status": "ok"
+   }
+  }
+ ]
+}

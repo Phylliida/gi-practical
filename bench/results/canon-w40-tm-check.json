@@ -1,0 +1,228 @@
+{
+ "label": "w40-tm-check",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "tb2-3",
+   "family": "tm",
+   "size": 3,
+   "n": 18,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 21,
+   "cert": "relabel",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 16.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 16.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.003,
+    "t_x": 0.003,
+    "t_y": 0.001,
+    "same": true,
+    "ngens": 4,
+    "aut_order": "16"
+   },
+   "iso": true,
+   "aut": 16.0
+  },
+  {
+   "name": "tb2-3-other",
+   "family": "tm",
+   "size": 3,
+   "n": 18,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 21,
+   "cert": "nauty",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 16.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 16.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.002,
+    "t_x": 0.001,
+    "t_y": 0.001,
+    "same": false,
+    "ngens": 4,
+    "aut_order": "16"
+   },
+   "iso": false,
+   "aut": 16.0
+  },
+  {
+   "name": "tb2-4",
+   "family": "tm",
+   "size": 4,
+   "n": 34,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 41,
+   "cert": "relabel",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 2.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 2.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.007,
+    "t_y": 0.002,
+    "same": true,
+    "ngens": 1,
+    "aut_order": "2"
+   },
+   "iso": true,
+   "aut": 2.0
+  },
+  {
+   "name": "tb2-4-other",
+   "family": "tm",
+   "size": 4,
+   "n": 34,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 41,
+   "cert": "nauty",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 2.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 2.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.011,
+    "t_x": 0.002,
+    "t_y": 0.009,
+    "same": false,
+    "ngens": 1,
+    "aut_order": "2"
+   },
+   "iso": false,
+   "aut": 2.0
+  },
+  {
+   "name": "tb2-5",
+   "family": "tm",
+   "size": 5,
+   "n": 66,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 81,
+   "cert": "relabel",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.08,
+    "t_x": 0.067,
+    "t_y": 0.013,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "tb2-5-other",
+   "family": "tm",
+   "size": 5,
+   "n": 66,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 81,
+   "cert": "nauty",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.045,
+    "t_x": 0.007,
+    "t_y": 0.037,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

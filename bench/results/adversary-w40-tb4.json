@@ -1,0 +1,186 @@
+{
+ "label": "w40-tb4",
+ "timeout": 100.0,
+ "rows": [
+  {
+   "name": "tb4-2",
+   "family": "tb4",
+   "size": 2,
+   "n": 24,
+   "maxdeg": 5,
+   "claim": true,
+   "cert": "relabel",
+   "before": {
+    "time": 2.0673798809875734,
+    "same": true,
+    "ngens": 4,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 8,
+     "canon_phase1_max_degree": 4,
+     "canon_trivial": 6,
+     "canon_phase2_max_log2_order": 22,
+     "canon_invariant": 2,
+     "canon_phase2_max_degree": 120,
+     "canon_perm_p2": 2,
+     "canon_perm_calls": 2,
+     "canon_perm_nodes": 316801,
+     "canon_perm_max_degree": 120
+    },
+    "form": "ea25706072dd",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.04498450504615903,
+    "same": true,
+    "ngens": 3,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 8,
+     "canon_phase1_max_degree": 4,
+     "canon_trivial": 6,
+     "canon_phase2_max_log2_order": 22,
+     "canon_invariant": 2,
+     "canon_phase2_max_degree": 120,
+     "canon_perm_p2": 2,
+     "canon_luks_calls": 2,
+     "canon_luks_max_degree": 120,
+     "canon_luks_nodes": 176,
+     "canon_luks_cosets": 300,
+     "canon_luks_products": 8,
+     "canon_luks_listed": 130,
+     "canon_luks_memo": 18
+    },
+    "form": "e233725c9b96",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "tb4-2-other",
+   "family": "tb4",
+   "size": 2,
+   "n": 24,
+   "maxdeg": 5,
+   "claim": null,
+   "cert": "nauty",
+   "before": {
+    "time": 1.5721022749785334,
+    "same": false,
+    "ngens": 4,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 8,
+     "canon_phase1_max_degree": 4,
+     "canon_trivial": 6,
+     "canon_phase2_max_log2_order": 22,
+     "canon_invariant": 2,
+     "canon_phase2_max_degree": 120,
+     "canon_perm_p2": 2,
+     "canon_perm_calls": 2,
+     "canon_perm_nodes": 230234,
+     "canon_perm_max_degree": 120
+    },
+    "form": "49e61bb3778a",
+    "status": "ok"
+   },
+   "after": {
+    "time": 0.04247528198175132,
+    "same": false,
+    "ngens": 3,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 8,
+     "canon_phase1_max_degree": 4,
+     "canon_trivial": 6,
+     "canon_phase2_max_log2_order": 22,
+     "canon_invariant": 2,
+     "canon_phase2_max_degree": 120,
+     "canon_perm_p2": 2,
+     "canon_luks_calls": 2,
+     "canon_luks_max_degree": 120,
+     "canon_luks_nodes": 109,
+     "canon_luks_cosets": 150,
+     "canon_luks_products": 16,
+     "canon_luks_listed": 67,
+     "canon_luks_memo": 46
+    },
+    "form": "5dcd0cf79ead",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "tb4-3",
+   "family": "tb4",
+   "size": 3,
+   "n": 88,
+   "maxdeg": 5,
+   "claim": true,
+   "cert": "relabel",
+   "before": {
+    "status": "timeout",
+    "time": 100.0
+   },
+   "after": {
+    "time": 1.697950360015966,
+    "same": true,
+    "ngens": 6,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 10,
+     "canon_phase1_max_degree": 16,
+     "canon_trivial": 6,
+     "canon_phase2_max_log2_order": 96,
+     "canon_invariant": 4,
+     "canon_phase2_max_degree": 2016,
+     "canon_perm_p2": 2,
+     "canon_luks_calls": 2,
+     "canon_luks_max_degree": 2016,
+     "canon_luks_nodes": 1532,
+     "canon_luks_cosets": 692,
+     "canon_luks_products": 152,
+     "canon_luks_listed": 618,
+     "canon_luks_memo": 288
+    },
+    "form": "0dafbbbf7696",
+    "status": "ok"
+   }
+  },
+  {
+   "name": "tb4-3-other",
+   "family": "tb4",
+   "size": 3,
+   "n": 88,
+   "maxdeg": 5,
+   "claim": null,
+   "cert": "nauty",
+   "before": {
+    "status": "timeout",
+    "time": 100.0
+   },
+   "after": {
+    "time": 2.173248771985527,
+    "same": false,
+    "ngens": 6,
+    "stats": {
+     "canon_roots": 2,
+     "canon_layers": 10,
+     "canon_phase1_max_degree": 16,
+     "canon_trivial": 6,
+     "canon_phase2_max_log2_order": 96,
+     "canon_invariant": 4,
+     "canon_phase2_max_degree": 2016,
+     "canon_perm_p2": 2,
+     "canon_luks_calls": 2,
+     "canon_luks_max_degree": 2016,
+     "canon_luks_nodes": 1126,
+     "canon_luks_cosets": 808,
+     "canon_luks_products": 171,
+     "canon_luks_listed": 409,
+     "canon_luks_memo": 295
+    },
+    "form": "b0c132c32171",
+    "status": "ok"
+   }
+  }
+ ]
+}

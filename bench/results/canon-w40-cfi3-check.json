@@ -1,0 +1,302 @@
+{
+ "label": "w40-cfi3-check",
+ "timeout": 60.0,
+ "rows": [
+  {
+   "name": "cfi3-6",
+   "family": "cfi3",
+   "size": 6,
+   "n": 108,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 189,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1944.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1944.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.135,
+    "t_x": 0.071,
+    "t_y": 0.065,
+    "same": true,
+    "ngens": 9,
+    "aut_order": "1944"
+   },
+   "iso": true,
+   "aut": 1944.0
+  },
+  {
+   "name": "cfi3-6-twist",
+   "family": "cfi3",
+   "size": 6,
+   "n": 108,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 189,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1944.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1944.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.152,
+    "t_x": 0.025,
+    "t_y": 0.127,
+    "same": false,
+    "ngens": 9,
+    "aut_order": "1944"
+   },
+   "iso": false,
+   "aut": 1944.0
+  },
+  {
+   "name": "cfi3-10",
+   "family": "cfi3",
+   "size": 10,
+   "n": 180,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 315,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 8748.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 8748.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.25,
+    "t_x": 0.151,
+    "t_y": 0.1,
+    "same": true,
+    "ngens": 16,
+    "aut_order": "8748"
+   },
+   "iso": true,
+   "aut": 8748.0
+  },
+  {
+   "name": "cfi3-10-twist",
+   "family": "cfi3",
+   "size": 10,
+   "n": 180,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 315,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 8748.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 8748.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.207,
+    "t_x": 0.045,
+    "t_y": 0.162,
+    "same": false,
+    "ngens": 16,
+    "aut_order": "8748"
+   },
+   "iso": false,
+   "aut": 8748.0
+  },
+  {
+   "name": "cfi3-16",
+   "family": "cfi3",
+   "size": 16,
+   "n": 288,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 504,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 39366.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 39366.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.404,
+    "t_x": 0.16,
+    "t_y": 0.244,
+    "same": true,
+    "ngens": 19,
+    "aut_order": "39366"
+   },
+   "iso": true,
+   "aut": 39366.0
+  },
+  {
+   "name": "cfi3-16-twist",
+   "family": "cfi3",
+   "size": 16,
+   "n": 288,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 504,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.0,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 39366.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 39366.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.291,
+    "t_x": 0.044,
+    "t_y": 0.247,
+    "same": false,
+    "ngens": 19,
+    "aut_order": "39366"
+   },
+   "iso": false,
+   "aut": 39366.0
+  },
+  {
+   "name": "cfi3-24",
+   "family": "cfi3",
+   "size": 24,
+   "n": 432,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 756,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 3188646.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3188646.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.428,
+    "t_x": 0.188,
+    "t_y": 0.24,
+    "same": true,
+    "ngens": 15,
+    "aut_order": "3188646"
+   },
+   "iso": true,
+   "aut": 3188646.0
+  },
+  {
+   "name": "cfi3-24-twist",
+   "family": "cfi3",
+   "size": 24,
+   "n": 432,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 756,
+   "cert": "cfi3 twist sum",
+   "dns": {
+    "status": "ok",
+    "time": 0.05,
+    "t_x": 0.02,
+    "t_y": 0.03,
+    "same": false,
+    "aut": 3188646.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 3188646.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.324,
+    "t_x": 0.058,
+    "t_y": 0.265,
+    "same": false,
+    "ngens": 15,
+    "aut_order": "3188646"
+   },
+   "iso": false,
+   "aut": 3188646.0
+  }
+ ]
+}
