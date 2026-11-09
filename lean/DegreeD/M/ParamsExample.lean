@@ -27,7 +27,7 @@ theorem params_exist_ge (A₀ : ℝ) (N₁₀ : ℕ) :
       (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
         cc.a + cc.aStar / Real.log 2 ∧
       A₀ ≤ cc.a ∧ N₁₀ ≤ P.N₀ ∧ P.α = 2 / 5 ∧ P.γ = 9 / 10 ∧ P.κ = 64 ∧ P.θ = 3 / 4 ∧
-      P.β = 9 / 10 ∧ P.q₀ = 2064 ∧ cc.a - 1 ≤ P.a := by
+      P.β = 9 / 10 ∧ P.q₀ = 2064 ∧ P.a = cc.a - 1 := by
   set a : ℝ := max A₀ 36001 with ha
   have ha1 : (36001 : ℝ) ≤ a := le_max_right _ _
   have haA : A₀ ≤ a := le_max_left _ _
@@ -136,8 +136,7 @@ theorem params_exist_ge (A₀ : ℝ) (N₁₀ : ℕ) :
   · rfl
   · rfl
   · rfl
-  · show cc.a - 1 ≤ a - 1
-    rw [h1]
+  · rw [h1]
 
 /-- **The parameter hypotheses are satisfiable, for any size of `a`.** -/
 theorem params_exist (A₀ : ℝ) :

@@ -178,17 +178,19 @@ variable {P : Params}
 
 /-- **Every script of `Solve` calls in the class has a run with root bounds**, with its exact
 value. -/
-theorem exec_of_calls {cσ : ℝ} {D : ℕ} (hcalls : ∀ {Ω C : Type} [Finite Ω] (S : State Ω C),
-      GammaHat D S.G → ∃ r : M.Run P .solve S none S.answer, r.RootsOK cσ D)
+theorem exec_of_calls {cσ : ℝ} {d D : ℕ} (hdD : d ≤ D)
+    (hcalls : ∀ {Ω C : Type} [Finite Ω] (S : State Ω C),
+      GammaHat d S.G → ∃ r : M.Run P .solve S none S.answer, r.RootsOK cσ D)
     {α : Type} (s : Script α) (B : ℕ)
-    (h : s.CallsExact (CallOK D B)) :
+    (h : s.CallsExact (CallOK d B)) :
     ∃ e : M.Exec P s s.evalExact, e.RootsOK cσ D := by
   refine M.Exec.exists_exact s (h.mono fun m T hT => ?_)
   obtain ⟨rfl, hfin, hg, -⟩ := hT
-  exact ⟨fun _ => ⟨hfin, hg⟩, hcalls T hg⟩
+  haveI := hfin
+  exact ⟨fun _ => ⟨hfin, hg.mono hdD⟩, hcalls T hg⟩
 
 /-- The sum of the costs of the calls of a script run. -/
-theorem exec_total_le {w : M.Node P → ℝ} {cσ : ℝ} {D : ℕ} {K : ℝ} (hK : 0 ≤ K)
+theorem exec_total_le {w : M.Node P → ℝ} {cσ : ℝ} {D : ℕ} {K : ℝ}
     {p : ∀ {Ω' C' : Type}, Mode → State Ω' C' → Prop}
     (hb : ∀ {Ω' C' : Type} {m : Mode} {T : State Ω' C'} (r : M.Run P m T none T.answer),
       p m T → r.RootsOK cσ D → r.total w ≤ K) :

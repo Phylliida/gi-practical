@@ -263,7 +263,7 @@ theorem params_full (hcite : GI.Cited.TransitiveAffected) (c₁ c₂ : ℝ) :
       (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
         cc.a + cc.aStar / Real.log 2 ∧
       c₁ / Real.log 2 + c₂ / Real.log 48 ≤ cc.a + cc.aStar / Real.log 2 ∧
-      P.Aggregates ∧ P.RowThreshold ∧ 0 ≤ P.γ := by
+      P.Aggregates ∧ P.RowThreshold ∧ 0 ≤ P.γ ∧ P.a = cc.a - 1 ∧ 198 ≤ cc.a := by
   obtain ⟨P, cc, h1, h2, h3, h4, h5, h6, h7, h8, h9, hN, hα, hγ, hκ, hθ, hβ, hq₀, ha⟩ :=
     params_exist_ge (max (c₁ / Real.log 2 + c₂ / Real.log 48) 198) GI.Assembly.P₀.N₀
   have hmax1 := le_max_left (c₁ / Real.log 2 + c₂ / Real.log 48) 198
@@ -273,7 +273,7 @@ theorem params_full (hcite : GI.Cited.TransitiveAffected) (c₁ c₂ : ℝ) :
     have := cc.aStar_nonneg
     positivity
   have hα₀ : P.α = GI.Assembly.P₀.α := hα
-  refine ⟨P, cc, h1, h2, h3, h4, h5, h6, h7, h8, by linarith, ?_, ?_, ?_⟩
+  refine ⟨P, cc, h1, h2, h3, h4, h5, h6, h7, h8, by linarith, ?_, ?_, ?_, ha, by linarith⟩
   · exact
       { β_cfg := by rw [hβ]; norm_num
         θ_half := by rw [hθ]; norm_num
@@ -281,7 +281,7 @@ theorem params_full (hcite : GI.Cited.TransitiveAffected) (c₁ c₂ : ℝ) :
         κ_five := by rw [hκ]; norm_num
         q₀_cert := by rw [hκ, hq₀]; norm_num
         q₀_cfg := by rw [hq₀, a12Threshold_eq]
-        a_cert := by rw [hκ]; push_cast; linarith
+        a_cert := by rw [hκ, ha]; push_cast; linarith
         cases := fun N hN' => by
           rw [hα₀]
           exact GI.Assembly.P₀_supportCases hcite N (lt_of_le_of_lt hN hN') }
