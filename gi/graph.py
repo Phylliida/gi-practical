@@ -56,8 +56,8 @@ from math import factorial, prod, ceil, log2
 from operator import itemgetter
 
 from .perm import sym_gens, identity, mul, cycle
-from .group import PermGroup, LazyTransversal, reduce_gens, _identity
-from .solver import Solver, Coset
+from .group import PermGroup, LazyTransversal, reduce_gens, _identity, OverBudget, WORK
+from .solver import Solver, Coset, Unsupported
 from .refine import refine_graphs, refine_pairs
 
 
@@ -301,13 +301,20 @@ def solve_stage(solver, n, parts, D, x, y):
 
 
 def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True,
-              ir=3, ir_min=6, ir_max="auto", ir_budget=2.0):
+              ir=3, ir_min=6, ir_max="auto", ir_budget=2.0, method="auto"):
     """X, Y: adjacency matrices (lists of rows; directed graphs, loops and edge
     colors allowed). vcolors_x/vcolors_y: optional vertex colors.
     refine: "2wl" (default), "1wl" or "none" (the front end's refinement).
     staged: use the staged orbit chain with refinement between stages.
     ir, ir_min, ir_max, ir_budget: the individualization policy (see Policy
     and the module docstring); ir=0 hands every stage to the recursion.
+    method: "auto" (default) chooses the pipeline by cheap features of the
+    graphs, deterministically (see choose_pipeline); "hybrid" is the 2-WL
+    front end and staged orbit chain below; "bounded" is Luks's reduction
+    (gi.bounded). Explicit front-end options ask for the hybrid pipeline. The
+    pipeline used is counted in solver.stats (pipeline_bounded, pipeline_hybrid,
+    pipeline_fallback when an "auto" bounded run went over its work budget and
+    fell back to the hybrid pipeline; see choose_pipeline).
     Returns None if not isomorphic, else (sigma, aut_gens): sigma[i] is the
     image of vertex i (an isomorphism X -> Y) and aut_gens generate Aut(X)."""
     n = len(X)
@@ -316,6 +323,14 @@ def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", s
     if n == 0:
         return (), []
     solver = solver or Solver()
+    if method == "auto" and (refine != "2wl" or not staged or ir != 3 or ir_min != 6
+                             or ir_max != "auto" or ir_budget != 2.0):
+        method = "hybrid"
+    if method != "hybrid":
+        res = _bounded_pipeline(solver, X, Y, vcolors_x, vcolors_y, method)
+        if res is not _NOT_DECIDED:
+            return res
+    solver.stats["pipeline_hybrid"] += 1
     pol = Policy(n, ir, ir_min, ir_max, ir_budget)
     r = pol.refine(lambda: refine_graphs(X, Y, vcolors_x, vcolors_y, refine))
     if r is None:
@@ -332,8 +347,100 @@ def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", s
     return ans.rep, gens
 
 
-class OverBudget(Exception):
-    """A budgeted call of the recursion ran out of work (its work is discarded)."""
+# -- pipeline dispatch ----------------------------------------------------------------
+DISPATCH_DEGREE = 8                     # bounded when the maximum degree is at most this
+DISPATCH_N = 256                        # or the graph is larger than this
+BOUNDED_WORK_PER_N2 = 1000              # the bounded run's work budget, in units * n^2
+
+
+def simple_lists(X):
+    """The neighbour lists of an undirected loopless graph with 0/1
+    adjacency matrix X, or None (edge colors, loops, directed)."""
+    nbr = []
+    for i, row in enumerate(X):
+        if row[i] or not set(row) <= {0, 1}:
+            return None
+        nbr.append([j for j, v in enumerate(row) if v])
+    for i, r in enumerate(nbr):
+        for j in r:
+            if not X[j][i]:
+                return None
+    return nbr
+
+
+def choose_pipeline(n, maxdeg):
+    """The pipeline of graph_iso(method="auto") for a simple graph on n vertices
+    of maximum degree maxdeg: "bounded" when maxdeg <= DISPATCH_DEGREE or
+    n > DISPATCH_N, else "hybrid". Measured on the tiers of bench/run.py and
+    the bench/hardness.py families: the bounded pipeline is 2-100x
+    faster on low-degree graphs and CFI/multipede families, and no worse
+    within a small factor on most other families, while the hybrid front
+    end's 2-WL is better on dense graphs of moderate size and on rigid
+    designs (STS, random Latin squares, projective planes); and its O(n^3)
+    refinement does not scale past n ~ 500. A bounded run that goes over the work budget
+    BOUNDED_WORK_PER_N2 * n^2 falls back to the hybrid pipeline."""
+    return "bounded" if (maxdeg <= DISPATCH_DEGREE or n > DISPATCH_N) else "hybrid"
+
+
+_NOT_DECIDED = object()
+
+
+def _bounded_pipeline(solver, X, Y, vcolors_x, vcolors_y, method):
+    """Graph_iso's bounded branch. Returns _NOT_DECIDED when the hybrid
+    pipeline should run instead (method "auto" only): not a simple graph, the
+    features choose hybrid, or the bounded run exceeded its work budget
+    (counted in deterministic units, so the outcome does not depend on the
+    machine: every Solver.solve/cont call costs the degree of its group,
+    Schreier-Sims a few units per Schreier generator, gi.group.WORK; the
+    rooted tests are limited by count, BOUNDED_TEST_LIMIT * n). Exact: both
+    pipelines compute the answer exactly; the work spent by an abandoned run is
+    discarded (only finished memo entries of the solver remain)."""
+    from .bounded import bounded_iso_lists, NotSimple
+    n = len(X)
+    nx, ny = simple_lists(X), simple_lists(Y)
+    if nx is None or ny is None:
+        if method == "bounded":
+            raise NotSimple("the bounded pipeline needs simple undirected graphs")
+        return _NOT_DECIDED
+    maxdeg = max(map(len, nx))
+    if method == "auto" and choose_pipeline(n, maxdeg) != "bounded":
+        return _NOT_DECIDED
+    budget = None if method == "bounded" else BOUNDED_WORK_PER_N2 * n * n
+    limit = None if method == "bounded" else BOUNDED_TEST_LIMIT * n
+    d = solver.__dict__
+    saved = {k: d[k] for k in ("solve", "cont") if k in d}
+    if budget is not None:
+        def hook(inner):
+            def h(G, *a):
+                WORK.left -= G.n
+                if WORK.left < 0:
+                    raise OverBudget
+                return inner(G, *a)
+            return h
+
+        for k in ("solve", "cont"):
+            d[k] = hook(getattr(solver, k))
+        WORK.left = budget
+    try:
+        res = bounded_iso_lists(nx, ny, solver=solver, vcolors_x=vcolors_x, vcolors_y=vcolors_y,
+                                max_tests=limit)
+    except (OverBudget, Unsupported):
+        if method == "bounded":
+            raise
+        solver.stats["pipeline_fallback"] += 1
+        return _NOT_DECIDED
+    finally:
+        WORK.left = None
+        for k in ("solve", "cont"):
+            if k in saved:
+                d[k] = saved[k]
+            else:
+                d.pop(k, None)
+    solver.stats["pipeline_bounded"] += 1
+    return res
+
+
+BOUNDED_TEST_LIMIT = 3                  # rooted tests per vertex, see _bounded_pipeline
 
 
 # The work budget of a trial is ir_budget * WORK_PER_REFINEMENT * n^2 units,

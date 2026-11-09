@@ -485,6 +485,12 @@ def structured_graphs():
     return [(name, lists_of(G)) for name, G in out]
 
 
+def jgad_lists(k):
+    from bench import bounded as bb
+    A = bb.fam_jgad(k, random.Random(1))[0]["X"]
+    return [[j for j, x in enumerate(r) if x] for r in A]
+
+
 def test_structured_graphs_exercise_all_paths():
     """Vertex-transitive and product graphs, CFI over a 4-regular base: these
     reach the permutation-group path in both phases (non-abelian layer groups
@@ -505,8 +511,12 @@ def test_structured_graphs_exercise_all_paths():
     fa, Xa = forms["CFI(4reg6)"]
     fb, Xb = forms["CFI(4reg6)-twist"]
     assert fa != fb and bounded_iso_lists(Xa, Xb) is None
-    for key in ("canon_perm_p1", "canon_perm_p2", "canon_invariant"):
+    for key in ("canon_perm_p1", "canon_ir", "canon_invariant"):
         assert total[key] > 0, key
+    # phase 2 through perm_canon: H with blocks moved by U1 (Johnson gadgets)
+    st = Counter()
+    canonical_labeling_lists(jgad_lists(6), stats=st)
+    assert st["canon_perm_p2"] > 0
     st = Counter()
     canonical_labeling_lists(irhard.FAMILIES["nst"](16, random.Random(1))[0]["X"], stats=st)
     assert st["canon_ea_p1"] > 0 and st["canon_ea_p2"] > 0

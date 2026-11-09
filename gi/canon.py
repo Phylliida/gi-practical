@@ -251,9 +251,15 @@ def _as_ea(G, n):
     irredundant, hence a basis then."""
     if isinstance(G, EA2):
         return G
-    if is_ea2(G.gens, n):
+    if _ea_possible(G) and is_ea2(G.gens, n):
         return EA2(n, G.gens)
     return None
+
+
+def _ea_possible(G):
+    """A cheap necessary condition for a group with irredundant generators to be
+    elementary abelian: its order is 2^(number of generators)."""
+    return G.order() == 1 << len(G.gens)
 
 
 def canon_group(G, n, pos, pidx, x, image, stats, tag=""):
@@ -285,6 +291,77 @@ def canon_group(G, n, pos, pidx, x, image, stats, tag=""):
     order = (PermGroup(len(pos), autsP).order() if autsP else 1) * K.order()
     U = PermGroup(n, [phi.lift(h) for h in autsP] + list(K.gens), order=order)
     return (None if a == identity(n) else a), (_as_ea(U, n) or U)
+
+
+def ir_canon(adj, col0):
+    """Canonical labelling of a vertex-colored graph on range(n) (neighbour
+    lists adj, colors col0) under the color-preserving permutations, by
+    individualization-refinement search (gi.wl.refine, automorphism pruning at
+    the search nodes). A leaf is a discrete coloring; its labelling sends
+    each color class of col0 onto itself, ordered by the leaf's cells, so the
+    labelling is a function of (adj, col0) up to the color-preserving
+    automorphisms; the canonical labelling is one minimizing the relabelled
+    sorted edge list. Returns (lab, auts): lab[v] is the new name of v (a
+    permutation inside each class of col0), and auts generate the automorphism
+    group of (adj, col0) (every least leaf is mapped to a visited one by the
+    found automorphisms: induction over the pruned tree, and the visited least
+    leaves are all compared with the first). Exponential in the worst case,
+    exact always."""
+    n = len(adj)
+    classes = {}
+    for v in range(n):
+        classes.setdefault(col0[v], []).append(v)
+    base = {}
+    for c0, vs in classes.items():      # vertices of the class by increasing name
+        base[c0] = sorted(vs)
+    best = [None, None]
+    auts = []
+    nodes = [0]
+
+    def labelling(c):
+        """lab from a discrete coloring c: each class of col0 ordered by c."""
+        lab = [0] * n
+        for c0, vs in classes.items():
+            order = sorted(vs, key=lambda v: c[v])
+            for name, v in zip(base[c0], order):
+                lab[v] = name
+        return lab
+
+    def search(c, path):
+        nodes[0] += 1
+        cells = {}
+        for v in range(n):
+            cells.setdefault(c[v], []).append(v)
+        target = None
+        for i in sorted(cells):
+            if len(cells[i]) > 1:
+                target = cells[i]
+                break
+        if target is None:
+            lab = labelling(c)
+            cert = tuple(sorted((min(lab[u], lab[v]), max(lab[u], lab[v]))
+                                for u in range(n) for v in adj[u] if u < v))
+            if best[0] is None or cert < best[0]:
+                best[0], best[1] = cert, lab
+            elif cert == best[0]:
+                binv = [0] * n
+                for v, l in enumerate(best[1]):
+                    binv[l] = v
+                a = tuple(binv[lab[v]] for v in range(n))
+                if any(a[v] != v for v in range(n)) and a not in auts:
+                    auts.append(a)
+            return
+        explored = []
+        for v in target:
+            if explored and auts:
+                fix = [a for a in auts if all(a[p] == p for p in path)]
+                if fix and _in_orbit(v, explored, fix):
+                    continue
+            search(wl_refine(adj, c, (v,), True), path + [v])
+            explored.append(v)
+
+    search(wl_refine(adj, col0), [])
+    return best[1], auts
 
 
 def canon_sparse(G, pos, pidx, x, stats, tag, moved):
@@ -338,9 +415,8 @@ def _as_sparse_ea(G, n):
     """G as a SparseEA if it is elementary abelian, else None."""
     if isinstance(G, SparseEA):
         return G
-    if is_ea2(G.gens, n):
-        return SparseEA.from_tuples(G.gens)
-    return None
+    E = _as_ea(G, n)
+    return None if E is None else SparseEA.from_tuples(E.gens)
 
 
 def _pair_image(g, e):
@@ -494,6 +570,34 @@ class RootedCanon:
         linv.extend([0] * (c - b))
         for t, l in zip(range(b, c), newlab):
             linv[l] = t
+        # inner edges of layer r + 1
+        E2 = set()
+        for t in range(b, c):
+            for w in R.adj[t]:
+                if t < w < c:
+                    l1, l2 = newlab[t - b], newlab[w - b]
+                    E2.add((l1, l2) if l1 < l2 else (l2, l1))
+        # H = U1 x prod Sym(blocks) when U1 fixes every position holding a block
+        # (ie H acts on the new labels as the product of the symmetric groups on
+        # the blocks): the inner-edge string is a colored graph (see ir_canon)
+        fixed = bool(sym) and bool(E2)
+        if fixed:
+            if sparse:
+                gens = U1.gens
+                for p in blocks:
+                    S = pos[p]
+                    for gid in U1.active_on(S):
+                        g = gens[gid]
+                        if pidx[frozenset([g.get(i, i) for i in S])] != p:
+                            fixed = False
+                            break
+                    if not fixed:
+                        break
+            else:
+                for u in U1.gens:
+                    if any(pidx[frozenset([u[i] for i in pos[p]])] != p for p in blocks):
+                        fixed = False
+                        break
         if sparse:
             # is H elementary abelian? (a property of the group: U1 elementary abelian,
             # every block <= 2, U1 fixes the positions holding a block of 2.)
@@ -529,19 +633,16 @@ class RootedCanon:
                 for _, (l1, l2) in sym:
                     U1.add({l1: l2, l2: l1})
                 H = U1
+            elif fixed:
+                return self._ir_layer(U1.tuples(b), U1.order(), b, c, E2, sym, lab, linv, st)
             else:
                 H = self._dense_H(U1, pos, pidx, blocks, sym, b, c)
+        elif fixed:
+            return self._ir_layer(list(U1.gens), U1.order(), b, c, E2, sym, lab, linv, st)
         else:
             H = self._perm_H(U1, pos, pidx, blocks, sym, b, c)
         st["canon_phase2_max_log2_order"] = max(st["canon_phase2_max_log2_order"],
                                                 H.order().bit_length() - 1)
-        # inner edges of layer r + 1
-        E2 = set()
-        for t in range(b, c):
-            for w in R.adj[t]:
-                if t < w < c:
-                    l1, l2 = newlab[t - b], newlab[w - b]
-                    E2.add((l1, l2) if l1 < l2 else (l2, l1))
         if not E2:
             return H
         pl = list(E2)
@@ -587,6 +688,43 @@ class RootedCanon:
         for t, l2 in ups:
             lab[t] = l2
             linv[l2] = t
+
+    def _ir_layer(self, Ugens, Uorder, b, c, E2, sym, lab, linv, st):
+        """Phase 2 when H = U1 x prod Sym(blocks), U1 fixing every position
+        holding a block: U1 moves no new label, the inner-edge string is the
+        graph E2 on the new labels and H acts on it through prod Sym(blocks),
+        so its canonical form is that of a colored graph (colors: the blocks,
+        canonical since the blocks are sets of labels). Canonized by
+        ir_canon; lab is updated, and A_(r+1) = U1 x Aut(colored graph) is
+        returned."""
+        st["canon_ir"] += 1
+        nv = c - b
+        col0 = list(range(nv))          # singletons keep their own color
+        for _, bl in sym:
+            m = bl[0] - b
+            for l in bl:
+                col0[l - b] = m
+        adj = [[] for _ in range(nv)]
+        for l1, l2 in E2:
+            u, v = l1 - b, l2 - b
+            adj[u].append(v)
+            adj[v].append(u)
+        rel, auts = ir_canon(adj, col0)
+        h0 = {b + v: b + w for v, w in enumerate(rel) if v != w}
+        if h0:
+            self._apply(lab, linv, h0, c, True)
+        relinv = [0] * nv
+        for v, w in enumerate(rel):
+            relinv[w] = v
+        gens = [tuple(g) + tuple(range(b, c)) for g in Ugens]
+        for a in auts:                  # Aut(F2) = rel^-1 Aut(graph) rel on new labels
+            g = list(range(c))
+            for v in range(nv):
+                g[b + rel[v]] = b + rel[a[v]]
+            gens.append(tuple(g))
+        gens = [g for g in dict.fromkeys(gens) if g != tuple(range(c))]
+        A2 = PermGroup(c, gens)
+        return _as_sparse_ea(A2, c) or A2
 
     @staticmethod
     def _dense_H(U1, pos, pidx, blocks, sym, b, c):
@@ -665,12 +803,17 @@ def canon_connected(g, stats, layers="class"):
             v = parent[v]
         return v
 
+    comps = [len(cand)]                 # number of orbits of the found automorphisms on K
+
     def absorb(a):
+        if comps[0] == 1:               # K is one orbit: more generators change nothing
+            return
         for i, f in enumerate(cand):    # (automorphisms map the class K onto itself)
             u, v = edges[f]
             p, q = find(i), find(pos[eidx[(a[u], a[v])]])
             if p != q:
                 parent[max(p, q)] = min(p, q)
+                comps[0] -= 1
 
     best = None                         # (keys, L, Linv)
     auts, done = [], []

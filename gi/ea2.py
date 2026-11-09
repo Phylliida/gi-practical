@@ -172,7 +172,7 @@ def compose(dicts):
 class SparseEA:
     """An elementary abelian 2-group on points given by an independent basis of
     commuting involutions, each stored sparsely as a dict {moved point: image}
-    (gens: {id: dict}), with who[p] = the list of generator ids moving p. Work
+    (gens: {id: dict}), with who[p] = the set of generator ids moving p. Work
     on a layer depends on the generators that actually move its points, not
     on |G| * n. Generators may be extended to new points in place: their
     images of old points never change, so older code that holds a dict can
@@ -204,9 +204,9 @@ class SparseEA:
         for p in g:
             w = who.get(p)
             if w is None:
-                who[p] = [gid]
+                who[p] = {gid}
             else:
-                w.append(gid)
+                w.add(gid)
         return gid
 
     def remove(self, gid):
@@ -226,9 +226,9 @@ class SparseEA:
         for p in moves:
             w = who.get(p)
             if w is None:
-                who[p] = [gid]
+                who[p] = {gid}
             else:
-                w.append(gid)
+                w.add(gid)
 
     def active_on(self, points):
         """Sorted ids of the generators moving some point of `points`."""

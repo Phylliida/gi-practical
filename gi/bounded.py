@@ -87,7 +87,7 @@ from collections import Counter
 from itertools import combinations
 
 from .perm import mul, identity, sym_gens
-from .group import PermGroup, ActionHom
+from .group import PermGroup, ActionHom, OverBudget
 from .solver import Solver
 from .ea2 import SparseEA, EAAction, compose, is_ea2
 from .wl import refine as wl_refine
@@ -218,15 +218,22 @@ def class_plan(g, col, u0, u1):
     for v in range(n):
         members.setdefault(col[v], []).append(v)
     done = [False] * n
-    dn = [0] * n                        # placed neighbours
-    for u in (u0, u1):
-        done[u] = True
-    for u in (u0, u1):
-        for w in nbr[u]:
-            dn[w] += 1
+    near = {}                           # c -> number of paths (x in c) - w - z with z placed
     pending = set(members) - {col[u0], col[u1]}
-    status, det = {}, set()
-    dirty = set(pending)
+    struct, det = {}, set()             # c -> (big >= 3, risk, pairs) for undetermined c
+    dirty = set()
+
+    def placed(v):                      # v was placed (done[v] is already set)
+        for w in nbr[v]:
+            dirty.add(col[w])
+            for x in nbr[w]:
+                c = col[x]
+                near[c] = near.get(c, 0) + 1
+
+    done[u0] = done[u1] = True
+    for u in (u0, u1):
+        placed(u)
+    dirty |= pending
     plan = []
     while pending:
         for c in dirty:
@@ -234,42 +241,37 @@ def class_plan(g, col, u0, u1):
                 continue
             ms = members[c]
             if len(ms) == 1:
-                st = (0,)
+                big = 1
             else:
-                ups = Counter(frozenset(w for w in nbr[v] if done[w]) for v in ms)
+                ups = Counter(frozenset([w for w in nbr[v] if done[w]]) for v in ms)
                 big = max(ups.values())
-                if big == 1:
-                    st = (0,)
-                else:
-                    risk = any(k >= 2 and S for S, k in ups.items())
-                    pairs = sum(k for k in ups.values() if k >= 2)
-                    near = sum(dn[w] for v in ms for w in nbr[v])
-                    st = (1, big >= 3, risk, pairs, -near, c)
-            status[c] = st
-            if st[0] == 0:
+            if big == 1:
                 det.add(c)
+                struct.pop(c, None)
             else:
+                risk = any(k >= 2 and S for S, k in ups.items())
+                pairs = sum(k for k in ups.values() if k >= 2)
+                struct[c] = (big >= 3, risk, pairs)
                 det.discard(c)
         dirty = set()
         if det:
             layer = sorted(det)
             det = set()
         else:
-            layer = [min(pending, key=status.__getitem__)]
-            if status[layer[0]][1]:     # a twin block of >= 3: BFS layers instead
+            c = min(pending, key=lambda c: (struct[c], -near.get(c, 0), c))
+            if struct[c][0]:            # a twin block of >= 3: BFS layers instead
                 return None
+            layer = [c]
         plan.append(layer)
         for c in layer:
             pending.discard(c)
+            struct.pop(c, None)
             for v in members[c]:
                 done[v] = True
-        for c in layer:
-            for v in members[c]:
-                for w in nbr[v]:
-                    dn[w] += 1
-                    dirty.add(col[w])
-                    for x in nbr[w]:
-                        dirty.add(col[x])
+        if pending:
+            for c in layer:
+                for v in members[c]:
+                    placed(v)
     return plan
 
 
@@ -871,8 +873,8 @@ class _Chain:
             st = S.stats
             st["luks_group_max_log2_order"] = max(st["luks_group_max_log2_order"],
                                                   round(math.log2(G1.order())))
-            if self.ea and is_ea2(G1.gens, c):    # (G1.gens is irredundant: a basis)
-                self.cur = SparseEA.from_tuples(G1.gens)
+            if self.ea and G1.order() == 1 << len(G1.gens) and is_ea2(G1.gens, c):
+                self.cur = SparseEA.from_tuples(G1.gens)  # (G1.gens is irredundant: a basis)
                 self.G.append(None)
             else:
                 self.G.append(G1)
@@ -1186,8 +1188,9 @@ class _Connected:
     Aut(X), the orbits of Aut(X) on the root class and the chains used."""
 
     def __init__(self, g, solver, aut=True, root="class", stable=False, rooted_wl=True, ea=True,
-                 layers="class"):
+                 layers="class", max_tests=None):
         self.g, self.solver, self.root, self.ea, self.stable = g, solver, root, ea, stable
+        self.max_tests = max_tests
         self.layers = layers if rooted_wl else "bfs"
         self.rooted_wl = rooted_wl
         n = g.n
@@ -1198,6 +1201,8 @@ class _Connected:
         self.keys = None
         self.chains = {}
         self.gens = None
+        self.cert0 = None
+        self.cert_hash = {}
         if aut and self.edges:
             self.compute_aut()
 
@@ -1211,10 +1216,21 @@ class _Connected:
         col = rooted_colors(self.g, u0, u1, self.stable) if self.rooted_wl else self.g.col
         return _Seed(self.g, u0, u1, col)
 
-    def chain(self, f):
+    def cert(self, f, seed=None):
+        """(cert, hash): a certificate of the rooted graph (g, edges[f]) when its
+        rooted 1-WL coloring is discrete, else (None, 0). Two rooted graphs
+        with discrete colorings are isomorphic iff their certificates are equal
+        (the color names are a function of the rooted isomorphism type, and
+        the certificate lists the root colors, the g.col of each color and the
+        edges in color names). seed: the rooted graph if already computed."""
+        if seed is None:
+            seed = self.rooted(f)
+        return discrete_cert(self.g, seed)
+
+    def chain(self, f, seed=None):
         c = self.chains.get(f)
         if c is None:
-            sd = self.rooted(f)
+            sd = self.rooted(f) if seed is None else seed
             plan = class_plan(sd.g, sd.col, sd.u0, sd.u1) if self.layers == "class" else None
             c = self.chains[f] = _Chain(_Rooted(sd.g, sd.u0, sd.u1, sd.col, plan), self.solver,
                                         self.ea, plan)
@@ -1246,11 +1262,15 @@ class _Connected:
         f0, C = self._class()
         self.f0 = f0
         self.cls = C
-        ch = self.chain(f0)
+        seed0 = self.rooted(f0)
+        ch = self.chain(f0, seed0)
         X = ch.X
         if ch.run(X) is None:           # (X, f0) -> (X, f0) always exists
             raise AssertionError("no automorphism found for the root")
         gens = [self.vertex_map(X, X, g) for g in ch.aut()]
+        cert0, h0, by0 = discrete_cert(self.g, seed0)
+        self.cert_hash = {f0: h0} if cert0 is not None else {}
+        self.cert0 = cert0
         pos = {f: i for i, f in enumerate(C)}
         parent = list(range(len(C)))
 
@@ -1260,12 +1280,17 @@ class _Connected:
                 v = parent[v]
             return v
 
+        comps = [len(C)]                # number of orbits on C of the group found so far
+
         def absorb(g):
+            if comps[0] == 1:           # (one orbit: more generators change nothing)
+                return
             for i, f in enumerate(C):   # (Aut(X) maps the class onto itself)
                 u, v = self.edges[f]
                 a, b = find(i), find(pos[self.eidx[(g[u], g[v])]])
                 if a != b:
                     parent[max(a, b)] = min(a, b)
+                    comps[0] -= 1
 
         for g in gens:
             absorb(g)
@@ -1278,7 +1303,24 @@ class _Connected:
             if rf == find(i0) or any(find(pos[e]) == rf for e in failed):
                 continue
             self.solver.stats["luks_aut_tests"] += 1
-            Z = ch.target(self.rooted(f))
+            self._budget()
+            seed = self.rooted(f)
+            if cert0 is not None:       # rooted colorings discrete: no chain needed
+                self.solver.stats["luks_cert_tests"] += 1
+                cf, hf, byf = discrete_cert(self.g, seed)
+                if cf is None or hf != h0 or cf != cert0:
+                    self.cert_hash[f] = hf if cf is not None else None
+                    failed.append(f)
+                    continue
+                self.cert_hash[f] = hf
+                g = [0] * len(by0)
+                for c, v in enumerate(by0):
+                    g[v] = byf[c]
+                g = tuple(g)
+                gens.append(g)
+                absorb(g)
+                continue
+            Z = ch.target(seed)
             s = ch.run(Z)
             if s is None:
                 failed.append(f)
@@ -1288,6 +1330,13 @@ class _Connected:
             absorb(g)
         self.gens = gens
         self.find = lambda f: find(pos[f])
+
+    def _budget(self):
+        """max_tests rooted tests in all (a test costs a refinement of the
+        graph at least); see gi/graph.py (dispatch)."""
+        st = self.solver.stats
+        if self.max_tests is not None and st["luks_aut_tests"] + st["luks_iso_tests"] > self.max_tests:
+            raise OverBudget
 
     def iso(self, other):
         """A vertex map self -> other (connected, same color names), or None."""
@@ -1306,19 +1355,52 @@ class _Connected:
                 return None
             e1 = res[0][0]
         seed = other.rooted(e1)
+        cy, hy, by = discrete_cert(other.g, seed)
         reps, seen = [self.f0], {self.find(self.f0)}
         for f in self.cls:
             if self.find(f) not in seen:
                 seen.add(self.find(f))
                 reps.append(f)
+        hx = getattr(self, "cert_hash", {})
         for f in reps:
             self.solver.stats["luks_iso_tests"] += 1
+            self._budget()
+            h = hx.get(f)
+            if h is not None and cy is not None and h != hy:
+                self.solver.stats["luks_cert_tests"] += 1
+                continue                # both discrete, the certificates differ
+            cx, hxf, bx = discrete_cert(self.g, self.rooted(f))
+            if cx is not None or cy is not None:
+                self.solver.stats["luks_cert_tests"] += 1
+                if cx is None or cy is None or cx != cy:
+                    continue            # (one is discrete and the other not, or the
+                g = [0] * len(bx)       # certificates differ: no rooted isomorphism)
+                for c, v in enumerate(bx):
+                    g[v] = by[c]
+                return tuple(g)
             ch = self.chain(f)
             Z = ch.target(seed)
             s = ch.run(Z)
             if s is not None:
                 return self.vertex_map(ch.X, Z, s)
         return None
+
+
+def discrete_cert(g, seed):
+    """See _Connected.cert: (certificate, its hash) or (None, 0) if the rooted
+    coloring is not discrete. Also the vertex map color -> vertex is returned as
+    the third entry (cert, h, by), by[c] = the vertex of color c."""
+    col = seed.col
+    n = g.n
+    by = [None] * n
+    for v, c in enumerate(col):
+        if c >= n or by[c] is not None:
+            return None, 0, None
+        by[c] = v
+    nbr, gc = g.nbr, g.col
+    rows = tuple(tuple(sorted([col[w] for w in nbr[by[i]]])) for i in range(n))
+    cert = (col[seed.u0], col[seed.u1], tuple(gc[by[i]] for i in range(n)), rows)
+    return cert, hash(cert), by
 
 
 def _invert(p):
@@ -1368,7 +1450,7 @@ def _check_lists(nbr):
 
 
 def bounded_iso_lists(nx, ny, solver=None, vcolors_x=None, vcolors_y=None, refine=True,
-                      root="class", rooted_wl=True, ea=True, layers="class"):
+                      root="class", rooted_wl=True, ea=True, layers="class", max_tests=None):
     """bounded_iso for graphs given by neighbour lists (nx[v]: the neighbours
     of v; symmetric, no loops or repeats), without O(n^2) matrices. Same
     arguments and return value as bounded_iso."""
@@ -1411,7 +1493,7 @@ def bounded_iso_lists(nx, ny, solver=None, vcolors_x=None, vcolors_y=None, refin
                     break
         else:
             rep = (_Connected(sub, solver, root=root, stable=refine, rooted_wl=rooted_wl, ea=ea,
-                              layers=layers)
+                              layers=layers, max_tests=max_tests)
                    if len(part) > 1 else _Single(sub))
             classes.append([rep, [(part, tuple(range(len(part))))], k])
     matches = [[] for _ in classes]
@@ -1466,4 +1548,4 @@ def _component_iso(rep, sub, solver):
     if isinstance(rep, _Single):
         return (0,) if rep.g.col == sub.col else None
     return rep.iso(_Connected(sub, solver, aut=False, stable=rep.stable, rooted_wl=rep.rooted_wl,
-                              ea=rep.ea, layers=rep.layers))
+                              ea=rep.ea, layers=rep.layers, max_tests=rep.max_tests))
