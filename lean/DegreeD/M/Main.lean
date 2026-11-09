@@ -418,7 +418,7 @@ theorem solve_phase_bound (hP : P.Terminating) (hc : Compat P cc) (hαγ : 2 * P
     (hq : (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
       cc.a + cc.aStar / Real.log 2)
     (hw : NodeBoundD w cw af) (hcw : 0 ≤ cw) (haf : 0 ≤ af) (ha : af + 1 ≤ cc.a)
-    {D : ℕ} (hD6 : 6 ≤ D) {C₁ : ℝ} (hC₁ : 0 ≤ C₁)
+    {D : ℕ} (hD6 : 6 ≤ D) {C₁ : ℝ}
     (hphase : ∀ (N : ℕ) (K Λ : ℝ), 0 ≤ K → xZero ≤ Λ → 6 ≤ (N : ℝ) ^ cc.γ →
       2 ≤ (N : ℝ) ^ (cc.γ * cc.D - cc.a) →
       ∀ {V : Type 1} (T : PhaseTree V), T.HypL cc (fun _ => Λ) N K →
@@ -531,7 +531,7 @@ theorem solve_phase_bound (hP : P.Terminating) (hc : Compat P cc) (hαγ : 2 * P
           rw [hexp]; ring
 
 /-- The phase-work bound at small sizes, independent of `Λ`. -/
-theorem total_le_of_small {D : ℕ} (hw : NodeBoundD w cw af) (hcw : 0 ≤ cw)
+theorem total_le_of_small (hw : NodeBoundD w cw af) (hcw : 0 ≤ cw)
     {Ω C : Type} {S : State Ω C} {L : Option (SuppliedLabels S)} {A : Set (Perm Ω)}
     (r : Run P .solve S L A) (hs : S.size ≤ P.N₀) :
     r.total w ≤ ((P.N₀ : ℝ) + 2) ^ cw := by
@@ -632,5 +632,159 @@ theorem recurrenceM {γ C : ℝ} (hγ0 : 0 < γ) (hγ1 : γ < 1) (hC : 0 ≤ C) 
 
 
 end Recurrence
+
+
+/-! ### The final theorem -/
+
+section Final
+
+variable {cc : ChargingConstants} {w : Node P → ℝ} {cw af cσ : ℝ}
+
+/-- **The worst-case-cost recurrence of `Γ̂_D`**, solved: `F_D(n) ≤ exp(C' Λ_D log(n+2))` for every
+`n`, with `C'` independent of `D`. -/
+theorem worstCost_bound (hP : P.Terminating) (hc : Compat P cc) (hαγ : 2 * P.α ≤ P.γ)
+    (hbase : AboveBase P cc) (h4 : ∀ n : ℕ, P.N₀ < n → (4 : ℝ) ≤ (n : ℝ) ^ ((1 - P.γ) / 2))
+    (hab : ((2 * P.κ : ℕ) : ℝ) + Real.log (9 : ℕ) / Real.log 48 ≤ cc.aStar)
+    {c₁ c₂ : ℝ} (hBCP : BCP) (hGNS : GNSPrimitive c₁ c₂) (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂)
+    (hcc : c₁ / Real.log 2 + c₂ / Real.log 48 ≤ cc.a + cc.aStar / Real.log 2)
+    (hq : (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
+      cc.a + cc.aStar / Real.log 2)
+    (hcσ : 0 ≤ cσ) (hw : NodeBoundD w cw af) (hcw : 0 ≤ cw) (haf : 0 ≤ af) (ha : af + 1 ≤ cc.a) :
+    ∃ C' : ℝ, ∀ (D : ℕ), 6 ≤ D → ∀ n, BddAbove (costSet D w cσ n) ∧
+      worstCost D w cσ n ≤ Real.exp (C' * (lamA P D * logN n)) := by
+  obtain ⟨C₁, hC₁, hphase⟩ := fresh_phase_boundL.{1} cc hcσ
+  set C₂ : ℝ := 4 * cw + 4 + C₁ with hC₂
+  have hC₂0 : 0 ≤ C₂ := by rw [hC₂]; positivity
+  set B₀ : ℝ := ((P.N₀ : ℝ) + 2) ^ cw with hB₀
+  have hB₀1 : 1 ≤ B₀ := one_le_pow_add_two cw hcw P.N₀
+  obtain ⟨C', hC'⟩ := recurrenceM (γ := P.γ) (C := C₂) (hc.γ_eq ▸ cc.γ_pos) hP.γ_lt hC₂0 P.N₀ B₀
+    (by linarith) h4
+  refine ⟨C', ?_⟩
+  intro D hD6
+  set Λ := lamA P D with hΛ
+  have hΛ1 : 1 ≤ Λ := (one_le_lam D).trans (lamA_ge_lam hP D)
+  set F := worstCost D w cσ with hF
+  have hF0 : ∀ n, 0 ≤ F n := fun n => worstCost_nonneg hw.nonneg D cσ n
+  -- the elementary step
+  have elem : ∀ n : ℕ, (∀ m < n, BddAbove (costSet D w cσ m)) → ∀ x ∈ costSet D w cσ n,
+      x ≤ (if n ≤ P.N₀ then B₀ else Real.exp (C₂ * (Λ * logN n)) * (1 + F ⌈(n : ℝ) ^ P.γ⌉₊)) := by
+    intro n IH x hx
+    obtain ⟨Ω, C, S, L, A, r, hS, hfin, hg, hok, rfl⟩ := hx
+    by_cases hs : S.size ≤ P.N₀
+    · have h1 := total_le_of_small hw hcw r hs
+      split_ifs with hnN
+      · exact h1
+      · refine h1.trans ?_
+        have hL : Real.log ((P.N₀ : ℝ) + 2) ≤ logN n := by
+          apply Real.log_le_log (by positivity)
+          have : (P.N₀ : ℝ) ≤ n := by exact_mod_cast (Nat.le_of_not_le hnN)
+          linarith
+        have hB : B₀ ≤ Real.exp (C₂ * (Λ * logN n)) := by
+          rw [hB₀, Real.rpow_def_of_pos (by positivity)]
+          apply Real.exp_le_exp.mpr
+          have hL0 : (0 : ℝ) ≤ logN n := (Real.log_nonneg (by
+            have : (0 : ℝ) ≤ P.N₀ := Nat.cast_nonneg _; linarith)).trans hL
+          have h2 : cw * Real.log ((P.N₀ : ℝ) + 2) ≤ cw * logN n :=
+            mul_le_mul_of_nonneg_left hL hcw
+          have h3 : logN n ≤ Λ * logN n := by nlinarith
+          have h4' : cw ≤ C₂ := by rw [hC₂]; linarith
+          nlinarith [mul_le_mul_of_nonneg_left h3 hcw, mul_le_mul_of_nonneg_right h4' (mul_nonneg (by linarith : (0:ℝ) ≤ Λ) hL0)]
+        have hexp0 := (Real.exp_pos (C₂ * (Λ * logN n))).le
+        have := hF0 ⌈(n : ℝ) ^ P.γ⌉₊
+        nlinarith
+    · push Not at hs
+      have hnN : ¬ n ≤ P.N₀ := by omega
+      rw [if_neg hnN]
+      obtain ⟨h6, h2, hlt⟩ := hbase S.size hs
+      have hsn : S.size ≤ n := hS
+      have hbs := IH _ (lt_of_lt_of_le hlt hsn)
+      have hs1 : 1 ≤ S.size := by have := hP.N₀_pos; omega
+      have h := solve_phase_bound (cσ := cσ) hP hc hαγ hab hBCP hGNS hc₁ hc₂ hcc hq hw hcw haf ha hD6 hphase hs hs1
+        h6 h2 hbs r rfl hg hok
+      refine h.trans ?_
+      have hnN1 : P.N₀ < n := by omega
+      obtain ⟨-, -, hlt'⟩ := hbase n hnN1
+      have hbn := IH _ hlt'
+      have hγ0 : 0 ≤ P.γ := (hc.γ_eq ▸ cc.γ_pos).le
+      have hceil : ⌈(S.size : ℝ) ^ P.γ⌉₊ ≤ ⌈(n : ℝ) ^ P.γ⌉₊ :=
+        Nat.ceil_mono (Real.rpow_le_rpow (Nat.cast_nonneg _) (by exact_mod_cast hsn) hγ0)
+      have hFm : F ⌈(S.size : ℝ) ^ P.γ⌉₊ ≤ F ⌈(n : ℝ) ^ P.γ⌉₊ :=
+        worstCost_mono hw.nonneg hceil hbn
+      have hLs : logN S.size ≤ logN n := by
+        apply Real.log_le_log (by positivity)
+        have : (S.size : ℝ) ≤ n := by exact_mod_cast hsn
+        linarith
+      have hΛ0 : 0 ≤ Λ := by linarith
+      have hexp : Real.exp (C₂ * (Λ * logN S.size)) ≤ Real.exp (C₂ * (Λ * logN n)) := by
+        apply Real.exp_le_exp.mpr
+        apply mul_le_mul_of_nonneg_left _ hC₂0
+        exact mul_le_mul_of_nonneg_left hLs hΛ0
+      have hF1 := hF0 ⌈(S.size : ℝ) ^ P.γ⌉₊
+      exact mul_le_mul hexp (by linarith) (by linarith) (Real.exp_pos _).le
+  -- boundedness for every `n`
+  have hbdd : ∀ n : ℕ, BddAbove (costSet D w cσ n) := fun n =>
+    Nat.strong_induction_on n fun n IH => ⟨_, elem n IH⟩
+  refine fun n => ⟨hbdd n, ?_⟩
+  -- solve the recurrence
+  have hsmall : ∀ m < P.N₀ + 1, F m ≤ B₀ := fun m hm =>
+    Real.sSup_le (fun x hx => by
+      have := elem m (fun m' _ => hbdd m') x hx
+      rwa [if_pos (by omega)] at this) (by linarith)
+  have hstep : ∀ N, P.N₀ + 1 ≤ N → F N ≤ Real.exp (C₂ * (Λ * logN N)) *
+      (1 + F ⌈(N : ℝ) ^ P.γ⌉₊) := by
+    intro N hN
+    have hnle : ¬ N ≤ P.N₀ := by omega
+    have hup : 0 ≤ Real.exp (C₂ * (Λ * logN N)) * (1 + F ⌈(N : ℝ) ^ P.γ⌉₊) := by
+      have := hF0 ⌈(N : ℝ) ^ P.γ⌉₊
+      positivity
+    exact Real.sSup_le (fun x hx => by
+      have := elem N (fun m' _ => hbdd m') x hx
+      rwa [if_neg hnle] at this) hup
+  exact hC' Λ hΛ1 F hsmall hstep n
+
+/-- `lam` depends only on `max(d, 6)`. -/
+theorem lam_max_six (d : ℕ) : lam (max d 6) = lam d := by
+  unfold lam
+  have : max (max d 6) 6 = max d 6 := by omega
+  rw [this]
+
+/-- **The Stage-1 degree-`d` theorem** (Theorem R\* at the level of the abstract recursion `M.Run`,
+with the dispatcher `(M′)`, under the cost hypotheses of the same kinds as
+`GI.Paper.thm_main_string_stage1`, and the two cited results `BCP` and `GNSPrimitive`). -/
+theorem degreeD_stage1 (hP : P.Terminating) (hc : Compat P cc) (hαγ : 2 * P.α ≤ P.γ)
+    (hbase : AboveBase P cc) (h4 : ∀ n : ℕ, P.N₀ < n → (4 : ℝ) ≤ (n : ℝ) ^ ((1 - P.γ) / 2))
+    (hab : ((2 * P.κ : ℕ) : ℝ) + Real.log (9 : ℕ) / Real.log 48 ≤ cc.aStar)
+    {c₁ c₂ : ℝ} (hBCP : BCP) (hGNS : GNSPrimitive c₁ c₂) (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂)
+    (hcc : c₁ / Real.log 2 + c₂ / Real.log 48 ≤ cc.a + cc.aStar / Real.log 2)
+    (hq : (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
+      cc.a + cc.aStar / Real.log 2)
+    (hcσ : 0 ≤ cσ) (hw : NodeBoundD w cw af) (hcw : 0 ≤ cw) (haf : 0 ≤ af) (ha : af + 1 ≤ cc.a) :
+    ∃ C' : ℝ, ∀ (d : ℕ) {Ω C : Type} [Finite Ω] (S : State Ω C) {A : Set (Perm Ω)}
+      (r : Run P .solve S none A), GammaHat d S.G → r.RootsOK cσ (max d 6) →
+      (A = {g | g ∈ S.G ∧ ∀ v ∈ S.dom, S.y (g v) = S.x v} ∧
+        (A = ∅ ∨ ∃ t ∈ S.G, A = t • (autGroup S.G S.dom S.dom_inv S.x : Set (Perm Ω)))) ∧
+      r.total w ≤ Real.exp (C' * (lam d * Real.log ((S.size : ℝ) + 2))) := by
+  obtain ⟨C', hC'⟩ := worstCost_bound hP hc hαγ hbase h4 hab hBCP hGNS hc₁ hc₂ hcc hq hcσ hw hcw haf ha
+  refine ⟨C' / P.α, ?_⟩
+  intro d Ω C _ S A r hg hok
+  have hA : A = {g | g ∈ S.G ∧ ∀ v ∈ S.dom, S.y (g v) = S.x v} := r.exact
+  refine ⟨⟨hA, ?_⟩, ?_⟩
+  · rw [hA]; exact answer_empty_or_coset S.dom_inv S.x S.y
+  · set D := max d 6 with hD
+    have hD6 : 6 ≤ D := le_max_right _ _
+    have hgD : GammaHat D S.G := hg.mono (le_max_left _ _)
+    obtain ⟨hbdd, hbnd⟩ := hC' D hD6 S.size
+    have htot : r.total w ≤ worstCost D w cσ S.size :=
+      total_le_worstCost hbdd r le_rfl ‹_› hgD hok
+    refine htot.trans (hbnd.trans (Real.exp_le_exp.mpr ?_))
+    have hlam : lam D = lam d := lam_max_six d
+    have hα := hP.α_pos
+    unfold lamA
+    rw [hlam]
+    apply le_of_eq
+    change C' * (lam d / P.α * logN S.size) = C' / P.α * (lam d * logN S.size)
+    field_simp
+
+end Final
 
 end GI.DegreeD.M
