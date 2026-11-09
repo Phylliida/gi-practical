@@ -517,3 +517,4 @@ are red-teams, a LaTeX paper, and final integration.
   provably tight instance of HJ's enumeration channel.
 * w18-latin (moonshot): n^{o(log n)} for Latin square or Steiner triple system isomorphism; does any graph
   family force n^{log n} on HJ's algorithm?
+* w19-video: an HTML/CSS/JS animated explainer of the HJ algorithm and its running time (video/).
