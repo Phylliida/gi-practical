@@ -553,3 +553,9 @@ are red-teams, a LaTeX paper, and final integration.
 * Canon: CFI n=3200 13.5→1.41s; Miyazaki n=3000 66.5→1.86s; 3-reg n=4000 0.46→0.26s; ns n=2464 1.24→0.83s.
 * Traces still wins every non-multipede family (CFI 10–23×, Miyazaki 30–90×, Q12 ~250×, 3-regular 13×).
   Solvable layers NOT done (profiles pointed elsewhere), so gi.canon has no polynomial guarantee at d ≤ 5.
+
+### w20-redteam-affine (done, commit 361654e; docs/redteam-w17-affine.md)
+* Theorems A, B, C sound. A is folklore; B is a routine instance of Rosenbaum / Le Gall–Rosenbaum; C is a
+  one-line gadget (its displayed Iso set had the direction reversed; nothing depends on it).
+* Prop B′ is only a generic birthday bound, so "the flag method has hit its limit" is unsupported.
+* "λ coefficient halved" in R** is speculative as worded: R** has a single Λ.
