@@ -626,3 +626,9 @@ are red-teams, a LaTeX paper, and final integration.
 
 ## Next
 * w30-sts: Steiner triple systems in n^{o(log n)} via a structure dichotomy (attacks the Q / Miller channel).
+
+### w31-redteam-w27w28 (done, commit 894cc10; docs/redteam-w27-w28.md)
+* Nothing broken. Narrowed: Cor N.1 uses reflection only at identity tanglegrams, and "every campaign reduction" holds only
+  for T2 Thm A and W8 Prop H. Theorem G is XP in ρ, not FPT in (b, ρ). Theorem C needs Pálfy–Wolf. LHJ escalates at ≥ ¾.
+  P3's missing existence proof closed with an explicit R of O(κ²) lines.
+* w32-conference: conference graphs below n^{log n} (pseudorandom-versus-algebraic dichotomy).
