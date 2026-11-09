@@ -735,3 +735,11 @@ are red-teams, a LaTeX paper, and final integration.
   (s ≥ d − 2√d − O(1)), beating 2^{d²/4} only from d = 282. Blow-up analysis sound as counting; "any kernel reduction" overreaches. T1 sound mod Qiao–Sun. T2 and T3 reverse
   directions tested exactly, 0 disagreements. No test reaches the regime where H beats 2^{d²/4}.
 * w47-mu: does any graph family force HJ's Lie-rank enumeration channel?
+
+### w47-mu (done, commit 92af9b0; docs/w47-mu.md), NOT yet red-teamed
+* A graph family, not a barrier. Claimed PROVEN from HJ as written: on PG(m−1,2) point–line incidence graphs X_m (m ≥ max(κ,7,m₀)), HJ reaches a Continue node enumerating
+  P ≅ GL(m−2,2) on 2-subspaces, with |P| ≥ 0.288·2^{(m−2)²} = n^{(1/4)log₂ n − O(1)} children, above the σ chain's n^{(1/8)log₂ n}. J₂(m,2) gives the same. Asymptotic only: at κ = 64, n ≥ 2^125.
+* Theorem C: nodes reached without an answer operation hold only Young groups; superconstant enumeration needs an ancestor answer group. No complete classification of those.
+* A statement about HJ, not GI: X_m is easy, and automorphism pruning removes this cost (Prop D). Gives no evidence of a GI/string separation; Neuen Q4.8 not addressed.
+* Open: does any graph force superpolynomial enumeration after pruning?
+* w48-redteam-mu: adversarial check of w47.
