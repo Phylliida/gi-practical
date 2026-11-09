@@ -6,8 +6,11 @@ import DegreeD.Luks.Final
 `graphScript`: for every pair of a connected component of `X` and a connected component of `Y`,
 the connected-graph reduction, each answer lifted to partial maps on `Fin n` so that the answers
 have one type. A permutation `g` is returned exactly when its restriction to every component of `X`
-is one of the lifted isomorphisms. `graphIso_general` is the theorem of `DegreeD/Luks/Final.lean`
-for arbitrary graphs; `graphIso_final` with the cited results.
+is one of the lifted isomorphisms. `luksScript` is `graphScript` with `q = min d n`, the named
+script of the theorem. `luksScript_exec` is the bound; **the statements that mean something are in
+`DegreeD/Luks/Statement.lean`** (`graphIso_reduction`). `graphIso_general_weak`, `graphIso_final_weak`
+keep the old form: they say only that some script has the value, which is vacuous
+(`docs/vacuity-graphIso-final.lean.txt`).
 -/
 
 namespace GI.DegreeD.Luks
@@ -21,13 +24,14 @@ section Any
 
 variable {V W : Type} [Fintype V] [Fintype W] {X : SimpleGraph V} {Y : SimpleGraph W} {q R : ℕ}
 
-/-- The reduction for connected graphs, edge-rooted when `X` has an edge, and direct
-when it has none (then it has at most one vertex). -/
+/-- The reduction for connected graphs: rooted at an edge of `X` when `X` has one, and at a
+vertex (a degenerate root) when it has none (then it has one vertex). Every branch runs the layers
+of the reduction: no branch returns a value without asking. -/
 noncomputable def anyScript (hX : X.Connected) (hY : Y.Connected)
     (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q) (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q)
     (R : ℕ) : Script (Set (V → W)) :=
   if h : ∃ u v, X.Adj u v then connScript hX hY hXd hYd h.choose h.choose_spec.choose R
-  else Script.done {f | ∃ e : X ≃g Y, (e : V → W) = f}
+  else connScript hX hY hXd hYd hX.nonempty.some hX.nonempty.some R
 
 theorem anyScript_spec (hX : X.Connected) (hY : Y.Connected)
     (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q) (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q)
@@ -37,8 +41,8 @@ theorem anyScript_spec (hX : X.Connected) (hY : Y.Connected)
       (anyScript hX hY hXd hYd R).evalExact = {f | ∃ e : X ≃g Y, (e : V → W) = f} := by
   unfold anyScript
   split_ifs with h
-  · exact connScript_spec hX hY hXd hYd h.choose_spec.choose_spec (hXR _ _) hYR
-  · exact ⟨trivial, Nat.zero_le _, rfl⟩
+  · exact connScript_spec hX hY hXd hYd (Or.inr h.choose_spec.choose_spec) (hXR _ _) hYR
+  · exact connScript_spec hX hY hXd hYd (Or.inl rfl) (hXR _ _) hYR
 
 end Any
 
@@ -276,113 +280,160 @@ theorem graphScript_spec (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q)
 
 end Graph
 
-/-! ### The theorem for all graphs -/
+/-! ### The named script and its run -/
+
+section Named
+
+variable {n d : ℕ} {X Y : SimpleGraph (Fin n)}
+
+theorem card_neighborSet_le_n (G : SimpleGraph (Fin n)) (l : Fin n) :
+    Nat.card (G.neighborSet l) ≤ n := by
+  calc Nat.card (G.neighborSet l) ≤ Nat.card (Fin n) :=
+        Nat.card_le_card_of_injective _ Subtype.val_injective
+    _ = n := by simp
+
+/-- **The named reduction**: the script `graphScript` of a pair of graphs on `Fin n` of maximum
+degree at most `d`, with `q = min d n` slots. This is the script of the theorems of
+`DegreeD/Luks/Statement.lean`. -/
+noncomputable def luksScript (hX : ∀ v, Nat.card (X.neighborSet v) ≤ d)
+    (hY : ∀ v, Nat.card (Y.neighborSet v) ≤ d) : Script (Set (Perm (Fin n))) :=
+  letI : Fintype X.ConnectedComponent := Fintype.ofFinite _
+  letI : Fintype Y.ConnectedComponent := Fintype.ofFinite _
+  graphScript (q := min d n) (fun l => le_min (hX l) (card_neighborSet_le_n X l))
+    (fun l => le_min (hY l) (card_neighborSet_le_n Y l))
+
+/-- The isomorphism set of two graphs on `Fin n`, as a set of permutations. -/
+def isoSet (X Y : SimpleGraph (Fin n)) : Set (Perm (Fin n)) :=
+  {g | ∀ a b, X.Adj a b ↔ Y.Adj (g a) (g b)}
+
+/-- The bound on the size of a query. -/
+theorem bOm_le {q : ℕ} (hqn : q ≤ n) : (bOm n q : ℝ) ≤ 3 * (n : ℝ) ^ 4 := by
+  rcases Nat.eq_zero_or_pos n with h0 | hn
+  · subst h0
+    have hq0 : q = 0 := by omega
+    simp [bOm, hq0]
+  · have h1 : n * q ≤ n * n := Nat.mul_le_mul_left _ hqn
+    have h2 : n * q * (n * q) ≤ n * n * (n * n) := Nat.mul_le_mul h1 h1
+    have h3 : bOm n q ≤ 3 * n ^ 4 := by
+      show n + (n * q + n * q * (n * q)) ≤ _
+      have h6 : n * n ≤ n * n * (n * n) := Nat.le_mul_self _
+      have h5 : n ≤ n * n := Nat.le_mul_self _
+      calc n + (n * q + n * q * (n * q)) ≤ n * n * (n * n) + (n * n * (n * n) + n * n * (n * n)) := by
+            have : n * q ≤ n * n * (n * n) := le_trans h1 h6
+            omega
+        _ = 3 * n ^ 4 := by ring
+    exact_mod_cast h3
+
+/-- The calls of `luksScript` along the exact answers, its number of calls and its value. -/
+theorem luksScript_spec (hX : ∀ v, Nat.card (X.neighborSet v) ≤ d)
+    (hY : ∀ v, Nat.card (Y.neighborSet v) ≤ d) :
+    (luksScript hX hY).CallsExact (CallOK d (bOm n (min d n))) ∧
+      (luksScript hX hY).numCalls ≤ n ^ 5 ∧
+      (luksScript hX hY).evalExact = isoSet X Y := by
+  letI : Fintype X.ConnectedComponent := Fintype.ofFinite _
+  letI : Fintype Y.ConnectedComponent := Fintype.ofFinite _
+  obtain ⟨hc1, hc2, hc3⟩ := graphScript_spec (q := min d n)
+    (fun l => le_min (hX l) (card_neighborSet_le_n X l))
+    (fun l => le_min (hY l) (card_neighborSet_le_n Y l))
+  refine ⟨?_, ?_, ?_⟩
+  · exact hc1.mono fun m T ⟨hm, hf, hg, hs⟩ =>
+      ⟨hm, hf, by haveI := hf; exact hg.mono (min_le_left _ _), hs⟩
+  · refine hc2.trans ?_
+    have hX' : Fintype.card X.ConnectedComponent ≤ n := by
+      calc Fintype.card X.ConnectedComponent ≤ Fintype.card (Fin n) :=
+            Fintype.card_le_of_surjective _ (Quot.mk_surjective)
+        _ = n := Fintype.card_fin n
+    have hY' : Fintype.card Y.ConnectedComponent ≤ n := by
+      calc Fintype.card Y.ConnectedComponent ≤ Fintype.card (Fin n) :=
+            Fintype.card_le_of_surjective _ (Quot.mk_surjective)
+        _ = n := Fintype.card_fin n
+    rw [Fintype.card_prod]
+    calc Fintype.card X.ConnectedComponent * Fintype.card Y.ConnectedComponent * n ^ 3
+        ≤ n * n * n ^ 3 := Nat.mul_le_mul (Nat.mul_le_mul hX' hY') le_rfl
+      _ = n ^ 5 := by ring
+  · exact hc3
+
+end Named
 
 open GI.DegreeD.M in
-/-- **GI of maximum degree `d`, at the level of runs, for all graphs.** The statement of
-`graphIso_connected` without the connectivity hypotheses. -/
-theorem graphIso_general {P : Params} {w : M.Node P → ℝ} (h : Stage1Conclusion P w) :
+/-- **The run of the named script, and its cost.** From the Stage-1 conclusion: there is a constant
+`C` such that the named script `luksScript hX hY` has a run returning its exact value, of total
+weight at most `exp(C log(d+2) log(n+2))`. (`M.Exec.exact`: *any* run of the script returns the
+exact value.) -/
+theorem luksScript_exec {P : Params} {w : M.Node P → ℝ} (h : Stage1Conclusion P w) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (n d : ℕ) (X Y : SimpleGraph (Fin n))
+      (hX : ∀ v, Nat.card (X.neighborSet v) ≤ d) (hY : ∀ v, Nat.card (Y.neighborSet v) ≤ d),
+      ∃ e : M.Exec P (luksScript hX hY) (luksScript hX hY).evalExact,
+        e.total w ≤ Real.exp (C * (Real.log ((d : ℝ) + 2) * Real.log ((n : ℝ) + 2))) := by
+  obtain ⟨cσ, C', hcσ, hS⟩ := h
+  set C₀ := max C' 0
+  refine ⟨10 + 30 * C₀, by have := le_max_right C' 0; simp only [C₀]; linarith, ?_⟩
+  intro n d X Y hX hY
+  obtain ⟨hcalls_d, hnum, -⟩ := luksScript_spec hX hY
+  have hqn : min d n ≤ n := min_le_right _ _
+  have hBval : bOm n (min d n) = n + (n * min d n + n * min d n * (n * min d n)) := rfl
+  set B := bOm n (min d n) with hB
+  set s := luksScript hX hY with hs
+  have hruns : ∀ {Ω C : Type} [Finite Ω] (S : State Ω C), GammaHat d S.G →
+      ∃ r : M.Run P .solve S none S.answer, r.RootsOK cσ (max d 6) :=
+    fun S hg => (hS d S hg).1
+  obtain ⟨e, he⟩ := exec_of_calls (d := d) (D := max d 6) (le_max_left _ _) hruns s B hcalls_d
+  refine ⟨e, ?_⟩
+  set K := Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) with hK
+  have hbound := exec_total_le (K := K) (p := CallOK d B) (cσ := cσ) (D := max d 6)
+    (w := w) ?_ s e he hcalls_d
+  · have hK0 : 0 ≤ K := (Real.exp_pos _).le
+    have hfb := final_bound (C₀ := C₀) (le_max_right _ _) n d (min d n) (n ^ 5) hqn
+      (Nat.pow_le_pow_left (by omega) 5)
+    simp only at hfb
+    rw [← hBval] at hfb
+    calc e.total w ≤ (s.numCalls : ℝ) * K := hbound
+      _ ≤ ((n ^ 5 : ℕ) : ℝ) * K := by
+        apply mul_le_mul_of_nonneg_right _ hK0
+        exact_mod_cast hnum
+      _ ≤ _ := hfb
+  · intro Ω' Cc m T r hp hr
+    obtain ⟨rfl, hf, hg, hs⟩ := hp
+    haveI := hf
+    have h1 := (hS d T hg).2 r hr
+    refine h1.2.trans (Real.exp_le_exp.2 ?_)
+    have hl0 : 0 ≤ Real.log ((T.size : ℝ) + 2) :=
+      Real.log_nonneg (by have : (0 : ℝ) ≤ T.size := Nat.cast_nonneg _; linarith)
+    have hl1 : Real.log ((T.size : ℝ) + 2) ≤ Real.log ((B : ℝ) + 2) :=
+      Real.log_le_log (by have : (0 : ℝ) ≤ T.size := Nat.cast_nonneg _; linarith) (by
+        have : (T.size : ℝ) ≤ B := by exact_mod_cast hs
+        linarith)
+    have hlam := lam_pos d
+    calc C' * (lam d * Real.log ((T.size : ℝ) + 2))
+        ≤ C₀ * (lam d * Real.log ((T.size : ℝ) + 2)) :=
+          mul_le_mul_of_nonneg_right (le_max_left _ _) (mul_nonneg hlam.le hl0)
+      _ ≤ C₀ * (lam d * Real.log ((B : ℝ) + 2)) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hl1 hlam.le) (le_max_right _ _)
+
+/-! ### The theorems in the old (vacuous) form -/
+
+open GI.DegreeD.M in
+/-- **Weak form; vacuous as stated.** The script `s` is existentially quantified after `X, Y`, so the
+conclusion holds for `Script.done {iso set}` with `C = 0`, regardless of the hypothesis
+(`docs/vacuity-graphIso-final.lean.txt`). Do not cite this. The theorem that means something is
+`graphIso_reduction_general`, about the named script `luksScript` and its read-off. -/
+theorem graphIso_general_weak {P : Params} {w : M.Node P → ℝ} (h : Stage1Conclusion P w) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (n d : ℕ) (X Y : SimpleGraph (Fin n)),
       (∀ v, Nat.card (X.neighborSet v) ≤ d) → (∀ v, Nat.card (Y.neighborSet v) ≤ d) →
       ∃ (s : Script (Set (Perm (Fin n)))) (e : M.Exec P s s.evalExact),
         s.evalExact = {g | ∀ a b, X.Adj a b ↔ Y.Adj (g a) (g b)} ∧
         s.CallsExact (fun {_ _} m T => m = .solve ∧ GammaHat d T.G ∧ (T.size : ℝ) ≤ 3 * (n : ℝ) ^ 4) ∧
         e.total w ≤ Real.exp (C * (Real.log ((d : ℝ) + 2) * Real.log ((n : ℝ) + 2))) := by
-  obtain ⟨cσ, C', hcσ, hS⟩ := h
-  set C₀ := max C' 0
-  refine ⟨10 + 30 * C₀, by have := le_max_right C' 0; simp only [C₀]; linarith, ?_⟩
-  intro n d X Y hXd hYd
-  letI : Fintype X.ConnectedComponent := Fintype.ofFinite _
-  letI : Fintype Y.ConnectedComponent := Fintype.ofFinite _
-  set q := min d n with hq
-  have hqd : q ≤ d := min_le_left _ _
-  have hqn : q ≤ n := min_le_right _ _
-  have hcardle : ∀ {G : SimpleGraph (Fin n)} (l : Fin n), Nat.card (G.neighborSet l) ≤ n := by
-    intro G l
-    calc Nat.card (G.neighborSet l) ≤ Nat.card (Fin n) :=
-          Nat.card_le_card_of_injective _ Subtype.val_injective
-      _ = n := by simp
-  have hXq : ∀ l, Nat.card (X.neighborSet l) ≤ q := fun l => le_min (hXd l) (hcardle l)
-  have hYq : ∀ l, Nat.card (Y.neighborSet l) ≤ q := fun l => le_min (hYd l) (hcardle l)
-  obtain ⟨hc1, hc2, hc3⟩ := graphScript_spec hXq hYq
-  set B := bOm n q with hB
-  set s := graphScript hXq hYq with hs
-  have hBval : B = n + (n * q + n * q * (n * q)) := rfl
-  have hsz : (B : ℝ) ≤ 3 * (n : ℝ) ^ 4 := by
-    rcases Nat.eq_zero_or_pos n with h0 | hn
-    · subst h0
-      have hq0 : q = 0 := by omega
-      simp [hB, bOm, hq0]
-    · have h1 : n * q ≤ n * n := Nat.mul_le_mul_left _ hqn
-      have h2 : n * q * (n * q) ≤ n * n * (n * n) := Nat.mul_le_mul h1 h1
-      have h3 : B ≤ 3 * n ^ 4 := by
-        rw [hBval]
-        have h6 : n * n ≤ n * n * (n * n) := Nat.le_mul_self _
-        have h5 : n ≤ n * n := Nat.le_mul_self _
-        calc n + (n * q + n * q * (n * q)) ≤ n * n * (n * n) + (n * n * (n * n) + n * n * (n * n)) := by
-              have : n * q ≤ n * n * (n * n) := le_trans h1 h6
-              omega
-          _ = 3 * n ^ 4 := by ring
-      exact_mod_cast h3
-  have hcalls_d : s.CallsExact (CallOK d B) := hc1.mono fun m T ⟨hm, hf, hg, hs⟩ =>
-    ⟨hm, hf, by haveI := hf; exact hg.mono hqd, hs⟩
-  have hnum : s.numCalls ≤ n ^ 5 := by
-    refine hc2.trans ?_
-    have hX : Fintype.card X.ConnectedComponent ≤ n := by
-      calc Fintype.card X.ConnectedComponent ≤ Fintype.card (Fin n) :=
-            Fintype.card_le_of_surjective _ (Quot.mk_surjective)
-        _ = n := Fintype.card_fin n
-    have hY : Fintype.card Y.ConnectedComponent ≤ n := by
-      calc Fintype.card Y.ConnectedComponent ≤ Fintype.card (Fin n) :=
-            Fintype.card_le_of_surjective _ (Quot.mk_surjective)
-        _ = n := Fintype.card_fin n
-    rw [Fintype.card_prod]
-    calc Fintype.card X.ConnectedComponent * Fintype.card Y.ConnectedComponent * n ^ 3
-        ≤ n * n * n ^ 3 := Nat.mul_le_mul (Nat.mul_le_mul hX hY) le_rfl
-      _ = n ^ 5 := by ring
-  have hruns : ∀ {Ω C : Type} [Finite Ω] (S : State Ω C), GammaHat d S.G →
-      ∃ r : M.Run P .solve S none S.answer, r.RootsOK cσ (max d 6) :=
-    fun S hg => (hS d S hg).1
-  obtain ⟨e, he⟩ := exec_of_calls (d := d) (D := max d 6) (le_max_left _ _) hruns s B hcalls_d
-  refine ⟨s, e, hc3, ?_, ?_⟩
-  · exact hcalls_d.mono fun m T ⟨hm, _, hg, hs⟩ => ⟨hm, hg, le_trans (by exact_mod_cast hs) hsz⟩
-  · set K := Real.exp (C₀ * (lam d * Real.log ((B : ℝ) + 2))) with hK
-    have hbound := exec_total_le (K := K) (p := CallOK d B) (cσ := cσ) (D := max d 6)
-      (w := w) ?_ s e he hcalls_d
-    · have hK0 : 0 ≤ K := (Real.exp_pos _).le
-      have hfb := final_bound (C₀ := C₀) (le_max_right _ _) n d q (n ^ 5) hqn
-        (Nat.pow_le_pow_left (by omega) 5)
-      simp only at hfb
-      rw [← hBval] at hfb
-      calc e.total w ≤ (s.numCalls : ℝ) * K := hbound
-        _ ≤ ((n ^ 5 : ℕ) : ℝ) * K := by
-          apply mul_le_mul_of_nonneg_right _ hK0
-          exact_mod_cast hnum
-        _ ≤ _ := hfb
-    · intro Ω' Cc m T r hp hr
-      obtain ⟨rfl, hf, hg, hs⟩ := hp
-      haveI := hf
-      have h1 := (hS d T hg).2 r hr
-      refine h1.2.trans (Real.exp_le_exp.2 ?_)
-      have hl0 : 0 ≤ Real.log ((T.size : ℝ) + 2) :=
-        Real.log_nonneg (by have : (0 : ℝ) ≤ T.size := Nat.cast_nonneg _; linarith)
-      have hl1 : Real.log ((T.size : ℝ) + 2) ≤ Real.log ((B : ℝ) + 2) :=
-        Real.log_le_log (by have : (0 : ℝ) ≤ T.size := Nat.cast_nonneg _; linarith) (by
-          have : (T.size : ℝ) ≤ B := by exact_mod_cast hs
-          linarith)
-      have hlam := lam_pos d
-      calc C' * (lam d * Real.log ((T.size : ℝ) + 2))
-          ≤ C₀ * (lam d * Real.log ((T.size : ℝ) + 2)) :=
-            mul_le_mul_of_nonneg_right (le_max_left _ _) (mul_nonneg hlam.le hl0)
-        _ ≤ C₀ * (lam d * Real.log ((B : ℝ) + 2)) :=
-            mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hl1 hlam.le) (le_max_right _ _)
+  obtain ⟨C, hC, hexec⟩ := luksScript_exec h
+  refine ⟨C, hC, fun n d X Y hX hY => ?_⟩
+  obtain ⟨e, he⟩ := hexec n d X Y hX hY
+  refine ⟨luksScript hX hY, e, (luksScript_spec hX hY).2.2, ?_, he⟩
+  refine (luksScript_spec hX hY).1.mono fun m T ⟨hm, _, hg, hs⟩ => ⟨hm, hg, ?_⟩
+  exact le_trans (by exact_mod_cast hs) (bOm_le (min_le_right _ _))
 
-/-- **GI of maximum degree `d`, from the cited results.** With HJ's cited results and the axioms
-`bcp`, `gnsPrimitive`: there are parameters `P` and a constant `C` such that for all graphs `X, Y` of
-maximum degree `≤ d` on `Fin n`, there is a run of a script of string-isomorphism calls, in `Γ̂_d` and
-on at most `3 n⁴` positions each, whose exact value is the isomorphism set of `X` and `Y`,
-and with at most `exp(C log(d+2) log(n+2))` nodes. -/
-theorem graphIso_final (hcite : GI.Cited.TransitiveAffected)
+/-- **Weak form; vacuous as stated** (see `graphIso_general_weak`). The theorem that means something
+is `graphIso_reduction` in `DegreeD/Luks/Statement.lean`. -/
+theorem graphIso_final_weak (hcite : GI.Cited.TransitiveAffected)
     (hK : GI.Cited.KaryCoherentRefinement) (h6 : GI.Cited.SixTransitiveContainsAlt)
     (hDL : GI.Cited.DesignLemma) (hAut : GI.Cited.AutCardLeSq)
     (hLie : GI.Cited.SimpleValuationDegree) :
@@ -398,7 +449,7 @@ theorem graphIso_final (hcite : GI.Cited.TransitiveAffected)
   have h5 : (5 : ℝ) ≤ P.a := by rw [hPa]; linarith
   have h197 : (0 : ℝ) ≤ P.a := by linarith
   refine ⟨P, ?_⟩
-  exact graphIso_general (M.degreeD_stage1_cited hcite hK h6 hDL hAut hLie hP hA hT hκ hc hαγ
+  exact graphIso_general_weak (M.degreeD_stage1_cited hcite hK h6 hDL hAut hLie hP hA hT hκ hc hαγ
     hbase h4 hab M.bcp hG hc₁ hc₂ hcc hq (M.nodeBoundD_one h5) le_rfl h197
     (by rw [hPa]; linarith) hγ)
 

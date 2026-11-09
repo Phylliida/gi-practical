@@ -1,5 +1,7 @@
 # w42-lean-supply: `Supply` for all `d`, and Luks's reduction in Lean
 
+> **Superseded (w43).** The statements `graphIso_final`, `graphIso_general`, `graphIso_connected` quoted below were vacuous: they are renamed `*_weak` with a warning docstring. The statement to cite is `graphIso_reduction` in `lean/DegreeD/Luks/Statement.lean`; see `docs/w43-lean-statement.md`.
+
 Branch `w42-lean-supply`. New Lean under `lean/DegreeD/Luks/` and `lean/DegreeD/M/{Supply,NodeBoundOne}.lean`
 (imports the built development at `~/math/GraphIsomorphismLog2`, not modified). Continues
 `docs/w38-lean-stage1.md` and closes items 3 and 4 of `docs/redteam-lean-stage1.md`.

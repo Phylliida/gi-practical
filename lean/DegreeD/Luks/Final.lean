@@ -4,7 +4,13 @@ import DegreeD.M.NodeBoundOne
 /-!
 # GI of maximum degree `d`, connected graphs, at the level of runs
 
-`graphIso_connected`: from the conclusion of the Stage-1 theorem (`Stage1Conclusion`,
+**Warning.** `graphIso_connected_weak` and `graphIso_connected_final_weak` say only that *some* script
+has the stated value: the script is chosen after `X` and `Y`, and `Script.done` may carry any value,
+so `done {iso set}` satisfies them trivially (docs/vacuity-graphIso-final.lean.txt). They are kept
+only because the run bound below is used by the new statement. The theorem that means something
+is `graphIso_reduction` in `DegreeD/Luks/Statement.lean`, about the named `luksScript`.
+
+`graphIso_connected_weak`: from the conclusion of the Stage-1 theorem (`Stage1Conclusion`,
 which `degreeD_stage1_cited` provides), for all connected graphs `X, Y` on `Fin n` of maximum
 degree at most `d`, there is a script of `Solve` calls and a run of it (`M.Exec`) whose exact value is
 the isomorphism set of `X` and `Y`, every call of which is a string-isomorphism instance on `≤ 3 n⁴`
@@ -128,12 +134,11 @@ theorem final_bound {C₀ : ℝ} (hC₀ : 0 ≤ C₀) (n d q N : ℕ) (hq : q �
 
 variable {w : M.Node P → ℝ}
 
-/-- **GI of connected graphs of maximum degree `d`, at the level of runs.** There is a constant
-`C` such that for all connected graphs `X, Y` on `Fin n` of maximum degree at most `d`, there is
-a script `s` of `Solve` calls and a run `e` of it such that: the exact value of `s` is the
-isomorphism set of `X` and `Y`; every call is on a group in `Γ̂_d` and at most `3 n⁴`
-positions; and the total weight of the run is at most `exp(C log(d+2) log(n+2))`. -/
-theorem graphIso_connected (h : Stage1Conclusion P w) :
+/-- **Weak form; vacuous as stated.** `s` is existentially quantified after `X, Y`, and a script may
+be `Script.done` of any value (`docs/vacuity-graphIso-final.lean.txt`), so the conclusion holds with
+`C = 0` by the script with no calls. Do not cite this; use `graphIso_reduction`. The proof does build the
+real reduction; the statement does not expose it. -/
+theorem graphIso_connected_weak (h : Stage1Conclusion P w) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (n d : ℕ) (X Y : SimpleGraph (Fin n)),
       X.Connected → Y.Connected → (∀ v, Nat.card (X.neighborSet v) ≤ d) →
       (∀ v, Nat.card (Y.neighborSet v) ≤ d) →
@@ -177,7 +182,7 @@ theorem graphIso_connected (h : Stage1Conclusion P w) :
     have hXR : ∀ w, edgeLvl X u v w ≤ Fintype.card (Fin n) := fun w => edgeLvl_lt_card hXc w
     have hYR : ∀ (p : Fin n × Fin n) w, edgeLvl Y p.1 p.2 w ≤ Fintype.card (Fin n) :=
       fun p w => edgeLvl_lt_card hYc w
-    obtain ⟨hc1, hc2, hc3⟩ := connScript_spec (q := q) (R := Fintype.card (Fin n)) hXc hYc hXq hYq huv hXR hYR
+    obtain ⟨hc1, hc2, hc3⟩ := connScript_spec (q := q) (R := Fintype.card (Fin n)) hXc hYc hXq hYq (Or.inr huv) hXR hYR
     set S₀ := connScript (q := q) hXc hYc hXq hYq u v (Fintype.card (Fin n)) with hS₀
     let s : Script (Set (Perm (Fin n))) :=
       S₀.bind fun S => Script.done {g : Perm (Fin n) | (g : Fin n → Fin n) ∈ S}
@@ -248,14 +253,9 @@ theorem graphIso_connected (h : Stage1Conclusion P w) :
     refine ⟨Script.done {g | ∀ a b, X.Adj a b ↔ Y.Adj (g a) (g b)}, M.Exec.done _, rfl, trivial, ?_⟩
     exact le_trans (le_of_eq (M.Exec.total_done w _)) (Real.exp_pos _).le
 
-/-- **The theorem from the cited results.** With the cited results of HJ's aggregation
-(`TransitiveAffected`, `KaryCoherentRefinement`, `SixTransitiveContainsAlt`, `DesignLemma`) and
-of Theorem A.9 (`AutCardLeSq`, `SimpleValuationDegree`), and the axioms `bcp`, `gnsPrimitive`: there
-are parameters `P` and a constant `C` such that for all connected `X, Y` of maximum degree
-`≤ d` on `Fin n` there is a run of a script of string-isomorphism calls in `Γ̂_d`, on at most `3 n⁴`
-positions each, with exact value the isomorphism set of `X` and `Y`, and at most
-`exp(C log(d+2) log(n+2))` nodes in all (weight `w ≡ 1`). -/
-theorem graphIso_connected_final (hcite : GI.Cited.TransitiveAffected)
+/-- **Weak form; vacuous as stated** (see `graphIso_connected_weak`). `graphIso_connected_weak` from the
+cited results. Use `graphIso_reduction` in `DegreeD/Luks/Statement.lean`. -/
+theorem graphIso_connected_final_weak (hcite : GI.Cited.TransitiveAffected)
     (hK : GI.Cited.KaryCoherentRefinement) (h6 : GI.Cited.SixTransitiveContainsAlt)
     (hDL : GI.Cited.DesignLemma) (hAut : GI.Cited.AutCardLeSq)
     (hLie : GI.Cited.SimpleValuationDegree) :
@@ -272,7 +272,7 @@ theorem graphIso_connected_final (hcite : GI.Cited.TransitiveAffected)
   have h5 : (5 : ℝ) ≤ P.a := by rw [hPa]; linarith
   have h197 : (0 : ℝ) ≤ P.a := by linarith
   refine ⟨P, ?_⟩
-  exact graphIso_connected (M.degreeD_stage1_cited hcite hK h6 hDL hAut hLie hP hA hT hκ hc hαγ
+  exact graphIso_connected_weak (M.degreeD_stage1_cited hcite hK h6 hDL hAut hLie hP hA hT hκ hc hαγ
     hbase h4 hab M.bcp hG hc₁ hc₂ hcc hq (M.nodeBoundD_one h5) le_rfl h197
     (by rw [hPa]; linarith) hγ)
 

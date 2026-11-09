@@ -8,9 +8,10 @@ import Mathlib.Combinatorics.SimpleGraph.Paths
 
 From a connected graph and a root edge: levels by distance to the root edge (`edgeLvl`) and slots
 (`mkLG`, an `LG`). The rooted isomorphisms of the whole graph are exactly the elements of
-`IsIso … R`, for `R` at least the eccentricity (`rooted_iff`). `connScript` asks, for each
-ordered pair of adjacent vertices of `Y` as the image of the root edge, the layers of the
-reduction, and returns all isomorphisms; `connScript_spec` is its correctness.
+`IsIso … R`, for `R` at least the eccentricity (`rooted_iff`). The root is an edge `{u, v}` of `X`
+or, for a graph without edges (a single vertex), a degenerate root `u = v`; in both cases
+`RootImg` says which pairs of `Y` may be its image. `connScript` asks, for each such pair, the
+layers of the reduction, and returns all isomorphisms; `connScript_spec` is its correctness.
 -/
 
 namespace GI.DegreeD.Luks
@@ -200,12 +201,23 @@ theorem f₀_left (u : V) (p : W × W) : f₀ u p u = p.1 := if_pos rfl
 
 theorem f₀_right {v : V} (h : v ≠ u) (p : W × W) : f₀ u p v = p.2 := if_neg h
 
-/-- The base map is an isomorphism of the balls of radius `0`, for adjacent image points. -/
+/-- The admissible images of a root `(u, v)` of `X`: the images of an edge are the ordered edges of
+`Y`, those of a degenerate root `u = v` (a graph without edges) are the vertices of `Y`, as diagonal pairs. -/
+def RootImg (Y : SimpleGraph W) (u v : V) (p : W × W) : Prop :=
+  (v = u ∧ p.2 = p.1) ∨ (v ≠ u ∧ Y.Adj p.1 p.2)
+
+/-- `f₀` is `p.2` at `v`, in both root shapes. -/
+theorem f₀_snd {v : V} {p : W × W} (h : (v = u ∧ p.2 = p.1) ∨ v ≠ u) : f₀ u p v = p.2 := by
+  rcases h with ⟨rfl, hp⟩ | h
+  · rw [f₀_left, hp]
+  · exact f₀_right h p
+
+/-- The base map is an isomorphism of the balls of radius `0`, for an admissible root image. -/
 theorem base_isIso (hX : X.Connected) (hY : Y.Connected) (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q)
-    (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q) (huv : X.Adj u v) (hp : Y.Adj p.1 p.2) :
+    (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q)
+    (hroot : (v = u ∧ p.2 = p.1) ∨ (X.Adj u v ∧ Y.Adj p.1 p.2)) :
     IsIso (mkLG X hX u v q hXd) (mkLG Y hY p.1 p.2 q hYd) (f₀ u p) 0 (f₀ u p) := by
-  have hne : v ≠ u := huv.ne'
-  have hne' : p.2 ≠ p.1 := hp.ne'
+  have hfv : f₀ u p v = p.2 := f₀_snd (hroot.imp (fun h => h) (fun h => h.1.ne'))
   have hzeroX : ∀ w, edgeLvl X u v w ≤ 0 ↔ w = u ∨ w = v := fun w => by
     rw [Nat.le_zero, edgeLvl_zero hX]
   have hzeroY : ∀ w, edgeLvl Y p.1 p.2 w ≤ 0 ↔ w = p.1 ∨ w = p.2 := fun w => by
@@ -216,45 +228,55 @@ theorem base_isIso (hX : X.Connected) (hY : Y.Connected) (hXd : ∀ l, Nat.card 
       have h1 : edgeLvl Y p.1 p.2 p.1 = 0 := (edgeLvl_zero hY).2 (Or.inl rfl)
       have h2 : edgeLvl X w v w = 0 := (edgeLvl_zero hX).2 (Or.inl rfl)
       rw [h1, h2]
-    · rw [f₀_right hne]
+    · rw [hfv]
       have h1 : edgeLvl Y p.1 p.2 p.2 = 0 := (edgeLvl_zero hY).2 (Or.inr rfl)
       have h2 : edgeLvl X u w w = 0 := (edgeLvl_zero hX).2 (Or.inr rfl)
       rw [h1, h2]
   have hmem : ∀ w, w = u ∨ w = v → f₀ u p w = p.1 ∨ f₀ u p w = p.2 := by
     rintro w (rfl | rfl)
     · left; exact f₀_left _ _
-    · right; exact f₀_right hne _
+    · right; exact hfv
   refine ⟨fun w hw => hlvl w ((hzeroX w).1 hw), ?_, fun w _ => rfl, ?_⟩
   · refine ⟨fun w hw => (hzeroY _).2 (hmem w ((hzeroX w).1 hw)), ?_, ?_⟩
     · intro a ha b hb hab
       rcases (hzeroX a).1 ha with rfl | rfl <;> rcases (hzeroX b).1 hb with rfl | rfl
       · rfl
-      · rw [f₀_left, f₀_right hne] at hab
-        exact absurd hab.symm hne'
-      · rw [f₀_right hne, f₀_left] at hab
-        exact absurd hab hne'
+      · rcases hroot with ⟨h, -⟩ | ⟨h, hadj⟩
+        · exact h.symm
+        · rw [f₀_left, hfv] at hab
+          exact absurd hab.symm hadj.ne'
+      · rcases hroot with ⟨h, -⟩ | ⟨h, hadj⟩
+        · exact h
+        · rw [hfv, f₀_left] at hab
+          exact absurd hab hadj.ne'
       · rfl
     · intro y hy
       rcases (hzeroY y).1 hy with rfl | rfl
       · exact ⟨u, (hzeroX u).2 (Or.inl rfl), f₀_left _ _⟩
-      · exact ⟨v, (hzeroX v).2 (Or.inr rfl), f₀_right hne _⟩
+      · exact ⟨v, (hzeroX v).2 (Or.inr rfl), hfv⟩
   · intro a b ha hb
     show X.Adj a b ↔ Y.Adj (f₀ u p a) (f₀ u p b)
-    rcases (hzeroX a).1 ha with rfl | rfl <;> rcases (hzeroX b).1 hb with rfl | rfl
-    · simp [f₀_left]
-    · rw [f₀_left, f₀_right hne]
-      exact ⟨fun _ => hp, fun _ => huv⟩
-    · rw [f₀_right hne, f₀_left]
-      exact ⟨fun _ => hp.symm, fun _ => huv.symm⟩
-    · simp [f₀_right hne]
+    rcases hroot with ⟨h, hd⟩ | ⟨huv, hadj⟩
+    · have hau : a = u := by rcases (hzeroX a).1 ha with rfl | rfl; exacts [rfl, h]
+      have hbu : b = u := by rcases (hzeroX b).1 hb with rfl | rfl; exacts [rfl, h]
+      subst hau hbu
+      simp [f₀_left]
+    · have hne : v ≠ u := huv.ne'
+      rcases (hzeroX a).1 ha with rfl | rfl <;> rcases (hzeroX b).1 hb with rfl | rfl
+      · simp [f₀_left]
+      · rw [f₀_left, f₀_right hne]
+        exact ⟨fun _ => hadj, fun _ => huv⟩
+      · rw [f₀_right hne, f₀_left]
+        exact ⟨fun _ => hadj.symm, fun _ => huv.symm⟩
+      · simp [f₀_right hne]
 
 /-- **The isomorphisms of the top ball are the rooted graph isomorphisms.** -/
 theorem rooted_iff (hX : X.Connected) (hY : Y.Connected) (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q)
-    (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q) (huv : X.Adj u v)
+    (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q) (hne : (v = u ∧ p.2 = p.1) ∨ v ≠ u)
     (hXR : ∀ w, edgeLvl X u v w ≤ R) (hYR : ∀ w, edgeLvl Y p.1 p.2 w ≤ R) (f : V → W) :
     IsIso (mkLG X hX u v q hXd) (mkLG Y hY p.1 p.2 q hYd) (f₀ u p) R f ↔
       ∃ e : X ≃g Y, (e : V → W) = f ∧ e u = p.1 ∧ e v = p.2 := by
-  have hne : v ≠ u := huv.ne'
+  have hfv : f₀ u p v = p.2 := f₀_snd hne
   constructor
   · intro h
     have hbij : Function.Bijective f := by
@@ -275,7 +297,7 @@ theorem rooted_iff (hX : X.Connected) (hY : Y.Connected) (hXd : ∀ l, Nat.card 
     · show f u = p.1
       rw [h.root u hu0, f₀_left]
     · show f v = p.2
-      rw [h.root v hv0, f₀_right hne]
+      rw [h.root v hv0, hfv]
   · rintro ⟨e, rfl, heu, hev⟩
     refine ⟨fun w hw => ?_, ?_, fun w hw => ?_, fun a b ha hb => ?_⟩
     · show edgeLvl Y p.1 p.2 (e w) = edgeLvl X u v w
@@ -292,7 +314,7 @@ theorem rooted_iff (hX : X.Connected) (hY : Y.Connected) (hXd : ∀ l, Nat.card 
     · have hw0 : edgeLvl X u v w = 0 := hw
       rcases (edgeLvl_zero hX).1 hw0 with rfl | rfl
       · rw [heu, f₀_left]
-      · rw [hev, f₀_right hne]
+      · rw [hev, hfv]
     · show X.Adj a b ↔ Y.Adj (e a) (e b)
       exact e.map_rel_iff.symm
 
@@ -305,16 +327,18 @@ section Conn
 variable {V W : Type} [Fintype V] [Fintype W] {X : SimpleGraph V} {Y : SimpleGraph W} {q R : ℕ}
   {u v : V}
 
-/-- The script of one candidate image of the root edge. -/
+/-- The script of one candidate image `p` of the root `(u, v)`: the layers of the reduction from
+the base map `f₀`, for an admissible image. -/
 noncomputable def candScript (hX : X.Connected) (hY : Y.Connected)
     (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q) (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q)
     (u v : V) (R : ℕ) (p : W × W) : Script (Set (V → W)) :=
-  if _h : Y.Adj p.1 p.2 then
+  if _h : RootImg Y u v p then
     rootedScript (mkLG X hX u v q hXd) (mkLG Y hY p.1 p.2 q hYd) (f₀ u p) R
   else Script.done ∅
 
-/-- **The reduction of a connected graph**: for every ordered pair of adjacent vertices of `Y`
-as the image of the root edge `(u, v)`, the layers of the reduction. -/
+/-- **The reduction of a connected graph**: for every admissible image of the root `(u, v)`
+(an ordered edge of `Y` for an edge root, a vertex of `Y` for a degenerate root `u = v`), the
+layers of the reduction. -/
 noncomputable def connScript (hX : X.Connected) (hY : Y.Connected)
     (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q) (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q)
     (u v : V) (R : ℕ) : Script (Set (V → W)) :=
@@ -326,7 +350,7 @@ graph isomorphisms; its calls are `Solve` calls in `Γ̂_q` on `|Om V q|` positi
 `|W|² R` calls. -/
 theorem connScript_spec (hX : X.Connected) (hY : Y.Connected)
     (hXd : ∀ l, Nat.card (X.neighborSet l) ≤ q) (hYd : ∀ l, Nat.card (Y.neighborSet l) ≤ q)
-    (huv : X.Adj u v) (hXR : ∀ w, edgeLvl X u v w ≤ R)
+    (huv : v = u ∨ X.Adj u v) (hXR : ∀ w, edgeLvl X u v w ≤ R)
     (hYR : ∀ (p : W × W) w, edgeLvl Y p.1 p.2 w ≤ R) :
     (connScript hX hY hXd hYd u v R).CallsExact (CallOK q (Nat.card (Om V q))) ∧
       (connScript hX hY hXd hYd u v R).numCalls ≤ Fintype.card (W × W) * R ∧
@@ -335,18 +359,24 @@ theorem connScript_spec (hX : X.Connected) (hY : Y.Connected)
   have hcand : ∀ p : W × W, (candScript hX hY hXd hYd u v R p).CallsExact
       (CallOK q (Nat.card (Om V q))) ∧ (candScript hX hY hXd hYd u v R p).numCalls ≤ R ∧
       (candScript hX hY hXd hYd u v R p).evalExact =
-        {f | Y.Adj p.1 p.2 ∧ ∃ e : X ≃g Y, (e : V → W) = f ∧ e u = p.1 ∧ e v = p.2} := by
+        {f | RootImg Y u v p ∧ ∃ e : X ≃g Y, (e : V → W) = f ∧ e u = p.1 ∧ e v = p.2} := by
     intro p
     unfold candScript
     split_ifs with hp
-    · obtain ⟨h1, h2, h3⟩ := rootedScript_spec (X := mkLG X hX u v q hXd)
+    · have hroot : (v = u ∧ p.2 = p.1) ∨ (X.Adj u v ∧ Y.Adj p.1 p.2) := by
+        rcases hp with h | ⟨hne, hadj⟩
+        · exact Or.inl h
+        · rcases huv with h0 | h0
+          · exact absurd h0 hne
+          · exact Or.inr ⟨h0, hadj⟩
+      obtain ⟨h1, h2, h3⟩ := rootedScript_spec (X := mkLG X hX u v q hXd)
         (Y := mkLG Y hY p.1 p.2 q hYd) (f₀ := f₀ u p) (R := R)
-        (base_isIso hX hY hXd hYd huv hp) hXR
+        (base_isIso hX hY hXd hYd hroot) hXR
       refine ⟨h1, h2, ?_⟩
       rw [h3]
       ext f
       simp only [Set.mem_setOf_eq]
-      rw [rooted_iff hX hY hXd hYd huv hXR (hYR p) f]
+      rw [rooted_iff hX hY hXd hYd (hroot.imp (fun h => h) (fun h => h.1.ne')) hXR (hYR p) f]
       exact ⟨fun h => ⟨hp, h⟩, fun h => h.2⟩
     · refine ⟨trivial, by simp [Script.numCalls], ?_⟩
       show (∅ : Set (V → W)) = _
@@ -383,7 +413,13 @@ theorem connScript_spec (hX : X.Connected) (hY : Y.Connected)
       exact ⟨e, he⟩
     · rintro ⟨e, rfl⟩
       let p : W × W := (e u, e v)
-      have hp : Y.Adj p.1 p.2 := e.map_rel_iff.2 huv
+      have hp : RootImg Y u v p := by
+        by_cases hvu : v = u
+        · exact Or.inl ⟨hvu, congrArg e hvu⟩
+        · refine Or.inr ⟨hvu, ?_⟩
+          rcases huv with h0 | h0
+          · exact absurd h0 hvu
+          · exact e.map_rel_iff.2 h0
       refine ⟨_, ⟨p, rfl⟩, ?_⟩
       rw [(hcand p).2.2]
       exact ⟨hp, e, rfl, rfl, rfl⟩
