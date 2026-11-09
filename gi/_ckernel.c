@@ -909,7 +909,6 @@ static int get_tables(PyObject *tables, Py_ssize_t size, Py_ssize_t n, int field
  * low 32 and high 32 bits of Vr. count is zeroed scratch of k colors. The
  * largest color class is handled through the column sums, as in the reference;
  * with many colors in the row the direct sum is cheaper. */
-__attribute__((target_clones("avx2", "default")))
 static void add_row_lohi(const uint64_t *row, uint64_t *lo, uint64_t *hi, Py_ssize_t n)
 {
     Py_ssize_t j;
