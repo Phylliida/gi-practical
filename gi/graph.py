@@ -350,7 +350,7 @@ def graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", s
 # -- pipeline dispatch ----------------------------------------------------------------
 DISPATCH_DEGREE = 8                     # bounded when the maximum degree is at most this
 DISPATCH_N = 256                        # or the graph is larger than this
-BOUNDED_WORK_PER_N2 = 1000              # the bounded run's work budget, in units * n^2
+BOUNDED_WORK_PER_N2 = 300               # the bounded run's work budget, in units * n^2
 
 
 def simple_lists(X):
