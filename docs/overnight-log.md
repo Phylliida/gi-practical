@@ -572,3 +572,10 @@ are red-teams, a LaTeX paper, and final integration.
   affine equivalence and tensor isomorphism as written.
 * The ETH barrier is re-based on CLIQUE-LB (notes added to the five memos); it survives if ETH fails.
 * w25-wiki: a wiki under wiki/ covering everything done, learned and tried.
+
+### w18-latin (done, commit 8047173; docs/w18-latin.md), NOT yet red-teamed
+* No n^{o(log n)} for Latin squares or STS. A1: n^{(1/2) log2 n + O(1)} for quasigroups / STS, Rosenbaum's
+  argument extended. A2/A3: subquasigroup-lattice DP.
+* Theorem B1 (given HJ as written): on the point–line incidence graph of PG(m−1,2), HJ makes at least
+  n^{(1/8) log2 n − O(1)} recursive calls, through the σx channel. A bound on HJ, not on GI: the family is easy
+  by other means. Partly checked by simulation.
