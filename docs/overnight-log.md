@@ -579,3 +579,6 @@ are red-teams, a LaTeX paper, and final integration.
 * Theorem B1 (given HJ as written): on the point–line incidence graph of PG(m−1,2), HJ makes at least
   n^{(1/8) log2 n − O(1)} recursive calls, through the σx channel. A bound on HJ, not on GI: the family is easy
   by other means. Partly checked by simulation.
+
+### w24-video-review (done, commit 4085217; video/REVIEW.md)
+* 31 errors found and fixed (10 wrong, 12 misleading, 9 minor). Runtime 65:31.
