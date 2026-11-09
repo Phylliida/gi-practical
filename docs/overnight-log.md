@@ -509,3 +509,9 @@ are red-teams, a LaTeX paper, and final integration.
 * Strict gain over Theorem X and Babai–Helfgott: 3/2 < x < 2 (log n = L^x).
 * Conditional on HJ, Theorem C alone gives n^{O(min(L³, log n))}, so Theorem G is redundant in that case;
   disclosed in the note.
+
+## Wave 16–17
+* w14-solver: solvable layers, dispatch, hot spots.
+* w16-ckernel: compiled kernel for hot primitives (Python stays as fallback and reference).
+* w17-affine (moonshot): beat 2^{O(k²)} for affine equivalence of arbitrary k-variable functions, the
+  provably tight instance of HJ's enumeration channel.
