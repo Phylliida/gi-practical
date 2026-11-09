@@ -499,3 +499,13 @@ are red-teams, a LaTeX paper, and final integration.
 * paper/exponent.tex: 12-page note.
 
 ### w15-redteam-theoremg: adversarial check of Theorem G.
+
+### w15-redteam-theoremg (done, commit df12b78; docs/redteam-theoremg.md)
+* No break. Signed: given GNS (v3), the N ≤ n^{O(L)} count, Lemma A, HBD's lemmas as corrected, and
+  Babai–Helfgott, string isomorphism for Γ̂_d and degree-d GI run in n^{O(log³ d)} for all d, and
+  n^{O(min(log³ d, log² n))}. One AI referee reading; no human or machine check.
+* One low-severity error fixed: (H3)'s "reads one point of Γ" is false after cohcoup's contraction, where
+  V₂ consists of blocks; the stream reads elements of the current V₂.
+* Strict gain over Theorem X and Babai–Helfgott: 3/2 < x < 2 (log n = L^x).
+* Conditional on HJ, Theorem C alone gives n^{O(min(L³, log n))}, so Theorem G is redundant in that case;
+  disclosed in the note.

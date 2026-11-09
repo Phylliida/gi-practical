@@ -62,13 +62,13 @@ Lemma~\ref{lem:A} & large alternating composition factors of permutation groups 
 Prop.~\ref{prop:k} & the giant degree drops by a factor $3/4$ per round, under the block-system rule of \S\ref{sec:tower} & \ProvenM\\
 Thm~\ref{thm:C} & running time $n^{O(L^3)}\cdot(1+X(d))$, where $X(d)$ bounds the cost of one black-box call & \ProvenM\\
 Thm~\ref{thm:X} & $X(d)\le 2^{O(L^5)}$, so running time $n^{O(L^3)}2^{O(L^5)}$; so $c\le 10/3$ for all $d$, and $c=3$ for $d\le 2^{\sqrt{\log n}}$ & \ProvenM; AI red-teamed\\
-Thm~\ref{thm:G} & running time $n^{O(L^3)}$ for all $d$ & \ProvenM; \emph{not red-teamed} (\S\ref{sec:status})\\
+Thm~\ref{thm:G} & running time $n^{O(L^3)}$ for all $d$ & \ProvenM; one AI red-team pass, no human check (\S\ref{sec:status})\\
 \S\ref{sec:question} & a question about the proof of GNS Lemma~7.2 & a question\\
 \bottomrule
 \end{tabularx}
 \medskip
 
-Here [proven] means a complete argument is given here, relying only on the inputs listed in the ledger of \S\ref{sec:ledger}. Theorem~\ref{thm:G} is presented with a full proof, but it is new, has had only the single pass of the (AI) author who wrote it, and should be regarded as provisional until someone else has attacked it. If it fails, Theorem~\ref{thm:X} is unaffected. For $d\ge 2^{(\log n)^{2/3}}$ the Babai--Helfgott bound $\exp(O(\log^3 n))$ of \cite{HBD} is $n^{O(L^{3})}$ or better, and we use nothing new there.
+Here [proven] means a complete argument is given here, relying only on the inputs listed in the ledger of \S\ref{sec:ledger}. Theorem~\ref{thm:G} is presented with a full proof, but it is new, has had only the pass of the (AI) author who wrote it and one AI red-team pass, and should be regarded as provisional until a human expert has checked it. If it fails, Theorem~\ref{thm:X} is unaffected. For $d\ge 2^{(\log n)^{2/3}}$ the Babai--Helfgott bound $\exp(O(\log^3 n))$ of \cite{HBD} is $n^{O(L^{3})}$ or better, and we use nothing new there.
 
 \section{Setting and inputs}\label{sec:setting}
 
@@ -282,7 +282,7 @@ There are $A,B=O(L^2)$ with $T(n,\rho)\le n^A2^{B\rho}$ for all $n\ge1$, $\rho\g
 Induct on $n+\rho$. Let $U=n^A2^{B\rho}$. Every recursive call has $\rho'\le\rho$ by Lemma~\ref{lem:maintained}. The intransitive step and the semi-regular step of G2 are routine: $\sum_iT(n_i,\rho)$ with $\sum n_i=n$, respectively $b^2T(n/b,\rho)\le b^{2-A}U$. For a macro step sum over $\mathcal T$. Each node has exits with $\sum n_i\le2^{O(L^2)}n$ and $n_i\le n/2$ (certificates, comparisons, small orbits, the Luks steps G3, G4, and G2 at non-root nodes of $\mathcal T$, where the top level has at most $d$ classes), contributing at most $Z2^{O(L^2)}2^{-(A-1)}U$. Rounds of type (S) contribute at most $ZC_h(5/6)^{A-1}U$. Rounds of type (T) contribute at most $ZC_h2^{-B}U$ for the large orbit (at $\rho-1$) and $ZC_h6^{-(A-1)}U$ for small orbits. The non-recursive work per node is $\mathrm{poly}(n)\cdot2^{O(L^2)}$ plus at most $k^6$ Babai--Helfgott calls of cost $\exp(O(\log^3k))$; since $k\le n$, $\log^3k\le L^2\log n$, and these terms are absorbed in $n^A$. All constraints hold for suitable $A,B=O(L^2)$.
 \end{proof}
 
-\begin{theorem}[\ProvenM; not red-teamed]\label{thm:G}
+\begin{theorem}[\ProvenM; one AI red-team pass]\label{thm:G}
 String isomorphism for $\Gammahat_d$ groups on $n$ points, and isomorphism of graphs of maximum degree $d\ge2$, are decidable in time $n^{O(\log^3d)}$ for all $d$.
 \end{theorem}
 \begin{proof}
@@ -319,7 +319,7 @@ We have written a complete argument for Theorem~\ref{thm:G}, but we regard it as
 \item The trichotomy (Prop.~\ref{prop:trichotomy}), which applies the combinatorial Lemmas~\ref{lem:partition}--\ref{lem:johnson} through Lemma~\ref{lem:subset}. The elementary inequalities have been machine-checked on small parameters. The group-theoretic inputs have not been checked by machine.
 \end{enumerate}
 
-Theorem~\ref{thm:X} and the facts of \S\S\ref{sec:A}--\ref{sec:X} went through a separate AI red-team pass during the work leading to this note. Theorem~\ref{thm:G} has not. No human expert has checked any statement here.
+Theorem~\ref{thm:X} and the facts of \S\S\ref{sec:A}--\ref{sec:X} went through a separate AI red-team pass during the work leading to this note, as did Theorem~\ref{thm:G}, whose red-team pass found and repaired one low-severity error in how the Split-or-Johnson stream was read. No human expert has checked any statement here.
 
 \section{A question about GNS Lemma 7.2}\label{sec:question}
 
