@@ -559,3 +559,8 @@ are red-teams, a LaTeX paper, and final integration.
   one-line gadget (its displayed Iso set had the direction reversed; nothing depends on it).
 * Prop B′ is only a generic birthday bound, so "the flag method has hit its limit" is unsupported.
 * "λ coefficient halved" in R** is speculative as worded: R** has a single Λ.
+
+### w19-video (done, commit ed3aa0b; video/index.html)
+* "The Third Logarithm": about 64 min, 24 chapters, offline. Derives the n^{O(log n)} running time on screen and
+  ends with the n^{O(log d)} chapters and a status card. CLAIMS.md ledger; headless-Firefox sweep.
+* w24-video-review: independent fact-check of the script against the sources.
