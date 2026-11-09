@@ -1,0 +1,414 @@
+{
+ "label": "w9-ns-iso",
+ "timeout": 600.0,
+ "rows": [
+  {
+   "name": "ns16",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.107,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.13,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.279,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.284,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns48",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.394,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns48-twist",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.506,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.568,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.714,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns80",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.62,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns80-twist",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 0.879,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns96",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.029,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns96-twist",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.119,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.41,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112-twist",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.392,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns128",
+   "family": "ns",
+   "size": 128,
+   "n": 2816,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6144,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.492,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns128-twist",
+   "family": "ns",
+   "size": 128,
+   "n": 2816,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6144,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.719,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns144",
+   "family": "ns",
+   "size": 144,
+   "n": 3168,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6912,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 1.611,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns144-twist",
+   "family": "ns",
+   "size": 144,
+   "n": 3168,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6912,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 2.133,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns160",
+   "family": "ns",
+   "size": 160,
+   "n": 3520,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 7680,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 2.462,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns160-twist",
+   "family": "ns",
+   "size": 160,
+   "n": 3520,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 7680,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 2.468,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns192",
+   "family": "ns",
+   "size": 192,
+   "n": 4224,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 9216,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 3.282,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns192-twist",
+   "family": "ns",
+   "size": 192,
+   "n": 4224,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 9216,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 3.296,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns256",
+   "family": "ns",
+   "size": 256,
+   "n": 5632,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 12288,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 3.686,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "ns256-twist",
+   "family": "ns",
+   "size": 256,
+   "n": 5632,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 12288,
+   "cert": "lemma",
+   "biso": {
+    "status": "ok",
+    "time": 4.969,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

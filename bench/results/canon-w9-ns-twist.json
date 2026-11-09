@@ -1,0 +1,507 @@
+{
+ "label": "w9-ns-twist",
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "ns16-twist",
+   "family": "ns",
+   "size": 16,
+   "n": 352,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 768,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 0.183,
+    "t_x": 0.088,
+    "t_y": 0.095,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.19,
+    "t_x": 0.09,
+    "t_y": 0.1,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.138,
+    "t_x": 0.085,
+    "t_y": 0.053,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns32-twist",
+   "family": "ns",
+   "size": 32,
+   "n": 704,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1536,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 2.868,
+    "t_x": 1.661,
+    "t_y": 1.206,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 2.87,
+    "t_x": 1.65,
+    "t_y": 1.22,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.11,
+    "t_x": 0.06,
+    "t_y": 0.05,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.265,
+    "t_x": 0.147,
+    "t_y": 0.118,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns48-twist",
+   "family": "ns",
+   "size": 48,
+   "n": 1056,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "pyn": {
+    "status": "ok",
+    "time": 18.495,
+    "t_x": 9.741,
+    "t_y": 8.754,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 17.22,
+    "t_x": 9.13,
+    "t_y": 8.09,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.38,
+    "t_x": 0.2,
+    "t_y": 0.18,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 1.87,
+    "t_x": 0.95,
+    "t_y": 0.92,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.414,
+    "t_x": 0.202,
+    "t_y": 0.212,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns64-twist",
+   "family": "ns",
+   "size": 64,
+   "n": 1408,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3072,
+   "cert": "lemma",
+   "pyn": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 5.71,
+    "t_x": 3.41,
+    "t_y": 2.3,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.612,
+    "t_x": 0.318,
+    "t_y": 0.294,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns80-twist",
+   "family": "ns",
+   "size": 80,
+   "n": 1760,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 3840,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 6.92,
+    "t_x": 2.25,
+    "t_y": 4.67,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.787,
+    "t_x": 0.39,
+    "t_y": 0.397,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns96-twist",
+   "family": "ns",
+   "size": 96,
+   "n": 2112,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 4608,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 68.3,
+    "t_x": 40.68,
+    "t_y": 27.62,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.991,
+    "t_x": 0.496,
+    "t_y": 0.495,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns112-twist",
+   "family": "ns",
+   "size": 112,
+   "n": 2464,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 5376,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.265,
+    "t_x": 0.625,
+    "t_y": 0.64,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns128-twist",
+   "family": "ns",
+   "size": 128,
+   "n": 2816,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6144,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.51,
+    "t_x": 0.765,
+    "t_y": 0.745,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns144-twist",
+   "family": "ns",
+   "size": 144,
+   "n": 3168,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 6912,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.965,
+    "t_x": 0.961,
+    "t_y": 1.004,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns160-twist",
+   "family": "ns",
+   "size": 160,
+   "n": 3520,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 7680,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 2.181,
+    "t_x": 1.072,
+    "t_y": 1.109,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns192-twist",
+   "family": "ns",
+   "size": 192,
+   "n": 4224,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 9216,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 2.697,
+    "t_x": 1.324,
+    "t_y": 1.373,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "ns256-twist",
+   "family": "ns",
+   "size": 256,
+   "n": 5632,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 12288,
+   "cert": "lemma",
+   "pyn": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dns": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 4.242,
+    "t_x": 2.102,
+    "t_y": 2.14,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

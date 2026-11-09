@@ -1,0 +1,562 @@
+{
+ "label": "w9-cfix",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "CFIx20",
+   "family": "cfix",
+   "size": 20,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 0.022,
+    "t_x": 0.011,
+    "t_y": 0.011,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 2048.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 2048.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 2048.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.086,
+    "t_x": 0.056,
+    "t_y": 0.03,
+    "same": true,
+    "ngens": 11,
+    "aut_order": "2048"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.062,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2048.0
+  },
+  {
+   "name": "CFIx20-twist",
+   "family": "cfix",
+   "size": 20,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 0.022,
+    "t_x": 0.011,
+    "t_y": 0.011,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 2048.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 2048.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 2048.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.087,
+    "t_x": 0.056,
+    "t_y": 0.032,
+    "same": false,
+    "ngens": 11,
+    "aut_order": "2048"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.051,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2048.0
+  },
+  {
+   "name": "CFIx40",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 0.232,
+    "t_x": 0.113,
+    "t_y": 0.119,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.24,
+    "t_x": 0.12,
+    "t_y": 0.12,
+    "same": true,
+    "aut": 2097152.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.09,
+    "t_x": 0.05,
+    "t_y": 0.04,
+    "same": true,
+    "aut": 2097152.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 2097152.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.221,
+    "t_x": 0.131,
+    "t_y": 0.09,
+    "same": true,
+    "ngens": 21,
+    "aut_order": "2097152"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.145,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2097152.0
+  },
+  {
+   "name": "CFIx40-twist",
+   "family": "cfix",
+   "size": 40,
+   "n": 400,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 600,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 0.223,
+    "t_x": 0.114,
+    "t_y": 0.109,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.24,
+    "t_x": 0.12,
+    "t_y": 0.12,
+    "same": false,
+    "aut": 2097152.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.12,
+    "t_x": 0.05,
+    "t_y": 0.07,
+    "same": false,
+    "aut": 2097152.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 2097152.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.22,
+    "t_x": 0.13,
+    "t_y": 0.09,
+    "same": false,
+    "ngens": 21,
+    "aut_order": "2097152"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.14,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2097152.0
+  },
+  {
+   "name": "CFIx80",
+   "family": "cfix",
+   "size": 80,
+   "n": 800,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1200,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 3.097,
+    "t_x": 1.643,
+    "t_y": 1.454,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 2.96,
+    "t_x": 1.64,
+    "t_y": 1.32,
+    "same": true,
+    "aut": 2199023255552.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 1.37,
+    "t_x": 0.62,
+    "t_y": 0.75,
+    "same": true,
+    "aut": 2199023255552.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 2199023255552.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.643,
+    "t_x": 0.338,
+    "t_y": 0.304,
+    "same": true,
+    "ngens": 41,
+    "aut_order": "2199023255552"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.464,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2199023255552.0
+  },
+  {
+   "name": "CFIx80-twist",
+   "family": "cfix",
+   "size": 80,
+   "n": 800,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1200,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 3.181,
+    "t_x": 1.64,
+    "t_y": 1.54,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 3.01,
+    "t_x": 1.63,
+    "t_y": 1.38,
+    "same": false,
+    "aut": 2199023255552.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 1.29,
+    "t_x": 0.62,
+    "t_y": 0.67,
+    "same": false,
+    "aut": 2199023255552.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 2199023255552.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.635,
+    "t_x": 0.332,
+    "t_y": 0.304,
+    "same": false,
+    "ngens": 41,
+    "aut_order": "2199023255552"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.448,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2199023255552.0
+  },
+  {
+   "name": "CFIx160",
+   "family": "cfix",
+   "size": 160,
+   "n": 1600,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 2400,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 54.012,
+    "t_x": 24.018,
+    "t_y": 29.994,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 42.07,
+    "t_x": 19.71,
+    "t_y": 22.36,
+    "same": true,
+    "aut": 2.417851639229e+24
+   },
+   "dns": {
+    "status": "ok",
+    "time": 15.56,
+    "t_x": 7.92,
+    "t_y": 7.64,
+    "same": true,
+    "aut": 2.417851639229e+24
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 2.417851639229e+24
+   },
+   "canon": {
+    "status": "ok",
+    "time": 2.412,
+    "t_x": 1.205,
+    "t_y": 1.206,
+    "same": true,
+    "ngens": 81,
+    "aut_order": "2417851639229258349412352"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.619,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2.417851639229e+24
+  },
+  {
+   "name": "CFIx160-twist",
+   "family": "cfix",
+   "size": 160,
+   "n": 1600,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 2400,
+   "cert": "cfi",
+   "pyn": {
+    "status": "ok",
+    "time": 51.437,
+    "t_x": 24.426,
+    "t_y": 27.011,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 42.01,
+    "t_x": 20.08,
+    "t_y": 21.93,
+    "same": false,
+    "aut": 2.417851639229e+24
+   },
+   "dns": {
+    "status": "ok",
+    "time": 21.64,
+    "t_x": 8.72,
+    "t_y": 12.92,
+    "same": false,
+    "aut": 2.417851639229e+24
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 2.417851639229e+24
+   },
+   "canon": {
+    "status": "ok",
+    "time": 2.441,
+    "t_x": 1.235,
+    "t_y": 1.206,
+    "same": false,
+    "ngens": 81,
+    "aut_order": "2417851639229258349412352"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.556,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2.4178516392292583e+24
+  },
+  {
+   "name": "CFIx320",
+   "family": "cfix",
+   "size": 320,
+   "n": 3200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4800,
+   "cert": "cfi",
+   "pyn": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 72.01,
+    "t_x": 51.56,
+    "t_y": 20.45,
+    "same": true,
+    "aut": 2.923003274662e+48
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.06,
+    "t_x": 0.03,
+    "t_y": 0.03,
+    "same": true,
+    "aut": 2.923003274662e+48
+   },
+   "canon": {
+    "status": "ok",
+    "time": 13.264,
+    "t_x": 6.619,
+    "t_y": 6.644,
+    "same": true,
+    "ngens": 161,
+    "aut_order": "2923003274661805836407369665432566039311865085952"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 8.438,
+    "same": true
+   },
+   "iso": true,
+   "aut": 2.923003274662e+48
+  },
+  {
+   "name": "CFIx320-twist",
+   "family": "cfix",
+   "size": 320,
+   "n": 3200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4800,
+   "cert": "cfi",
+   "pyn": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 103.93,
+    "t_x": 48.57,
+    "t_y": 55.36,
+    "same": false,
+    "aut": 2.923003274662e+48
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.07,
+    "t_x": 0.04,
+    "t_y": 0.03,
+    "same": false,
+    "aut": 2.923003274662e+48
+   },
+   "canon": {
+    "status": "ok",
+    "time": 13.425,
+    "t_x": 6.776,
+    "t_y": 6.649,
+    "same": false,
+    "ngens": 161,
+    "aut_order": "2923003274661805836407369665432566039311865085952"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 7.598,
+    "same": false
+   },
+   "iso": false,
+   "aut": 2.923003274661806e+48
+  }
+ ]
+}
