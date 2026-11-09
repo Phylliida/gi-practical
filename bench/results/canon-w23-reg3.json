@@ -1,0 +1,258 @@
+{
+ "label": "w23-reg3",
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "3reg200",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.005,
+    "t_x": 0.003,
+    "t_y": 0.002,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.004,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg200-other",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "bounded_iso",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.004,
+    "t_x": 0.002,
+    "t_y": 0.002,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.004,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg1000",
+   "family": "reg3",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.34,
+    "t_x": 0.17,
+    "t_y": 0.17,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.036,
+    "t_x": 0.026,
+    "t_y": 0.011,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.024,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg1000-other",
+   "family": "reg3",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "bounded_iso",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.34,
+    "t_x": 0.17,
+    "t_y": 0.17,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.023,
+    "t_x": 0.013,
+    "t_y": 0.01,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.02,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg4000",
+   "family": "reg3",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 6000,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 13.11,
+    "t_x": 6.7,
+    "t_y": 6.41,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.121,
+    "t_x": 0.073,
+    "t_y": 0.048,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.133,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg4000-other",
+   "family": "reg3",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 6000,
+   "cert": "bounded_iso",
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 12.84,
+    "t_x": 6.42,
+    "t_y": 6.42,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.114,
+    "t_x": 0.056,
+    "t_y": 0.058,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.104,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

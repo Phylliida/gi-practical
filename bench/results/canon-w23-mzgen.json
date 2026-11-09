@@ -1,0 +1,334 @@
+{
+ "label": "w23-mzgen",
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "mz25",
+   "family": "mzgen",
+   "size": 25,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 9007199254741000.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.16,
+    "t_x": 0.04,
+    "t_y": 0.12,
+    "same": true,
+    "aut": 9007199254741000.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.055,
+    "t_x": 0.028,
+    "t_y": 0.027,
+    "same": true,
+    "ngens": 54,
+    "aut_order": "9007199254740992"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.045,
+    "same": true
+   },
+   "iso": true,
+   "aut": 9007199254741000.0
+  },
+  {
+   "name": "mz25-twist",
+   "family": "mzgen",
+   "size": 25,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "nauty",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 9007199254741000.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.21,
+    "t_x": 0.03,
+    "t_y": 0.18,
+    "same": false,
+    "aut": 9007199254741000.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.054,
+    "t_x": 0.027,
+    "t_y": 0.027,
+    "same": false,
+    "ngens": 54,
+    "aut_order": "9007199254740992"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.031,
+    "same": false
+   },
+   "iso": false,
+   "aut": 9007199254740992.0
+  },
+  {
+   "name": "mz50",
+   "family": "mzgen",
+   "size": 50,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.014120480183e+31
+   },
+   "dns": {
+    "status": "ok",
+    "time": 1.82,
+    "t_x": 0.54,
+    "t_y": 1.28,
+    "same": true,
+    "aut": 1.014120480183e+31
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.107,
+    "t_x": 0.058,
+    "t_y": 0.049,
+    "same": true,
+    "ngens": 104,
+    "aut_order": "10141204801825835211973625643008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.075,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.014120480183e+31
+  },
+  {
+   "name": "mz50-twist",
+   "family": "mzgen",
+   "size": 50,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "nauty",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.014120480183e+31
+   },
+   "dns": {
+    "status": "ok",
+    "time": 2.98,
+    "t_x": 0.54,
+    "t_y": 2.44,
+    "same": false,
+    "aut": 1.014120480183e+31
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.097,
+    "t_x": 0.058,
+    "t_y": 0.04,
+    "same": false,
+    "ngens": 104,
+    "aut_order": "10141204801825835211973625643008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.065,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0141204801825835e+31
+  },
+  {
+   "name": "mz100",
+   "family": "mzgen",
+   "size": 100,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.0,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.285550435407e+61
+   },
+   "dns": {
+    "status": "ok",
+    "time": 23.65,
+    "t_x": 2.01,
+    "t_y": 21.64,
+    "same": true,
+    "aut": 1.285550435407e+61
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.23,
+    "t_x": 0.13,
+    "t_y": 0.1,
+    "same": true,
+    "ngens": 204,
+    "aut_order": "12855504354071922204335696738729300820177623950262342682411008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.202,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.285550435407e+61
+  },
+  {
+   "name": "mz100-twist",
+   "family": "mzgen",
+   "size": 100,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "nauty",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.285550435407e+61
+   },
+   "dns": {
+    "status": "ok",
+    "time": 15.02,
+    "t_x": 2.11,
+    "t_y": 12.91,
+    "same": false,
+    "aut": 1.285550435407e+61
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.268,
+    "t_x": 0.139,
+    "t_y": 0.129,
+    "same": false,
+    "ngens": 204,
+    "aut_order": "12855504354071922204335696738729300820177623950262342682411008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.169,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.2855504354071922e+61
+  },
+  {
+   "name": "mz150",
+   "family": "mzgen",
+   "size": 150,
+   "n": 3000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4500,
+   "cert": "relabel",
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.629628781068e+91
+   },
+   "dns": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.467,
+    "t_x": 0.237,
+    "t_y": 0.229,
+    "same": true,
+    "ngens": 304,
+    "aut_order": "16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.38,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.629628781068e+91
+  },
+  {
+   "name": "mz150-twist",
+   "family": "mzgen",
+   "size": 150,
+   "n": 3000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4500,
+   "cert": "nauty",
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 1.629628781068e+91
+   },
+   "dns": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.367,
+    "t_x": 0.21,
+    "t_y": 0.157,
+    "same": false,
+    "ngens": 304,
+    "aut_order": "16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.293,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.629628781067589e+91
+  }
+ ]
+}
