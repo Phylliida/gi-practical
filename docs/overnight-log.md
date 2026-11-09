@@ -669,3 +669,10 @@ are red-teams, a LaTeX paper, and final integration.
 * Theorems A, B, C [claimed PROVEN by hand]: exact reductions from cubic Boolean equivalence to quadratic-form tuple isometry over F_2.
 * Conditional on arXiv:2610.00874 Thm 1.2 (unrefereed, partly audited): AGL/GL equivalence of cubics decided in 2^{Õ(n^{1.5})}.
   T2 instances with cubic colourings would be decided in n^{Õ(√log n)}; nothing for general STS. Prior-art search not completed.
+
+### w36-lean (done, commit 719357a; docs/w36-lean.md, lean/DegreeD/)
+* Machine-checked (3,342 lines, no sorry; axioms re-verified independently by a fresh compile): Lemma 7.1 with a parameter Λ
+  (PhaseTree.HypL.cost_le), the recurrence abstract_R_star, and the (H2) regrouping on the real scripts (aggregate_branch_fam,
+  ≤ 9 q^{2κ} disjoint-domain families). Non-vacuity shown at Λ = x and at d ≥ N.
+* NOT machine-checked: for d < N, nothing yet shows the required Good runs exist (Γ̂_d closure and the M' dispatcher); the
+  tree uses unclipped Q; tolls K are hypotheses. Estimated remaining: 5k–12k lines for Stage-1 R*; 30k–150k for machine level.
