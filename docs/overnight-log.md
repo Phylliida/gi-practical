@@ -676,3 +676,10 @@ are red-teams, a LaTeX paper, and final integration.
   ≤ 9 q^{2κ} disjoint-domain families). Non-vacuity shown at Λ = x and at d ≥ N.
 * NOT machine-checked: for d < N, nothing yet shows the required Good runs exist (Γ̂_d closure and the M' dispatcher); the
   tree uses unclipped Q; tolls K are hypotheses. Estimated remaining: 5k–12k lines for Stage-1 R*; 30k–150k for machine level.
+
+### w37-redteam-cubic (done, commit dce72f3; docs/redteam-w35-w34.md)
+* No break. Theorems A, B, C of w35 sound for all n, both directions; Theorem D sound as a conditional. w34's VC bounds, Thm 4.1 and
+  the Latin-square depth bound sound. Solutions biject with Iso(f,g).
+* Prior art: Sun, arXiv:2611.05920 (4 Nov 2026, unrefereed) covers alternating tuple isometry over Z/p^τ, so E(i)'s tuple case is no
+  longer new as a statement; it gives a second conditional route to cubics in 2^{O(n^{51/26} log n)}.
+* w39-wiki-refresh: fold w27–w37 into the wiki and repair docs/w18-latin.md.
