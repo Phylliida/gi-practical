@@ -1,0 +1,22 @@
+25-12-5-6 n=25: max|T| = 22 = n-3 (graph #0, triple (0, 1, 2), T=-22, signs s,t,u = -1,-1,-1); log_n|T| = 0.9603
+   W(V,V) n=625: exact T at the lifted triple = 478 (Lemma 4.1 predicts T^2 + R, R in [-12,12]), log_N|T| = 0.9583
+   recursion lower bound level 1: n=625, |T| >= 472, exponent 0.9564
+   recursion lower bound level 2: n=390625, |T| >= 222772, exponent 0.9564
+   recursion lower bound level 3: n=152587890625, |T| >= 49627363972, exponent 0.9564
+   recursion lower bound level 4: n=23283064365386962890625, |T| >= 2462875254809363616772, exponent 0.9564
+   recursion lower bound level 5: n=542101086242752217003726400434970855712890625, |T| >= 6065754520752287763126465784330252879699972, exponent 0.9564
+   check T^W / N at n=625: 0.765
+conf2graph.42 n=41: max|T| = 38 = n-3 (graph #3, triple (0, 1, 2), T=-38, signs s,t,u = -1,-1,-1); log_n|T| = 0.9795
+   W(V,V) n=1681: exact T at the lifted triple = 1438 (Lemma 4.1 predicts T^2 + R, R in [-12,12]), log_N|T| = 0.9790
+   recursion lower bound level 1: n=1681, |T| >= 1432, exponent 0.9784
+   recursion lower bound level 2: n=2825761, |T| >= 2050612, exponent 0.9784
+   recursion lower bound level 3: n=7984925229121, |T| >= 4205009574532, exponent 0.9784
+   recursion lower bound level 4: n=63759030914653054346432641, |T| >= 17682105521905791663019012, exponent 0.9784
+   recursion lower bound level 5: n=4065214023175683899921868126254722311886802750234881, |T| >= 312656855687811288972908945763125251391194273456132, exponent 0.9784
+conf2graph.50 n=49: max|T| = 46 = n-3 (graph #19, triple (0, 31, 42), T=46, signs s,t,u = 1,1,1); log_n|T| = 0.9838
+   W(V,V) n=2401: exact T at the lifted triple = 2110 (Lemma 4.1 predicts T^2 + R, R in [-12,12]), log_N|T| = 0.9834
+   recursion lower bound level 1: n=2401, |T| >= 2104, exponent 0.9830
+   recursion lower bound level 2: n=5764801, |T| >= 4426804, exponent 0.9830
+   recursion lower bound level 3: n=33232930569601, |T| >= 19596593654404, exponent 0.9830
+   recursion lower bound level 4: n=1104427674243920646305299201, |T| >= 384026482855827119388595204, exponent 0.9830
+   recursion lower bound level 5: n=1219760487635835700138573862562971820755615294131238401, |T| >= 147476339534616880450432472509365444944080784571801604, exponent 0.9830

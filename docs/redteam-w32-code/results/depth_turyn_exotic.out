@@ -1,0 +1,6 @@
+W(P81,P81) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound 335923200, n^2=43046721, sampled: [(3, 51, 60, [0, 1950, 4855])] [105s]
+W(Peisert81,Peisert81) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound 3023308800, n^2=43046721, sampled: [(3, 25, 60, [0, 4962, 108])] [94s]
+W(P81,Peisert81) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound None, n^2=43046721, sampled: [(3, 41, 60, [0, 1950, 4855])] [98s]
+W(lines9,lines9) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound 214990848, n^2=43046721, sampled: [(3, 10, 60, [0, 3884, 5126])] [115s]
+W(W(P9,P9),Peisert81) n=6561: n=6561, conf(n<=2000)=None, |Aut|=None, k=2 not enumerated (n large); |Aut| lower bound None, n^2=43046721, sampled: [(3, 11, 60, [0, 1950, 4855])] [105s]
+done

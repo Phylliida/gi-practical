@@ -1,0 +1,25 @@
+Lemma 4.1 exhaustive:
+  P5xP5 triples, mismatches = (3600, 0) [0s]
+  P9xP9 triples, mismatches = (254016, 0) [2s]
+  P13xP13 triples, mismatches = (2944656, 0) [22s]
+  inequivalent order-25 factors (Spence #0, #1), random 200000 generic triples:  (200000, 0)
+Conference-ness (exact C^2 = nI-J etc):
+  skew3 level 1: n=9, conference-type: True
+  skew3 level 2: n=81, conference-type: True
+  skew3 level 3: n=6561, conference-type: None
+  P5 level 1: n=25, conference-type: True
+  P5 level 2: n=625, conference-type: True
+  P9 level 1: n=81, conference-type: True
+  P9 level 2: n=6561, conference-type: None
+  P13 level 1: n=169, conference-type: True
+  skew7 level 1: n=49, conference-type: True
+  skew11 level 1: n=121, conference-type: True
+P(5): n=5, exact max p = 21/25 = 0.84000; exact max P = 0/25 = 0.00000; argmax P pair (0, 1)
+P(9): n=9, exact max p = 53/81 = 0.65432; exact max P = 6/81 = 0.07407; argmax P pair (0, 1)
+P(13): n=13, exact max p = 93/169 = 0.55030; exact max P = 8/169 = 0.04734; argmax P pair (0, 1)
+W(skew3,skew3): n=9, exact max p = 53/81 = 0.65432; exact max P = 6/81 = 0.07407; argmax P pair (0, 1)
+Constant: v=9, P_V=0.07407, inf product=0.665658, c = 0.049308
+W(P9,P9): C^2 ok = True [26s]
+n=81 (W(P9,P9)): exact max p = 1869/6561 = 0.28487, exact max P = 926/6561 = 0.14114
+Thm 4.2 level 0->1, all 324 pairs (x1,x2),(x1,y2): violations 0; min P_W/P_V = 1.9053; bound (8/9)(7/9) = 0.6914
+Thm 4.2 mirror pairs (x1,x2),(y1,x2), 324: violations 0; min P_W/P_V = 1.9053

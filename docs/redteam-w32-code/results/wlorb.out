@@ -1,0 +1,10 @@
+P(121): n=121, pairs (0,v) tested 120, trivial stabilizer 0, #1-WL cells != #orbits on 0 pairs; ex [] [1s]
+P(125): n=125, pairs (0,v) tested 124, trivial stabilizer 0, #1-WL cells != #orbits on 0 pairs; ex [] [1s]
+P(169): n=169, pairs (0,v) tested 168, trivial stabilizer 0, #1-WL cells != #orbits on 0 pairs; ex [] [2s]
+Peisert 121: n=121, pairs (0,v) tested 120, trivial stabilizer 120, #1-WL cells != #orbits on 0 pairs; ex [] [1s]
+Peisert 361: n=361, pairs (0,v) tested 52, trivial stabilizer 52, #1-WL cells != #orbits on 0 pairs; ex [] [2s]
+W(P9,P9): n=81, pairs (0,v) tested 80, trivial stabilizer 0, #1-WL cells != #orbits on 0 pairs; ex [] [0s]
+W(P13,P13): n=169, pairs (0,v) tested 168, trivial stabilizer 144, #1-WL cells != #orbits on 0 pairs; ex [] [2s]
+W(skew11,skew11): n=121, pairs (0,v) tested 120, trivial stabilizer 100, #1-WL cells != #orbits on 0 pairs; ex [] [1s]
+W2(P5): n=625, pairs (0,v) tested 90, trivial stabilizer 0, #1-WL cells != #orbits on 0 pairs; ex [] [7s]
+done
