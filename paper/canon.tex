@@ -913,8 +913,8 @@ on pairs; then apply Lemma~F4.
 Each $R_\fA$ satisfies $|\varphi(H):\varphi(R_\fA)|\ge(4/3)^k$, by Proposition~\ref{prop:cases}(2) and
 \cite[Cor.~6.5]{GNS} ($k\ge24$). The number of branches is $r\le k^6$, as in \cite[Lemma~6.7]{GNS}, where
 $\fA_{1,1}$ is paired with each $\fA_{2,j}$. The calls of BC are on domains of size at most $2k^t=d^{O(\log d)}$,
-so each costs $\exp(O((\log d)^{2c_{\mathrm{BC}}}))$, where $\exp(O((\log n)^{c_{\mathrm{BC}}}))$ is the running time
-of BC.
+so each costs $\exp(O((\log d)^{2c_{\mathrm{BC}}}))$, where $\exp(O((\log n)^{c_{\mathrm{BC}}}))$ bounds the running time
+of BC and of the isomorphism test \cite[Thm.~2.1]{Bab19} on domains of size $n$.
 
 \begin{remark}[What Theorem~A needs from BC]\label{rem:BC}
 BC is called only in Proposition~\ref{prop:opt1}, only at Option~1 nodes, where $\varphi(H)\in\{A_k,S_k\}$ and
@@ -1276,7 +1276,7 @@ only, which costs the same.
   children), plus, at leaves, $\max(d^{1+\log d},k!,d)\cdot n$. In total $2^{O(\log^2d)}n$.
 \item \emph{Total exits.} $\sum n_i\le2^{K_0\log^3d}\,n$ with every $n_i\le n/2$, for an absolute constant $K_0$.
 \item \emph{Non-recursive work.} $2^{O(\log^3d)}\cdot\big(n^{O(1)}+\exp(O((\log d)^{2c_{\mathrm{BC}}}))\big)
-  =d^{O((\log d)^{c_1})}n^{O(1)}$.
+  =d^{O((\log d)^{c_1})}n^{O(1)}$ with $c_1:=\max(2,2c_{\mathrm{BC}}-1)$.
 \end{itemize}
 
 \subsection{Proof of the time bound}\label{sec:timebound}
@@ -1288,7 +1288,7 @@ The intransitive step satisfies (B), with $\ell\ge2$. So the recursion tree has 
 depth is at most $2\log N+1$: by the choice of chain rule, every child of a (B)-node is transitive, and a
 transitive node is an (A)-node, so sizes halve at least every two levels. Hence there are at most
 $(2\log N+2)N^{K+1}$ macro nodes, each costing $d^{O((\log d)^{c_1})}N^{O(1)}$. The total is
-$N^{O((\log d)^{c_2})}$, since $d\le N$.
+$N^{O((\log d)^{c_2})}$ with $c_2:=\max(3,c_1)$, since $d\le N$.
 
 \emph{$\Gd$ instances.} A transitive constituent of size $n_i$ becomes an almost $d$-ary instance on
 $N_i:=|\Omega_i^*|\le n_i^{O(\log^2d)}$ points \cite[Thm.~4.6]{GNS}, costing $n_i^{O((\log d)^{c_2+2})}$. The
@@ -1703,6 +1703,13 @@ at most $\log_2 n!\le n\log n$, which bounds the number of rounds.
 
 \subsection{Canonical simplification and renormalization}
 
+For a set $Y$ of $\mathfrak Q$-strings and $U\subseteq\bigcup\mathfrak Q$ put $\widehat s(Y,U):=\sum_{Q\in\mathfrak Q}|Q\setminus U|\cdot m_Y(Q)^{f(d)+1}$.
+Thus $\widehat s(Y,\emptyset)$ is the $d$-virtual size of $Y$. If $Y[U]$ is simple, then $\widehat s(Y,U)$ is the
+$d$-virtual size of $Y[\bigcup\mathfrak Q\setminus U]$, since the strings on a block then differ only outside $U$; in
+general it can be larger. For $U'$ disjoint from $U$ we have
+$\widehat s(Y,U)-\widehat s(Y,U\cup U')=\sum_{Q}|Q\cap U'|\,m_Y(Q)^{f(d)+1}$, which is at least the $d$-virtual size of
+$Y[U']$, and at least $|U'|$ if $Y$ is completely occupied.
+
 \begin{named}[Lemma SIMP]
 Let $A\le\Sym(\Omega)$ be in $\Gd$, with an almost $d$-ary $A$-invariant sequence $\vec\fB$ having $\fP$ as a level; let $W\subseteq\Omega$ be
 $A$-invariant, let $F$ be a set of $\fP[W]$-strings with $A[W]\le\Aut(F)$, and let $\cZ_F$ be the $A$-invariant set of
@@ -1716,8 +1723,7 @@ occupied set $(Z^\pi)_*$ of $\fP^*$-strings, such that
 \item $W^*$ is $\Lambda^*$-invariant, $\Lambda^*[W^*]\le\Aut(F^*)$, where $F^*:=(Z^\pi)_*[W^*]$ is simple and depends only on the
   computed data, not on $Z$ or $\pi$;
 \item $Z^\pi\mapsto(Z^\pi)_*$ is injective and $(Z^{\pi r})_*=((Z^\pi)_*)^{\iota(r)}$ for $r\in A''$;
-\item the $d$-virtual size of $(Z^\pi)_*$ is at most that of $Z$, and that of $(Z^\pi)_*[\Omega^*\setminus W^*]$ is at most
-  that of $Z[\Omega\setminus W]$.
+\item the $d$-virtual size of $(Z^\pi)_*$ is at most that of $Z$, and $\widehat s((Z^\pi)_*,W^*)\le\widehat s(Z,W)$.
 \end{enumlab}
 If $F$ is simple, put $C:=A$, $\Omega^*:=\Omega$, $(Z^\pi)_*:=Z^\pi$ (nothing is done).
 \end{named}
@@ -1732,7 +1738,7 @@ every point of $\Omega$ occurs as a first coordinate. The partition $\fP'$, the 
 (claim \texttt{preserve-isomorphisms}, \src{Neu20}{1987--2002}). Moreover $Z'$ is completely occupied, $Z'[W']$ depends only on $F$,
 $\psi'(A)[W']\le\Aut(Z'[W'])$ and $Z'[W']$ is simple \src{Neu20}{2006--2029}.
 
-\emph{Step 2 (lift the sequence)} to $\vec\fB'$ \src{Neu20}{2031--2040}, a function of $(\vec\fB,F)$; only the level $\fP'$ can violate almost
+\emph{Step 2 (lift the sequence)} to $\vec\fB'$ \src{Neu20}{2031--2040} (blocks with $P\cap W=\emptyset$ handled as in Step~1, a detail omitted in the text there), a function of $(\vec\fB,F)$; only the level $\fP'$ can violate almost
 $d$-arity \src{Neu20}{2041--2046}.
 
 \emph{Step 3 (balance).} Apply Lemma~S to the string $x(Z'):\fP'\to\mathbb N^2$,
@@ -1754,9 +1760,15 @@ $(f'(P^*),x)\in Z''$, the set $F^*$ is simple and determined by the computed dat
 Complete occupancy of $(Z^\pi)_*$ is immediate from (VII) and the complete occupancy of $Z''$. (S3): $f'$ is
 onto $\fP'$ (otherwise (VIII) fails for two sets differing on a block outside the image); each $P^*$ is mapped
 bijectively onto $f'(P^*)$ by $f$ ((III), (V)), so $x\circ f$ determines $x$; equivariance is (VIII) applied to $\fX:=Z''$,
-$\mathfrak Y:=Z''^{r}$, together with Step~1. (S4) is the estimate in the proof of properties (F), (G) of
-\cite[Thm.~4.17]{Neu20} \src{Neu20}{2115--2141}, which uses only (I)--(V) and \texttt{respect-block-sizes}; it holds with
-$\fX_1:=Z^\pi$, $\fX_1'=\fX_1'':=Z''$ and $\Gamma'':=A'''$; (S4) for $(Z^\pi)_*[\Omega^*\setminus W^*]$ is proved in the same way.
+$\mathfrak Y:=Z''^{r}$, together with Step~1. (S4): the first bound is the estimate in the proof of property (F) of
+\cite[Thm.~4.17]{Neu20} \src{Neu20}{2115--2141}, which uses only (I)--(V) and the first half of \texttt{respect-block-sizes}; it holds with
+$\fX_1:=Z^\pi$, $\fX_1'=\fX_1'':=Z''$ and $\Gamma'':=A'''$. For the second bound, the same computation with $|P'|$ replaced by $|P'\setminus W'|$ applies:
+by (III), (V), (VII),
+$\widehat s((Z^\pi)_*,W^*)=\sum_{P'}|P'\setminus W'|\,m_{Z''}(P')^{f(d)+1}\,|(f')^{-1}(P')|$. For a block $P$ of $\fP$ put $B_P:=\bigcup_zP\times\{z\}$. Every copy $P'$ of $P$ has $|P'\setminus W'|=|P\setminus W|$, and on
+an orbit $A$ of $(A''')_{B_P}$ on the copies of $P$ the value $m_{Z''}(P')=:m(A)$ is constant. So by (IV) the contribution of $P$ is at most
+$|P\setminus W|\sum_A(|A|\,m(A))^{f(d)+1}\le|P\setminus W|\,(\sum_A|A|\,m(A))^{f(d)+1}=|P\setminus W|\,m_{Z^\pi}(P)^{f(d)+1}$, and the sum over $P$ is
+$\widehat s(Z^\pi,W)=\widehat s(Z,W)$, since $\pi\in A$ and $W$ is $A$-invariant.
+(Neuen's property (G), the same bound for the virtual size of the restriction $(Z^\pi)_*[\Omega^*\setminus W^*]$, is false in general; see Remark~\ref{rem:neu20}(3). It is not used.)
 
 In the language of ECMs: $C$ is an $A$-ECM because $x(Z'^{\psi'(a)})=x(Z')^{\psi'(a)}$ (action on $\fP'$) and the Theorem~A
 canonizer of $x(Z')$ is equivariant; and $Z\mapsto Z'$ and $Z''\mapsto(Z^\pi)_*$ are the changes of action of Lemma~E3 (using
@@ -1825,9 +1837,11 @@ $H_0$-invariant.
 \emph{Invariants.} (I1) and (I2) are (S1), (S2) of Lemma~SIMP. (I3) follows from (S3), the claim
 \texttt{preserve-isomorphisms} and property (VIII) of \cite[Thm.~4.9]{Neu20}, and the fact that balancing
 and windowing only pass to subgroups containing the relevant automorphisms (Lemma~E1). (I5) holds at the start by
-hypothesis and is preserved by (S3); it is needed for strict monotonicity of the virtual size. (I4) is Neuen's
-argument \src{Neu20}{2400--2412}: $W'\neq\emptyset$ strictly lowers $s'$ \cite[Obs.~4.12]{Neu20} (using (I5)), and Simplify does
-not raise it (S4). Hence there are at most $s$ rounds.
+hypothesis and is preserved by Lemma~SIMP, whose objects are completely occupied; it is needed for strict monotonicity of the virtual size.
+(I4): the bound on the virtual size of $(Z^\pi)_*$ is (S4). For the second statement let $Y:=(Z^\pi)_*$ at round $i$. Since $F_i$ is simple,
+$s'_i=\widehat s(Y,W_i)$. Extending the window gives $\widehat s(Y,W_i\cup W')\le s'_i-|W'|$ by (I5) (the object changes only by elements of the right
+group during the round, which does not change $\widehat s$), and Simplify does not raise $\widehat s$ (S4), so
+$s'_{i+1}=\widehat s(Y_{i+1},W_{i+1})\le\widehat s(Y,W_i\cup W')<s'_i$. This corrects Neuen's argument \src{Neu20}{2400--2412}, which uses his property (G) (Remark~\ref{rem:neu20}(3)). Hence there are at most $s$ rounds.
 
 \emph{(LC2)} holds by the tests at (a) and (c).
 
@@ -1843,8 +1857,8 @@ $R_i$. Equivariance follows from (LC1).
 \cite[Lemma~4.7]{Neu20} (= \cite[Thm.~6(b)]{Bab16}) is applied to $\Lambda'$ itself, which is a giant by test (c);
 the orbits in $W'$ are affected for $\Lambda'$ because $\Aff$ is antimonotone. So each $N'$-orbit in a $\Lambda'$-orbit
 $O$ has size at most $|O|/t$, and the $(R\cap N')$-orbits lie inside $N'$-orbits. Since $(Z^\pi)_*[O]$ is balanced
-(Lemma~B), each piece has virtual size at most $s/2$ \cite[Obs.~4.13]{Neu20}. Over the rounds the window
-virtual sizes sum to at most $s$ \src{Neu20}{2425--2434}; with the $t!$ cosets the total is at most $t!\,s$.
+(Lemma~B), each piece has virtual size at most $s/2$ \cite[Obs.~4.13]{Neu20}. Since the virtual size of $Y[W']$ is at most
+$\widehat s(Y,W_i)-\widehat s(Y,W_i\cup W')\le s'_i-s'_{i+1}$, the window virtual sizes sum to at most $s$ over the rounds (this is the accounting of \src{Neu20}{2425--2434} with $\widehat s$ in place of $t_i$); with the $t!$ cosets the total is at most $t!\,s$.
 The calls of Theorem~A (Lemmas~B, W and SIMP) are polynomially many, on domains of polynomial size.
 \end{proof}
 
@@ -1868,8 +1882,8 @@ canonizing at the level $H_0$ at which the windows are defined.
 In the setting of \cite[Lemma~4.29]{Neu20}, for a single $\fX$ (and $\Gamma'$, $\varphi$, $t<k/10$ as there), one
 computes one of:
 \begin{enumlab}{\roman}
-\item a family $\{\fA_j(\fX)\}_{j\le k^6}$ of $t$-ary structures on subsets $V_j\subseteq[k]$ with $|V_j|\ge3k/4$, each
-  of relative symmetry defect at least $1/4$, equivariant as a family:
+\item a family $\{\fA_j(\fX)\}_{j\le k^6}$ of $t$-ary structures on subsets $V_j\subseteq[k]$ with $|V_j|\ge3k/4-4$ (the $4$ being the individualized points, as in Proposition~\ref{prop:cases}), each,
+  viewed as a structure on $[k]$ with $V_j$ marked, of relative symmetry defect at least $1/4$, equivariant as a family:
   $\{\fA_j(\fX^h)\}=\{\fA_j(\fX)\}^{\varphi(h)}$;
 \item a pair $(M(\fX),\Delta(\fX))$ with $|M|\ge3k/4$, $\Delta\le\Aut_{\Gamma'_M}(\fX)$ and $\varphi(\Delta)[M]\ge\Alt(M)$, both
   equivariant.
@@ -1979,7 +1993,7 @@ Chain, Luks, Agg or CanLC, has strictly smaller measure than $I$.
   $(4/3)^k>1$ in $G'\le\Gamma$ (Proposition~\ref{prop:opt1}, Lemma~\ref{lem:K}, \cite[Cor.~4.28]{Neu20}), and the virtual size is unchanged,
   since the object is only transported.
 \end{enumerate}
-Calls of Theorem~A, Corollary~D and BC are calls of other algorithms, which terminate. So CanHyp terminates, and we
+Moreover Chain has at most $|\Omega|$ stages, Lemma~B at most $n\log n$ rounds, and the loop of CanLC at most $s$ rounds (by (I4) of Lemma~LC). Calls of Theorem~A, Corollary~D and BC are calls of other algorithms, which terminate. So CanHyp terminates, and we
 may prove the rest by induction on $\mu$, assuming that the recursive calls of CanHyp return canonizers
 (Lemma~LC and Lemma~AGG were stated and proved under this assumption).
 
@@ -2034,16 +2048,16 @@ which pass to subgroups. With the choice of Remark~\ref{rem:gap1}, \cite[Lemma~4
 $\sum s_i\le2^{O(\log^3d)}s$ at a node with $s_i\le s/2$, and \cite[Lemma~2.6]{Neu20} then gives
 $s^{O(\log^3d)}(n+m)^{\polylog d}$. With $s\le(n+m)^{O(\log d)}$ this is $(n+m)^{O((\log d)^{c'})}$. What is
 missing is a written transfer of Neuen's accounting \cite[Lemma~4.36, Lemma~2.6]{Neu20} to the canonical
-recursion, including the two points of Remark~\ref{rem:neu20}.
+recursion, including the three points of Remark~\ref{rem:neu20}.
 \end{proofsketch}
 \status{Correctness (algorithm CanHyp, Proposition~\ref{prop:canhyp}): proof modulo Theorem~A; \cite[Thms.~4.8, 4.9, 4.17]{Neu20} (constructions and the listed
-properties), \cite[Lemma~4.16]{Neu20}, the virtual-size facts \cite[Obs.~4.12, 4.13, Lemma~4.14]{Neu20};
+properties, except (G) of Thm.~4.17, which is not used and which fails as stated, Remark~\ref{rem:neu20}(3)), \cite[Lemma~4.16]{Neu20}, the virtual-size facts \cite[Obs.~4.12, 4.13, Lemma~4.14]{Neu20};
 \cite[Thm.~5.8]{GNS}; \cite[Thm.~6(b)]{Bab16}; the CFSG facts of the aggregation \cite[Thm.~4.31,
 Lemma~4.32]{Neu20}; \cite[Lemma~7.1]{GNS}; BC; canonical generating sets; and requirement~\ref{D3}, which
 includes the structure-graph lemma of Neuen's dissertation \cite[Lemma~6.1.17]{Neu19}, which we have not
 seen. Running time: \textbf{proof sketch}.}
 
-\begin{remark}[Two points about Neu20 as written]\label{rem:neu20}
+\begin{remark}[Three points about Neu20 as written]\label{rem:neu20}
 \begin{enumerate}
 \item The potential argument in the proof of \cite[Lemma~4.36]{Neu20} contains the step discussed in
   Remark~\ref{rem:gap1} \src{Neu20}{2716}, and the choice of block system \src{Neu20}{2683} is equally
@@ -2057,6 +2071,15 @@ seen. Running time: \textbf{proof sketch}.}
   small, and the bound $s_i\le s/2$ is not justified as written. Testing $\psi(\Lambda')$ immediately after
   balancing, as in step (c) of CanLC, fixes this; correctness of Neu20 is unaffected. Whether the journal
   version handles this we do not know.
+\item \emph{Virtual size outside the window (bound on the iterations and the cost accounting).} Property~(G) of \cite[Thm.~4.17]{Neu20}
+  \src{Neu20}{1961} is false as stated. Take $\Gamma=1$, $\fP=\{\{a,b\},\{c,d\}\}$, $W=\{a,c\}$ and let $\fX$ consist of the strings
+  $(a,b)\mapsto(0,0),(1,0)$ on the first block and $(c,d)\mapsto(0,0)$ on the second. Then $\fX[\Omega\setminus W]$ has virtual size $2$, but the two
+  copies of $\{a,b\}$ made in Simplify each carry one string on the copy of $b$, so $\fX'[\Omega'\setminus W']$ has virtual size $3$, and Renormalize cannot lower
+  this because $f'$ is onto and $|P^*|=|f'(P^*)|$. The proof of (F) does not carry over (``analogously'', \src{Neu20}{2141}): strings on one block with different
+  window parts may agree outside the window, so the multiplicities of the copies may add up to more than the
+  multiplicity of the block's outside part. The loop bound and the size sum in the proof of
+  \cite[Thm.~4.24]{Neu20} \src{Neu20}{2400--2434} rest on (G); they survive with $\widehat s$ (property (S4) of Lemma~SIMP), which on the simplified
+  instances equals the virtual size of the outside part. We do not use (G).
 \end{enumerate}
 There is also a harmless typo: ``$\ker\psi=N_{(\mathfrak B)}$'' \src{Neu20}{2687} should read $N_{(\mathfrak C)}$.
 \end{remark}
@@ -2470,7 +2493,7 @@ H4 & \textbf{conditional} on Theorem~H, H1, H2; \textbf{sketch}; parameter-free 
 FPT treewidth canonization & speculation; no claim\\
 Remark~\ref{rem:gap1} & question about the written proof of \cite[Lemma~7.2]{GNS}; the proposed choice is proved to work (Lemma~\ref{lem:potential})\\
 Remark~\ref{rem:gap2} & presentation point in \cite[Thm.~7.3]{GNS}; covered by Lemma~REC\\
-Remark~\ref{rem:neu20} & two points in the cost analysis of \cite{Neu20}; correctness of Neu20 unaffected\\
+Remark~\ref{rem:neu20} & three points in the cost analysis of \cite{Neu20}; correctness of Neu20 unaffected\\
 \bottomrule
 \end{tabularx}
 \end{center}
