@@ -515,3 +515,5 @@ are red-teams, a LaTeX paper, and final integration.
 * w16-ckernel: compiled kernel for hot primitives (Python stays as fallback and reference).
 * w17-affine (moonshot): beat 2^{O(k²)} for affine equivalence of arbitrary k-variable functions, the
   provably tight instance of HJ's enumeration channel.
+* w18-latin (moonshot): n^{o(log n)} for Latin square or Steiner triple system isomorphism; does any graph
+  family force n^{log n} on HJ's algorithm?
