@@ -703,3 +703,10 @@ are red-teams, a LaTeX paper, and final integration.
 * "Cost" is Σ w over nodes, a tree-size bound with an abstract weight, not machine time. Nothing in lean/DegreeD/ is about graphs, running
   time or a machine. Gap to the English claim: no program, w is not time, Supply for d > q₀, Luks reduction, trusted axioms.
 * w42-lean-supply: Supply for D > q₀ and the abstract Luks reduction.
+
+### w42-lean-supply (merged, commit f03df03; docs/w42-lean-supply.md): STATEMENT DEFECT FOUND
+* Real: `Supply.ofGiant` and `degreeD_stage1_cited` (runs exist for every d) and the Luks layer lemmas (extf_isIso, readStep_*, gammaHat_wreath).
+* DEFECT: `graphIso_final` / `graphIso_general` / `graphIso_connected` are trivially true as stated. `Script.done a` may carry any value, built
+  classically, so `s := done {iso set}` with zero calls satisfies the conclusion with C = 0. Proved in Lean: docs/vacuity-graphIso-final.lean.txt
+  (axioms: the 3 standard ones). The proof does build a real reduction, but the statement does not expose it. Do NOT cite these theorems as they stand.
+* w43-lean-statement: restate so that the trivial witness fails.

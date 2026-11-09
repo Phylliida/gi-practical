@@ -1,0 +1,12 @@
+import DegreeD.Luks.Final
+import DegreeD.Luks.Components
+open Equiv Equiv.Perm GI.Algorithm GI.DegreeD
+/-- The conclusion of `graphIso_final`, for any `P`, by the script that makes no calls. -/
+theorem trivial_witness (P : Params) (n d : ℕ) (X Y : SimpleGraph (Fin n)) :
+    ∃ (s : Script (Set (Perm (Fin n)))) (e : M.Exec P s s.evalExact),
+      s.evalExact = {g | ∀ a b, X.Adj a b ↔ Y.Adj (g a) (g b)} ∧
+      s.CallsExact (fun {_ _} m T => m = .solve ∧ GammaHat d T.G ∧ (T.size : ℝ) ≤ 3 * (n : ℝ) ^ 4) ∧
+      e.total (fun _ => (1 : ℝ)) ≤ Real.exp (0 * (Real.log ((d : ℝ) + 2) * Real.log ((n : ℝ) + 2))) := by
+  refine ⟨Script.done _, .done _, rfl, trivial, ?_⟩
+  simp [M.Exec.total]
+#print axioms trivial_witness
