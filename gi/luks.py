@@ -230,7 +230,12 @@ def _giant_points(G, x, run):
 
 
 def _ea_possible(G):
-    """A cheap necessary condition (generators of PermGroup are irredundant)."""
+    """A cheap necessary condition for G to be elementary abelian, exact on every
+    group that reaches it: generators accepted by PermGroup are irredundant, and
+    the kernels of ActionHom/RestrictionHom (a level S[m] of a chain) have as many
+    strong generators as their rank when elementary abelian, since each one
+    appended to S[m] enlarged <S[m]> and so doubled it. So the test reads the group,
+    not the generating set (tests/test_luks.py)."""
     return G.order() == 1 << len(G.gens)
 
 

@@ -4,6 +4,7 @@ string), Aut against enumeration of the group, method selection, and the
 adversarial families of bench/adversary.py (forms equal under relabelling,
 different on non-isomorphic pairs, Aut checked, no exponential path used at
 degree <= 5)."""
+import math
 import random
 import sys
 from collections import Counter
@@ -11,7 +12,7 @@ from collections import Counter
 import networkx as nx
 import pytest
 
-from gi.group import PermGroup
+from gi.group import PermGroup, ActionHom, RestrictionHom
 from gi.luks import luks_canon, LimitExceeded, enum_limit_default
 from gi.perm import act, mul, inv, sym_gens, alt_gens, cycle
 from gi.canon import canonical_form_lists, canonical_labeling_lists, relabel_lists, _form_of
@@ -306,3 +307,110 @@ def test_ir_path_kept_for_large_twin_blocks():
     rng = random.Random(1)
     Y = relabel_lists(X, rng.sample(range(nb), nb))
     assert canonical_form_lists(Y) == f1 and canonical_form_lists(Y, guarantee=True) == f2
+
+
+# -- referee tests (docs/redteam-w40-solvable.md) ---------------------------------------------------
+def test_palfy_wolf_constant_exact():
+    """Wolf 1982, Theorem 3.1 and Corollary 3.3: a solvable primitive group of degree k has order at most
+    k^(alpha + 1) / 24^(1/3), alpha = (3 log 48 + log 24) / (3 log 9) = 2.24399...; equality for AGL(2, 3)
+    at k = 9, so the exponent cannot be rounded down."""
+    alpha = (3 * math.log(48) + math.log(24)) / (3 * math.log(9))
+    bound = lambda k: k ** (alpha + 1) / 24 ** (1 / 3)
+    assert math.isclose(bound(9), 432)
+    assert 24 ** (-1 / 3) * 9 ** 3.2439 < 432            # (3.2439 is too small at k = 9)
+    for k in (2, 3, 4, 5, 7, 8, 9, 16, 25, 27, 81, 256, 625, 729, 6561, 3 ** 12):
+        assert bound(k) < k ** 4 <= enum_limit_default(k) or k < 7
+
+
+@pytest.mark.parametrize("seed", range(20))
+def test_ea_kernels_have_a_basis_as_generators(seed):
+    """The elementary abelian test of gi.luks reads the number of generators: a kernel must not have
+    redundant ones, whatever generating set of G it came from."""
+    rng = random.Random(seed)
+    a = rng.randint(2, 5)
+    m = 1 << a
+    n = 2 * m
+    gens = []
+    for i in range(a):
+        g = list(range(n))
+        for x in range(m):
+            g[x] = x ^ (1 << i)
+            g[m + x] = m + (x ^ (1 << ((i + 1) % a)))
+        gens.append(tuple(g))
+    swap = tuple(list(range(m, n)) + list(range(m)))
+    base = gens + [swap]
+
+    def rnd():
+        e = tuple(range(n))
+        for _ in range(12):
+            e = mul(e, rng.choice(base))
+        return e
+    G = PermGroup(n, [rnd() for _ in range(rng.randint(3, 8))] + base)
+    side = lambda g: (0 if g[0] < m else 1, 0 if g[m] < m else 1)
+    N = ActionHom(G, 2, side).kernel()
+    assert N.order() == 1 << len(N.gens)
+    F = PermGroup(n, gens + [tuple(rng.sample(gens, 1)[0])])    # (intransitive: O1, O2 orbits)
+    N2 = RestrictionHom(F, list(range(m))).kernel()
+    assert N2.order() == 1 or N2.order() == 1 << len(N2.gens)
+
+
+def twin_gadget(k, t):
+    """A binary tree with a tail on its root; k of its leaves (all at one depth) carry a twin t-set each;
+    t further vertices each joined to the j-th twin of every such leaf. Twin blocks have size t, maximum degree is
+    max(k, t + 1), and the up-set of a further vertex has t^k images under the group."""
+    D = 0
+    while (1 << D) < k:
+        D += 1
+    nbr, level = [[]], [0]
+    for _ in range(D):
+        nxt = []
+        for p in level:
+            for _ in range(2):
+                v = len(nbr)
+                nbr.append([p])
+                nbr[p].append(v)
+                nxt.append(v)
+        level = nxt
+    W = [[] for _ in range(t)]
+    for s in level[:k]:
+        for j in range(t):
+            v = len(nbr)
+            nbr.append([s])
+            nbr[s].append(v)
+            W[j].append(v)
+    for j in range(t):
+        w = len(nbr)
+        nbr.append(list(W[j]))
+        for a in W[j]:
+            nbr[a].append(w)
+    prev = 0
+    for _ in range(4):
+        u = len(nbr)
+        nbr.append([prev])
+        nbr[prev].append(u)
+        prev = u
+    return nbr
+
+
+def test_product_action_section_at_degree_5():
+    """Sym(3) wr D4 in product action on 81 up-sets (primitive, solvable): degree 5, one listed node, no
+    exponential path, forms invariant."""
+    X = twin_gadget(4, 3)
+    assert max(map(len, X)) <= 5
+    st = Counter()
+    fx, _ = check_labeling(X, st)
+    assert st["canon_phase1_max_degree"] == 81
+    assert st["canon_ir"] == 0 and st["canon_luks_fallback"] == 0 and st["canon_perm_nodes"] == 0
+    rng = random.Random(1)
+    assert canonical_form_lists(relabel_lists(X, rng.sample(range(len(X)), len(X)))) == fx
+
+
+def test_twin_blocks_alone_do_not_bound_the_position_domain():
+    """Theorem A of docs/w40-solvable.md is polynomial only for bounded degree: with twin blocks of 3 and
+    degree k the phase-1 domain has 3^k points (the bound m <= 2 n^d is attained in spirit)."""
+    Y = twin_gadget(6, 3)                               # twin blocks of 3, degree 6
+    st = Counter()
+    canonical_labeling_lists(Y, stats=st)
+    assert max(map(len, Y)) == 6
+    assert st["canon_phase1_max_degree"] == 3 ** 6
+    assert st["canon_ir"] == 0 and st["canon_luks_fallback"] == 0
