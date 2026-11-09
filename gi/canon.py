@@ -273,6 +273,57 @@ def _ea_possible(G):
     return G.order() == 1 << len(G.gens)
 
 
+class _LazyGroup:
+    """A permutation group by a generating set (a list, equal to what PermGroup
+    would keep of it) and its known order; the stabilizer chain (PermGroup) is
+    only built when something needs it (real()). Enough for the layers of the
+    canonizer where the string is invariant under the group."""
+    __slots__ = ("n", "gens", "_order", "_pg")
+
+    def __init__(self, n, gens, order):
+        self.n, self.gens, self._order, self._pg = n, gens, order, None
+
+    def order(self):
+        return self._order
+
+    def real(self):
+        if self._pg is None:
+            self._pg = PermGroup(self.n, self.gens, order=self._order)
+        return self._pg
+
+
+def _orbit_index(acts, m, deg):
+    """orb[p] = the index of the orbit of position p under the permutations acts
+    (of degree deg >= m, or None if there are none: every point its own orbit);
+    only points below m are returned."""
+    if deg is None:
+        return None
+    if _ck is not None:
+        orbs = _ck.orbits(deg, acts)
+        if orbs is not None:
+            lab = [0] * deg
+            for i, o in enumerate(orbs):
+                for p in o:
+                    lab[p] = i
+            return lab
+    lab = [-1] * deg
+    nxt = 0
+    for s in range(deg):
+        if lab[s] >= 0:
+            continue
+        lab[s] = nxt
+        stack = [s]
+        while stack:
+            q = stack.pop()
+            for a in acts:
+                r = a[q]
+                if lab[r] < 0:
+                    lab[r] = nxt
+                    stack.append(r)
+        nxt += 1
+    return lab
+
+
 def canon_group(G, n, pos, pidx, x, image, stats, tag="", acts=None):
     """Canonize the string x on the positions pos (ordered; pidx: position ->
     index) under the action of G (an EA2 or PermGroup on range(n)), where
@@ -292,6 +343,9 @@ def canon_group(G, n, pos, pidx, x, image, stats, tag="", acts=None):
         stats["canon_invariant"] += 1
         return None, G
     E = _as_ea(G, n)
+    if isinstance(G, _LazyGroup):       # (from here on a stabilizer chain is needed)
+        G = G.real()
+        gens = G.gens
     if E is not None:
         stats["canon_ea" + tag] += 1
         c, N = EAAction(len(E.gens), acts, len(pos)).canon(x)
@@ -602,16 +656,28 @@ class RootedCanon:
         for U, ts in att.items():
             occ[frozenset([lab[i] for i in U])] = ts
         table = acts1 = None            # the action of A on the positions, computed once
-        if sparse:
-            S_list, table = _closure_sparse(occ, A, _set_image_sparse)
+        res = None
+        if _ck is not None:             # (compiled closure: pos sorted, the table on indices)
+            res = (_ck.closure_sparse(list(occ), A.gens, A.who, 0) if sparse
+                   else _ck.closure_dense(list(occ), A.gens, 0))
+        if res is not None:
+            pos, tb = res
+            if sparse:
+                table = tb
+            else:
+                acts1 = tb
+            pidx = {S: i for i, S in enumerate(pos)}
         else:
-            S_list, rows = _closure_dense(occ, A.gens, _set_image)
-        pos = sorted(S_list, key=lambda S: tuple(sorted(S)))
-        pidx = {S: i for i, S in enumerate(pos)}
-        if sparse:
-            table = _table_to_pos(table, S_list, pidx)
-        else:
-            acts1 = _rows_to_pos(rows, S_list, pidx)
+            if sparse:
+                S_list, table = _closure_sparse(occ, A, _set_image_sparse)
+            else:
+                S_list, rows = _closure_dense(occ, A.gens, _set_image)
+            pos = sorted(S_list, key=lambda S: tuple(sorted(S)))
+            pidx = {S: i for i, S in enumerate(pos)}
+            if sparse:
+                table = _table_to_pos(table, S_list, pidx)
+            else:
+                acts1 = _rows_to_pos(rows, S_list, pidx)
         vt = {S: tuple([col[t] for t in ts]) for S, ts in occ.items()}
         code = {v: i + 1 for i, v in enumerate(sorted(set(vt.values())))}
         x = [0] * len(pos)
@@ -728,23 +794,34 @@ class RootedCanon:
         if not E2:
             return H
         if isinstance(H, SparseEA):
-            pl0, table2 = _closure_sparse(E2, H, _pair_image_sparse)
-            pl = sorted(pl0)
-            pidx2 = {e: i for i, e in enumerate(pl)}
+            res = _ck.closure_sparse(list(E2), H.gens, H.who, 1) if _ck is not None else None
+            if res is not None:
+                pl, table2 = res
+                pidx2 = {e: i for i, e in enumerate(pl)}
+            else:
+                pl0, table2 = _closure_sparse(E2, H, _pair_image_sparse)
+                pl = sorted(pl0)
+                pidx2 = {e: i for i, e in enumerate(pl)}
+                table2 = _table_to_pos(table2, pl0, pidx2)
             x2 = [1 if e in E2 else 0 for e in pl]
             st["canon_phase2_max_degree"] = max(st["canon_phase2_max_degree"], len(pl))
-            h0, _ = canon_sparse(H, pl, _table_to_pos(table2, pl0, pidx2), x2, st, "_p2")
+            h0, _ = canon_sparse(H, pl, table2, x2, st, "_p2")
             A2 = H
             if h0 is not None:
                 self._apply(lab, linv, h0, c, True)
         else:
-            pl0, rows2 = _closure_dense(E2, H.gens, _pair_image)
-            pl = sorted(pl0)
-            pidx2 = {e: i for i, e in enumerate(pl)}
+            res = _ck.closure_dense(list(E2), H.gens, 1) if _ck is not None else None
+            if res is not None:
+                pl, acts2 = res
+                pidx2 = {e: i for i, e in enumerate(pl)}
+            else:
+                pl0, rows2 = _closure_dense(E2, H.gens, _pair_image)
+                pl = sorted(pl0)
+                pidx2 = {e: i for i, e in enumerate(pl)}
+                acts2 = _rows_to_pos(rows2, pl0, pidx2)
             x2 = [1 if e in E2 else 0 for e in pl]
             st["canon_phase2_max_degree"] = max(st["canon_phase2_max_degree"], len(pl))
-            h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2",
-                                 _rows_to_pos(rows2, pl0, pidx2))
+            h0, A2 = canon_group(H, c, pl, pidx2, x2, _pair_image, st, "_p2", acts2)
             if h0 is not None:
                 self._apply(lab, linv, h0, c, False)
             A2 = _as_sparse_ea(A2, c) or A2
@@ -816,10 +893,18 @@ class RootedCanon:
 
     @staticmethod
     def _perm_H(U1, acts, blocks, sym, b, c):
-        """H as a PermGroup from a PermGroup U1, with acts[i][p] = the image of
-        position p under U1.gens[i]."""
+        """H = rho(U1) x| prod Sym(blocks) from a PermGroup U1, with acts[i][p] =
+        the image of position p under U1.gens[i], as a _LazyGroup: its .gens are
+        exactly those of PermGroup(c, hU + sg, order=|H|) (the generators
+        of U1 extended rank-wise, the generators of the Sym of the first block
+        of each U1-orbit of positions, for each color block: a Sym generator of
+        another block of that orbit, same rank range, is conjugate under the
+        extension of the U1-element mapping the position, so redundant; a
+        generator of a block in a new orbit is never redundant, since
+        rank-wise extensions act trivially inside a block), and its stabilizer
+        chain is built only if something asks for it (see _LazyGroup)."""
         hU = []
-        items = [(p, labs) for p, labs in blocks.items()]
+        items = list(blocks.items())
         for u, act in zip(U1.gens, acts):
             full = list(u) + [0] * (c - b)
             for p, labs in items:
@@ -827,8 +912,18 @@ class RootedCanon:
                     full[l] = l2
             hU.append(tuple(full))
         order = U1.order() * prod(factorial(len(bl)) for _, bl in sym)
-        sg = [tuple(range(b)) + tuple(h[b:]) for _, bl in sym for h in sym_gens(c, bl)]
-        return PermGroup(c, hU + sg, order=order)
+        sg = []
+        if sym:
+            orb = _orbit_index(acts, max(p for p, _ in sym) + 1, len(acts[0]) if acts else None)
+            seen = set()
+            base = tuple(range(b))
+            for p, bl in sym:
+                key = (orb[p] if orb is not None else p, bl[0] - blocks[p][0])
+                if key not in seen:
+                    seen.add(key)
+                    for h in sym_gens(c, bl):
+                        sg.append(base + tuple(h[b:]))
+        return _LazyGroup(c, hU + sg, order)
 
 
 # -- connected graphs and whole graphs -----------------------------------------------------

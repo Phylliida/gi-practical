@@ -1069,7 +1069,12 @@ def _truncated_profiles(g, edges, C, use_col):
     cur = [1 << v for v in range(n)] if balls is None else None
     key = list(col)
     k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
-    while min(Counter(k1).values()) > STAGE1_SMALL:
+    # k1 only matters through the partition of C it induces, which can only change when the
+    # partition of the vertices by key does (key is refined each round): recomputed only then
+    smallest = min(Counter(k1).values())
+    ndist = len(set(key))
+    stale = False
+    while smallest > STAGE1_SMALL:
         if balls is not None:
             counts = _ck.balls_step(balls)
             if counts is None:
@@ -1091,6 +1096,14 @@ def _truncated_profiles(g, edges, C, use_col):
         sig = list(zip(key, counts))
         rank = {x: i for i, x in enumerate(sorted(set(sig)))}
         key = [rank[x] for x in sig]
+        if len(rank) != ndist:
+            ndist = len(rank)
+            k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
+            smallest = min(Counter(k1).values())
+            stale = False
+        else:
+            stale = True
+    if stale:                           # (the names may have changed, not the partition)
         k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
     return k1
 
