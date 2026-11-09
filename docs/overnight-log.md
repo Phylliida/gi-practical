@@ -571,3 +571,4 @@ are red-teams, a LaTeX paper, and final integration.
 * No transfer to GI: natural fixed-width encodings have about n² variables, and Sec. 4's M ≥ 32b²(b+w) rules out
   affine equivalence and tensor isomorphism as written.
 * The ETH barrier is re-based on CLIQUE-LB (notes added to the five memos); it survives if ETH fails.
+* w25-wiki: a wiki under wiki/ covering everything done, learned and tried.
