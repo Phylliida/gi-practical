@@ -591,3 +591,11 @@ are red-teams, a LaTeX paper, and final integration.
   incremental Schreier scans. Paired: xl hybrid 4.85s → 3.07s; xl ir=0 55.0s → 37.5s; 112 outputs identical.
 * Merge note: the work-budget charge is now len(T)·len(news)·n/32, charging only generators actually scanned;
   tests/test_stage_memo.py pinned to method="hybrid" because auto dispatch sends small graphs elsewhere.
+
+### w23-speed2 (done, merged; docs/w23-speed2.md)
+* Compiled the bounded and canonical hot paths; verified-automorphism probe skips root edges; layer group H built
+  without Schreier–Sims. Hypercube diagnosis (Q12): union-find on all oriented edges and repeated rooted runs,
+  not perm_canon.
+* Paired canon: CFI n=3200 1.40→0.43s; Miyazaki n=3000 1.84→0.47s; Q12 4.83→0.57s; 3-reg n=4000 0.25→0.11s;
+  ns n=5632 3.63→1.43s. Traces still ahead except on multipedes (about 7× CFI, 23× Miyazaki, 14–29× Q12).
+* After the merge: 2679 passed (kernel on), 1910 passed (off); bench 56/56 in 3.3s; irhard audit ran.

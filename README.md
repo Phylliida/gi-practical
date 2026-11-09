@@ -360,11 +360,12 @@ an affine F_2 coset by Gaussian elimination (`EAAction.canon`), and other groups
 over a stabilizer chain with automorphism pruning (`perm_canon`, exact but exponential in the worst
 case).
 
-On Neuen–Schweitzer's rigid multipedes, computing both forms of a pair takes 1.25 s at n = 2464 and
-4.2 s at n = 5632, while pynauty, dense nauty, sparse nauty and Traces each exceed 600 s from
-n = 2464 on. Traces remains far ahead elsewhere (random 3-regular n = 4000: 0.01 s per graph against
-0.24 s; CFI n = 3200: 0.06 s per pair against 13 s), and sparse nauty and Traces on hypercubes. See
-docs/w9-canontool.md, including §3.4 on where it loses; `bench/canon.py` reproduces the tables.
+On Neuen–Schweitzer's rigid multipedes, computing both forms of a pair takes 0.34 s at n = 2464 and
+1.4 s at n = 5632 with the compiled kernel (docs/w23-speed2.md), while pynauty, dense nauty, sparse nauty and Traces
+each exceeded 600 s from n = 2464 on when last measured for that long (docs/w9-canontool.md). Traces remains ahead elsewhere
+(random 3-regular n = 4000: 0.02–0.04 s per pair against 0.11 s; CFI n = 3200: 0.06 s against 0.43 s; Q12: 0.04 s against
+0.57 s), and sparse nauty on hypercubes. See docs/w9-canontool.md, including §3.4 on where it loses, and docs/w23-speed2.md;
+`bench/canon.py` reproduces the tables.
 
 ## Compiled kernel (optional)
 
@@ -382,8 +383,9 @@ The script takes the headers and the extension suffix from the interpreter runni
 `python3-config` on PATH (on NixOS that may belong to a different Python). If gcc is missing, use
 `nix shell nixpkgs#gcc -c python3 build_ckernel.py`. Without the build, or with a stale one (a
 warning is issued), everything runs in pure Python with identical outputs. The kernel makes the
-default hybrid 2.0–2.4× faster; the bounded-degree pipeline and canonical forms are unchanged
-(1.00–1.15×), since their hot code is still Python. See docs/w16-ckernel.md.
+default hybrid 2.0–2.4× faster (docs/w16-ckernel.md). It also covers the hot primitives of the bounded-degree
+and canonical paths (1-WL, layer plans, position closures, F₂ elimination, edge orbits), so canonical forms are
+2.2–8.4× and `bounded_iso` 1.3–2.5× faster at the largest benchmark sizes (docs/w23-speed2.md).
 The stage loop keeps the verdict of each block between stages and only recomputes what a stage can
 have changed; see docs/w22-speed.md for the invariant, the debug mode and paired timings.
 

@@ -93,6 +93,7 @@ from .group import PermGroup, ActionHom, OverBudget
 from .solver import Solver
 from .ea2 import SparseEA, EAAction, compose, is_ea2
 from .wl import refine as wl_refine
+from .kernel import ck as _ck
 
 
 class NotSimple(ValueError):
@@ -168,6 +169,8 @@ def _components(nbr):
 
 
 def _induced(g, part):
+    if len(part) == g.n:                # (part is sorted: the whole graph, same names)
+        return g
     loc = {v: i for i, v in enumerate(part)}
     return _Graph([[loc[w] for w in g.nbr[v]] for v in part], [g.col[v] for v in part])
 
@@ -214,6 +217,10 @@ def class_plan(g, col, u0, u1):
     twin block of >= 3 vertices: then the colors are too coarse for this
     order to help (e.g. hypercubes, where class layers make big symmetric
     groups that BFS layers avoid). This also depends only on X."""
+    if _ck is not None:                 # (the compiled class_plan; None means BFS layers)
+        r = _ck.class_plan(g.nbr, col, u0, u1)
+        if r is not NotImplemented:
+            return r
     nbr = g.nbr
     n = g.n
     members = {}
@@ -385,6 +392,19 @@ class _LayerEA:
 
 
 _FALLBACK = object()
+
+
+def _acts_from_table(table, ids, m):
+    """The permutations of the positions 0..m-1 of the generators ids, from a
+    table {id: {moved position: image}} (ck.closure_sparse)."""
+    idn = list(range(m))
+    acts = []
+    for gid in ids:
+        a = idn[:]
+        for p, q in table[gid].items():
+            a[p] = q
+        acts.append(tuple(a))
+    return acts
 
 
 class _Chain:
@@ -588,26 +608,38 @@ class _Chain:
         for s, S in enumerate(L.A):
             for k, t in enumerate(att[S]):
                 L.slot[t] = (s, k)
-        S_list = list(L.A)
-        sidx = dict(L.aidx)
-        for S in S_list:
-            for gid in G.active_on(S):
-                g = gens[gid]
-                S2 = frozenset([g.get(i, i) for i in S])
-                if S2 not in sidx:
-                    sidx[S2] = len(S_list)
-                    S_list.append(S2)
+        res = _ck.closure_sparse(L.A, gens, G.who, 2) if _ck is not None else None
+        if res is not None:             # (the same BFS order; table on the position indices)
+            S_list, table = res
+            sidx = {S: i for i, S in enumerate(S_list)}
+        else:
+            table = None
+            S_list = list(L.A)
+            sidx = dict(L.aidx)
+            for S in S_list:
+                for gid in G.active_on(S):
+                    g = gens[gid]
+                    S2 = frozenset([g.get(i, i) for i in S])
+                    if S2 not in sidx:
+                        sidx[S2] = len(S_list)
+                        S_list.append(S2)
         L.S, L.sidx = S_list, sidx
         xS = [0] * len(S_list)
         for s, S in enumerate(L.A):
             xS[s] = self.code(tuple(X.col[t] for t in att[S]))
         L.xS = tuple(xS)
-        act_ids = G.active_on(set().union(*S_list) if S_list else ())
-        L.act_ids = act_ids
-        L.act_dicts = [gens[g] for g in act_ids]
-        acts = []
-        for g in L.act_dicts:
-            acts.append(tuple([sidx[frozenset([g.get(i, i) for i in S])] for S in S_list]))
+        if table is not None:
+            act_ids = sorted(table)
+            L.act_ids = act_ids
+            L.act_dicts = [gens[g] for g in act_ids]
+            acts = _acts_from_table(table, act_ids, len(S_list))
+        else:
+            act_ids = G.active_on(set().union(*S_list) if S_list else ())
+            L.act_ids = act_ids
+            L.act_dicts = [gens[g] for g in act_ids]
+            acts = []
+            for g in L.act_dicts:
+                acts.append(tuple([sidx[frozenset([g.get(i, i) for i in S])] for S in S_list]))
         L.act1 = EAAction(len(act_ids), acts, len(S_list))
         st["luks_phase1_max_degree"] = max(st["luks_phase1_max_degree"], len(S_list))
         self.L.append(L)
@@ -699,24 +731,32 @@ class _Chain:
                     pairs.append((t, u))
         ne = len(pairs)
         gens = G.gens
-        for p, q in pairs:
-            for gid in G.active_on((p, q)):
-                h = gens[gid]
-                hp, hq = h.get(p, p), h.get(q, q)
-                pq = (hp, hq) if hp < hq else (hq, hp)
-                if pq not in pidx:
-                    pidx[pq] = len(pairs)
-                    pairs.append(pq)
-        h_ids = G.active_on(set().union(*pairs))
-        L.h_ids = h_ids
-        L.h_dicts = [gens[g] for g in h_ids]
-        act = []
-        for h in L.h_dicts:
-            img = []
+        res = _ck.closure_sparse(pairs, gens, G.who, 3) if _ck is not None else None
+        if res is not None:             # (the same BFS order; table on the pair indices)
+            pairs, table = res
+            h_ids = sorted(table)
+            L.h_ids = h_ids
+            L.h_dicts = [gens[g] for g in h_ids]
+            act = _acts_from_table(table, h_ids, len(pairs))
+        else:
             for p, q in pairs:
-                hp, hq = h.get(p, p), h.get(q, q)
-                img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
-            act.append(tuple(img))
+                for gid in G.active_on((p, q)):
+                    h = gens[gid]
+                    hp, hq = h.get(p, p), h.get(q, q)
+                    pq = (hp, hq) if hp < hq else (hq, hp)
+                    if pq not in pidx:
+                        pidx[pq] = len(pairs)
+                        pairs.append(pq)
+            h_ids = G.active_on(set().union(*pairs))
+            L.h_ids = h_ids
+            L.h_dicts = [gens[g] for g in h_ids]
+            act = []
+            for h in L.h_dicts:
+                img = []
+                for p, q in pairs:
+                    hp, hq = h.get(p, p), h.get(q, q)
+                    img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
+                act.append(tuple(img))
         L.pairs, L.act2 = pairs, EAAction(len(h_ids), act, len(pairs))
         L.x2 = tuple([1] * ne + [0] * (len(pairs) - ne))
         st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], len(pairs))
@@ -970,6 +1010,10 @@ BFS_ENDS = 64                           # at most this many BFS runs per stage
 
 def _bfs_dist(g, s):
     """Distances from s in the connected graph g (a list)."""
+    if _ck is not None:
+        d = _ck.bfs_dist(g.nbr, s)
+        if d is not None:
+            return d
     n, nbr = g.n, g.nbr
     dist = [-1] * n
     dist[s] = 0
@@ -1054,26 +1098,51 @@ def _truncated_profiles(g, edges, C, use_col):
         for v in range(n):
             masks[col[v]] = masks.get(col[v], 0) | (1 << v)
         cm = [m for _, m in sorted(masks.items())]
-    cur = [1 << v for v in range(n)]
+    balls = None
+    if _ck is not None:                 # (the compiled ball step; same counts)
+        colidx = None
+        if use_col:
+            order = {c: i for i, (c, _) in enumerate(sorted(masks.items()))}
+            colidx = [order[c] for c in col]
+        balls = _ck.balls_new(nbr, colidx, len(cm) if use_col else 0)
+    cur = [1 << v for v in range(n)] if balls is None else None
     key = list(col)
     k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
-    while min(Counter(k1).values()) > STAGE1_SMALL:
-        nxt = []
-        for v in range(n):
-            b = cur[v]
-            for w in nbr[v]:
-                b |= cur[w]
-            nxt.append(b)
-        if nxt == cur:
-            break
-        if use_col:
-            counts = [tuple(((b ^ a) & m).bit_count() for m in cm) for a, b in zip(cur, nxt)]
+    # k1 only matters through the partition of C it induces, which can only change when the
+    # partition of the vertices by key does (key is refined each round): recomputed only then
+    smallest = min(Counter(k1).values())
+    ndist = len(set(key))
+    stale = False
+    while smallest > STAGE1_SMALL:
+        if balls is not None:
+            counts = _ck.balls_step(balls)
+            if counts is None:
+                break
         else:
-            counts = [(b ^ a).bit_count() for a, b in zip(cur, nxt)]
-        cur = nxt
+            nxt = []
+            for v in range(n):
+                b = cur[v]
+                for w in nbr[v]:
+                    b |= cur[w]
+                nxt.append(b)
+            if nxt == cur:
+                break
+            if use_col:
+                counts = [tuple(((b ^ a) & m).bit_count() for m in cm) for a, b in zip(cur, nxt)]
+            else:
+                counts = [(b ^ a).bit_count() for a, b in zip(cur, nxt)]
+            cur = nxt
         sig = list(zip(key, counts))
         rank = {x: i for i, x in enumerate(sorted(set(sig)))}
         key = [rank[x] for x in sig]
+        if len(rank) != ndist:
+            ndist = len(rank)
+            k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
+            smallest = min(Counter(k1).values())
+            stale = False
+        else:
+            stale = True
+    if stale:                           # (the names may have changed, not the partition)
         k1 = [(key[edges[f][0]], key[edges[f][1]]) for f in C]
     return k1
 
@@ -1123,13 +1192,18 @@ def root_class(g, edges, keys=None, stats=None):
     n, col = g.n, g.col
     ncol = _nc(g)
     use_col = 1 < ncol <= 4
-    k0 = [(col[u], col[v]) for u, v in edges]
-    cnt = Counter(k0)
-    if keys is None:
-        best = min(cnt, key=lambda k: (cnt[k], k))
+    if ncol == 1 and edges:             # (all pairs equal: skip the tally)
+        k00 = (col[0], col[0])
+        best = k00 if keys is None else keys[0][0]
+        C = list(range(len(edges))) if best == k00 else []
     else:
-        best = keys[0][0]
-    C = [f for f, k in enumerate(k0) if k == best]
+        k0 = [(col[u], col[v]) for u, v in edges]
+        cnt = Counter(k0)
+        if keys is None:
+            best = min(cnt, key=lambda k: (cnt[k], k))
+        else:
+            best = keys[0][0]
+        C = [f for f, k in enumerate(k0) if k == best]
     out = [(best, len(C))]
     if keys is not None and len(C) != keys[0][1]:
         return None
@@ -1137,8 +1211,12 @@ def root_class(g, edges, keys=None, stats=None):
         stats["luks_root_stage0"] = max(stats["luks_root_stage0"], len(C))
     if len(C) <= 1:
         return C, out
-    ends = sorted(set(v for f in C for v in edges[f]))
-    if len(ends) <= BFS_ENDS:
+    # (ends only matters when it has at most BFS_ENDS vertices; a vertex is the source of
+    # at most maxdeg oriented edges of C and the target of as many)
+    ends = None
+    if len(C) <= BFS_ENDS * 2 * max(map(len, g.nbr)):
+        ends = sorted(set(v for f in C for v in edges[f]))
+    if ends is not None and len(ends) <= BFS_ENDS:
         prof = _profile_keys(g, ends, use_col)
         k1 = [(prof[edges[f][0]], prof[edges[f][1]]) for f in C]
     else:
@@ -1241,6 +1319,8 @@ class _Connected:
         return c
 
     def vertex_map(self, X, Z, sigma):
+        if _ck is not None:             # (order^-1, then sigma, then Z's order)
+            return _ck.mul(_ck.mul(_ck.inv(tuple(X.order)), tuple(sigma)), tuple(Z.order))
         out = [0] * len(sigma)
         for i, s in enumerate(sigma):
             out[X.order[i]] = Z.order[s]
@@ -1283,10 +1363,16 @@ class _Connected:
             return v
 
         comps = [len(C)]                # number of orbits on C of the group found so far
+        tbl = _ck.orbit_table(self.g.nbr, C) if _ck is not None else None
 
         def absorb(g):
             if comps[0] == 1:           # (one orbit: more generators change nothing)
                 return
+            if tbl is not None:         # (compiled; parent stays valid for find)
+                r = _ck.orbit_absorb(tbl, parent, comps[0], g)
+                if r is not None:
+                    comps[0] -= r
+                    return
             for i, f in enumerate(C):   # (Aut(X) maps the class onto itself)
                 u, v = self.edges[f]
                 a, b = find(i), find(pos[self.eidx[(g[u], g[v])]])
@@ -1299,6 +1385,8 @@ class _Connected:
         failed = []
         i0 = pos[f0]
         for f in C:
+            if comps[0] == 1:           # (one orbit: every other edge is an image of f0)
+                break
             if f == f0:
                 continue
             rf = find(pos[f])
@@ -1439,6 +1527,10 @@ def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, 
 
 
 def _check_lists(nbr):
+    if _ck is not None:                 # (sorted lists; otherwise the body below)
+        r = _ck.check_lists(nbr)
+        if r is not None:
+            return r
     n = len(nbr)
     sets = [set(r) for r in nbr]
     for i, r in enumerate(nbr):

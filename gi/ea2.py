@@ -29,6 +29,7 @@ the convention of gi.perm) is computed orbit by orbit:
     is a0 + N, and N (the null space) is Aut_G(x) in coordinates.
 """
 from .perm import identity
+from .kernel import ck as _ck
 
 __all__ = ["EA2", "SparseEA", "EAAction", "is_ea2", "XorBasis", "nullspace", "compose"]
 
@@ -158,6 +159,10 @@ def compose(dicts):
     (each maps its keys among themselves): a dict of the moved points of the
     product. Costs O(sum of the supports). (Involutions are their own
     inverses, so the x with c(x) = y is c(y); order does not matter.)"""
+    if _ck is not None:
+        r = _ck.ea_compose(dicts)
+        if r is not None:
+            return r
     c = {}
     for g in dicts:
         ups = [(c.get(y, y), g[y]) for y in g]
@@ -201,6 +206,8 @@ class SparseEA:
         self._next = gid + 1
         self.gens[gid] = g
         who = self.who
+        if _ck is not None and _ck.ea_who_add(who, g, gid) is not None:
+            return gid
         for p in g:
             w = who.get(p)
             if w is None:
@@ -212,6 +219,8 @@ class SparseEA:
     def remove(self, gid):
         g = self.gens.pop(gid)
         who = self.who
+        if _ck is not None and _ck.ea_who_remove(who, g, gid) is not None:
+            return
         for p in g:
             w = who[p]
             if len(w) == 1:
@@ -223,6 +232,8 @@ class SparseEA:
         """Add entries {new point: image} to generator gid."""
         g, who = self.gens[gid], self.who
         g.update(moves)
+        if _ck is not None and _ck.ea_who_add(who, moves, gid) is not None:
+            return
         for p in moves:
             w = who.get(p)
             if w is None:
@@ -418,6 +429,10 @@ class EAAction:
         minimizers of an invariant set's restriction are a coset of its
         stabilizer), so the new minimizer set is c + U intersected with
         m0 + D + K_O, added as linear equations (the annihilator of D + K_O)."""
+        if _ck is not None:             # (word-parallel; the same orbits and bases)
+            r = _ck.ea_canon(self.k, self.act, self.m, x)
+            if r is not None:
+                return r
         k = self.k
         eqs = XorBasis()
         c, U = 0, [1 << i for i in range(k)]

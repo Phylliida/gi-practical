@@ -17,6 +17,8 @@ difference between the counts into the old cell and those into the other parts).
 """
 from collections import deque
 
+from .kernel import ck as _ck
+
 __all__ = ["refine"]
 
 
@@ -25,6 +27,10 @@ def refine(nbr, col, roots=(), stable=False):
     initial colors (ints, or anything sortable); roots: vertices (in order) to
     individualize first. stable: the initial coloring is known to be equitable,
     so only the individualized cells start on the worklist."""
+    if _ck is not None:
+        r = _ck.wl_refine(nbr, col, roots, stable)
+        if r is not None:
+            return r
     n = len(nbr)
     members = {}
     for v in range(n):

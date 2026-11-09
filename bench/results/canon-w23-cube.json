@@ -1,0 +1,258 @@
+{
+ "label": "w23-cube",
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "Q6",
+   "family": "cube",
+   "size": 6,
+   "n": 64,
+   "seed": 0,
+   "maxdeg": 6,
+   "edges": 192,
+   "cert": "formula",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 46080.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 46080.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.007,
+    "t_x": 0.004,
+    "t_y": 0.003,
+    "same": true,
+    "ngens": 6,
+    "aut_order": "46080"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.016,
+    "same": true
+   },
+   "iso": true,
+   "aut": 46080.0
+  },
+  {
+   "name": "Q8",
+   "family": "cube",
+   "size": 8,
+   "n": 256,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1024,
+   "cert": "formula",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 10321920.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 10321920.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.021,
+    "t_x": 0.011,
+    "t_y": 0.01,
+    "same": true,
+    "ngens": 8,
+    "aut_order": "10321920"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.062,
+    "same": true
+   },
+   "iso": true,
+   "aut": 10321920.0
+  },
+  {
+   "name": "Q9",
+   "family": "cube",
+   "size": 9,
+   "n": 512,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 2304,
+   "cert": "formula",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 185794560.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 185794560.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.048,
+    "t_x": 0.024,
+    "t_y": 0.024,
+    "same": true,
+    "ngens": 9,
+    "aut_order": "185794560"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.127,
+    "same": true
+   },
+   "iso": true,
+   "aut": 185794560.0
+  },
+  {
+   "name": "Q10",
+   "family": "cube",
+   "size": 10,
+   "n": 1024,
+   "seed": 0,
+   "maxdeg": 10,
+   "edges": 5120,
+   "cert": "formula",
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3715891200.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3715891200.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.121,
+    "t_x": 0.071,
+    "t_y": 0.049,
+    "same": true,
+    "ngens": 10,
+    "aut_order": "3715891200"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.261,
+    "same": true
+   },
+   "iso": true,
+   "aut": 3715891200.0
+  },
+  {
+   "name": "Q11",
+   "family": "cube",
+   "size": 11,
+   "n": 2048,
+   "seed": 0,
+   "maxdeg": 11,
+   "edges": 11264,
+   "cert": "formula",
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 81749606400.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 81749606400.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.276,
+    "t_x": 0.148,
+    "t_y": 0.127,
+    "same": true,
+    "ngens": 11,
+    "aut_order": "81749606400"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.642,
+    "same": true
+   },
+   "iso": true,
+   "aut": 81749606400.0
+  },
+  {
+   "name": "Q12",
+   "family": "cube",
+   "size": 12,
+   "n": 4096,
+   "seed": 0,
+   "maxdeg": 12,
+   "edges": 24576,
+   "cert": "formula",
+   "dnt": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 1961990553600.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.03,
+    "t_x": 0.01,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 1961990553600.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.595,
+    "t_x": 0.266,
+    "t_y": 0.329,
+    "same": true,
+    "ngens": 12,
+    "aut_order": "1961990553600"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.84,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1961990553600.0
+  }
+ ]
+}
