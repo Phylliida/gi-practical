@@ -722,3 +722,10 @@ are red-teams, a LaTeX paper, and final integration.
   ≤ 4" with unbounded degree (needs d fixed). The exponent 3.2439 should be 3.244; "about 53" is an estimate (g(m) = m⁶ asserted). Theorem B sound for fixed d;
   citation fixed (Liebeck–Shalev via GNS). Wolf (1982) read in full; Pálfy, BCP, Liebeck–Shalev not read. §2.1's "true worst case is Schreier–Sims" is false.
 * w45-quartic: quartic Boolean equivalence / 4-tensor isomorphism in 2^{o(d²)}, or a barrier.
+
+### w45-quartic (done, commit 5a17e2e; docs/w45-quartic.md), NOT yet red-teamed
+* No 2^{o(d²)} for general quartics; no CFI-style barrier. Why cubic results don't propagate: kernel reductions blow up to L = O(n³), so a 3-TI bound transfers only
+  if its exponent is < 3/2, and today's is exactly 3/2.
+* T1: 4-TI in q^{n²}·poly. T2: h-tuples of 3-tensors reduce to one 3-tensor of length O(hn). T3 (subclass, conditional). H [claimed PROVEN]: rank-based
+  2^{(2√2+o(1))d²/√min(s,d/2)}, beats 2^{d²/4} for s > 128.
+* w46-redteam-quartic: adversarial check.
