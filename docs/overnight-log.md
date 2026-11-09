@@ -585,3 +585,9 @@ are red-teams, a LaTeX paper, and final integration.
 
 ## Wave 26
 * w26-redteam-pg: adversarial check of w18 Theorem B1 (PG(m-1,2) lower bound for HJ) and A1.
+
+### w22-speed (done, merged; docs/w22-speed.md)
+* Stage-loop verdict memo with a written safety argument (GI_STAGE_CHECK=1 audits every scan), new C fast paths,
+  incremental Schreier scans. Paired: xl hybrid 4.85s → 3.07s; xl ir=0 55.0s → 37.5s; 112 outputs identical.
+* Merge note: the work-budget charge is now len(T)·len(news)·n/32, charging only generators actually scanned;
+  tests/test_stage_memo.py pinned to method="hybrid" because auto dispatch sends small graphs elsewhere.

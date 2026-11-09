@@ -375,6 +375,7 @@ sifting, orbits). Build it with the Python you will run:
 python3 build_ckernel.py            # needs only gcc (or $CC); writes gi/_ckernel*.so (git-ignored)
 python3 build_ckernel.py --clean    # remove it
 GI_NO_CKERNEL=1 python3 ...         # disable it for one run
+GI_STAGE_CHECK=1 python3 ...        # debug: audit the stage loop's cached verdicts at every scan
 ```
 
 The script takes the headers and the extension suffix from the interpreter running it, not from
@@ -383,6 +384,8 @@ The script takes the headers and the extension suffix from the interpreter runni
 warning is issued), everything runs in pure Python with identical outputs. The kernel makes the
 default hybrid 2.0–2.4× faster; the bounded-degree pipeline and canonical forms are unchanged
 (1.00–1.15×), since their hot code is still Python. See docs/w16-ckernel.md.
+The stage loop keeps the verdict of each block between stages and only recomputes what a stage can
+have changed; see docs/w22-speed.md for the invariant, the debug mode and paired timings.
 
 ## Benchmark protocol
 
