@@ -29,6 +29,8 @@ from collections import Counter, OrderedDict
 from itertools import chain
 from operator import add, itemgetter
 
+from .kernel import ck as _ck
+
 _BIG = sys.byteorder == "big"
 
 
@@ -225,7 +227,14 @@ def wl2_single(P):
     as one 2-WL round has colored the pairs).
 
     Isomorphic inputs give the same trace and corresponding colorings (each
-    step depends only on the multiset of keys), which is what wl2 needs."""
+    step depends only on the multiset of keys), which is what wl2 needs.
+
+    The compiled kernel computes the same keys (it returns None for an input it
+    does not handle, and then this body runs)."""
+    if _ck is not None:
+        r = _ck.wl2_single(P, _tables)
+        if r is not None:
+            return r
     n = len(P)
     names = {v: i for i, v in enumerate(sorted(set(chain.from_iterable(P))))}
     get = names.__getitem__
@@ -297,6 +306,10 @@ def wl2(PX, PY):
     RY, ty = (RX, tx) if PY == PX else _wl2_single_cached(PY)
     if tx != ty:
         return None
+    if _ck is not None:
+        ok = _ck.wl2_check(PX, PY, RX, RY)
+        if ok is not None:
+            return (RX, RY) if ok else None
     pairs = set(zip(chain.from_iterable(RX), chain.from_iterable(PX)))
     if RY is not RX:
         pairs.update(zip(chain.from_iterable(RY), chain.from_iterable(PY)))

@@ -11,6 +11,7 @@ from collections import OrderedDict, namedtuple
 from itertools import compress
 from operator import itemgetter, ne
 
+from .kernel import ck as _ck
 from .perm import identity, mul, inv, maps
 
 _IDENTITY = {}
@@ -318,6 +319,10 @@ class PermGroup:
         plan = plans[2].get(start)
         if plan is None:
             plan = plans[2][start] = self._make_plan(start)
+        if _ck is not None:
+            r = _ck.sift(g, plan, self.Ti, self.base)
+            if r is not None:
+                return r
         Tis = self.Ti
         for l, b, get, fix in plan:
             if get is None:
@@ -367,6 +372,10 @@ class PermGroup:
         if fp is None:
             fp = plans[2][key] = self._make_fast_plan(start)
         P, steps = fp
+        if _ck is not None:
+            r = _ck.sifts_to_id(P, factors, steps, self.Ti)
+            if r is not None:
+                return r
         g = P
         for f in factors:
             g = itemgetter(*g)(f)
@@ -383,6 +392,10 @@ class PermGroup:
     def _make_fast_plan(self, start):
         base = self.base
         nt = self._nontrivial()
+        if _ck is not None:
+            r = _ck.make_fast_plan(base, nt, start, self._amb, self.n)
+            if r is not None:
+                return r
         pts, steps, where = [], [], {}
         for l in nt[bisect_left(nt, start):]:
             where[base[l]] = len(pts)
@@ -513,21 +526,23 @@ class PermGroup:
             self._orbs = (gens, len(gens), allo)
         else:
             n = self.n
-            seen = [False] * n
-            allo = []
-            for p in range(n):
-                if seen[p]:
-                    continue
-                seen[p] = True
-                orb = [p]
-                for a in orb:
-                    for g in gens:
-                        b = g[a]
-                        if not seen[b]:
-                            seen[b] = True
-                            orb.append(b)
-                orb.sort()
-                allo.append(orb)
+            allo = _ck.orbits(n, gens) if _ck is not None else None
+            if allo is None:
+                seen = [False] * n
+                allo = []
+                for p in range(n):
+                    if seen[p]:
+                        continue
+                    seen[p] = True
+                    orb = [p]
+                    for a in orb:
+                        for g in gens:
+                            b = g[a]
+                            if not seen[b]:
+                                seen[b] = True
+                                orb.append(b)
+                    orb.sort()
+                    allo.append(orb)
             self._orbs = (gens, len(gens), allo)
             if self._snap is not None:
                 self._snap.orbs = allo

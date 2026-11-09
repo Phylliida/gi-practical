@@ -8,3 +8,4 @@ paper/*.bbl
 paper/*.blg
 paper/*.out
 paper/*.toc
+gi/_ckernel*.so
