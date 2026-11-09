@@ -656,3 +656,11 @@ are red-teams, a LaTeX paper, and final integration.
 * Overclaims to fix: "hardest instances are PG-fibred", "exactly the barrier". The fibration form is Jungnickel–Tonchev
   Thm 2.8/2.9; no reduction to STS isomorphism found in prior art.
 * w35-cubic: cubic Boolean equivalence over F_2 in 2^{Õ(d^{1.5})}.
+
+### w34-vc (done, commit 005ca3c; docs/w34-vc.md), NOT yet red-teamed
+* VC route does not reach o(log n): one-round VC is at least ⌊½ log2 n⌋ − 4, and on iterated Turyn products the multi-round
+  VC is ≥ log_v n − 1 in every round. Yet those graphs have depth 3 at every tested level: VC obstructs the proof technique,
+  not small hitting sets.
+* Thm 4.1: depth ≤ 2⌈3 ln n / ln(1/τ)⌉ + 88 d(τ) + 22; conditional on d(τ) = o(log n), conference graphs are in n^{o(log n)}.
+* Latin squares of Z_2^k need depth Ω(log n), so that analogue of Levet's question is negative.
+* w36-lean: scope machine-checking the n^{O(log d)} re-accounting against the HJ Lean development.
