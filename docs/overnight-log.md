@@ -743,3 +743,13 @@ are red-teams, a LaTeX paper, and final integration.
 * A statement about HJ, not GI: X_m is easy, and automorphism pruning removes this cost (Prop D). Gives no evidence of a GI/string separation; Neuen Q4.8 not addressed.
 * Open: does any graph force superpolynomial enumeration after pruning?
 * w48-redteam-mu: adversarial check of w47.
+
+### w48-redteam-mu (done, commit 2138e9a; docs/redteam-w47-mu.md)
+* Theorem A survives: node group GL(V)_ℓ with |GL(m−2,2)| children, given (H0) (HJ as written, exact recursive answers). P acts on 2-subspaces (d ≈ n/16, μ = (1/8+o(1)) log₂ N) only under a coordinate top
+  partition, which is what the Lean selects; other towers give another primitive action (at m = 7 the unordered-pair tower acts on 31 hyperplanes). N = n². m₀ is finite but its conditions are never listed.
+* Lemmas L, B sound: every nauty generator of Aut(B) is induced by a linear map fixing ℓ (m = 5..8), block systems exhaustive (m = 5..7), hand re-derivation. L = GL(V)_ℓ exactly. n ≥ 2^125 confirmed.
+* Theorem C BROKEN as stated (medium): O5 omits HJ's Case 1 and imprimitive partition overcosets, which are wreath products; K_a⊔K_a exposes Sym(a)≀C₂ in product action, degree a². Repairable by widening O5 and "Young"; bounded-order
+  enumeration then checked by hand only, wreath block-system classification missing. Its Corollary is false as worded (say "superconstant order").
+* A′ needs a test set (lines ⟨e_i,1⟩). Prop D covers one node only: "removable on X_m" and "same status as B1" overreach, since w28's P2 is a sketch.
+* Not reachable by computation: any run at m ≥ 64, (H0) itself, the action on G₄(U) for k ≥ 6.
+* w49-pruned: is there a graph whose enumeration is not covered by automorphisms?
