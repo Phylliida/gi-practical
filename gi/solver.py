@@ -52,6 +52,7 @@ from itertools import chain
 from collections import Counter, OrderedDict, namedtuple
 from operator import add
 
+from .kernel import ck as _ck
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens, sym_gens
 from .group import (PermGroup, ActionHom, RestrictionHom, reduce_gens, top_block_system,
                     johnson_structure, product_action, giant_labels, label_support,
@@ -102,6 +103,10 @@ def refine_labels(q, hx, hy, cx, cy, px=None, py=None):
     sort). The term b = a gets the code -1, so it adds -K + c[a], which the
     signature holds already. The partitions are those of the literal
     multisets; only the names differ."""
+    if _ck is not None and not hx and not hy and px is not None:
+        r = _ck.refine_labels_pairs(q, cx, cy, px, py)
+        if r is not None:
+            return r
     cx, cy = list(cx), list(cy)
     rows = None
     if px is not None and all(type(v) is int and v >= 0 for v in chain(cx, cy)):
@@ -315,7 +320,7 @@ class Solver:
             if not self._may_be_cameron(order):
                 return self.enumerate(G, x, y, known)
             self.stats["cameron_skip_enum"] += 1    # (M): dispatch its quotients instead
-        orbs = G.orbits()
+        orbs = list(G.orbits_shared())  # (only this list is reordered below)
         if len(orbs) > 1:
             if self.young:
                 a = self.young_step(G, x, y, known)

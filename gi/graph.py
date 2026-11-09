@@ -52,13 +52,19 @@ within a work budget worth a few refinements (counted, not timed, so the
 output does not depend on the machine's load). Depth O(log n) costs at most a
 factor n^O(log n), so the n^O(log n) bound of the recursion is kept.
 """
+import os
 from math import factorial, prod, ceil, log2
-from operator import itemgetter
+from operator import getitem, itemgetter
 
 from .perm import sym_gens, identity, mul, cycle
 from .group import PermGroup, LazyTransversal, reduce_gens, _identity
 from .solver import Solver, Coset
 from .refine import refine_graphs, refine_pairs
+from .kernel import ck as _ck
+
+# Debug mode of the stage loop: every tracked scan is checked against the full
+# rescan and every stored verdict is recomputed (see StageMemo).
+STAGE_CHECK = os.environ.get("GI_STAGE_CHECK", "") not in ("", "0")
 
 
 def pair_coloring(adj, vcolors=None):
@@ -189,6 +195,19 @@ def pull_back(P, pi):
     return [list(g(P[p])) for p in pi]
 
 
+def action_on_pairs(n, D, vgens):
+    """The permutations of range(len(D)) induced by the vertex permutations
+    vgens on the list D of pairs (position k is the pair D[k]). KeyError if a
+    pair leaves D."""
+    if _ck is not None and D:
+        pi, pj = map(list, zip(*D))
+        r = _ck.action_on_pairs(n, pi, pj, list(vgens))
+        if r is not None:
+            return r
+    idx = {p: k for k, p in enumerate(D)}
+    return [tuple(idx[(g[i], g[j])] for i, j in D) for g in vgens]
+
+
 def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None, classes=None):
     """Iso_K(x|D, y|D) for K = <vgens> (vertex permutations) acting on pairs.
     D: a K-invariant list of pairs (i, j); every vertex moved by K must occur as
@@ -201,22 +220,24 @@ def solve_on(solver, n, vgens, D, x, y, vbase=None, order=None, classes=None):
     and stops at the known order). Returns a Coset of vertex permutations, or
     None."""
     m = len(D)
+    pi, pj = map(list, zip(*D)) if m else ([], [])
     if classes is not None:
         K = sym_product_group(n, classes, D)
     else:
-        idx = {p: k for k, p in enumerate(D)}
-        pgens = [tuple(idx[(g[i], g[j])] for i, j in D) for g in vgens]
+        pgens = action_on_pairs(n, D, vgens)
         if vbase is not None:
+            idx = {p: k for k, p in enumerate(D)}
             base = [idx[(b, b)] for b in vbase]
             K = PermGroup(m, pgens, base=base, order=order, ambient_base=base)
         else:
             K = PermGroup(m, pgens)
-    a = solver.solve(K, range(m), tuple(x[i][j] for i, j in D), tuple(y[i][j] for i, j in D))
+    a = solver.solve(K, range(m), tuple(map(getitem, map(x.__getitem__, pi), pj)),
+                     tuple(map(getitem, map(y.__getitem__, pi), pj)))
     if a is None:
         return None
-    first = {}
-    for k, (i, j) in enumerate(D):
-        first.setdefault(i, k)
+    # one position per first coordinate (reversed: the earliest one wins, the
+    # order of the keys is irrelevant to back)
+    first = dict(zip(reversed(pi), range(m - 1, -1, -1)))
 
     def back(h):
         p = list(range(n))
@@ -448,8 +469,9 @@ def align(n, x, y, classes):
     if the sizes differ."""
     tau = list(range(n))
     out = []
+    dx, dy = [x[v][v] for v in range(n)], [y[v][v] for v in range(n)]
     for C in classes:
-        cx, cy = classes_of([x[v][v] for v in range(n)], C), classes_of([y[v][v] for v in range(n)], C)
+        cx, cy = classes_of(dx, C), classes_of(dy, C)
         if sorted((k, len(v)) for k, v in cx.items()) != sorted((k, len(v)) for k, v in cy.items()):
             return None
         for col, W in cx.items():
@@ -542,6 +564,10 @@ def factor_base_order(n, factors):
 def clean(x, y, A, B, gens):
     """Whether x == y on A x B and every generator (vertex permutations
     fixing A and B setwise) preserves x there. (Rows are compared as tuples.)"""
+    if _ck is not None:
+        r = _ck.clean(x, y, A, B, gens)
+        if r is not None:
+            return r
     if not A or not B:
         return True
     gB = itemgetter(*B)
@@ -668,10 +694,11 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
     the individualization branches. They stay automorphisms in every later
     group of the loop, since each stage replaces G by a subgroup containing
     Aut_G(x), and refinement keeps them (x is refined, never relabeled)."""
-    rho = identity(n)
+    idn = rho = identity(n)
     pol = pol or Policy(n, ir=0)
     factors = [(list(range(n)), None)] if factors is None else list(factors)
     fixed = list(fixed)
+    memo = StageMemo()
     while True:
         # 1. refine with the G-orbits as extra vertex labels
         if not fresh:
@@ -683,6 +710,7 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
                     solver.stats["refine_reject"] += 1
                     return None
                 x, y = r
+                memo.clear()
         fresh = False
         # 2. shrink the symmetric factors
         syms = [P for P, gens in factors if gens is None]
@@ -690,14 +718,28 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
         if r is None:
             return None
         sub, tau = r
-        if any(tau[v] != v for v in range(n)):
+        if tau != idn:
             y = pull_back(y, tau)
             rho = mul(tau, rho)
+            memo.moved(tau, factors, fixed)
         covered = set(v for W in sub for v in W)
         fixed += [v for P in syms for v in P if v not in covered]
-        factors = [f for f in factors if f[1] is not None] + [(W, None) for W in sub]
+        # (a class that did not split keeps its factor object, and with it its verdicts)
+        unsplit = {f[0][0]: f for f in factors if f[1] is None}
+        factors = [f for f in factors if f[1] is not None] + [
+            f if f is not None and len(f[0]) == len(W) else (W, None)
+            for W, f in ((W, unsplit.get(W[0])) for W in sub)]
         # 3. the next stage
-        stage = pick_stage(n, x, y, factors, fixed)
+        stage = pick_stage_tracked(n, x, y, factors, fixed, memo)
+        if STAGE_CHECK:
+            memo.audit(n, x, y, factors, fixed, stage)
+        if stage is None:
+            # The memo only saves work: the loop ends on the full rescan alone,
+            # so that no stored verdict can make the answer wrong.
+            stage = pick_stage(n, x, y, factors, fixed)
+            if stage is not None:       # (never observed; see tests/test_stage_memo.py)
+                solver.stats["stage_memo_mismatch"] += 1
+                memo.clear()
         if stage is None:
             break
         if stage == "fail":
@@ -722,8 +764,10 @@ def staged_iso(solver, n, x, y, method, factors=None, fixed=(),
             a = solve_stage(solver, n, parts, D, x, y)
         if a is None:
             return None
-        y = pull_back(y, a.rep)
-        rho = mul(a.rep, rho)
+        if a.rep != idn:
+            y = pull_back(y, a.rep)
+            rho = mul(a.rep, rho)
+            memo.moved(a.rep, factors, fixed)
         factors = [f for f in factors if not any(f is p for p in parts)]
         P = sorted(v for p in parts for v in p[0])
         nf, nfix = new_factors(n, a.gens, P)
@@ -819,6 +863,181 @@ def individualize(solver, n, x, y, method, factors, fixed, C, pol, depth, need_a
         if sigma is None:
             return None
     return Coset(reduce_gens(n, gens), sigma)
+
+
+class StageMemo:
+    """The verdicts of pick_stage's block checks, kept across the iterations of
+    one staged_iso loop so that a scan only recomputes what can have changed.
+
+    A verdict says whether one block is clean: the self block P x P of a factor,
+    the cross block (A x B) + (B x A) of two factors, or the cross block of the
+    fixed vertices and a factor. It is a function of x and y on the positions
+    of that block and of the factors' (P, gens) only.
+
+    INVARIANT. Whenever pick_stage_tracked runs, every stored verdict of two
+    current factor objects equals what pick_stage would compute now, and
+    fix_ok / fix_pair hold for the prefix of `fixed` they name. Why:
+
+      (a) x and y are only ever rebound, never mutated in place. x changes only
+          at a refinement, which clears the memo; y changes at a refinement or
+          as y = pull_back(y, pi), and pi is reported to moved().
+      (b) pull_back(y, pi)[i][j] = y[pi i][pi j], so an entry whose two indices
+          are fixed by pi does not change. moved() gives every factor holding
+          a moved vertex a new serial, and verdicts are keyed by serials, so
+          every block containing a moved vertex loses its verdicts. If pi moves
+          a fixed vertex (the loop never does that) everything is cleared.
+      (c) A factor object (P, gens) is never mutated, and an object is kept
+          alive by `serial` as long as its id() is used as a key, so a serial
+          stands for one fixed P and gens. Two factors keep their order in
+          the sorted scan, since the sort key is a function of P.
+      (d) `fixed` only grows, and the fixed vertices are moved by nothing. A
+          check against the fixed vertices is a conjunction over them
+          (the generators fix them pointwise), so a verdict for fixed[:m] extends
+          to fixed[:m'] by checking the new vertices only, and a dirty verdict
+          stays dirty.
+
+    So the scan returns exactly what the full rescan returns, and the stage
+    sequence and the output are unchanged. Soundness does not rest on this:
+    a wrong "dirty" only causes a redundant exact stage, "fail" is only ever
+    returned from a direct comparison, and a wrong "clean" could only matter
+    where the loop ends, which staged_iso decides by an uncached pick_stage.
+
+    Debug: GI_STAGE_CHECK=1 (module flag STAGE_CHECK) runs audit() after every
+    scan: the full rescan must agree, and every stored verdict is recomputed."""
+
+    __slots__ = ("verdict", "serial", "next", "fix_ok", "fix_pair")
+
+    def __init__(self):
+        self.clear()
+
+    def clear(self):
+        self.verdict = {}               # (serial, serial) -> block is clean
+        self.serial = {}                # id(factor) -> (factor, its current serial)
+        self.next = 0
+        self.fix_ok = 0                 # fixed[:fix_ok]^2 is known to be clean
+        self.fix_pair = {}              # serial of B -> (m, verdict for fixed[:m] with B)
+
+    def sid(self, f):
+        e = self.serial.get(id(f))
+        if e is None:
+            e = self._new_serial(f)
+        return e[1]
+
+    def _new_serial(self, f):
+        e = self.serial[id(f)] = (f, self.next)
+        self.next += 1
+        return e
+
+    def moved(self, pi, factors, fixed):
+        """y has just become pull_back(y, pi); factors and fixed as they were."""
+        m = {v for v, w in enumerate(pi) if v != w}
+        if not m.isdisjoint(fixed):
+            self.clear()
+            return
+        for f in factors:
+            if id(f) in self.serial and not m.isdisjoint(f[0]):
+                self._new_serial(f)
+
+    def fix_clean(self, n, x, y, fixed, B, gb, sb):
+        """The cross block of the fixed vertices and the factor (B, gb)."""
+        m, ok = self.fix_pair.get(sb, (0, True))
+        if ok and m < len(fixed):
+            new = fixed[m:]
+            gg = sym_gens(n, B) if gb is None else gb
+            ok = clean(x, y, new, B, gg) and clean(x, y, B, new, gg)
+            self.fix_pair[sb] = (len(fixed), ok)
+        return ok
+
+    def audit(self, n, x, y, factors, fixed, stage):
+        """Debug: the tracked scan's answer and every stored verdict against
+        a recomputation from x and y (AssertionError if one disagrees)."""
+        ref = pick_stage(n, x, y, factors, fixed)
+        if ref != stage:
+            raise AssertionError(f"tracked scan {stage!r:.200} != full rescan {ref!r:.200}")
+        m = self.fix_ok
+        if not clean(x, y, fixed[:m], fixed[:m], []):
+            raise AssertionError("fix_ok: stale verdict of the fixed block")
+        live = {}
+        for f in factors:
+            e = self.serial.get(id(f))
+            if e is not None:
+                live[e[1]] = f
+        for (sa, sb), v in self.verdict.items():
+            if sa in live and sb in live:
+                if v != _full_verdict(n, x, y, live[sa], live[sb]):
+                    raise AssertionError(f"stale verdict of the block {live[sa][0]} x {live[sb][0]}")
+        for sb, (m, v) in self.fix_pair.items():
+            if sb in live:
+                A, (B, gb) = fixed[:m], live[sb]
+                gg = sym_gens(n, B) if gb is None else gb
+                if v != (clean(x, y, A, B, gg) and clean(x, y, B, A, gg)):
+                    raise AssertionError(f"stale verdict of fixed[:{m}] x {B}")
+
+
+def _full_verdict(n, x, y, fa, fb):
+    """The check pick_stage makes on one block (a self block if fa is fb)."""
+    (A, ga), (B, gb) = fa, fb
+    if fa is fb:
+        return sym_clean(x, y, A, A) if ga is None else clean(x, y, A, A, ga)
+    if ga is None and gb is None:
+        return sym_clean(x, y, A, B) and sym_clean(x, y, B, A)
+    gg = (sym_gens(n, A) if ga is None else ga) + (sym_gens(n, B) if gb is None else gb)
+    return clean(x, y, A, B, gg) and clean(x, y, B, A, gg)
+
+
+def pick_stage_tracked(n, x, y, factors, fixed, memo):
+    """pick_stage, with the verdicts that cannot have changed taken from memo
+    (StageMemo gives the invariant). The checks and the order of the scan are
+    those of pick_stage."""
+    m = memo.fix_ok
+    if m < len(fixed):                  # the block of the fixed vertices: only the new ones
+        new = fixed[m:]
+        if not clean(x, y, fixed, new, []) or not clean(x, y, new, fixed[:m], []):
+            return "fail"
+        memo.fix_ok = len(fixed)
+    order = sorted(factors, key=lambda f: (len(f[0]), f[0][0]))
+    ids = [memo.sid(f) for f in order]
+    verdict = memo.verdict
+    for want_sym in (False, True):      # (the solved factors first)
+        for f, s in zip(order, ids):
+            if (f[1] is None) == want_sym:
+                v = verdict.get((s, s))
+                if v is None:
+                    v = verdict[(s, s)] = _full_verdict(n, x, y, f, f)
+                if not v:
+                    P = f[0]
+                    return "self", [f], [(i, j) for i in P for j in P]
+    FIX = (fixed, [])
+    parts = ([FIX] if fixed else []) + order
+    serials = ([None] if fixed else []) + ids
+    best = None
+    for a in range(len(parts)):
+        pa = parts[a]
+        A, ga = pa
+        sa = serials[a]
+        la = 1 if ga == [] else len(A)
+        for b in range(a + 1, len(parts)):
+            pb = parts[b]
+            B, gb = pb
+            size = la + len(B)
+            if best is not None and size >= best[0]:
+                continue
+            sb = serials[b]
+            if pa is FIX:
+                ok = memo.fix_clean(n, x, y, fixed, B, gb, sb)
+            else:
+                ok = verdict.get((sa, sb))
+                if ok is None:
+                    ok = verdict[(sa, sb)] = _full_verdict(n, x, y, pa, pb)
+            if not ok:
+                best = (size, pa, pb)
+    if best is None:
+        return None
+    _, pa, pb = best
+    A, B = pa[0], pb[0]
+    D = sorted([(i, j) for i in A for j in B] + [(j, i) for i in A for j in B]
+               + [(i, i) for i in A + B])
+    return "merge", ([pa, pb] if pa is not FIX else [pb]), D
 
 
 def pick_stage(n, x, y, factors, fixed):

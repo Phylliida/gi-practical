@@ -35,15 +35,80 @@ CHAIN_CACHE_LIMIT = 1 << 24
 _CHAINS = OrderedDict()
 _chains_size = 0
 
+# Front of the chain cache: (n, the ids of the generator objects, base) -> the
+# chain. Hashing a generator costs its degree, and most repeated groups arrive
+# as the very same tuple objects. An id may only be compared while its object
+# is alive, so every id-key is paired in chain.idkeys with a tuple holding its
+# generators (for an alias of the same value, its own objects: these are not
+# the ones in chain.key), and the id-keys leave this table when the chain is
+# evicted. So a hit means the same generators, and hence the chain that the
+# lookup by value would give. The aliases are charged to the cache size.
+_CHAIN_IDS = {}
+
+
+# Levels of a chain with a prescribed base start trivial, and most of them stay
+# so. Their containers are shared: the transversal level {b: idn} (one dict per
+# (degree, point)), which also serves as Ti, the empty _par dict, and no _ok
+# dict. These are safe to share because level dicts are only ever replaced
+# (_orbit builds new ones), never written to; only _ok[l] is written to, and
+# it is created when a level needs it (_schreier).
+_NO_PAR = {}
+_TRIVIAL_LEVELS = OrderedDict()         # degree -> list of {b: identity} per point b
+
+
+def _trivial_levels(n):
+    t = _TRIVIAL_LEVELS.get(n)
+    if t is None:
+        idn = _identity(n)
+        t = _TRIVIAL_LEVELS[n] = [{b: idn} for b in range(n)]
+        if len(_TRIVIAL_LEVELS) > 64:
+            _TRIVIAL_LEVELS.popitem(last=False)
+    return t
+
+
+def _add_alias(c, idk, gens):
+    """Let the generator objects `gens` (equal to those of c) find the chain c."""
+    global _chains_size
+    extra = c.key.k[0] * (len(gens) + 1)
+    c.idkeys.append((idk, gens))
+    _CHAIN_IDS[idk] = c
+    c.size += extra
+    _chains_size += extra
+    _trim_chains()
+
+
+def _trim_chains():
+    global _chains_size
+    while _chains_size > CHAIN_CACHE_LIMIT:
+        _, old = _CHAINS.popitem(last=False)
+        _chains_size -= old.size
+        for k, _ in old.idkeys:
+            del _CHAIN_IDS[k]
+
+
+class _ChainKey:
+    """A key of _CHAINS, its hash computed once (dict lookups, move_to_end)."""
+    __slots__ = ("k", "h")
+
+    def __init__(self, k):
+        self.k, self.h = k, hash(k)
+
+    def __hash__(self):
+        return self.h
+
+    def __eq__(self, other):
+        return self.k == other.k
+
 
 class _Chain:
     __slots__ = ("key", "gens", "base", "S", "T", "Ti", "par", "order", "size", "elements", "nt",
-                 "isodata", "orbs", "blocks")
+                 "isodata", "orbs", "blocks", "idkeys")
 
 
 def clear_chain_cache():
     global _chains_size
     _CHAINS.clear()
+    _CHAIN_IDS.clear()
     _chains_size = 0
 
 
@@ -134,10 +199,17 @@ class PermGroup:
             gens = list(gens)
         key = None
         if gens:
-            key = (n, tuple(gens), tuple(base))
-            snap = _CHAINS.get(key)
+            idk = (n, tuple(map(id, gens)), tuple(base))
+            snap = _CHAIN_IDS.get(idk)
             if snap is not None:
-                _CHAINS.move_to_end(key)
+                _CHAINS.move_to_end(snap.key)
+            else:
+                key = _ChainKey((n, tuple(gens), tuple(base)))
+                snap = _CHAINS.get(key)
+                if snap is not None:
+                    _CHAINS.move_to_end(snap.key)   # (first: the alias may trigger a trim)
+                    _add_alias(snap, idk, key.k[1])
+            if snap is not None:
                 self._load(snap)
                 if order is not None and self._order != order:
                     raise ValueError("PermGroup: the given order is wrong")
@@ -152,13 +224,13 @@ class PermGroup:
         self._nt, self._nt_T = [], self.T
         self._done = order == 1
         if base:
-            idn = self.idn
             self.base = list(base)
-            self.S = [[] for _ in self.base]
-            self.T = [{b: idn} for b in self.base]
-            self.Ti = [{b: idn} for b in self.base]
-            self._par = [{} for _ in self.base]
-            self._ok = [{} for _ in self.base]
+            k = len(self.base)
+            self.S = [()] * k           # (tuples until a level gets a generator)
+            self.T = list(map(_trivial_levels(n).__getitem__, self.base))
+            self.Ti = list(self.T)
+            self._par = [_NO_PAR] * k
+            self._ok = [None] * k
             self._ord_T = self.T
             self._nt, self._nt_T = [], self.T
         for g in gens:
@@ -166,7 +238,7 @@ class PermGroup:
                 break
             self.add(g)
         if key is not None:
-            self._store(key)
+            self._store(key, idk)
 
     # Chains from from_bsgs are explicit; levels 0..k-1 of a chain with
     # _transp = k have transposition transversals (see from_bsgs).
@@ -204,8 +276,8 @@ class PermGroup:
         G.S = [list(s) for s in S]
         G.T = list(T)
         G.Ti = list(T) if Ti is None else list(Ti)
-        G._par = [{} for _ in G.base]
-        G._ok = [{} for _ in G.base]
+        G._par = [_NO_PAR] * len(G.base)
+        G._ok = [None] * len(G.base)
         G._ginv = {}
         G._order = math.prod(len(t) for t in G.T)
         G._ord_T = G.T
@@ -222,16 +294,16 @@ class PermGroup:
         self.S = list(c.S)              # tuples, copied to lists before any change
         self._cow = True
         self.T, self.Ti, self._par = list(c.T), list(c.Ti), list(c.par)
-        self._ok = [{} for _ in c.base]
+        self._ok = [None] * len(c.base)
         self._ginv = {}
         self._order = c.order
         self._ord_T = self.T
         self._nt, self._nt_T = list(c.nt), self.T
         self._snap = c
 
-    def _store(self, key):
+    def _store(self, key, idk):
         global _chains_size
-        size = self.n * (2 * sum(len(t) for t in self.T) + len(self.gens) + 1)
+        size = self.n * (2 * sum(map(len, self.T)) + len(self.gens) + 1)
         if size > CHAIN_CACHE_LIMIT // 8:
             return
         c = _Chain()
@@ -242,11 +314,11 @@ class PermGroup:
         c.order, c.size, c.elements = self._order, size, None
         c.nt, c.isodata = tuple(self._nontrivial()), None
         c.orbs, c.blocks = None, False
+        c.idkeys = [(idk, key.k[1])]
         _CHAINS[key] = c
+        _CHAIN_IDS[idk] = c
         _chains_size += size
-        while _chains_size > CHAIN_CACHE_LIMIT:
-            _, old = _CHAINS.popitem(last=False)
-            _chains_size -= old.size
+        _trim_chains()
         self._snap = c
 
     # -- Schreier-Sims -----------------------------------------------------
@@ -256,8 +328,8 @@ class PermGroup:
         self.S.append([])
         self.T.append({b: self.idn})
         self.Ti.append({b: self.idn})
-        self._par.append({})
-        self._ok.append({})
+        self._par.append(_NO_PAR)
+        self._ok.append(None)
 
     def _orbit(self, l):
         """Recompute the BFS orbit and transversal of level l, reusing the old
@@ -297,7 +369,10 @@ class PermGroup:
         A trivial orbit stays trivial under a generator fixing its point."""
         S, T = self.S, self.T
         for l in range(lo, hi + 1):
-            S[l].append(g)
+            sl = S[l]
+            if sl.__class__ is tuple:   # (a level that was empty so far)
+                sl = S[l] = list(sl)
+            sl.append(g)
             if l == hi or len(T[l]) > 1:
                 self._orbit(l)
 
@@ -453,7 +528,10 @@ class PermGroup:
                 i -= 1
                 continue
             restart = False
-            Ti, par, ok, S, b = self.Ti[i], self._par[i], self._ok[i], self.S[i], base[i]
+            Ti, par, S, b = self.Ti[i], self._par[i], self.S[i], base[i]
+            ok = self._ok[i]
+            if ok is None:
+                ok = self._ok[i] = {}
             for p, u in list(T.items()):
                 e = p - n
                 for s in S:
@@ -517,6 +595,14 @@ class PermGroup:
     def orbits(self, points=None):
         """Orbits of the group, as sorted lists, containing the given points
         (all points by default), ordered by their least element."""
+        allo = self.orbits_shared()
+        if points is None:
+            return [list(o) for o in allo]
+        pts = set(points)
+        return [list(o) for o in allo if not pts.isdisjoint(o)]
+
+    def orbits_shared(self):
+        """All orbits, the cached lists themselves: callers must not change them."""
         gens = self.gens
         c = self._orbs
         if c is not None and c[0] is gens and c[1] == len(gens):
@@ -546,10 +632,7 @@ class PermGroup:
             self._orbs = (gens, len(gens), allo)
             if self._snap is not None:
                 self._snap.orbs = allo
-        if points is None:
-            return [list(o) for o in allo]
-        pts = set(points)
-        return [list(o) for o in allo if not pts.isdisjoint(o)]
+        return allo
 
     def elements(self):
         """All elements (only for small groups), in the order of
@@ -671,7 +754,7 @@ class PermGroup:
             H.T = self.T[m:]
             H.Ti = self.Ti[m:]
             H._par = self._par[m:]
-            H._ok = [{} for _ in H.base]
+            H._ok = [None] * len(H.base)
             H.gens = list(H.S[0])
             H._order = H.order()
             H._ord_T = H.T
@@ -729,14 +812,19 @@ class ActionHom:
     def image_order(self):
         if self.C is None:
             return self.G.order()
-        return math.prod(len(self.C.T[l]) for l in range(self.m))
+        return math.prod(map(len, self.C.T[:self.m]))
+
+    def _image_levels(self):
+        """The nontrivial levels of C below m, increasing."""
+        m, nt = self.m, self.C._nontrivial()
+        return nt[:bisect_left(nt, m)]
 
     def image_group(self):
         if self._image is None:
             if self.C is None:
                 amb = self.G.short_base()
             else:                       # the nontrivial image levels form a base of the image
-                amb = [l for l in range(self.m) if len(self.C.T[l]) > 1]
+                amb = self._image_levels()
             self._image = PermGroup(self.m, [self.image_of(g) for g in self.G.gens],
                                     order=self.image_order(), ambient_base=amb)
         return self._image
@@ -750,8 +838,8 @@ class ActionHom:
         n, m, C = self.G.n, self.m, self.C
         T, Ti = C.T, C.Ti
         if self._levels is None:
-            self._levels = [l for l in range(m) if len(T[l]) > 1]
-        g = tuple(n + v for v in p)     # the image coordinates of the combined element
+            self._levels = self._image_levels()
+        g = tuple(map(n.__add__, p))    # the image coordinates of the combined element
         acc = None
         # Trivial levels contribute nothing; p is in the image iff the residue
         # is trivial after the nontrivial ones.
@@ -780,8 +868,8 @@ class ActionHom:
                 K.S = [[s[:n] for s in S] for S in C.S[m:]]
                 K.T = [{p: u[:n] for p, u in T.items()} for T in C.T[m:]]
                 K.Ti = [{p: u[:n] for p, u in T.items()} for T in C.Ti[m:]]
-                K._par = [{} for _ in K.base]
-                K._ok = [{} for _ in K.base]
+                K._par = [_NO_PAR] * len(K.base)
+                K._ok = [None] * len(K.base)
                 K.gens = list(K.S[0])
                 K._order = K.order()
                 K._ord_T = K.T
@@ -830,15 +918,15 @@ class RestrictionHom(ActionHom):
             self.C = PermGroup(n, G.gens, base=D, order=G.order(), ambient_base=G.short_base())
 
     def image_order(self):
-        return math.prod(len(self.C.T[l]) for l in range(self.m))
+        return math.prod(map(len, self.C.T[:self.m]))
 
     def lift(self, p):
         n, m, C, D = self.G.n, self.m, self.C, self.D
         T, Ti = C.T, C.Ti
         if self._levels is None:
-            self._levels = [l for l in range(m) if len(T[l]) > 1]
+            self._levels = self._image_levels()
             self._Dt = tuple(D)
-        g = tuple(D[v] for v in p)      # g[i]: current image of D[i]
+        g = tuple(map(D.__getitem__, p))    # g[i]: current image of D[i]
         acc = None
         for l in self._levels:          # (as in ActionHom.lift)
             pt = g[l]

@@ -1281,11 +1281,460 @@ done:
     return res;
 }
 
+/* -- stage loop (gi/graph.py) and label refinement (gi/solver.py) ---------- */
+
+/* 1 if a == b, 0 if not, -1 if not both exact ints (the reference decides). */
+static inline int int_eq(PyObject *a, PyObject *b)
+{
+    Py_ssize_t u, v;
+    if (a == b)
+        return 1;
+    if (read_small(a, &u) && read_small(b, &v))
+        return u == v;
+    if (!PyLong_CheckExact(a) || !PyLong_CheckExact(b))
+        return -1;
+    return PyObject_RichCompareBool(a, b, Py_EQ);
+}
+
+/* The row x[i] if x is a list of lists of length n there; NULL otherwise. */
+static inline PyObject *clean_row(PyObject *x, Py_ssize_t i, Py_ssize_t n)
+{
+    PyObject *row = PyList_GET_ITEM(x, i);
+    if (!PyList_CheckExact(row) || PyList_GET_SIZE(row) != n)
+        return NULL;
+    return row;
+}
+
+/* clean(x, y, A, B, gens): graph.clean. True, False, or None for the reference. */
+static PyObject *ck_clean(PyObject *m, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *x, *y, *A, *B, *gens, *res = Py_None;
+    Py_ssize_t n, la, lb, ng, i, j, t, k;
+    int32_t *a = NULL, *b = NULL, *gb = NULL;
+    (void)m;
+    if (nargs != 5)
+        Py_RETURN_NONE;
+    x = args[0]; y = args[1]; A = args[2]; B = args[3]; gens = args[4];
+    if (!PyList_CheckExact(A) || !PyList_CheckExact(B) || !PyList_CheckExact(x)
+        || !PyList_CheckExact(y) || !PyList_CheckExact(gens))
+        Py_RETURN_NONE;
+    la = PyList_GET_SIZE(A);
+    lb = PyList_GET_SIZE(B);
+    if (la == 0 || lb == 0)
+        Py_RETURN_TRUE;
+    n = PyList_GET_SIZE(x);
+    if (PyList_GET_SIZE(y) != n)
+        Py_RETURN_NONE;
+    ng = PyList_GET_SIZE(gens);
+    a = malloc((size_t)(la + 1) * sizeof(int32_t));
+    b = malloc((size_t)(lb + 1) * sizeof(int32_t));
+    gb = malloc((size_t)(lb + 1) * sizeof(int32_t));
+    if (!a || !b || !gb) {
+        PyErr_NoMemory();
+        res = NULL;
+        goto done;
+    }
+    for (i = 0; i < la; i++) {
+        if (!read_index(PyList_GET_ITEM(A, i), n, &k))
+            goto done;
+        a[i] = (int32_t)k;
+    }
+    for (j = 0; j < lb; j++) {
+        if (!read_index(PyList_GET_ITEM(B, j), n, &k))
+            goto done;
+        b[j] = (int32_t)k;
+    }
+    for (i = 0; i < la; i++) {
+        PyObject *rx = clean_row(x, a[i], n), *ry = clean_row(y, a[i], n);
+        if (!rx || !ry)
+            goto done;
+        for (j = 0; j < lb; j++) {
+            int e = int_eq(PyList_GET_ITEM(rx, b[j]), PyList_GET_ITEM(ry, b[j]));
+            if (e < 0)
+                goto done;
+            if (!e) {
+                res = Py_False;
+                goto done;
+            }
+        }
+    }
+    for (t = 0; t < ng; t++) {
+        PyObject *g = PyList_GET_ITEM(gens, t);
+        if (!PyTuple_CheckExact(g) || PyTuple_GET_SIZE(g) != n)
+            goto done;
+        for (j = 0; j < lb; j++) {
+            if (!read_index(PyTuple_GET_ITEM(g, b[j]), n, &k))
+                goto done;
+            gb[j] = (int32_t)k;
+        }
+        for (i = 0; i < la; i++) {
+            PyObject *r1, *r2;
+            if (!read_index(PyTuple_GET_ITEM(g, a[i]), n, &k))
+                goto done;
+            r1 = clean_row(x, k, n);
+            r2 = clean_row(x, a[i], n);
+            if (!r1 || !r2)
+                goto done;
+            for (j = 0; j < lb; j++) {
+                int e = int_eq(PyList_GET_ITEM(r1, gb[j]), PyList_GET_ITEM(r2, b[j]));
+                if (e < 0)
+                    goto done;
+                if (!e) {
+                    res = Py_False;
+                    goto done;
+                }
+            }
+        }
+    }
+    res = Py_True;
+done:
+    free(a); free(b); free(gb);
+    Py_XINCREF(res);
+    return res;
+}
+
+#define PAIRS_MAX_N 4096
+
+/* action_on_pairs(n, pi, pj, gens): graph.action_on_pairs on the positions
+ * (pi[k], pj[k]). A list of tuples, or None for the reference (which raises
+ * KeyError if a pair leaves the list). */
+static PyObject *ck_action_on_pairs(PyObject *m, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *pi, *pj, *gens, *res = NULL;
+    Py_ssize_t n, cnt, ng, k, t, v;
+    int32_t *where = NULL, *ri = NULL, *rj = NULL, *img = NULL;
+    (void)m;
+    if (nargs != 4 || !read_small(args[0], &n) || n < 0 || n > PAIRS_MAX_N)
+        Py_RETURN_NONE;
+    pi = args[1]; pj = args[2]; gens = args[3];
+    if (!PyList_CheckExact(pi) || !PyList_CheckExact(pj) || !PyList_CheckExact(gens))
+        Py_RETURN_NONE;
+    cnt = PyList_GET_SIZE(pi);
+    ng = PyList_GET_SIZE(gens);
+    if (PyList_GET_SIZE(pj) != cnt)
+        Py_RETURN_NONE;
+    {
+        int ok = ints_ensure(cnt);
+        if (ok < 0)
+            return NULL;
+        if (!ok)
+            Py_RETURN_NONE;
+    }
+    where = calloc((size_t)(n * n + 1), sizeof(int32_t));
+    ri = malloc((size_t)(cnt + 1) * sizeof(int32_t));
+    rj = malloc((size_t)(cnt + 1) * sizeof(int32_t));
+    img = malloc((size_t)(n + 1) * sizeof(int32_t));
+    if (!where || !ri || !rj || !img) {
+        PyErr_NoMemory();
+        goto done;
+    }
+    for (k = 0; k < cnt; k++) {
+        if (!read_index(PyList_GET_ITEM(pi, k), n, &v))
+            goto use_python;
+        ri[k] = (int32_t)v;
+        if (!read_index(PyList_GET_ITEM(pj, k), n, &v))
+            goto use_python;
+        rj[k] = (int32_t)v;
+        where[ri[k] * n + rj[k]] = (int32_t)(k + 1);     /* (a later duplicate wins) */
+    }
+    /* the whole input is checked before anything is built */
+    for (t = 0; t < ng; t++) {
+        PyObject *g = PyList_GET_ITEM(gens, t);
+        if (!PyTuple_CheckExact(g) || PyTuple_GET_SIZE(g) != n)
+            goto use_python;
+        for (k = 0; k < n; k++)
+            if (!read_index(PyTuple_GET_ITEM(g, k), n, &v))
+                goto use_python;
+    }
+    res = PyList_New(ng);
+    if (res == NULL)
+        goto done;
+    for (t = 0; t < ng; t++) {
+        PyObject *g = PyList_GET_ITEM(gens, t);
+        PyObject *out = PyTuple_New(cnt);
+        if (out == NULL) {
+            Py_CLEAR(res);
+            goto done;
+        }
+        PyList_SET_ITEM(res, t, out);
+        for (k = 0; k < n; k++) {
+            read_index(PyTuple_GET_ITEM(g, k), n, &v);
+            img[k] = (int32_t)v;
+        }
+        for (k = 0; k < cnt; k++) {
+            int32_t w = where[img[ri[k]] * n + img[rj[k]]];
+            if (w == 0) {               /* left the list: the reference raises */
+                Py_CLEAR(res);
+                goto use_python;
+            }
+            PyTuple_SET_ITEM(out, k, int_ref(w - 1));
+        }
+    }
+    goto done;
+use_python:
+    res = Py_None;
+    Py_INCREF(res);
+done:
+    free(where); free(ri); free(rj); free(img);
+    return res;
+}
+
+/* a hash table (u, v) -> code, codes given in order of first appearance */
+typedef struct {
+    int32_t *ku, *kv, *val;
+    size_t mask, used;
+} pair_tab;
+
+static int pt_alloc(pair_tab *t, size_t cap)
+{
+    size_t i;
+    t->ku = malloc(cap * sizeof(int32_t));
+    t->kv = malloc(cap * sizeof(int32_t));
+    t->val = malloc(cap * sizeof(int32_t));
+    if (!t->ku || !t->kv || !t->val)
+        return 0;
+    for (i = 0; i < cap; i++)
+        t->val[i] = -1;
+    t->mask = cap - 1;
+    return 1;
+}
+
+static void pt_free(pair_tab *t)
+{
+    free(t->ku); free(t->kv); free(t->val);
+    t->ku = t->kv = t->val = NULL;
+}
+
+static inline size_t pt_slot(const pair_tab *t, int32_t u, int32_t v)
+{
+    uint64_t h = (uint64_t)(uint32_t)u * 0x9E3779B97F4A7C15ULL;
+    h ^= (uint64_t)(uint32_t)v * 0xC2B2AE3D27D4EB4FULL;
+    h ^= h >> 29;
+    return (size_t)h & t->mask;
+}
+
+/* The code of (u, v), adding it if new; -1 if out of memory. */
+static int32_t pt_code(pair_tab *t, int32_t u, int32_t v)
+{
+    size_t i = pt_slot(t, u, v);
+    while (t->val[i] != -1) {
+        if (t->ku[i] == u && t->kv[i] == v)
+            return t->val[i];
+        i = (i + 1) & t->mask;
+    }
+    if ((t->used + 1) * 10 > (t->mask + 1) * 7) {
+        pair_tab b;
+        size_t j;
+        if (!pt_alloc(&b, (t->mask + 1) * 2)) {
+            pt_free(&b);
+            return -1;
+        }
+        b.used = t->used;
+        for (j = 0; j <= t->mask; j++)
+            if (t->val[j] != -1) {
+                size_t s = pt_slot(&b, t->ku[j], t->kv[j]);
+                while (b.val[s] != -1)
+                    s = (s + 1) & b.mask;
+                b.ku[s] = t->ku[j]; b.kv[s] = t->kv[j]; b.val[s] = t->val[j];
+            }
+        pt_free(t);
+        *t = b;
+        i = pt_slot(t, u, v);
+        while (t->val[i] != -1)
+            i = (i + 1) & t->mask;
+    }
+    t->ku[i] = u;
+    t->kv[i] = v;
+    t->val[i] = (int32_t)t->used;
+    return (int32_t)t->used++;
+}
+
+static int cmp_i64(const void *a, const void *b)
+{
+    int64_t x = *(const int64_t *)a, y = *(const int64_t *)b;
+    return (x > y) - (x < y);
+}
+
+/* the signature order of refine_labels: the color, then the sorted row */
+static inline int sig_less(const int64_t *c, const int64_t *nb, Py_ssize_t q, int32_t a, int32_t b)
+{
+    Py_ssize_t k;
+    const int64_t *ra, *rb;
+    if (c[a] != c[b])
+        return c[a] < c[b];
+    ra = nb + a * q;
+    rb = nb + b * q;
+    for (k = 0; k < q; k++)
+        if (ra[k] != rb[k])
+            return ra[k] < rb[k];
+    return 0;
+}
+
+static inline int sig_equal(const int64_t *c, const int64_t *nb, Py_ssize_t q, int32_t a, int32_t b)
+{
+    return c[a] == c[b] && memcmp(nb + a * q, nb + b * q, (size_t)q * sizeof(int64_t)) == 0;
+}
+
+static void sort_sigs(int32_t *idx, int32_t *tmp, Py_ssize_t m, const int64_t *c,
+                      const int64_t *nb, Py_ssize_t q)
+{
+    Py_ssize_t w, lo;
+    for (w = 1; w < m; w *= 2) {
+        for (lo = 0; lo < m; lo += 2 * w) {
+            Py_ssize_t mid = lo + w < m ? lo + w : m, hi = lo + 2 * w < m ? lo + 2 * w : m;
+            Py_ssize_t a = lo, b = mid, o = lo;
+            while (a < mid && b < hi)
+                tmp[o++] = sig_less(c, nb, q, idx[b], idx[a]) ? idx[b++] : idx[a++];
+            while (a < mid)
+                tmp[o++] = idx[a++];
+            while (b < hi)
+                tmp[o++] = idx[b++];
+        }
+        memcpy(idx, tmp, (size_t)m * sizeof(int32_t));
+    }
+}
+
+/* Reads q small non-negative ints from a list or tuple; 0 if it is not one. */
+static int read_colors(PyObject *c, Py_ssize_t q, int64_t *out, int64_t *maxv)
+{
+    Py_ssize_t i, v;
+    if (!(PyList_CheckExact(c) || PyTuple_CheckExact(c)) || PySequence_Fast_GET_SIZE(c) != q)
+        return 0;
+    for (i = 0; i < q; i++) {
+        if (!read_small(PySequence_Fast_GET_ITEM(c, i), &v) || v < 0)
+            return 0;
+        out[i] = v;
+        if (v > *maxv)
+            *maxv = v;
+    }
+    return 1;
+}
+
+static Py_ssize_t count_distinct(const int64_t *c, Py_ssize_t q, int64_t *tmp)
+{
+    Py_ssize_t i, cnt = 0;
+    memcpy(tmp, c, (size_t)q * sizeof(int64_t));
+    qsort(tmp, (size_t)q, sizeof(int64_t), cmp_i64);
+    for (i = 0; i < q; i++)
+        if (i == 0 || tmp[i] != tmp[i - 1])
+            cnt++;
+    return cnt;
+}
+
+#define LABELS_MAX_Q 30000
+
+/* refine_labels_pairs(q, cx, cy, px, py): solver.refine_labels with empty
+ * hypergraphs and integer pair colors. (nx, ny), or None for the reference. */
+static PyObject *ck_refine_labels_pairs(PyObject *m, PyObject *const *args, Py_ssize_t nargs)
+{
+    Py_ssize_t q, M, a, b, s, N;
+    int64_t *c = NULL, *c2 = NULL, *R = NULL, *nb = NULL, *row = NULL, *tmp = NULL, K, maxc = 0;
+    int32_t *p = NULL, *idx = NULL, *itmp = NULL;
+    pair_tab tab = {NULL, NULL, NULL, 0, 0};
+    PyObject *res = NULL;
+    (void)m;
+    if (nargs != 5 || !read_small(args[0], &q) || q <= 0 || q > LABELS_MAX_Q)
+        Py_RETURN_NONE;
+    M = 2 * q;
+    N = q * q;
+    c = malloc((size_t)M * sizeof(int64_t));
+    c2 = malloc((size_t)M * sizeof(int64_t));
+    R = malloc((size_t)M * (size_t)q * sizeof(int64_t));
+    nb = malloc((size_t)M * (size_t)q * sizeof(int64_t));
+    row = malloc((size_t)q * sizeof(int64_t));
+    tmp = malloc((size_t)q * sizeof(int64_t));
+    p = malloc((size_t)N * sizeof(int32_t));
+    idx = malloc((size_t)M * sizeof(int32_t));
+    itmp = malloc((size_t)M * sizeof(int32_t));
+    if (!c || !c2 || !R || !nb || !row || !tmp || !p || !idx || !itmp) {
+        PyErr_NoMemory();
+        goto done;
+    }
+    if (!read_colors(args[1], q, c, &maxc) || !read_colors(args[2], q, c + q, &maxc))
+        goto use_python;
+    K = 2 * (int64_t)q > 1 + maxc ? 2 * (int64_t)q : 1 + maxc;
+    if (!pt_alloc(&tab, 1024)) {
+        PyErr_NoMemory();
+        goto done;
+    }
+    for (s = 0; s < 2; s++) {           /* one code table, first appearance, as the reference */
+        if (!read_matrix(args[3 + s], q, p))
+            goto use_python;
+        for (a = 0; a < q; a++) {
+            int64_t *r = R + (s * q + a) * q;
+            for (b = 0; b < q; b++) {
+                int32_t code = pt_code(&tab, p[a * q + b], p[b * q + a]);
+                if (code < 0) {
+                    PyErr_NoMemory();
+                    goto done;
+                }
+                r[b] = (int64_t)code * K;
+            }
+            r[a] = -K;
+        }
+    }
+    for (;;) {
+        Py_ssize_t i, rank = -1, d0, d1, e0, e1;
+        if (PyErr_CheckSignals() < 0)
+            goto done;
+        for (a = 0; a < M; a++) {
+            const int64_t *r = R + a * q;
+            const int64_t *col = a < q ? c : c + q;
+            int64_t *out = nb + a * q;
+            for (b = 0; b < q; b++)
+                out[b] = r[b] + col[b];
+            qsort(out, (size_t)q, sizeof(int64_t), cmp_i64);
+            idx[a] = (int32_t)a;
+        }
+        sort_sigs(idx, itmp, M, c, nb, q);
+        for (i = 0; i < M; i++) {
+            if (i == 0 || !sig_equal(c, nb, q, idx[i - 1], idx[i]))
+                rank++;
+            c2[idx[i]] = rank;
+        }
+        d0 = count_distinct(c, q, tmp);
+        d1 = count_distinct(c + q, q, tmp);
+        e0 = count_distinct(c2, q, tmp);
+        e1 = count_distinct(c2 + q, q, tmp);
+        memcpy(c, c2, (size_t)M * sizeof(int64_t));
+        if (e0 == d0 && e1 == d1)
+            break;
+    }
+    res = PyTuple_New(2);
+    if (res == NULL)
+        goto done;
+    for (s = 0; s < 2; s++) {
+        PyObject *lst = PyList_New(q);
+        if (lst == NULL) {
+            Py_CLEAR(res);
+            goto done;
+        }
+        PyTuple_SET_ITEM(res, s, lst);
+        for (a = 0; a < q; a++) {
+            PyObject *v = PyLong_FromLongLong(c[s * q + a]);
+            if (v == NULL) {
+                Py_CLEAR(res);
+                goto done;
+            }
+            PyList_SET_ITEM(lst, a, v);
+        }
+    }
+    goto done;
+use_python:
+    res = Py_None;
+    Py_INCREF(res);
+done:
+    free(c); free(c2); free(R); free(nb); free(row); free(tmp); free(p); free(idx); free(itmp);
+    pt_free(&tab);
+    return res;
+}
+
 /* -- module --------------------------------------------------------------- */
 #define FAST(name) {#name, (PyCFunction)(void (*)(void))ck_##name, METH_FASTCALL, NULL}
 static PyMethodDef methods[] = {
     FAST(set_fallbacks), FAST(mul), FAST(inv), FAST(act), FAST(maps), FAST(orbits),
     FAST(sift), FAST(sifts_to_id), FAST(make_fast_plan), FAST(wl2_single), FAST(wl2_check),
+    FAST(clean), FAST(action_on_pairs), FAST(refine_labels_pairs),
     {NULL, NULL, 0, NULL}
 };
 
