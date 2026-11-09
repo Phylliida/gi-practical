@@ -4,21 +4,21 @@
   V.chapter('table', 'The charging table');
 
   const ROWS = [
-    { op: 'Affected test or rectangle', m: 'N^a', drop: 'A c_\\theta x-2B', term: C.x2, why: 'domain shrinks by θ: x² falls by c_θ x' },
+    { op: 'Affected test or rectangle', m: 'N^a', drop: 'A c_\\theta x-2B', term: C.x2, why: 'domain shrinks by θ: x² falls by c_{θ} x' },
     { op: 'Visible unaffected test', m: 'N^a', drop: 'A\\kappa x-2B', term: C.sig, why: 'σ falls by κ: σx falls by κx' },
     { op: 'Product refinement, r ≥ 2', m: 'N^a\\,2^r r!', drop: 'A(r-1)x-2B', term: C.rho, why: 'ρ falls by r−1: ρx falls by (r−1)x' },
     { op: 'Primitive enumeration, degree d', m: 'N^a e^{a\\log^2 d}', drop: '\\tfrac A3 x\\log d-2B', term: C.x2, why: 'domain drops by d: x² falls by ⅓ x log d' },
-    { op: 'Auxiliary-graph continuation', m: 'q^a', drop: 'A c_\\beta\\log q-2B', term: C.Q, why: 'cap q→βq: Q falls by c_β log q' },
+    { op: 'Auxiliary-graph continuation', m: 'q^a', drop: 'A c_\\beta\\log q-2B', term: C.Q, why: 'cap q→βq: Q falls by c_{β} log q' },
     { op: 'Row initialization or enlargement', m: 'b_0', drop: 'B', term: C.h, why: 'h falls by one: Bh falls by B' },
   ];
   const Y0 = 150, RH = 74;
-  const drawRow = (r, i, a) => {
+  const drawRow = (r, i, a, dropA = a) => {
     const y = Y0 + i * RH;
     if (i % 2 === 0) c.rect(70, y - 34, 1140, RH, { fill: C.bg2, alpha: a * 0.6, r: 5 });
     c.rect(70, y - 34, 6, RH, { fill: r.term, alpha: a });
     c.text(r.op, 92, y + 2, { size: 20, align: 'left', alpha: a, weight: 500 });
     c.tex(r.m, 620, y + 2, { size: 25, alpha: a, key: 'mcol' + i });
-    c.tex(r.drop, 900, y + 2, { size: 25, alpha: a, key: 'dcol' + i });
+    c.tex(r.drop, 900, y + 2, { size: 25, alpha: dropA, key: 'dcol' + i });
   };
 
   V.scene({
@@ -31,7 +31,7 @@
       'Row four: enumeration of a primitive quotient of degree d. Branches e to the a log squared d. Here is the one line that looks scary: log squared d. Domain drops by d, so x squared falls by a third of x log d. Since x is at least log d, that covers it.',
       { say: 'Before row five: what do you predict it is? Same domain. One cap falls. What pays?', hold: 1.5 },
       'Row five: the continuation after a rectangle. Only q to the a branches, because branching is over labels. Paid by Q falling by c beta log q.',
-      'Row six: a row-construction event has a bounded number b zero of branches. It spends one unit of h, and the weight drops by B.',
+      'Row six: a row-construction event has a bounded number b zero of branches. It spends one unit of h, and the potential drops by B.',
     ],
     draw(c_, b) {
       D.title('The charging table', { alpha: b.on(0), y: 38 });
@@ -40,12 +40,13 @@
       c.text('Branches', 620, Y0 - 58, { size: 19, fill: C.ink2, alpha: a, weight: 600 });
       c.text('Potential drop', 900, Y0 - 58, { size: 19, fill: C.ink2, alpha: a, weight: 600 });
       ROWS.forEach((r, i) => {
-        const on = i + 2 === 7 ? 7 : (i >= 5 ? 8 : i + 2);
+        const on = i >= 5 ? 8 : i + 2;
         const al = b.t >= b.s(Math.min(on, 8)) ? 1 : 0;
         const showAll = b.in(0, 2);
         const dim = showAll ? 0.4 : 1;
         const shown = showAll ? b.on(0, 2) * 0.4 : (b.on(on) * 1);
-        drawRow(r, i, Math.max(shown, 0));
+        // row five: the prediction beat shows the row but keeps its potential drop hidden until the answer
+        drawRow(r, i, Math.max(shown, 0), i === 4 && b.in(6, 7) ? 0 : (i === 4 && !showAll ? b.on(7) : Math.max(shown, 0)));
         if (i === 4) {
           // prediction prompt in the beat before row five
           if (b.in(6, 7)) c.text('?', 900, Y0 + i * RH + 2, { size: 36, weight: 700, fill: C.Q, alpha: b.on(6, 7) });
@@ -64,7 +65,7 @@
       'For the domain and sigma rows, since log of N to the a is at most a star x, we need A c theta to be at least a star plus a bit. Same with A kappa.',
       'For the enumeration row we have to be a little more careful, but the check is short: a log squared d, plus a star x, is at most that coefficient times x log d, because x is at least log d, and x at least log 8.',
       'So the conditions are just a handful of inequalities for the single constant A. Those inequalities are listed in the paper, and they are checked in Lean.',
-      'Then every class of children carries at most 1 over 8J of the weight, and J is at most 8. Everything fits. The argument is finished.',
+      'Then every class of children carries at most 1 over 8J of the weight, and the paper takes J equal to 8. Everything fits. The argument is finished.',
     ],
     draw(c_, b) {
       D.title('Every row is one inequality', { alpha: b.on(0) });
@@ -78,7 +79,7 @@
       eqs.forEach((e) => c.tex(e.tex, 640, e.y, { size: 27, alpha: b.on(e.on), fill: e.col }));
       c.tex('H_\\ast=2B+\\log(8J),\\quad x_0=\\log 8,\\quad a_\\ast=a/\\gamma', 640, 420, { size: 23, alpha: b.on(1), fill: C.ink2 });
       const a4 = b.on(4);
-      c.tex('\\text{each class carries}\\ \\le\\ \\frac{W}{8J},\\quad J\\le 8', 640, 520, { size: 32, alpha: a4 });
+      c.tex('\\text{each class carries}\\ \\le\\ \\frac{W}{8J},\\quad J=8', 640, 520, { size: 32, alpha: a4 });
       c.text('Lean: GI.Paper.lem_main_phase_bound', 640, 575, { size: 18, fill: C.ink2, alpha: a4 });
     },
   });

@@ -59,7 +59,7 @@
       'The honest baseline is to try all n-factorial renamings.',
       'In 1983, Babai, Kantor and Luks brought that down to e to the square root of n log n, roughly.',
       'In 2015 Babai announced a quasi-polynomial algorithm. Helfgott\'s careful accounting of the corrected version gives e to the log cubed of n.',
-      'And in November 2026, a preprint by Hajiaghayi and JafariRaviz proves e to the log squared of n. That is the same as n to the order log n.',
+      'And in November 2026, a preprint by Hajiaghayi and JafariRaviz gives a proof of e to the order log squared of n. That is the same as n to the order log n.',
       'This chart shows only the shape: the constants are ignored, so read nothing into where the lines cross.',
     ],
     draw(c_, b) {
@@ -98,7 +98,7 @@
         c.tex(fn.tex, end[0] + 8, end[1] - 14, { size: 21, align: 'left', fill: fn.col(), alpha: prog > 0.9 ? al : 0 });
       });
       // right column: years
-      const rows = [['brute force', '\\text{try all } n!', C.red], ['1983', 'e^{\\sqrt{n\\log n}}', C.orange], ['2015', 'e^{(\\log n)^3}', C.violet], ['Nov 2026', 'e^{(\\log n)^2}=n^{O(\\log n)}', C.aqua]];
+      const rows = [['brute force', '\\text{try all } n!', C.red], ['1983', 'e^{O(\\sqrt{n\\log n})}', C.orange], ['2015–17', 'e^{O((\\log n)^3)}', C.violet], ['Nov 2026 preprint', 'e^{O((\\log n)^2)}=n^{O(\\log n)}', C.aqua]];
       rows.forEach(([yr, tex, col], i) => {
         const al = appear[i], y = 170 + i * 92;
         c.circle(918, y, 7, { fill: col, alpha: al });

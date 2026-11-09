@@ -16,7 +16,7 @@
   V.scene({
     beats: [
       'One design decision has been sitting quietly in the background, and now it earns its keep. Every call returns its complete answer: one isomorphism and generators, or the empty set.',
-      'Suppose instead an auxiliary call found a single isomorphism and handed it back. Then the parent would need to retry, once for every possibility the auxiliary hid. Its branching multiplies. Depth times depth.',
+      'Suppose instead an auxiliary call found a single isomorphism and handed it back. Then the parent would need to retry, once for every possibility the auxiliary hid. Its branching multiplies. Cost times cost.',
       'With complete answers, the auxiliary call finishes first, and returns its entire coset. The parent then continues once, under that one coset. The work adds.',
       'So even when a rectangle query does a big search internally, that search is a one-time additive cost. The auxiliary leaves do not each spawn a continuation of the parent.',
       'Two more details from the paper. First, an answer may be an overcoset: it can contain extras that are not real isomorphisms, like the extension over the unconstrained labels. That is fine. The parent re-checks the original colours, and the extras die there.',

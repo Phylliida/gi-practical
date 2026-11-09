@@ -40,7 +40,7 @@
       'Same pattern for sigma. Lambda sigma falls by kappa Lambda, paying d to the order kappa. Q d is unchanged in form. The whole table has moved from log of N, to log of d.',
     ],
     draw(c_, b) {
-      D.title('Replace the x that paid for N^a', { alpha: b.on(0) });
+      D.title('Replace the x that paid for N^{a}', { alpha: b.on(0) });
       const a = b.on(0);
       c.tex('N^a=e^{a\\log N}\\le e^{a_\\ast x}', 640, 110, { size: 32, alpha: a });
       c.text('this is why x sits in Φ', 640, 150, { size: 20, fill: C.ink2, alpha: a });
@@ -93,17 +93,17 @@
 
   V.scene({
     beats: [
-      'Now the enumeration channel, which is the one that really is forced. Grohe, Neuen and Schweitzer proved a structure theorem for this class. A primitive group of degree d prime in the class either has order at most d prime to the c one log d, plus c two, or it has a very specific form: a socle that is a power of a Johnson group, with a big enough parameter.',
-      'So in the first case, enumerating costs e to the c one log d times log d prime. Remember the drop for shrinking by d prime: one third of Lambda log d prime. Lambda is about log d. So one third Lambda log d prime pays for it, exactly.',
+      'Now the enumeration channel, which is the one that really is forced. Grohe, Neuen and Schweitzer proved a structure theorem for this class. A primitive group of degree d prime in the class either has order at most d prime to the c one log d, plus c two, or it has a very specific form: a socle that is a power of a Johnson group, Alt m acting on t-subsets, with a big enough parameter.',
+      'So in the first case, enumerating costs e to the c one log d times log d prime. Remember the drop for shrinking by d prime: one third of Lambda log d prime. Lambda is about log d. So one third Lambda log d prime pays for it, up to the constant A.',
       'In the second case we must not enumerate. Here the corrected dispatcher rule comes in: recognize the group, and do product refinement and the giant step, if and only if the socle is a Johnson power in product action with m greater than 4 log base 2 of m choose t, and m is greater than the constant q zero. Otherwise enumerate. This test is structural and does not even need to know d.',
       'The original Theorem 3.13 is stated with order conditions too, but the fix here is the structural test: that is how the red-team corrected the dispatcher, and the corrected form is what I am presenting.',
-      'What about product refinement? The index was 2 to the r times r factorial, and that gives log r, a log log n term. In this class, the top group is a subgroup of Sym r that also lies in the class. Babai, Cameron and Palfy bound such a group by d to the r minus 1.',
+      'What about product refinement? The index was 2 to the r times r factorial, and that gives log r, a log log n term. In this class, the top group is a subgroup of Sym r that also lies in the class. Babai, Cameron and Pálfy bound such a group by d to the r minus 1.',
       'So the index is at most 2 to the r, times d plus 1 to the r minus 1, whose log is at most r minus 1, times Lambda. And rho still falls by r minus 1. So rho times Lambda pays. That is the ell in the potential replaced by Lambda, and no log log n term survives.',
     ],
     draw(c_, b) {
       D.title('Enumeration, and the dispatcher', { alpha: b.on(0) });
       const a = b.on(0);
-      c.text('GNS Theorem 3.13 (primitive group of degree d′ in Γ̂_d)', 640, 96, { size: 22, weight: 600, alpha: a });
+      c.text('GNS Theorem 3.13 (primitive group of degree d′ in \\hat{Γ}_{d})', 640, 96, { size: 22, weight: 600, alpha: a });
       D.card(70, 130, 540, 180, { alpha: a, stroke: C.aqua });
       c.text('order bound', 340, 165, { size: 22, weight: 600, alpha: a });
       c.tex("|P|\\le d'^{\\,c_1\\log d+c_2}", 340, 225, { size: 30, alpha: a });
@@ -120,7 +120,7 @@
       c.tex('\\text{recognize, product-refine, GiantStep} \\iff \\mathrm{Soc}(P)\\cong(A_m^{(t)})^k \\text{ in product action},\\ m>4\\log_2\\binom mt,\\ m>q_0;\\ \\text{ else enumerate}', 640, 464, { size: 21, alpha: a2 });
       const a4 = b.on(4), a5 = b.on(5);
       c.tex('2^r\\,r!\\quad\\to\\quad 2^r(d+1)^{r-1}', 340, 535, { size: 30, alpha: a4 });
-      c.text('Babai–Cameron–Pálfy: |top group| ≤ d^(r−1), for d ≥ 6', 340, 585, { size: 19, fill: C.ink2, alpha: a4 });
+      c.text('Babai–Cameron–Pálfy: |top group| ≤ d^{r−1}, for d ≥ 6', 340, 585, { size: 19, fill: C.ink2, alpha: a4 });
       c.tex('\\log(\\text{index})\\le(r-1)\\Lambda\\ \\Rightarrow\\ \\rho\\text{ pays},\\ \\text{no }\\log\\log n', 880, 548, { size: 26, alpha: a5 });
       D.chip('not machine-checked', 1110, 94, { alpha: a, stroke: C.red, size: 15, textFill: C.ink });
       if (b.in(5)) potentialL(640, 650, true, { alpha: b.on(5), size: 34 });

@@ -6,9 +6,9 @@
     beats: [
       'Helfgott wrote out the accounting for the corrected algorithm carefully. I will show you his recurrence, because every term of it is going to come back.',
       'Here k is about 2 log n. F of n and r is the time for strings of length n, with a block hierarchy whose remaining depth is measured by r. And m is the number of labels.',
-      'First term: computing certificates. There are about n to the k test sets, and comparisons between them. Each is a call on a domain smaller by a factor of k.',
-      'Second term: the coloured structure on labels. Design Lemma chooses a tuple of up to k labels. That choice isn\'t canonical, so its cost, m to the k, multiplies everything that comes after. Split-or-Johnson does the same, with m to the log m choices.',
-      'Pulled together: a cost of about exp of log squared n per round, and r is at most 2 log base 2 of n rounds.',
+      'First two terms: computing certificates. There are about n to the k test sets, and comparisons between them. Each is a call on a domain smaller by a factor of k.',
+      'Last term: the coloured structure on labels. Design Lemma chooses a tuple of up to k labels. That choice isn\'t canonical, so its cost, m to the k, multiplies everything that comes after. Split-or-Johnson does the same, with m to the log m choices.',
+      'Pulled together: a cost of about exp of log squared n per round. Each round either lowers r by one or halves n, and r is at most 2 log base 2 of n, so there are at most about 3 log base 2 of n rounds.',
     ],
     draw(c_, b) {
       D.title('Helfgott\'s recurrence (Appendix A)', { alpha: b.on(0) });
@@ -26,7 +26,7 @@
         c.text(p.sub, p.x, p.y + 48, { size: 18, fill: C.ink2, alpha: al });
       });
       const a4 = b.on(4);
-      c.tex('\\text{cost per round } e^{O(\\log^2 n)}\\quad\\times\\quad r\\le 2\\log_2 n\\ \\text{rounds}', 640, 420, { size: 28, alpha: a4 });
+      c.tex('\\text{cost per round } e^{O(\\log^2 n)}\\quad\\times\\quad r+\\log_2 n\\le 3\\log_2 n\\ \\text{rounds}', 640, 420, { size: 28, alpha: a4 });
       c.tex('F(n,r)\\le e^{O(\\log^3 n)}', 640, 480, { size: 34, alpha: a4, fill: C.ink });
     },
   });
@@ -62,6 +62,7 @@
       const a5 = b.on(5);
       c.line(460, 470, 830, 470, { stroke: C.lab, lw: 0, alpha: 0 });
       c.text('the second tile is the one to remove', 640, 545, { size: 26, weight: 600, alpha: a5 });
+      D.simplified(640, 610, b.on(1), 'my framing of Helfgott\'s recurrence, not his');
     },
   });
 })();

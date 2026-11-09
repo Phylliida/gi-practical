@@ -5,9 +5,9 @@
   V.scene({
     beats: [
       'There is a catch in stopping at the first rectangle. Who solves it? We need the answer under exactly the relabelings that the current group allows. And a rectangle on q labels has up to q squared cells.',
-      'If q is small, there is no problem. Let lambda be N to the alpha, with alpha two fifths. When q is at most lambda, solve the configuration fresh, on its q squared positions. That is at most N to the 2 alpha, which is well below the threshold of the phase.',
+      'If q is small, there is no problem. Write N for the number of positions when the current phase of the recursion began; chapter 15 explains phases. Let lambda be N to the alpha, with alpha two fifths. When q is at most lambda, solve the configuration fresh, on its q squared positions. That is at most N to the 2 alpha, which is well below the threshold of the phase.',
       'If q is bigger than lambda, q squared might be larger than the whole domain. So a fresh call on q squared positions is out of the question. The rectangle has to be solved somewhere inside the positions that we already have.',
-      'Here is the good news. Above lambda, the classification pins down the action: the orbits of the kernel on positions are indexed by single labels, by ordered pairs, or by unordered pairs of labels. Those are the only ways.',
+      'Here is the good news. Above lambda, a lemma in the paper pins down the action: the orbits of the kernel on positions are indexed by single labels, by ordered pairs, or by unordered pairs of labels. Those are the only ways.',
       'If they are pairs: pull each matrix entry back to all positions over that pair. The positions over W times R form an orbit Delta of a subgroup. Its size is a fraction of s, at most theta: a constant smaller than 1. So the recursive call is on a genuinely smaller orbit, which keeps all of its inherited hierarchy, and caps, and budget.',
       'And that orbit call is what pays for the rectangle query: the domain decreases by a constant factor.',
     ],

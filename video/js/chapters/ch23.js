@@ -12,6 +12,7 @@
     ],
     draw(c_, b) {
       D.title('The degree-d bound', { alpha: b.on(0) });
+      D.chip('conditional · not in the HJ paper', 1080, 92, { alpha: b.on(0), stroke: C.red, size: 17, textFill: C.ink });
       const a = b.on(0);
       c.tex('\\Phi_\\Lambda(\\text{root}) = O(\\Lambda\\log N)', 640, 110, { size: 32, alpha: a });
       const a2 = b.on(2);
@@ -47,17 +48,18 @@
     beats: [
       'Can re-analysis push this any further? No. There is an explicit family that forces this algorithm to do the work.',
       'Take D odd, and d equal to D minus 1. Let P be the affine-type group: the even-weight vectors of length D, over F two, extended by Sym D permuting the coordinates. It acts on 2 to the d points, and it is primitive.',
-      'Now take the wreath product of P with a cycle of length m, acting in the product action on those d-coordinate vectors, m at a time. N is 2 to the d m positions. The group is in Gamma hat D, and it is primitive.',
+      'Now take the wreath product of P with a cycle of length m, where m is a power of 2, acting in the product action on those d-coordinate vectors, m at a time. N is 2 to the d m positions. The group is in Gamma hat D, and it is primitive.',
       'Its socle is elementary abelian: no Johnson structure, so the corrected dispatcher enumerates it, and so does the original. And its order is at least N to the log base 2 of D minus 0.443.',
       'So on every pair of strings, the algorithm creates at least that many cosets, whatever the colours are. Real numbers: for D equals 9 and m equals 256, the exponent of N is about 3.3. So no re-analysis can give n to the little o of log d, on this algorithm, in the string setting.',
       'Two scope limits. It is the string-isomorphism setting, not graphs. Whether graphs of degree d produce such groups inside this algorithm is not known. And the floor is not intrinsic: a different algorithm that memoizes over block pairs solves this very family in time fixed-parameter in d. The algorithm has to change.',
     ],
     draw(c_, b) {
       D.title('Why this cannot be pushed further by re-analysis', { alpha: b.on(0) });
+      D.chip('not in the HJ paper · AI-checked only', 1040, 86, { alpha: b.on(0), stroke: C.red, size: 16, textFill: C.ink });
       const a = b.on(1);
       c.tex('P_d=\\mathbb F_2^{\\,d}\\rtimes\\mathrm{Sym}(D),\\quad D=d+1\\ \\text{odd}', 640, 112, { size: 28, alpha: a });
       const a2 = b.on(2);
-      c.tex('G_{d,m}=P_d\\wr C_m,\\quad N=2^{dm},\\quad G_{d,m}\\in\\hat\\Gamma_D', 640, 165, { size: 28, alpha: a2 });
+      c.tex('G_{d,m}=P_d\\wr C_m,\\quad m=2^j,\\quad N=2^{dm},\\quad G_{d,m}\\in\\hat\\Gamma_D', 640, 165, { size: 28, alpha: a2 });
       const a3 = b.on(3);
       c.tex('|G_{d,m}|\\ \\ge\\ N^{\\log_2 D-0.443}', 640, 228, { size: 34, alpha: a3 });
       // Chart: exponent of N for D=3,5,9,33

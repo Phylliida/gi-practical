@@ -6,7 +6,7 @@
 
   V.scene({
     beats: [
-      'One more thing, and it is not in the paper. The same machinery can do better when the input has a bounded degree: when every vertex touches at most d others. This chapter and the next two are about that, and they have a different status from everything so far. I will spell the status out at the end. Please hold the two things apart.',
+      'One more thing, and it is not in the paper. If the analysis below is right, the same machinery does better when the input has a bounded degree: when every vertex touches at most d others. This chapter and the next two are about that, and they have a different status from everything so far. I will spell the status out at the end. Please hold the two things apart.',
       'Luks\'s 1982 reduction is the starting point. Fix one edge. Now the graph has a root. Reveal the rest in layers, by distance from that edge.',
       'A vertex in one layer has at most d minus 1 children in the next. So when we extend an automorphism by one layer, what is left to choose is a permutation of the children of each vertex, which is a permutation of at most d minus 1 things.',
       'A chain of these choices, one layer at a time, is exactly a sequence of string-isomorphism problems, each under a group built by stacking symmetric groups on at most d minus 1 points. The reduction is polynomial time, and it does not depend on d.',
@@ -44,13 +44,13 @@
     beats: [
       'The class of groups is called Gamma hat d, from Grohe, Neuen and Schweitzer: every composition factor embeds in the symmetric group on d points. A composition factor is one of the simple pieces, like Alt five.',
       'Two facts about this class. First, it is closed: subgroups and quotients of a group in the class are in the class. And the algorithm only ever builds subgroups, quotients, cosets inside its current group. So the algorithm never leaves the class.',
-      'Second, and this is the whole point. A giant on q labels means an alternating group Alt q is a section of the group, so it is a composition factor. If that is in the class, then Alt q embeds in Sym d, which forces q to be at most d.',
+      'Second, and this is the whole point. A giant on q labels means an alternating group Alt q is a quotient of the group, so it is one of the composition factors. In this class, that factor embeds in Sym d, and for q at least 5 that forces q to be at most d.',
       'So every giant has q at most d. Think about what that does. If d is at most N to the alpha, then q is at most lambda, and the giant step never takes the wide branch.',
-      'Look at the algorithm flow. The wide-giant branch, RowStep, the row terminal, the column floors, the in-domain rectangles: all of them only run for q greater than lambda. They simply do not occur. Every auxiliary configuration is the small kind, on q squared positions, a fresh call that stays in the class.',
+      'Look at the algorithm flow. The wide-giant branch, the row step, the row terminal, the columns, the in-domain rectangles: all of them only run for q greater than lambda. They simply do not occur. Every auxiliary configuration is the small kind, on q squared positions, a fresh call that stays in the class.',
       'That is the first big simplification. The second one is about the wallet.',
     ],
     draw(c_, b) {
-      D.title('The class Γ̂_d, and what it removes', { alpha: b.on(0) });
+      D.title('The class \\hat{Γ}_{d}, and what it removes', { alpha: b.on(0) });
       const a = b.on(0);
       c.tex('G\\in\\hat\\Gamma_d\\iff\\text{ every composition factor of } G \\text{ embeds in } \\mathrm{Sym}(d)', 640, 112, { size: 25, alpha: a });
       const a1 = b.on(1);
@@ -68,7 +68,7 @@
       arrows.forEach((ar, i) => c.arrow(ar[0], ar[1], ar[2], ar[3], { stroke: C.ink3, alpha: a4 * (i >= 2 ? 0.28 : 0.9), lw: 2 }));
       boxes.forEach(([label, x, y, gone]) => D.box(x, y, 150, 56, label, { alpha: a4 * (gone ? 0.28 : 1), size: 17, stroke: gone ? C.rule : C.aqua }));
       if (a4 > 0) { c.line(120, 460, 900, 540, { stroke: C.red, lw: 3, alpha: a4 * 0.75 }); c.line(900, 460, 120, 540, { stroke: C.red, lw: 3, alpha: a4 * 0.75 }); c.text('never runs when d ≤ λ', 1040, 500, { size: 22, weight: 650, alpha: a4 }); }
-      c.text('Everything else stays in the class Γ̂_d', 640, 620, { size: 25, alpha: b.on(4), weight: 600 });
+      c.text('Everything else stays in the class \\hat{Γ}_{d}', 640, 620, { size: 25, alpha: b.on(4), weight: 600 });
     },
   });
 })();

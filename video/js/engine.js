@@ -148,15 +148,61 @@
     if (o.stroke) { ctx.strokeStyle = o.stroke; ctx.lineWidth = o.lw || 2; ctx.lineJoin = 'round'; ctx.stroke(); }
     ctx.globalAlpha = 1;
   };
+  // Canvas strings have no math mode, so `_{..}`, `^{..}` and `\\hat{..}` are the one piece of markup: they
+  // draw as a real subscript, superscript or hat. Any other `_` or `^` (e.g. a Lean identifier) stays literal.
+  const scriptRe = /(\\hat|[_^])\{([^}]*)\}/g;
+  const hasScript = (s) => s.indexOf('_{') >= 0 || s.indexOf('^{') >= 0 || s.indexOf('\\hat{') >= 0;
+  const segments = (s) => {
+    const out = []; let i = 0; scriptRe.lastIndex = 0;
+    for (let m = scriptRe.exec(s); m; m = scriptRe.exec(s)) {
+      if (m.index > i) out.push({ t: s.slice(i, m.index), k: 0 });
+      out.push({ t: m[2], k: m[1] === '_' ? 1 : m[1] === '^' ? -1 : 0, hat: m[1] === '\\hat' });
+      i = m.index + m[0].length;
+    }
+    if (i < s.length) out.push({ t: s.slice(i), k: 0 });
+    return out;
+  };
+  const SCRIPT_SCALE = 0.68, SCRIPT_SHIFT = 0.28;
+  const fontOf = (o, sz) => `${o.italic ? 'italic ' : ''}${o.weight || 400} ${sz}px ${o.family || FS}`;
+  function layoutScripts(s, o) {
+    const size = o.size || 22;
+    let w = 0;
+    const segs = segments(s).map((g) => {
+      const sz = g.k ? Math.round(size * SCRIPT_SCALE) : size;
+      ctx.font = fontOf(o, sz);
+      const dw = ctx.measureText(g.t).width, r = { ...g, sz, dx: w, w: dw };
+      w += dw; return r;
+    });
+    return { segs, w };
+  }
   c.text = (s, x, y, o = {}) => {
     const a = al(o); if (a <= 0) return;
     ctx.globalAlpha = a; ctx.fillStyle = o.fill || C.ink;
-    ctx.font = `${o.italic ? 'italic ' : ''}${o.weight || 400} ${o.size || 22}px ${o.family || FS}`;
-    ctx.textAlign = o.align || 'center'; ctx.textBaseline = o.base || 'middle';
+    ctx.textBaseline = o.base || 'middle';
+    if (hasScript(s)) {
+      const { segs, w } = layoutScripts(s, o), size = o.size || 22;
+      const left = o.align === 'left' ? x : o.align === 'right' ? x - w : x - w / 2;
+      ctx.textAlign = 'left';
+      segs.forEach((g) => {
+        ctx.font = fontOf(o, g.sz); ctx.fillText(g.t, left + g.dx, y + g.k * size * SCRIPT_SHIFT);
+        if (g.hat) {
+          const mx = left + g.dx + g.w / 2;
+          ctx.strokeStyle = o.fill || C.ink; ctx.lineWidth = Math.max(1.2, size * 0.06); ctx.lineCap = 'round';
+          ctx.beginPath(); ctx.moveTo(mx - size * 0.16, y - size * 0.47); ctx.lineTo(mx, y - size * 0.61); ctx.lineTo(mx + size * 0.16, y - size * 0.47); ctx.stroke();
+        }
+      });
+      ctx.globalAlpha = 1;
+      return;
+    }
+    ctx.font = fontOf(o, o.size || 22);
+    ctx.textAlign = o.align || 'center';
     ctx.fillText(s, x, y);
     ctx.globalAlpha = 1;
   };
-  c.width = (s, o = {}) => { ctx.font = `${o.weight || 400} ${o.size || 22}px ${FS}`; return ctx.measureText(s).width; };
+  c.width = (s, o = {}) => {
+    if (hasScript(s)) return layoutScripts(s, { weight: o.weight, size: o.size }).w;
+    ctx.font = `${o.weight || 400} ${o.size || 22}px ${FS}`; return ctx.measureText(s).width;
+  };
 
   const txPool = new Map(), txSeen = new Set();
   c.tex = (ltx, x, y, o = {}) => {
