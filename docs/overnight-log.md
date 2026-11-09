@@ -716,3 +716,9 @@ are red-teams, a LaTeX paper, and final integration.
   guarantee when twin blocks ≤ 4 (every d ≤ 5; hand proof, crude exponent about 53, group-order bounds cited from memory); guarantee=True gives
   n^{O(d²)}. Remaining exponential paths at d ≥ 6 are counted. nauty and Traces solve these families easily.
 * w44-redteam-luks: adversarial check of the polynomial guarantee.
+
+### w44-redteam-luks (done, commit 0cb2fd5; docs/redteam-w40-solvable.md)
+* No wrong answer or canonicity failure; no input at d ≤ 5 reached ir_canon or perm_canon. Theorem A is sound at d ≤ 5, but false as stated for "twin blocks
+  ≤ 4" with unbounded degree (needs d fixed). The exponent 3.2439 should be 3.244; "about 53" is an estimate (g(m) = m⁶ asserted). Theorem B sound for fixed d;
+  citation fixed (Liebeck–Shalev via GNS). Wolf (1982) read in full; Pálfy, BCP, Liebeck–Shalev not read. §2.1's "true worst case is Schreier–Sims" is false.
+* w45-quartic: quartic Boolean equivalence / 4-tensor isomorphism in 2^{o(d²)}, or a barrier.
