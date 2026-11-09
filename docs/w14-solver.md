@@ -1,7 +1,9 @@
 # w14-solver: profile-driven speedups of the bounded and canonical pipelines, and pipeline dispatch
 
 Measured on the families where we lost to Traces and nauty. Before = commit d6db110, after = this
-branch, both run back to back on the same machine, one process at a time, `nice`; dreadnaut 2.9.1.
+branch, both run back to back on the same machine under `nice`, one benchmark at a time; dreadnaut
+2.9.1. Short single-core jobs (a few seconds of pytest, git) ran alongside some runs, and the machine
+(64 cores) had a load of about 2-4 from other work. One seed per size.
 Data: `bench/results/canon-w14-*.json` (`-base` = before, `-new` = after, `-nauty-*` = the three
 dreadnaut modes), `bench/results/w14-tiers-{base,new}.json`.
 
@@ -22,16 +24,17 @@ Everything below is exact; every answer was checked as in `bench/` (§4).
   the individualized cells on the worklist. Every decision depends only on sizes, counts and colors,
   so the names are a function of the rooted isomorphism type.
 * **Staged root selection (`root_class`).** The O(diam·|E|) edge invariants on all oriented edges
-  (16 s on Miyazaki n=2000) are replaced by stages: 1-WL color pair; sphere-size profiles, stopped
+  (16 s of a 31 s profiled run on Miyazaki n=2000) are replaced by stages: 1-WL color pair; sphere-size profiles, stopped
   at the radius where a class of ≤ 8 edges appears; then the old invariant, skipped when the class
   is too large. Every isomorphism respects these classes; `iso` selects the same keys in Y.
 * **Discrete rooted certificates (`discrete_cert`).** A root whose rooted refinement is discrete
   needs no chain: compare a certificate of the rooted graph (exact: colors are a function of the
-  rooted isomorphism type). Rigid inputs (random Latin squares, STS) spent almost all their time in chain
-  setup.
+  rooted isomorphism type). On a rigid random Latin square pair (n = 64) the profiled run went from
+  27 s to 6.4 s; what remains is one refinement per root. Under dispatch most such rigid inputs go to the
+  hybrid pipeline anyway, so this mainly helps rigid graphs of low degree or above n = 256.
 * **`ir_canon`.** Phase-2 layers where H = U1 × ∏Sym(blocks), U1 moving no block, are a colored
-  graph problem; solved by individualization-refinement instead of `perm_canon`. Hypercubes spent
-  most of their canonization time there (84k search nodes on Q11, now none).
+  graph problem; solved by individualization-refinement instead of `perm_canon`. On Q11 `perm_canon`
+  took 0.9 s of a 3.3 s profiled run (84k search nodes); it is no longer called on Q10 and Q11.
 * **Smaller items.** `class_plan` keeps its neighbourhood counts incrementally; the orbits of the
   root class stop being updated once they are one orbit; repeated `is_ea2` checks are avoided.
 * **Dispatch (`graph_iso(method="auto")`, the new default).** Deterministic: bounded when
@@ -43,8 +46,10 @@ Everything below is exact; every answer was checked as in `bench/` (§4).
   families; hybrid wins on rigid dense graphs and designs, where bounded runs out of budget).
 
 Not done: the solvable-layer extension of `ea2` (candidate 1). The profiles did not point to it:
-`luks_ea_fallback` is 0–3 per run on the families measured, and on them `perm_canon` is now reached
-only on the Johnson-gadget family built to exercise (M). So layers with non-EA groups still go through
+`luks_ea_fallback` was 0–3 per run where I looked (nst, CFI over 4-regular bases, Q8, jgad), and
+`perm_canon` stays small on the natural families (nst n = 768: 88 calls, 528 nodes; CFI(4reg): about
+80 nodes). Only the constructed Johnson gadgets reach tens of thousands of nodes (jgad12: 98k). No time
+went into building inputs that attack `perm_canon`. So layers with non-EA groups still go through
 `Solver.solve`/`perm_canon`, and **`gi.canon` still has no polynomial guarantee at d ≤ 5**.
 
 ## 2. Why it is exact
@@ -74,9 +79,11 @@ only on the Johnson-gadget family built to exercise (M). So layers with non-EA g
 
 ## 3. Results (paired before/after, nauty and Traces)
 
-Before/after columns are both computed in the same run sequence; Traces and nauty columns are
-canonical forms of a pair (timeout 120 s, `>120` after a timeout at that size). Twisted/non-isomorphic
-pairs are omitted here; they are in the JSON and match the isomorphic timings.
+Before/after columns come from the same back-to-back runs. Traces and nauty columns are canonical
+forms of a pair (cpu time, 0.01 s clock, so 0 means under 0.01 s and ratios against small cells are rough;
+timeout 120 s, `>120` after a timeout at that size). The biso columns solve a different task (isomorphism plus
+Aut, no canonical form). Twisted/non-isomorphic pairs are omitted here; they are in the JSON, and ours
+match the isomorphic timings.
 
 **CFI over random cubic graphs (cfix), isomorphic pairs** (seconds; canon = both canonical forms; biso = bounded_iso_lists with Aut)
 
@@ -144,10 +151,13 @@ Traces all exceed the 120 s limit here (sparse nauty 530 s in docs/w1-scale.md),
 lemma-known answers, |Aut| = 1 and every edge of σ.
 
 **Tiers (bench/run.py, tiny..xl, 50 instances, all answers checked):** 14.6 s → 8.8 s, 50/50 correct.
-No instance is more than 1.3× slower; worst is PG(2,7), 1.77 → 2.06 s (bounded run aborted by the budget, then
-hybrid). Dispatch: 31 bounded, 19 hybrid, 2 fallbacks.
+Dispatch: 31 bounded, 19 hybrid (2 of them fallbacks, PG(2,5) and PG(2,7)). Largest slowdowns: PG(2,5) 0.46 → 0.55 s
+and PG(2,7) 1.77 → 2.06 s (the aborted bounded run), and rand12 1 → 2 ms. Dispatch also leaves time on the table:
+degree above 8 at n ≤ 256 goes to hybrid even where the bounded pipeline was faster when measured alone (rook10
+2.0 s against 0.2 s, Kneser(10,3) 1.4 s against 0.8 s).
 
-**Dispatch on hardness families** (39 instances, `method="auto"` vs the old `graph_iso`; decisions all agree):
+**Dispatch on hardness families** (39 instances, `method="auto"` vs the old `graph_iso`; the two decisions
+agree on every instance, σ was not re-verified in this run):
 total 63.8 → 50.6 s. Large gains on CFI over grids/K5 and multipedes (e.g. CFI(grid3x5) 5.9 → 0.07 s). Budget
 overhead is at most 0.3 s (PG(2,7)); STS13-pair 0.01 → 0.09 s, STS15-pair 0.03 → 0.14 s are the largest
 relative slowdowns.
@@ -155,13 +165,13 @@ relative slowdowns.
 ### Remaining losses
 
 * Traces is faster on every non-multipede family: CFI n = 3200: 0.06 s vs 0.64 s (biso), 1.41 s
-  (canon), about 10–23×; Q11: 0.02 vs 2.1 s canon, about 100×, and Q12 0.02 vs 5.0 s; Miyazaki n = 3000: 0.02
-  vs 0.56/1.86 s, about 30–90×; random 3-regular n = 4000: 0.02 vs 0.26 s, about 13×.
-* Sparse nauty beats us on all hypercubes (Q12: 0.03 s vs 5 s) and at the small end of the other
-  families (CFI n ≤ 400 for canonical forms, nst up to n = 576, ns up to 704).
+  (canon), about 10–23×; Q11: 0.02 vs 2.1 s canon, about 100×, and Q12 0.02 vs 5.0 s, about 250×; Miyazaki
+  n = 3000: 0.02 vs 0.56/1.86 s, about 30–90×; random 3-regular n = 4000: 0.02 vs 0.26 s, about 13×.
+* Sparse nauty beats us on all hypercubes (Q12: 0.03 s vs 5 s) and at the small end of some other
+  families: CFI at n = 200, nst at n ≤ 384 (the sizes measured), ns up to n = 704 (level there for biso).
 * **Slowdowns against before.** nst n = 768 canon 2.39 → 2.69 s (0.9×), nst n = 384 biso 0.233 → 0.306 s
-  (0.8×): the color names changed, and the layer plan breaks ties by name (548 → 587 layers at n = 768).
-  Dispatch fallbacks, listed above.
+  (0.8×). At n = 768 the layer count changed (548 → 587); the likely cause is that the color names changed and
+  `class_plan` breaks ties by name, but this was not isolated. Dispatch fallbacks, listed above.
 * `perm_canon` and `ir_canon` remain exponential in the worst case; no adversarial family was tried.
 
 ## 4. Tests
