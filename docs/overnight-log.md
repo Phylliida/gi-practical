@@ -639,3 +639,11 @@ are red-teams, a LaTeX paper, and final integration.
   n^{o(log n)} for STS gives 2^{o(d²)} string isomorphism under GL(d,2). Links the STS barrier to the affine / tensor barrier.
 * T5: STS within n^{o(1)} blocks of a projective space in n^{o(log n)}. w18's "locally algebraic" lead refuted.
 * w33-redteam-sts: adversarial check of T1, T2, T3, T5.
+
+### w32-conference (done, commit 49fec8a; docs/w32-conference.md), NOT yet red-teamed
+* No n^{o(log n)}. Levet 2023 Q6.5 (individualization set of size O(1) or o(log n)) still open.
+* Proven: T(a,b,v) second moment and mod-8 facts; rank₂(A); bad-pair reduction. "Collision probability → 0 for all pairs" is
+  FALSE (iterated Turyn over P(9)), so the structure side must include tensor products.
+* Experiments to n = 49 (Spence), Paley to 1097, Turyn to 6561: minimum 1-WL depth always 2 or 3. Cannot separate O(1) from
+  slow growth; large examples are all algebraic or products.
+* w34-vc: follow up with VC/ε-net bounds, 2-WL grid detection, and a growth lemma for the stable algebra.
