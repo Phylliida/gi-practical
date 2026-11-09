@@ -125,7 +125,7 @@ Fix $t:=\max\{9,3+\lceil\log d\rceil\}$ and $\tau_0:=\max\{40t,k_0\}$, for an ab
 \item[G1.] If $H$ is intransitive, process orbits one by one (chain rule), with restricted towers.
 \item[G2.] Let $\fT_1$ be the top non-trivial level. If $H^{\fT_1}$ is semi-regular, apply Luks reduction to $H_{(\fT_1)}$.
 \item[G3.] \textbf{Rule.} Otherwise $|\fT_1|\le d$. Choose a maximal proper $H$-invariant partition $\fD\succeq\fT_1$. So $P:=H^{\fD}$ is primitive. If $|P|\le d^{1+\log d}$, apply Luks reduction to $H_{(\fD)}$.
-\item[G4.] Apply (G3) to $P$ to obtain $N\trianglelefteq P$ of index at most $d$, an $N$-invariant partition $\C$ of $\fD$ and a giant representation $\psi\colon N\to S_k$ with $\ker\psi=N_{(\C)}$. Let $G':=\{g\in H:g^{\fD}\in N\}$, let $\varphi:=\psi\circ(\text{action on }\fD)$ and let $\C'$ be the lift of $\C$ to $\Omega$. Then $\ker\varphi=G'_{(\C')}$. Split over the cosets of $G'$. If $G'$ is intransitive, go to G1 (its orbits are blocks of $H$ of size at most $n/2$). If $k\le\tau_0$, apply Luks reduction to $\ker\varphi$.
+\item[G4.] Apply input (G3) of \S\ref{sec:setting}, that is \cite[Lemma~7.1]{GNS}, to $P$ to obtain $N\trianglelefteq P$ of index at most $d$, an $N$-invariant partition $\C$ of $\fD$ and a giant representation $\psi\colon N\to S_k$ with $\ker\psi=N_{(\C)}$. Let $G':=\{g\in H:g^{\fD}\in N\}$, let $\varphi:=\psi\circ(\text{action on }\fD)$ and let $\C'$ be the lift of $\C$ to $\Omega$. Then $\ker\varphi=G'_{(\C')}$. Split over the cosets of $G'$. If $G'$ is intransitive, go to G1 (its orbits are blocks of $H$ of size at most $n/2$). If $k\le\tau_0$, apply Luks reduction to $\ker\varphi$.
 \item[G5.] Compute the local certificates and comparisons of \cite[\S6]{GNS} for all $t$-subsets of $[k]$, and determine the case (i)--(v) of \cite[App.~A]{GNS}. Different cases on the two strings mean $\Iso=\emptyset$.
 \item[G6.] \emph{Light rounds.} In cases (i)--(iv) use \cite[Lemmas~6.7, 6.9]{GNS}: at most $k^6$ cosets of one group $R\le G'$. Case (iv) calls the Babai--Helfgott test on graphs with at most $k$ vertices.
 \item[G7.] \emph{Heavy round.} Case (v) is treated in \S\ref{sec:heavy} (or, for Theorem~\ref{thm:C}, by the black box of \cite[Lemma~6.7]{GNS}).
@@ -143,7 +143,7 @@ $\T_O$ is an almost $d$-ary tower of $R^O$-invariant partitions, and $\rho(\T_O)
 All listed partitions are invariant, and $\C'\succeq\fD\succeq\fT_1$ makes this a chain. The levels above $\fT_1[O]$ have at most $|\fT_1|\le d$ classes, and the lower levels are inherited. Inserting $\fD$ and $\C'$ does not raise $\rho$ and restriction does not raise it, by Lemma~\ref{lem:rho}. Inserting $\fE$, which is strict by Lemma~\ref{lem:partition}, lowers it by at least 1.
 \end{proof}
 
-The rule in G3 is a legal run of GNS's algorithm, since GNS leave the block system unspecified. We checked every use of the block system in GNS. The local certificates and comparisons need only \emph{some} almost $d$-ary invariant sequence, and $\T$ is one. Lemma 7.1 of GNS needs only primitivity of $P$ and degree at most $d$, and $|\fD|\le|\fT_1|\le d$. The windows, kernels and restrictions use only inheritance by subgroups and invariant subsets. The only place the choice matters is the inequality $H'_{(\C')}\le\ker\varphi'$ in the proof of Lemma~7.2 of GNS, which holds here by construction: the next $\fD'$ is above $\C'[\Omega']$. See \S\ref{sec:question}.
+The rule in G3 is a legal choice in GNS's algorithm, since GNS leave the block system unspecified. (Algorithm G differs from GNS in one further respect: G2 tests semi-regularity on the top of the maintained tower rather than on the original sequence. When that top was inserted it has at most $d$ classes, so G2 is then an ordinary Luks step of at most $d$ cosets, which needs no support from GNS.) We checked every use of the block system in GNS. The local certificates and comparisons need only \emph{some} almost $d$-ary invariant sequence, and $\T$ is one. Lemma 7.1 of GNS needs only primitivity of $P$ and degree at most $d$, and $|\fD|\le|\fT_1|\le d$. The windows, kernels and restrictions use only inheritance by subgroups and invariant subsets. The only place the choice matters is the inequality $H'_{(\C')}\le\ker\varphi'$ in the proof of Lemma~7.2 of GNS, which holds here by construction: the next $\fD'$ is above $\C'[\Omega']$. See \S\ref{sec:question}.
 
 \subsection{Classes as subsets of $[k]$}
 
@@ -167,7 +167,7 @@ With $\fD'\succeq\C'[\Omega']$ (rule G3), $A_{k'}$ is a composition factor of a 
 Let $X(d)$ bound the cost of one call in case \textup{(v)}. Then string isomorphism for $\Gammahat_d$ groups, and so isomorphism of graphs of maximum degree $d$, is decidable in time $n^{O(L^3)}\cdot(1+X(d))$.
 \end{theorem}
 \begin{proof}
-Run Algorithm G with the black box in G7. By Prop.~\ref{prop:k} every path of same-domain nodes has $O(L)$ aggregation nodes, each branching at most $2d\,k^6$, so a macro step has $2^{O(L^2)}$ nodes. Exits per node total at most $2^{O(L^2)}n$ with parts of size at most $n/2$. The induction of Theorem~\ref{thm:T}, with the type-(S) and type-(T) rounds removed, gives $N^{O(L^2)}$ macro steps on $N$ points; (G1) gives $N\le n^{O(L)}$. The non-recursive cost per node is $\mathrm{poly}(N)$ plus at most $k^6$ calls to the black box or to Babai--Helfgott on graphs with at most $k$ vertices, and $2^{O(\log^3 k)}\le N^{O(L^2)}$ since $k\le N$.
+Run Algorithm G with the black box in G7. By Prop.~\ref{prop:k} every path of same-domain nodes has $O(L)$ aggregation nodes, each branching at most $2d\,k^6$, so a macro step has $2^{O(L^2)}$ nodes. Exits per node total at most $2^{O(L^2)}n$ with parts of size at most $n/2$. The induction of Theorem~\ref{thm:T}, with the type-(S) and type-(T) rounds removed, gives $N^{O(L^2)}$ macro steps on $N$ points; input (G1) of \S\ref{sec:setting} gives $N\le n^{O(L)}$. The non-recursive cost per node is $\mathrm{poly}(N)$ plus at most $k^6$ calls to the black box or to Babai--Helfgott on graphs with at most $k$ vertices, and $2^{O(\log^3 k)}\le N^{O(L^2)}$ since $k\le N$.
 \end{proof}
 
 \section{Theorem X: the black box in time $2^{O(\log^5 d)}$}\label{sec:X}
@@ -203,10 +203,10 @@ We now replace the case-(v) black box of G7 by a Design-Lemma round.
 We use Split-or-Johnson in the following form, read from HBD's proofs of Split-or-Johnson and of its Bipartite and Coherent versions (this reading is the part of the argument most in need of independent checking):
 
 \begin{quote}
-There is a deterministic procedure $\mathrm{Proc}$ taking a uniprimitive classical coherent configuration $\fX$ on $m$ points and a stream $\zeta$ of points, with the following properties: \textup{(i)} $\mathrm{Proc}(\fX^\pi,\zeta^\pi)=\mathrm{Proc}(\fX,\zeta)^\pi$ for all bijections $\pi$; \textup{(ii)} along every path of the tree of valid streams, the product of the numbers of options at the choice points is at most $m^{c_H\log m}$, so the tree has at most $m^{c_H\log m}$ leaves; \textup{(iii)} at most $c_H\log^2m$ points with at least two options are read along any path; \textup{(iv)} the output is either a coloured $\tfrac34$-partition (each colour class equipartitioned, blocks of size between $2$ and $\tfrac34 m$, except for singleton colour classes) or a Johnson scheme $\mathcal J(r,s')$, $s'\ge2$, $r\ge2s'$, on $\Gamma_0$ with $|\Gamma_0|\ge\tfrac34m$, with an explicit identification with the $s'$-subsets of an $r$-set $\Lambda$.
+There is a deterministic procedure $\mathrm{Proc}$ taking a uniprimitive classical coherent configuration $\fX$ on $m$ points and a stream $\zeta$ of elements (each a point of $\Gamma$ or, after a contraction in HBD's Coherent Split-or-Johnson, a block of points forming one element of the current $V_2$), with the following properties: \textup{(i)} $\mathrm{Proc}(\fX^\pi,\zeta^\pi)=\mathrm{Proc}(\fX,\zeta)^\pi$ for all bijections $\pi$; \textup{(ii)} along every path of the tree of valid streams, the product of the numbers of options at the choice points is at most $m^{c_H\log m}$, so the tree has at most $m^{c_H\log m}$ leaves; \textup{(iii)} at most $c_H\log^2m$ elements with at least two options are read along any path; \textup{(iv)} the output is either a coloured $\tfrac34$-partition (each colour class equipartitioned, blocks of size between $2$ and $\tfrac34 m$, except for singleton colour classes) or a Johnson scheme $\mathcal J(r,s')$, $s'\ge2$, $r\ge2s'$, on $\Gamma_0$ with $|\Gamma_0|\ge\tfrac34m$, with an explicit identification with the $s'$-subsets of an $r$-set $\Lambda$.
 \end{quote}
 
-The bound (ii) is HBD's index bound, which is a worst-case bound over executions, hence holds along every path; the leaf count follows, since the number of leaves below a node is at most its number of children times the maximum below a child. Then (iii) follows from (ii), since each point read from a set with at least two options contributes a factor at least $2$ to the product along its path, while points read from singleton sets are canonical and are fixed in any case. Fix $k_0$ such that $c_H\log^2 k\le k/40$ for all $k\ge k_0$.
+The bound (ii) is HBD's index bound, which is a worst-case bound over executions, hence holds along every path; the leaf count follows, since the number of leaves below a node is at most its number of children times the maximum below a child. Then (iii) follows from (ii), since each element read from a set with at least two options contributes a factor at least $2$ to the product along its path; elements read from singleton sets are canonical and are not recorded in $I$. Individualization is of elements of the current $V_2$: HBD's cost per round is $|V_2|^{d}$ for the current $V_2$, and replacing a contracted block by a representative point would not keep it polynomial in $m$. An individualized block is recorded in the output as an additional colour class, and $I$ below consists of points only; all individualized elements lie outside $V_1$, hence outside any colour class of size greater than $\tfrac34m$. Fix $k_0$ such that $c_H\log^2 k\le k/40$ for all $k\ge k_0$.
 
 \subsection{The pairwise round}
 
@@ -214,7 +214,7 @@ Consider a node in case (v) with $|D_1|=|D_2|=m>3k/4$ (else output $\emptyset$),
 
 \begin{enumerate}
 \item Apply the Weisfeiler--Leman functors with joint colour names, obtaining $\fX_1,\fX_2$.
-\item Apply the Design Lemma with $\alpha=3/4$ to $\fX_1$, taking the lexicographically first tuple $\vec x\in D_1^{<t}$ meeting an outcome. Build $\mathrm{Proc}^+(\fX,\vec x,\zeta)$: output the colouring in outcome (1); output the colouring and the partition by the first disconnected colour if outcome (2) is imprimitive; output the colouring and $\mathrm{Proc}(\fX'',\zeta)$ if it is uniprimitive. Take the first valid $\zeta$ on side 1. The output $Y_1$ also records the set $I$ of individualized points and the colour of $[k]\setminus D_1$.
+\item Apply the Design Lemma with $\alpha=3/4$ to $\fX_1$, taking the lexicographically first tuple $\vec x\in D_1^{<t}$ meeting an outcome. Build $\mathrm{Proc}^+(\fX,\vec x,\zeta)$: output the colouring in outcome (1); output the colouring and the partition by the first disconnected colour if outcome (2) is imprimitive; output the colouring and $\mathrm{Proc}(\fX'',\zeta)$ if it is uniprimitive. Take the first valid $\zeta$ on side 1. The output $Y_1$ also records the set $I$ of individualized points, the individualized blocks (as additional colours), and the colour of $[k]\setminus D_1$.
 \item Let $L_Y$ be the group of permutations in $\varphi(G')$ that preserve $D_1$ and act on $[k]$ preserving $Y_1$, fixing $I$ pointwise, and let $R:=\varphi^{-1}(L_Y)$.
 \item For each $\vec y\in D_2^{|\vec x|}$ and each leaf $\zeta'$ of the stream tree, compute $Y_2=\mathrm{Proc}^+(\fX_2,\vec y,\zeta')$; discard mismatched types and parameters; otherwise compute the set of $g\in G'$ with $\varphi(g)$ carrying $(D_1,Y_1,I_1)$ to $(D_2,Y_2,I_2)$. This is empty or a coset $R\tau_j$.
 \end{enumerate}
@@ -279,14 +279,14 @@ Along a path the giant degree decreases: $k'\le 3k/4$ by Prop.~\ref{prop:k}, or 
 There are $A,B=O(L^2)$ with $T(n,\rho)\le n^A2^{B\rho}$ for all $n\ge1$, $\rho\ge0$.
 \end{theorem}
 \begin{proof}
-Induct on $n+\rho$. Let $U=n^A2^{B\rho}$. Every recursive call has $\rho'\le\rho$ by Lemma~\ref{lem:maintained}. The intransitive step and the semi-regular step of G2 are routine: $\sum_iT(n_i,\rho)$ with $\sum n_i=n$, respectively $b^2T(n/b,\rho)\le b^{2-A}U$. For a macro step sum over $\mathcal T$. Each node has exits with $\sum n_i\le2^{O(L^2)}n$ and $n_i\le n/2$ (certificates, comparisons, small orbits, the Luks steps G3, G4), contributing at most $Z2^{O(L^2)}2^{-(A-1)}U$. Rounds of type (S) contribute at most $ZC_h(5/6)^{A-1}U$. Rounds of type (T) contribute at most $ZC_h2^{-B}U$ for the large orbit (at $\rho-1$) and $ZC_h6^{-(A-1)}U$ for small orbits. The non-recursive work per node is $\mathrm{poly}(n)\cdot2^{O(L^2)}$ plus at most $k^6$ Babai--Helfgott calls of cost $\exp(O(\log^3k))$; since $k\le n$, $\log^3k\le L^2\log n$, and these terms are absorbed in $n^A$. All constraints hold for suitable $A,B=O(L^2)$.
+Induct on $n+\rho$. Let $U=n^A2^{B\rho}$. Every recursive call has $\rho'\le\rho$ by Lemma~\ref{lem:maintained}. The intransitive step and the semi-regular step of G2 are routine: $\sum_iT(n_i,\rho)$ with $\sum n_i=n$, respectively $b^2T(n/b,\rho)\le b^{2-A}U$. For a macro step sum over $\mathcal T$. Each node has exits with $\sum n_i\le2^{O(L^2)}n$ and $n_i\le n/2$ (certificates, comparisons, small orbits, the Luks steps G3, G4, and G2 at non-root nodes of $\mathcal T$, where the top level has at most $d$ classes), contributing at most $Z2^{O(L^2)}2^{-(A-1)}U$. Rounds of type (S) contribute at most $ZC_h(5/6)^{A-1}U$. Rounds of type (T) contribute at most $ZC_h2^{-B}U$ for the large orbit (at $\rho-1$) and $ZC_h6^{-(A-1)}U$ for small orbits. The non-recursive work per node is $\mathrm{poly}(n)\cdot2^{O(L^2)}$ plus at most $k^6$ Babai--Helfgott calls of cost $\exp(O(\log^3k))$; since $k\le n$, $\log^3k\le L^2\log n$, and these terms are absorbed in $n^A$. All constraints hold for suitable $A,B=O(L^2)$.
 \end{proof}
 
 \begin{theorem}[\ProvenM; not red-teamed]\label{thm:G}
 String isomorphism for $\Gammahat_d$ groups on $n$ points, and isomorphism of graphs of maximum degree $d\ge2$, are decidable in time $n^{O(\log^3d)}$ for all $d$.
 \end{theorem}
 \begin{proof}
-By (G1), and orbit-by-orbit processing, one instance on $N\le n^{O(L)}$ points with an almost $d$-ary tower suffices. Lemma~\ref{lem:rho}(a) gives $\rho\le2\log N$, and Theorem~\ref{thm:T} gives $N^{A}2^{2B\log N}=N^{O(L^2)}=n^{O(L^3)}$.
+By input (G1) of \S\ref{sec:setting}, and orbit-by-orbit processing, one instance on $N\le n^{O(L)}$ points with an almost $d$-ary tower suffices. Lemma~\ref{lem:rho}(a) gives $\rho\le2\log N$, and Theorem~\ref{thm:T} gives $N^{A}2^{2B\log N}=N^{O(L^2)}=n^{O(L^3)}$.
 \end{proof}
 
 \section{Bounds in all regimes}\label{sec:regimes}
@@ -299,13 +299,15 @@ Write $\log n=L^x$, with $x\ge 1$.
 range & bound & source\\
 \midrule
 $x\ge2$ & $n^{O(L^3)}$ & Theorem~\ref{thm:C} with Theorem~\ref{thm:X}\\
-$3/2\le x<2$ & $n^{O(L^3)}$ & Theorem~\ref{thm:G} only\\
-$1\le x<3/2$ & $\exp(O(\log^3 n))=n^{O(L^{2x})}$, better than $L^3$ & Babai--Helfgott \cite{HBD}\\
+$3/2<x<2$ & $n^{O(L^3)}$ & Theorem~\ref{thm:G} only\\
+$1\le x\le3/2$ & $\exp(O(\log^3 n))=n^{O(L^{2x})}$, at least as good as $L^3$ & Babai--Helfgott \cite{HBD}\\
 \bottomrule
 \end{tabularx}
 \medskip
 
-Thus Theorem~\ref{thm:G} gives $n^{O(\min\{\log^3d,\ \log^2n\})}$ in all regimes. Without Theorem~\ref{thm:G}, the range $3/2<x<2$ remains at exponent $\min\{5-x,2x\}$, with worst case $10/3$ at $x=5/3$. Going below exponent $2$ for all $d$ would beat the best published bound for general graph isomorphism, since $d\le n$. The exponent $3$ is a limit of this accounting, namely $\log N=\Theta(L\log n)$ times $K=\Theta(L^2)$ per macro step. It is not a lower bound for any algorithm.
+Thus Theorem~\ref{thm:G} together with the Babai--Helfgott bound gives $n^{O(\min\{\log^3d,\ \log^2n\})}$ in all regimes. Without Theorem~\ref{thm:G}, the range $3/2<x<2$ remains at exponent $\min\{5-x,2x\}$, with worst case $10/3$ at $x=5/3$. Going below exponent $2$ for all $d$ would beat the best published bound for general graph isomorphism, since $d\le n$. The exponent $3$ is a limit of this accounting, namely $\log N=\Theta(L\log n)$ times $K=\Theta(L^2)$ per macro step. It is not a lower bound for any algorithm.
+
+We do not use the unrefereed bound $\exp(O(\log^2 n))$ claimed for graph isomorphism in arXiv:2611.01399. If that bound holds, running it on the whole input when $\log n\le L^3$ and Theorem~\ref{thm:C} with the Babai--Helfgott black box otherwise gives $n^{O(\min\{L^3,\log n\})}$ for all $d$, which subsumes Theorems~\ref{thm:X} and~\ref{thm:G} for graph isomorphism.
 
 \section{Status of Theorem G}\label{sec:status}
 
