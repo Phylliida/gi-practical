@@ -13,8 +13,7 @@
 
 | Branch | When it lands, update |
 |---|---|
-| `w43-lean-statement` (running) | recompile independently, check `#print axioms` and that the trivial witness fails. Then [Lean audit](Lean-Audit.md), [Results ledger](Results-Ledger.md), [Corrections](Corrections.md), [Timeline](Timeline.md), and the table on [Home](Home.md) |
-| `w47-mu` (running) | [Barriers](Math-Barriers.md), [Results ledger](Results-Ledger.md) section 3, [Timeline](Timeline.md), and the table on [Home](Home.md); red-team anything that looks like a result first |
+| `w49-pruned`, `w50-gain` (running) | [Barriers](Math-Barriers.md) or [Core problem](Math-Core-Problem.md), [Results ledger](Results-Ledger.md), [Timeline](Timeline.md), and the table on [Home](Home.md); red-team anything that looks like a result first |
 | `w32-conference` (on master, `49fec8a`, not red-teamed) | when a red-team lands: [Moonshots](Moonshots.md), [Results ledger](Results-Ledger.md), [Corrections](Corrections.md), and the row on [Home](Home.md) |
 
 After merging: search this directory for "in progress" and "as of", and update the "Work still in progress" table.

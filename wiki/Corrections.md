@@ -316,7 +316,7 @@ The earlier statement that nothing of the project's own accounting is machine-ch
 
 | Item | Correction | Source |
 |---|---|---|
-| `graphIso_final`, `graphIso_general`, `graphIso_connected` | vacuous as stated: a zero-call script satisfies them with C = 0. Withdrawn as evidence until restated | [w42](../docs/w42-lean-supply.md), [Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42) |
+| `graphIso_final`, `graphIso_general`, `graphIso_connected` | vacuous as stated: a zero-call script satisfies them with C = 0. Withdrawn as evidence, renamed `*_weak`, and replaced by `graphIso_reduction` (w43) | [w42](../docs/w42-lean-supply.md), [Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42) |
 | w40 Theorem A, "polynomial when twin blocks ≤ 4" | false as stated for unbounded degree; needs d fixed. Sound at every fixed d ≤ 5 | [redteam-w40-solvable](../docs/redteam-w40-solvable.md) |
 | w40 exponent | 3.2439 should be 3.244. "About 53" is an estimate, because g(m) = m⁶ is asserted | same |
 | w40 §2.1, "true worst case is Schreier–Sims" | false | same |
@@ -324,6 +324,16 @@ The earlier statement that nothing of the project's own accounting is machine-ch
 | w45 blow-up claim, "any kernel reduction" | holds for time bounds in L alone, single field, one-input reductions | same §2 |
 | T3′ of w45 | needs f_i(0) = 0 | same |
 | arXiv:2604.00591 as described in w45 | its 4-tensor algorithm is not "via eigenvalue-free slices" | same §7 |
+
+### HJ's enumeration channel (w47, w48)
+
+| Item | Correction | Source |
+|---|---|---|
+| Theorem C of w47 | broken as stated: O5 omits HJ's Case 1 and imprimitive partition overcosets, which are wreath products (K_a⊔K_a exposes Sym(a)≀C₂ in product action, degree a²). Repairable by widening O5 and "Young"; the bounded-order conclusion is then checked by hand only, and the wreath block-system classification is missing | [redteam-w47-mu](../docs/redteam-w47-mu.md) |
+| Corollary to Theorem C | false as worded; say "superconstant order" | same |
+| Theorem A wording, "2-subspaces, d ≈ n/16" | holds only for a coordinate top partition, which is what the Lean selects. At m = 7 the unordered-pair tower acts on 31 hyperplanes. N = n² | same |
+| A′ of w47 | gave no test set; use the lines ⟨e_i,**1**⟩ | same |
+| Prop D of w47, "removable on X_m", "same status as B1" | Prop D covers one node only, and w28's P2 is a sketch | same |
 
 ### The video
 

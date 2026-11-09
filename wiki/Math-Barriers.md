@@ -24,6 +24,19 @@ The red-team found it **sound as a statement about HJ as written**, with one con
 
 So the n^{Θ(log n)} behaviour of HJ is not confined to string isomorphism (the upper half being HJ's unrefereed theorem). It implies that a better potential cannot improve HJ; any improvement must change the certificate recursion (or prune tests).
 
+## HJ's enumeration channel on graphs (w47, w48)
+
+**Theorem A** ([w47-mu](../docs/w47-mu.md), given HJ as written and exact recursive answers; AI red-teamed by [w48](../docs/redteam-w47-mu.md)): on X_m, HJ reaches a `Continue` node with group GL(V)_ℓ and |GL(m−2,2)| = n^{(1/4)log₂ n − O(1)} children. Under a coordinate top partition, which is what the Lean selects, P acts on 2-subspaces, with μ = (1/8+o(1)) log₂ N and N = n². Other towers give another primitive action. This is above the n^{(1/8)log₂ n} of Theorem B1.
+
+Its caveats matter:
+
+* **Asymptotic only.** At κ = 64 it needs n ≥ 2^125. No run at m ≥ 64 is possible, and exact recursive answers are an assumption.
+* **It bounds HJ, not GI.** X_m is easy. At this node the automorphisms F_ℓ cover all of P, so pruning collapses the children. That is a statement about one node only.
+* **What was checked.** The red-team identified the group exactly for m = 5..8, checked block systems exhaustively for m = 5..7, and traced the path against the paper and the Lean.
+* **Theorem C is broken as stated.** See [Corrections](Corrections.md#hjs-enumeration-channel-w47-w48).
+
+So "enumerated quotients on graphs are small" is false for HJ as written, and this route gives no evidence that GI is easier than string isomorphism. The open question is whether any graph forces superpolynomial enumeration after pruning.
+
 ## Can HJ avoid the σx channel? (w28)
 
 [w28-sigma](../docs/w28-sigma.md) attacks the σx channel that B1 exploits. AI red-teamed by [w31](../docs/redteam-w27-w28.md), which found no claim broken and certifies neither P2, Q1 nor the conjecture below; everything assumes HJ correct, and nothing is machine-checked.

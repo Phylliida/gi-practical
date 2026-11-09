@@ -258,7 +258,10 @@ See [Math: core problem](Math-Core-Problem.md). None of these gives FPT for degr
 | Claim | Statement | Status | Checked by | Source |
 |---|---|---|---|---|
 | `degreeD_stage1` (w38) | any `M.Run` on a Γ̂_d state returns the exact transporter at tree cost ≤ exp(C′·log(8·max(d,6))·log(s+2)) | machine-checked; 3 standard axioms, BCP and GNS 3.13 as hypotheses. Cost is an abstract weight | fresh compile; AI red-team w41 | [w38](../docs/w38-lean-stage1.md), [w41](../docs/redteam-lean-stage1.md) |
-| `graphIso_final` and variants (w42) | as stated, trivially true | **do not cite**; being restated by w43 | Lean proof of the trivial witness | [w42](../docs/w42-lean-supply.md) |
+| `graphIso_final` and variants (w42) | as stated, trivially true | **do not cite**; renamed `*_weak` | Lean proof of the trivial witness | [w42](../docs/w42-lean-supply.md) |
+| `graphIso_reduction` (w43) | the named script `luksScript` computes the explicit read-off on every oracle, asks only layer instances, is exact, and has a run with ≤ exp(C log(d+2) log(n+2)) nodes | machine-checked; 3 standard axioms, `bcp`, `gnsPrimitive`, six cited hypotheses. Node count, not machine time; "explicit" is a reader's check | independent fresh compile and axiom check; no red-team of the definitions | [w43](../docs/w43-lean-statement.md) |
+| Theorem A (w47) | HJ reaches a node with group GL(V)_ℓ and \|GL(m−2,2)\| children on X_m; P acts on 2-subspaces under a coordinate top partition, μ = (1/8+o(1)) log₂ N | proven from HJ as written with exact recursive answers; asymptotic only (n ≥ 2^125 at κ = 64) | AI red-team w48; group identified exactly for m = 5..8 | [w47](../docs/w47-mu.md), [w48](../docs/redteam-w47-mu.md) |
+| Theorem C (w47) | which HJ nodes can enumerate | **broken as stated**, repair hand-checked only | AI red-team w48 | same |
 | Polynomial canonization (w40) | deterministic polynomial canonical forms at fixed d ≤ 5; n^{O(d²)} with `guarantee=True` | hand proof; needs d fixed; exponent about 53 is an estimate | AI red-team w44 | [w40](../docs/w40-solvable.md), [w44](../docs/redteam-w40-solvable.md) |
 | T1 (w45) | 4-tensor isomorphism in q^{n²} poly | proven modulo Qiao–Sun Thm 1.1 | AI red-team w46 | [w45](../docs/w45-quartic.md), [w46](../docs/redteam-w45-quartic.md) |
 | T2 (w45) | h-tuples of 3-tensors reduce to one 3-tensor of length O(hn) | proven | AI red-team w46; exact tests | same |
@@ -292,5 +295,5 @@ See [Benchmarks](Benchmarks.md) for tables and caveats. All timings are one mach
 * Transfer of the w1 HJ string lower bounds to graphs (Theorem B1 of w18 is a separate graph-level bound).
 * An n^{o(log n)} algorithm for general Latin squares, Steiner triple systems or conference graphs.
 * An unconditional 2^{o(n²)} algorithm for cubic Boolean equivalence (Theorem D of w35 is conditional).
-* A machine-checked Theorem R\*. Runs now exist for every d (w42), but `graphIso_final` and its variants are vacuous as stated, and cost is an abstract tree weight rather than machine time ([Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42)).
+* A machine-level Theorem R\*. `graphIso_reduction` (w43) gives a reduction with a recursion-node bound, but there is no program, and node count is not machine time ([Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42)).
 * A 2^{o(d²)} algorithm for general quartic Boolean equivalence (w45).

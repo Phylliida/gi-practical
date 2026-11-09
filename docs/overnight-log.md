@@ -753,3 +753,13 @@ are red-teams, a LaTeX paper, and final integration.
 * A′ needs a test set (lines ⟨e_i,1⟩). Prop D covers one node only: "removable on X_m" and "same status as B1" overreach, since w28's P2 is a sketch.
 * Not reachable by computation: any run at m ≥ 64, (H0) itself, the action on G₄(U) for k ≥ 6.
 * w49-pruned: is there a graph whose enumeration is not covered by automorphisms?
+
+### w43-lean-statement (done, commit 6638151, merged 7219a7c; docs/w43-lean-statement.md, lean/DegreeD/Luks/Statement.lean)
+* `graphIso_reduction` replaces the vacuous theorems (renamed `*_weak`, with warnings). It is about the named script `luksScript`, not `∃ s`: on every oracle the script computes the explicit read-off `luksOff`; every call on every branch is a layer
+  instance of a pair of components; along exact answers calls are in Γ̂_d on ≤ 3n⁴ positions, at most n⁵ of them; the exact value is the isomorphism set; and a run exists with ≤ exp(C log(d+2) log(n+2)) nodes.
+* Independently re-checked by me: fresh compile of all 35 modules (234 s, no errors, no sorry). `#print axioms graphIso_reduction` = 3 standard + bcp + gnsPrimitive (six cited statements are hypotheses); the failure lemmas use 3 standard only. My own derivation that
+  `done {iso set}` fails compiles. My own walk over definition values from luksOff, luksScript, layerState, readStep, mkLG reaches none of SimpleGraph.Iso, isoSet, State.answer, evalExact (positive control: an old-shape script reaches SimpleGraph.Iso). The walk can miss an inlined copy of the iso definition.
+* Residual: Script and luksOff are classical terms, so "explicit" is a reader's check; choice picks and Subgroup.closure in readStep are unpriced; Γ̂_d holds along exact answers only; e.total counts recursion nodes, and there is still no program or machine model.
+  Filter scripts are not excluded by the null oracle alone; irrelevant to the theorem, which names its script.
+* Theorem R* is therefore machine-checked only as a reduction with a node-count bound, modulo the two axioms and six cited hypotheses. Not at machine level.
+* w50-gain: the height-2 gain-graph core of TreeCI.

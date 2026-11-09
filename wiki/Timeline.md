@@ -107,10 +107,13 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 40 | w40-solvable | `b6a4d9e` | polynomial canonical forms at bounded degree via Luks's recursion; red-teamed by w44 | [w40-solvable](../docs/w40-solvable.md) |
 | 41 | w41-redteam-lean | `16336ad` | red-team of w38: axioms not found false; "cost" is a tree-size bound, not machine time | [report](../docs/redteam-lean-stage1.md) |
 | 42 | w42-lean-supply | `f03df03` | `Supply` for all D, Luks layer lemmas; found that `graphIso_final` is vacuous | [w42-lean-supply](../docs/w42-lean-supply.md) |
-| 43 | w43-lean-statement | | **running**: restating `graphIso_final` | [Home](Home.md#work-still-in-progress) |
+| 43 | w43-lean-statement | `6638151` | `graphIso_reduction`, a statement the trivial witness fails; independently recompiled (merged `7219a7c`) | [w43-lean-statement](../docs/w43-lean-statement.md), [Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42) |
 | 44 | w44-redteam-luks | `0cb2fd5` | red-team of w40 | [report](../docs/redteam-w40-solvable.md) |
 | 45 | w45-quartic | `5a17e2e` | quartic equivalence and 4-tensors; red-teamed by w46 | [w45-quartic](../docs/w45-quartic.md) |
 | 46 | w46-redteam-quartic | `91a1fd4` | red-team of w45 | [report](../docs/redteam-w45-quartic.md) |
-| 47 | w47-mu | | **running**: HJ's enumeration channel on graphs | [Home](Home.md#work-still-in-progress) |
+| 47 | w47-mu | `92af9b0` | HJ's enumeration channel is forced on PG(m−1,2) graphs; red-teamed by w48 | [w47-mu](../docs/w47-mu.md) |
+| 48 | w48-redteam-mu | `2138e9a` | red-team of w47: Theorem A survives, Theorem C broken as stated | [report](../docs/redteam-w47-mu.md) |
+| 49 | w49-pruned | | **running**: can the enumeration survive automorphism pruning? | [Home](Home.md#work-still-in-progress) |
+| 50 | w50-gain | | **running**: the height-2 gain-graph core of TreeCI | [Home](Home.md#work-still-in-progress) |
 
-The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `1e596e0`.
+The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `7219a7c`.
