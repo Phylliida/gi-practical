@@ -686,3 +686,12 @@ are red-teams, a LaTeX paper, and final integration.
 
 ## Next
 * w40-solvable: worst-case polynomial canonical forms at bounded degree (replace the exponential searches with Luks / Babai-Luks group recursion).
+
+### w38-lean-stage1 (done, commit 1c162b8; docs/w38-lean-stage1.md, lean/DegreeD/M/)
+* Stage-1 degree-d theorem machine-checked (fresh compile, 3m22s): for a modified recursion M.Run, any run on a Γ̂_d state returns the
+  exact transporter at cost ≤ exp(C'·log(8·max(d,6))·log(s+2)), C' independent of d. `degreeD_stage1` uses only the 3 standard axioms
+  (BCP and GNS 3.13 as hypotheses); `degreeD_stage1_ax` adds axioms `bcp` and `gnsPrimitive`.
+* gnsPrimitive states the product form from GNS's proof plus a normalizer step, not GNS's literal Thm 3.13.
+* Still hypotheses: Supply (not shown inhabited), NodeBoundD, RootsOK for arbitrary runs. Not addressed: the machine-level program, the
+  Luks reduction, HJ's correctness beyond its Lean theorem.
+* w41-redteam-lean: does the theorem say what is claimed; are the hypotheses satisfiable; is gnsPrimitive faithful?
