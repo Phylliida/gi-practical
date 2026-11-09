@@ -113,7 +113,9 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 46 | w46-redteam-quartic | `91a1fd4` | red-team of w45 | [report](../docs/redteam-w45-quartic.md) |
 | 47 | w47-mu | `92af9b0` | HJ's enumeration channel is forced on PG(m−1,2) graphs; red-teamed by w48 | [w47-mu](../docs/w47-mu.md) |
 | 48 | w48-redteam-mu | `2138e9a` | red-team of w47: Theorem A survives, Theorem C broken as stated | [report](../docs/redteam-w47-mu.md) |
-| 49 | w49-pruned | | **running**: can the enumeration survive automorphism pruning? | [Home](Home.md#work-still-in-progress) |
+| 49 | w49-pruned | `f4134a2` | enumeration surviving one-sided pruning; red-teamed by w51 | [w49-pruned](../docs/w49-pruned.md) |
+| 51 | w51-redteam-pruned | `8c97f8e` | red-team of w49: T survives, P broken for two-sided pruning | [report](../docs/redteam-w49-pruned.md) |
+| 52 | w52-redteam-conference | | **running**: red-team of w32 | [Home](Home.md#work-still-in-progress) |
 | 50 | w50-gain | | **running**: the height-2 gain-graph core of TreeCI | [Home](Home.md#work-still-in-progress) |
 
-The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `7219a7c`.
+The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `8c97f8e`.

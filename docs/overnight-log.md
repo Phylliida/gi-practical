@@ -771,3 +771,11 @@ are red-teams, a LaTeX paper, and final integration.
 * Needs two choices the paper leaves free (source orbital R₁, rectangle colours). Lean's rectangle colour rule not traced. Needs n ≥ 2^33152 at κ = 64.
 * The gap exploits HJ's Case 2b refining one F-orbital where Helfgott uses the Schurian configuration. Repair R1 removes this node on this family (effect PROVEN, soundness SKETCH). So not evidence of a real Lie-type obstacle, and nothing about GI: the family looks easy by linear algebra [SKETCH]. No whole-tree bound.
 * w51-redteam-pruned: adversarial check of w49.
+
+### w51-redteam-pruned (done, commit 8c97f8e; docs/redteam-w49-pruned.md)
+* Theorem T survives (given H0, for any resolution whose Case 2b orbital is R₁). In Lean, stSrc2b and rcFind fix the choices by label order, so the orbital is R₁ iff the two smallest labels are R₁-related: a worst-case labelling. d must be even, so n ≥ 2^33280. Rectangle query strings carry no H-information.
+* Theorem P BROKEN as stated (high): certified automorphisms of source and target act on both sides, so one child per double coset Sp\GL/Sp suffices, which is |Cl(GL(d/2,2))| = N^{(1+o(1))/(4e)}, polynomial in N. Exact counts for d = 2,4,6,8: 1, 3, 6, 14 (the 14 predicted first). The classification is cited from memory. Left-only pruning does leave ≥ [GL:Sp].
+* So w47 §5.3 is falsified literally (it names only Aut_H(x)), but its two-sided form is not refuted. "Strongest possible" and "genuinely inequivalent" must go. R1's effect sound, its soundness still open.
+* Not reachable: e ≥ 2κ, any HJ run, H0, direct Aut(x) at e ≥ 4 (non-affine automorphisms excluded by proof only), other orbitals at e ≥ 4, Lean's label map, Kantor's paper itself.
+* Line closed for now: even complete removal of enumeration leaves the x² and Q channels paying log N·log w (w28), so it cannot lower HJ's exponent.
+* w52-redteam-conference: the overdue red-team of w32.

@@ -334,6 +334,9 @@ The earlier statement that nothing of the project's own accounting is machine-ch
 | Theorem A wording, "2-subspaces, d ≈ n/16" | holds only for a coordinate top partition, which is what the Lean selects. At m = 7 the unordered-pair tower acts on 31 hyperplanes. N = n² | same |
 | A′ of w47 | gave no test set; use the lines ⟨e_i,**1**⟩ | same |
 | Prop D of w47, "removable on X_m", "same status as B1" | Prop D covers one node only, and w28's P2 is a sketch | same |
+| Theorem P of w49, "any automorphism pruning" | broken: two-sided pruning leaves one child per double coset Sp\\GL/Sp, polynomial in N. Holds only for left-only pruning | [redteam-w49-pruned](../docs/redteam-w49-pruned.md) |
+| Theorem T of w49 | holds for a resolution whose Case 2b orbital is R₁; the Lean fixes this by label order, so it is a worst-case labelling. d must be even, n ≥ 2^33280 | same |
+| w47 §5.3 conjecture | false as literally worded; the two-sided form is not refuted | same |
 
 ### The video
 

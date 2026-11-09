@@ -37,6 +37,10 @@ Its caveats matter:
 
 So "enumerated quotients on graphs are small" is false for HJ as written, and this route gives no evidence that GI is easier than string isomorphism. The open question is whether any graph forces superpolynomial enumeration after pruning.
 
+**Does it survive pruning? (w49, w51)** [w49-pruned](../docs/w49-pruned.md) builds a Cayley graph on F₂^d⊗F₂^e whose first rectangle has symmetry GL(V)×GL(U) while the whole graph has only symplectic symmetry. HJ then enumerates GL(d,2) at a node, for any resolution whose Case 2b orbital is R₁ (in the Lean, a worst-case labelling), with n ≥ 2^33280 at κ = 64. Pruning by automorphisms on one side leaves at least [GL:Sp] children.
+
+The [red-team](../docs/redteam-w49-pruned.md) broke the claim that this holds for any pruning. Certified automorphisms act on both source and target, so one child per double coset Sp\\GL/Sp suffices, about N^{(1+o(1))/(4e)}, which is polynomial in N (exact counts 1, 3, 6, 14 for d = 2, 4, 6, 8; the classification is cited from memory). So w47's conjecture is false as literally worded, but its two-sided form stands. Even complete removal of enumeration would leave the x² and Q channels paying log N·log w ([w28](../docs/w28-sigma.md)), so this line cannot lower HJ's exponent.
+
 ## Can HJ avoid the σx channel? (w28)
 
 [w28-sigma](../docs/w28-sigma.md) attacks the σx channel that B1 exploits. AI red-teamed by [w31](../docs/redteam-w27-w28.md), which found no claim broken and certifies neither P2, Q1 nor the conjecture below; everything assumes HJ correct, and nothing is machine-checked.
