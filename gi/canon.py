@@ -1012,12 +1012,19 @@ def canon_connected(g, stats, layers="class"):
         Linv = [0] * n
         for v, l in enumerate(L):
             Linv[l] = v
-        gs = A.tuples(n) if isinstance(A, SparseEA) else A.gens
-        if _ck is not None:
+        if isinstance(A, SparseEA):     # (the sparse generators, on the vertices)
+            idn0 = tuple(range(n))
+            new = []
+            for sg in A.gens.values():
+                h = list(idn0)
+                for p, q in sg.items():
+                    h[Linv[p]] = Linv[q]
+                new.append(tuple(h))
+        elif _ck is not None:
             Lt, Lit = tuple(L), tuple(Linv)
-            new = [mul(mul(Lt, a), Lit) for a in gs]
+            new = [mul(mul(Lt, a), Lit) for a in A.gens]
         else:
-            new = [tuple([Linv[a[L[v]]] for v in range(n)]) for a in gs]
+            new = [tuple([Linv[a[L[v]]] for v in range(n)]) for a in A.gens]
         if better:
             best = (keys, L, Linv)
         else:                           # equal keys, so equal forms: an automorphism
@@ -1069,11 +1076,14 @@ def canonical_labeling_lists(nbr, colors=None, stats=None, layers="class"):
     for size, form, part, L, auts in comps:
         for i, v in enumerate(part):
             lab[v] = off + L[i]
-        for a in auts:
-            h = list(range(n))
-            for i, v in enumerate(part):
-                h[v] = part[a[i]]
-            gens.append(tuple(h))
+        if size == n:                   # (one component: part is range(n))
+            gens.extend(auts)
+        else:
+            for a in auts:
+                h = list(range(n))
+                for i, v in enumerate(part):
+                    h[v] = part[a[i]]
+                gens.append(tuple(h))
         if prev is not None and prev[0] == size and prev[1] == form:
             pp, pL = prev[2], prev[3]
             Li = [0] * size

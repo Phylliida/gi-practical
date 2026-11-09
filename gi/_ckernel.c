@@ -3171,6 +3171,142 @@ done:
 }
 /* ===== end of w23-speed2 block (3) ===== */
 
+/* SparseEA primitives (gi/ea2.py). ea_compose(dicts) -> dict: compose() of a
+ * list of dicts (the same algorithm, entry order included). ea_who_add(who, g,
+ * gid), ea_who_remove(who, g, gid): the index maintenance of SparseEA.add,
+ * extend and remove; None if who or g are not dicts (the caller's Python body
+ * then runs). */
+static PyObject *ck_ea_compose(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *dicts, *c;
+    Py_ssize_t nd, k;
+    (void)m_;
+    if (nargs != 1 || !PyList_CheckExact(args[0]))
+        Py_RETURN_NONE;
+    dicts = args[0];
+    nd = PyList_GET_SIZE(dicts);
+    for (k = 0; k < nd; k++)
+        if (!PyDict_CheckExact(PyList_GET_ITEM(dicts, k)))
+            Py_RETURN_NONE;
+    c = PyDict_New();
+    if (c == NULL)
+        return NULL;
+    for (k = 0; k < nd; k++) {
+        PyObject *g = PyList_GET_ITEM(dicts, k);
+        Py_ssize_t size = PyDict_GET_SIZE(g), pos = 0, i, nups = 0;
+        PyObject *y, *z;
+        PyObject **ups = malloc((size_t)(size ? 2 * size : 1) * sizeof(PyObject *));
+        if (ups == NULL) {
+            Py_DECREF(c);
+            return PyErr_NoMemory();
+        }
+        while (PyDict_Next(g, &pos, &y, &z)) {
+            PyObject *x = PyDict_GetItemWithError(c, y);   /* c.get(y, y) */
+            if (x == NULL) {
+                if (PyErr_Occurred())
+                    goto fail;
+                x = y;
+            }
+            Py_INCREF(x);
+            Py_INCREF(z);
+            ups[2 * nups] = x;
+            ups[2 * nups + 1] = z;
+            nups++;
+        }
+        for (i = 0; i < nups; i++) {
+            PyObject *x = ups[2 * i], *zz = ups[2 * i + 1];
+            int eq = PyObject_RichCompareBool(zz, x, Py_EQ);
+            if (eq < 0)
+                goto fail;
+            if (eq) {                   /* c.pop(x, None) */
+                if (PyDict_DelItem(c, x) < 0) {
+                    if (!PyErr_ExceptionMatches(PyExc_KeyError))
+                        goto fail;
+                    PyErr_Clear();
+                }
+            } else if (PyDict_SetItem(c, x, zz) < 0) {
+                goto fail;
+            }
+        }
+        for (i = 0; i < 2 * nups; i++)
+            Py_DECREF(ups[i]);
+        free(ups);
+        continue;
+fail:
+        for (i = 0; i < 2 * nups; i++)
+            Py_DECREF(ups[i]);
+        free(ups);
+        Py_DECREF(c);
+        return NULL;
+    }
+    return c;
+}
+
+static PyObject *ck_ea_who_add(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *who, *g, *gid, *p, *v;
+    Py_ssize_t pos = 0;
+    (void)m_;
+    if (nargs != 3 || !PyDict_CheckExact(args[0]) || !PyDict_CheckExact(args[1]))
+        Py_RETURN_NONE;
+    who = args[0];
+    g = args[1];
+    gid = args[2];
+    while (PyDict_Next(g, &pos, &p, &v)) {
+        PyObject *w = PyDict_GetItemWithError(who, p);
+        if (w == NULL) {
+            PyObject *s;
+            if (PyErr_Occurred())
+                return NULL;
+            s = PySet_New(NULL);
+            if (s == NULL)
+                return NULL;
+            if (PySet_Add(s, gid) < 0 || PyDict_SetItem(who, p, s) < 0) {
+                Py_DECREF(s);
+                return NULL;
+            }
+            Py_DECREF(s);
+        } else if (PySet_Add(w, gid) < 0) {
+            return NULL;
+        }
+    }
+    Py_RETURN_TRUE;
+}
+
+static PyObject *ck_ea_who_remove(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *who, *g, *gid, *p, *v;
+    Py_ssize_t pos = 0;
+    (void)m_;
+    if (nargs != 3 || !PyDict_CheckExact(args[0]) || !PyDict_CheckExact(args[1]))
+        Py_RETURN_NONE;
+    who = args[0];
+    g = args[1];
+    gid = args[2];
+    while (PyDict_Next(g, &pos, &p, &v)) {
+        PyObject *w = PyDict_GetItemWithError(who, p);   /* who[p] */
+        if (w == NULL) {
+            if (!PyErr_Occurred())
+                _PyErr_SetKeyError(p);
+            return NULL;
+        }
+        if (PySet_GET_SIZE(w) == 1) {
+            if (PyDict_DelItem(who, p) < 0)
+                return NULL;
+        } else {
+            int r = PySet_Discard(w, gid);
+            if (r < 0)
+                return NULL;
+            if (r == 0) {
+                _PyErr_SetKeyError(gid);
+                return NULL;
+            }
+        }
+    }
+    Py_RETURN_TRUE;
+}
+/* ===== end of w23-speed2 block (4) ===== */
+
 #define FAST(name) {#name, (PyCFunction)(void (*)(void))ck_##name, METH_FASTCALL, NULL}
 static PyMethodDef methods[] = {
     FAST(set_fallbacks), FAST(mul), FAST(inv), FAST(act), FAST(maps), FAST(orbits),
@@ -3180,6 +3316,7 @@ static PyMethodDef methods[] = {
     FAST(orbit_table), FAST(orbit_absorb),
     FAST(closure_dense),
     FAST(closure_sparse),
+    FAST(ea_compose), FAST(ea_who_add), FAST(ea_who_remove),
     {NULL, NULL, 0, NULL}
 };
 
