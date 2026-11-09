@@ -21,11 +21,13 @@ variable {P : Params}
 /-! ### The per-node hypothesis -/
 
 /-- **The per-node hypothesis** (the shape of HJ's `NodeBound`, split): the structural work of a
-node is polynomial in the phase size, and only the row terminal has work `exp(cw (log N)²)`. -/
+node is polynomial in the phase size (per coset at a dispatcher node, since an enumeration under
+`(M′)` can have super-polynomially many cosets), and only the row terminal has work
+`exp(cw (log N)²)`. -/
 structure NodeBoundD (w : Node P → ℝ) (cw af : ℝ) : Prop where
   nonneg : ∀ nd, 0 ≤ w nd
   work : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → nd.run.kind ≠ .rowTerminal →
-    w nd ≤ ((nd.S.N : ℝ) + 2) ^ cw
+    w nd ≤ (1 + (nd.run.fanout : ℝ)) * ((nd.S.N : ℝ) + 2) ^ cw
   rowTerminal : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → nd.run.kind = .rowTerminal →
     w nd ≤ expLogSq cw nd.S.N
   solve : ∀ nd : Node P, nd.m = .solve → w nd ≤ ((nd.S.size : ℝ) + 2) ^ cw
@@ -95,9 +97,16 @@ theorem NodeBoundD.toE {w : Node P → ℝ} {cw af : ℝ} (hw : NodeBoundD w cw 
       rw [if_neg hR]
       by_cases hk : r.kind = .rowTerminal
       · refine (hw.rowTerminal ⟨m, Ω, C, S, L, A, r⟩ hm hsz hk).trans ?_
-        apply expLogSq_mono_left
-        linarith
-      · exact (hw.work ⟨m, Ω, C, S, L, A, r⟩ hm hsz hk).trans (pow_le_expLogSq hcw S.N)
+        have h1 : expLogSq cw S.N ≤ expLogSq (2 * cw) S.N := expLogSq_mono_left (by linarith) _
+        have h2 : (1 : ℝ) ≤ 1 + (r.fanout : ℝ) := by
+          have : (0 : ℝ) ≤ r.fanout := Nat.cast_nonneg _
+          linarith
+        exact h1.trans (le_mul_of_one_le_left (expLogSq_nonneg _ _) h2)
+      · refine (hw.work ⟨m, Ω, C, S, L, A, r⟩ hm hsz hk).trans ?_
+        have h2 : (0 : ℝ) ≤ 1 + (r.fanout : ℝ) := by
+          have : (0 : ℝ) ≤ r.fanout := Nat.cast_nonneg _
+          linarith
+        exact mul_le_mul_of_nonneg_left (pow_le_expLogSq hcw S.N) h2
   calls := hw.calls
 
 /-! ### Root bounds -/

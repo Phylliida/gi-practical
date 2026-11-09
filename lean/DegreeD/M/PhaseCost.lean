@@ -219,7 +219,16 @@ theorem level_eq_four {k : CallKind} (h1 : k ≠ .orbitStop) (h2 : k ≠ .orbitC
 theorem work_le (hw : NodeBoundE d w Eb af) {m : Mode} {Ω C : Type} {S : State Ω C}
     {L : Option (SuppliedLabels S)}
     {A : Set (Perm Ω)} (r : Run P m S L A) (hm : m ≠ .solve) (hN : S.N = N)
-    (hsz : S.size ≤ N) (hg : GammaHat d S.G) : w r.node ≤ Eb N := by
+    (hsz : S.size ≤ N) (hg : GammaHat d S.G) (hfan : r.fanout = 0 := by rfl) : w r.node ≤ Eb N := by
+  have := hw.work r.node hm (hN ▸ hsz) hg
+  rw [show r.node.S.N = N from hN, show r.node.run.fanout = 0 from hfan] at this
+  simpa using this
+
+/-- The work of a dispatcher node: `Eb N` per coset. -/
+theorem work_le_fan (hw : NodeBoundE d w Eb af) {m : Mode} {Ω C : Type} {S : State Ω C}
+    {L : Option (SuppliedLabels S)}
+    {A : Set (Perm Ω)} (r : Run P m S L A) (hm : m ≠ .solve) (hN : S.N = N)
+    (hsz : S.size ≤ N) (hg : GammaHat d S.G) : w r.node ≤ (1 + (r.fanout : ℝ)) * Eb N := by
   have := hw.work r.node hm (hN ▸ hsz) hg
   rwa [show r.node.S.N = N from hN] at this
 
@@ -755,8 +764,9 @@ theorem toll_bound (hw : NodeBoundE d w Eb af) {Qf : QFun} (haf : 0 ≤ af) (ha 
     simp only [Function.comp_def]
     linarith
   | dispatch hs htr hfl' I child hchild hN' hhier hbk A r =>
-    have hwk := work_le hw (Run.dispatch hs htr hfl' I child hchild hN' hhier hbk A r) (by decide)
-      hN hsz hg
+    have hwk : w (Run.dispatch hs htr hfl' I child hchild hN' hhier hbk A r).node ≤
+        (1 + (I.n : ℝ)) * c :=
+      work_le_fan hw (Run.dispatch hs htr hfl' I child hchild hN' hhier hbk A r) (by decide) hN hsz hg
     have hr := fun j => hinh (r j) ((hN' j).trans hN) (hchild j).2.1
       ((hchild j).1.le.trans I.K_le) (hok j) hs
     have hrs := Finset.sum_le_sum fun j (_ : j ∈ Finset.univ) => hr j

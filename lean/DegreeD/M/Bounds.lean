@@ -118,7 +118,7 @@ theorem enumeration_card_le [Finite Ω] {cc : ChargingConstants} {c₁ c₂ : �
   set D := max d 6 with hD
   have hD6 : 6 ≤ D := le_max_right _ _
   have hG : GammaHat D Q.ρ.range := PrimitiveQuotient.gammaHat_range hS (le_max_left _ _) Q
-  rcases hGNS D Q.d (by omega) Q.two_le Q.ρ.range Q.primitive hG with h1 | ⟨m, k, r, e, hform, hmD, h2km, hlog⟩
+  rcases hGNS D Q.d hD6 Q.two_le Q.ρ.range Q.primitive hG with h1 | ⟨m, k, r, e, hform, hmD, h2km, hlog⟩
   · -- option 1 of GNS 3.13
     have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
     have hc : c₁ / Real.log 2 + c₂ / Real.log 48 ≤ cc.a + cc.aStar / Real.log 2 := hcc

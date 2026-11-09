@@ -208,13 +208,26 @@ def patch_totalcost(s):
     · exact ih'.2 nd hnd hm
 """)
     # NodeBound: node work Eb N, for nodes of the class
-    i = s.index("structure NodeBound (w : Node P → ℝ) (cw af : ℝ) : Prop where")
+    i = s.index("/-- **The per-node hypothesis** (Section 7.4), on the work `w` of the nodes:")
     j = s.index("/-! ### The worst-case cost `F` -/")
-    s = s[:i] + """structure NodeBoundE (d : ℕ) (w : Node P → ℝ) (Eb : ℕ → ℝ) (af : ℝ) : Prop where
+    s = s[:i] + """/-- The number of cosets a dispatcher node loops over; `0` at every other node. Under `(M′)` an
+enumeration node has `|ρ(G)|` cosets, which can exceed every polynomial in `N`, so the node's own
+work may be proportional to it. Each child pays for its share (`toll_bound`). -/
+noncomputable def Run.fanout {m : Mode} {Ω C : Type} {S : State Ω C}
+    {L : Option (SuppliedLabels S)} {A : Set (Perm Ω)} (r : Run P m S L A) : ℕ :=
+  match r with
+  | .dispatch _ _ _ I _ _ _ _ _ _ _ => I.n
+  | _ => 0
+
+/-- **The per-node hypothesis** in generic form: node work `Eb N` at phase size `N`, for nodes of
+the class `Γ̂_d`; `DegreeD/M/Main.lean` derives it from `NodeBoundD`. -/
+structure NodeBoundE (d : ℕ) (w : Node P → ℝ) (Eb : ℕ → ℝ) (af : ℝ) : Prop where
   nonneg : ∀ nd, 0 ≤ w nd
   one_le : ∀ n, 1 ≤ Eb n
-  /-- The work of a node of a phase with phase size `N`, in the class, is at most `Eb N`. -/
-  work : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → GammaHat d nd.S.G → w nd ≤ Eb nd.S.N
+  /-- The work of a node of a phase with phase size `N`, in the class, is at most `Eb N`, once
+  per coset at a dispatcher node. -/
+  work : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → GammaHat d nd.S.G →
+    w nd ≤ (1 + (nd.run.fanout : ℝ)) * Eb nd.S.N
   calls : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N →
     (nd.run.scriptCalls.length : ℝ) ≤ (nd.S.N : ℝ) ^ af
 

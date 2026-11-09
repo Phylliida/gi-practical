@@ -296,23 +296,24 @@ noncomputable def Run.scriptCalls {m : Mode} {Ω C : Type} {S : State Ω C}
 /-- `E = exp(c (log(n+2))²)`, the shape of every bound in Section 7. -/
 noncomputable def expLogSq (c : ℝ) (n : ℕ) : ℝ := Real.exp (c * Real.log ((n : ℝ) + 2) ^ 2)
 
-/-- **The per-node hypothesis** (Section 7.4), on the work `w` of the nodes:
+/-- The number of cosets a dispatcher node loops over; `0` at every other node. Under `(M′)` an
+enumeration node has `|ρ(G)|` cosets, which can exceed every polynomial in `N`, so the node's own
+work may be proportional to it. Each child pays for its share (`toll_bound`). -/
+noncomputable def Run.fanout {m : Mode} {Ω C : Type} {S : State Ω C}
+    {L : Option (SuppliedLabels S)} {A : Set (Perm Ω)} (r : Run P m S L A) : ℕ :=
+  match r with
+  | .dispatch _ _ _ I _ _ _ _ _ _ _ => I.n
+  | _ => 0
 
-* `work`: a node of a phase with phase size `N`, on at most `N` positions, does at most
-  `E_N = exp(cw (log(N+2))²)` work itself ("all structural work … at one node";
-  "The terminal's additional work is `exp(O((log N)²))`");
-* `solve`: a `Solve` node on `s` positions does at most `exp(cw (log(s+2))²)` work itself
-  (reading the input, the direct enumeration below `N₀`, the initialization of a
-  fresh phase);
-* `calls`: such a node makes at most `N^{af}` calls from its query scripts.
-
-The costs of the recursive calls are not part of a node's work: they are the total
-costs of the children. -/
+/-- **The per-node hypothesis** in generic form: node work `Eb N` at phase size `N`, for nodes of
+the class `Γ̂_d`; `DegreeD/M/Main.lean` derives it from `NodeBoundD`. -/
 structure NodeBoundE (d : ℕ) (w : Node P → ℝ) (Eb : ℕ → ℝ) (af : ℝ) : Prop where
   nonneg : ∀ nd, 0 ≤ w nd
   one_le : ∀ n, 1 ≤ Eb n
-  /-- The work of a node of a phase with phase size `N`, in the class, is at most `Eb N`. -/
-  work : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → GammaHat d nd.S.G → w nd ≤ Eb nd.S.N
+  /-- The work of a node of a phase with phase size `N`, in the class, is at most `Eb N`, once
+  per coset at a dispatcher node. -/
+  work : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → GammaHat d nd.S.G →
+    w nd ≤ (1 + (nd.run.fanout : ℝ)) * Eb nd.S.N
   calls : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N →
     (nd.run.scriptCalls.length : ℝ) ≤ (nd.S.N : ℝ) ^ af
 

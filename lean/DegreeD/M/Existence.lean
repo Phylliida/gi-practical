@@ -295,6 +295,15 @@ theorem rowTerminal_calls_class [Finite Ω] (hg : GammaHat D S.G) (I : RowTermin
   refine Script.callsExact_bind _ _ (Script.callsExact_table _ _ (fun ij _ => ?_) _) trivial
   exact hHb
 
+/-- The configuration calls of HJ's aggregation (`pairState`, the group `Sym(n)` acting diagonally
+on pairs) are in `Γ̂_D` as soon as `n ≤ D`. This is the case the field `GiantCase.aggregate.cls`
+is meant for, with `n ≤ q ≤ D`. -/
+theorem pairState_class {C' : Type} {n : ℕ} (hn : n ≤ D) (x y : Fin n × Fin n → C') :
+    GammaHat D (pairState n x y).G := by
+  have h : GammaHat D (Perm (Fin n)) :=
+    gammaHat_perm (MonoidHom.id _) Function.injective_id (by simpa using hn)
+  exact GammaHat.range (diagHom n) h
+
 end RowClass
 
 /-! ### Existence of runs -/
