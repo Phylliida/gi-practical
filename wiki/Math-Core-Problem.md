@@ -2,11 +2,11 @@
 
 What remains when the group-theoretic machinery is stripped away. This is where the question "is degree-d GI FPT?" now lives.
 
-[Home](Home.md) · Sources: [w1-fpt](../docs/w1-fpt.md), [w1-structure](../docs/w1-structure.md), [w2-coset](../docs/w2-coset.md), [w4-t2](../docs/w4-t2.md), [w6-tanglegram](../docs/w6-tanglegram.md), [w8-poset](../docs/w8-poset.md) · Ledger: [section 6](Results-Ledger.md#6-the-core-problem-treeci-tanglegrams-posets) · Open: [Open problems](Open-Problems.md#core-questions)
+[Home](Home.md) · Sources: [w1-fpt](../docs/w1-fpt.md), [w1-structure](../docs/w1-structure.md), [w2-coset](../docs/w2-coset.md), [w4-t2](../docs/w4-t2.md), [w6-tanglegram](../docs/w6-tanglegram.md), [w8-poset](../docs/w8-poset.md), [w27-tree](../docs/w27-tree.md), [redteam-w27-w28](../docs/redteam-w27-w28.md) · Ledger: [section 6](Results-Ledger.md#6-the-core-problem-treeci-tanglegrams-posets) · Open: [Open problems](Open-Problems.md#core-questions)
 
 No FPT algorithm and no hardness result was found for any of these problems. All are in XP by Luks or GNS.
 
-**In progress as of `1368fb6`:** `w27-tree` attacks R1_c (complete-tree tanglegram isomorphism) and height-2 posets with large μ. Nothing from it is on this page yet.
+**w27** attacked R1_c (complete-tree tanglegram isomorphism) and height-2 posets with large μ; [below](#height-2-posets-and-r1_c-w27). Neither is settled.
 
 ## Definitions
 
@@ -30,6 +30,17 @@ No FPT algorithm and no hardness result was found for any of these problems. All
    * TreeCI = CI(arbitrary G, full Aut(T,x), same tree). T²_full = CI(full, full, different trees). The gap between them is exactly **(R2): are all tree groups fpt-definable?**
    * Degree-d GI ≡ depth-2 tanglegrams with unbounded root (Prop A″). **R1 is necessary for FPT degree-d GI** (T²_full ≤ coloured GI of degree b+1).
 7. **Posets** (w8-poset). Theorem 1 solves SI under generalized wreath products over posets in b!·2^{O(b^{μ+1})}·N^{O(1)}, but Prop H shows C_h ⊔ C_h (width 2) is already R1_c. So width and dimension cannot help.
+
+## Height-2 posets and R1_c (w27)
+
+Source: [w27-tree](../docs/w27-tree.md) (`b11f2d3`), AI red-teamed by [redteam-w27-w28](../docs/redteam-w27-w28.md), which found no claim broken and narrowed three. See [Corrections](Corrections.md#height-2-posets-and-r1_c-w27-w31); the memo was not edited afterwards. **HT2** is string isomorphism under G₁ × G₂, G_i = K_i ⋊ T_i, with T_i = S_b^m on V and K_i = S_b^V: the poset (A_m < k) ⊔ (A_m < k).
+
+* **Not settled.** FPT for height-2 is open and FPT for R1_c was not found.
+* **Barrier** (Prop N, Cor N.1, proven): a section Y_c of the A₅ wreath tower in a group with a normal series of length ℓ whose factors embed in products of S_b has c ≤ ℓ·D(b). So no parameterized reduction from R1_c(b₀) to a bounded-height family can reflect Aut at the identity tanglegrams. This narrows but does not decide height 2: it only rules out hardness proofs of the gadget kind used so far.
+* **No small faithful domain** (Lemma MD, proven, likely folklore): Sym(b) ≀ R has minimal faithful degree exactly rb for b ≥ 5, so a domain-based coset-intersection bound is useless for the shared group of HT2.
+* **Sub-classes.** Reduction 0 (T₂ fixed or enumerable: FPT, modulo ADKT). Theorem G (pinning set of ρ blocks): (b!·b^m)^ρ · b!·2^{O(b)}·N^{O(1)}, which is **XP in ρ and not FPT in (b, ρ)**. Theorem G+ adds r top coordinates, FPT in r. Theorem C (soluble surviving top after a given r-coordinate set): (b!)^{r+2}·N^{O(1)}, modulo Luks's recursion and Pálfy–Wolf.
+* **Open residue.** A hard height-2 instance needs a non-soluble surviving top on many coordinates and no small pinning set. The cleanest case is a bipartite gain graph with labels in S_b, up to switching: non-abelian with curvature over a large non-soluble top. Flat components are a sketch; low-support generation of π₁ is speculation.
+* **R1_c.** Prop 3.2: a definable one-call combine at node u needs Ω(s²/log s) leaves where n − n_max = 2s, so W6's lead 2 is false as stated. A limit on that route; a combine that leaves R1 is TreeCI on the frontier.
 
 ## What makes instances hard (w6-tanglegram, w4-t2)
 

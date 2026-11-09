@@ -1,5 +1,7 @@
 # w18-latin: Latin squares, Steiner triple systems, conference graphs, and HJ on graphs
 
+> **Note (2026-11-09).** The enumeration cutoff $q_1$ (§2) and the Latin-square-graph exponent $(1/8)\log_2 N$ (§3) were corrected from [redteam-w18-latin.md](redteam-w18-latin.md); its §5 lists further corrections, not applied here, so read the two together.
+
 Moonshot memo, branch `w18-latin`, 2026-11-08. HJ = Hajiaghayi–JafariRaviz, arXiv:2611.01399
 (LaTeX source, line numbers `L…` as in `docs/moonshot-theory.md`). Every statement about "HJ" is about
 the algorithm **as written** in that source and assumes HJ is correct (it is unrefereed; see
@@ -58,12 +60,12 @@ Tags: **[V]** statement read in abstract/source; **[S]** via citing text only (o
 $V=\mathbb F_2^m$, $k=2^m$. Points $P=V\setminus\{0\}$, blocks $B=\{\{a,b,a+b\}\}$ (the lines of
 $\mathrm{PG}(m-1,2)$, equivalently the Steiner triple system on $P$). $X_m$ is the incidence graph on
 $P\sqcup B$; $n=|P|+|B|\approx k^2/6$. HJ's root works on $\Omega=$ ordered vertex pairs (L589–600) with $G=\mathrm{Sym}(n)$.
-Let $\kappa$ be HJ's certificate size ($\kappa=64$ in HJ; only $\kappa\ge 5$ and "fixed" are used), and $q_0$ its absolute degree cutoff.
+Let $\kappa$ be HJ's certificate size ($\kappa=64$ in HJ; only $\kappa\ge 5$ and "fixed" are used), and $q_1$ the largest degree of a symmetric group accepted by HJ's enumeration test ($q_1=486290$ at Lean's parameters $a=36000$, $q_0=2064$; the absolute degree cutoff $q_0$ is not the cutoff that matters here).
 
 **Theorem B1. [PROVEN, given HJ as written.]** For $Y\cong X_m$ and any fixed $\kappa\ge 5$, the recursion tree of
 HJ on $(X_m,Y)$ has at least
 $$\prod_{j=0}^{J-1}\tfrac12\binom{2^{m-j\kappa}-1}{\kappa}\ \ge\ 2^{m^2/2-O_\kappa(m)}\ =\ n^{\frac18\log_2 n-O_\kappa(1)}$$
-nodes (calls of `Continue`), where $J=\lfloor (m-c)/\kappa\rfloor$, $c=\lceil\log_2 q_0\rceil+\kappa+3$.
+nodes (calls of `Continue`), where $J=\lfloor (m-c)/\kappa\rfloor$, $c=\lceil\log_2 q_1\rceil+\kappa+3$.
 
 The proof tracks one chain of nested certificate calls.
 
@@ -84,7 +86,7 @@ The state may in fact be any group $G$ with $[G_j,G_j]\le G\le G_j$ ("normalizat
 
 ### 2.3 Level step
 
-**Lemma 1. [PROVEN]** Let $r_j\ge\kappa+c_1$ with $2^{r_j}-1>q_0$. Let $T\subseteq Q_j$ be a $\kappa$-subset,
+**Lemma 1. [PROVEN]** Let $r_j\ge\kappa+c_1$ with $2^{r_j}-1>q_1$. Let $T\subseteq Q_j$ be a $\kappa$-subset,
 linearly independent in $V/D_j$, with coset representatives $a_c$ ($c\in T$). Put
 $$D_{j+1}=D_j\oplus\langle a_c\rangle,\quad \Sigma=\textstyle\sum_{c}a_c+D_j,\quad Z_{j+1}=Z_j\cup\Sigma,$$
 $$\mathcal U_{j+1}=\{\tilde\tau\in\mathrm{GL}(D_{j+1}):\tilde\tau|_{D_j}\in\mathcal U_j,\ \tilde\tau(a_c)\in a_c+D_j\}.$$
@@ -125,7 +127,7 @@ At a level-$j$ state: $G_j$ is transitive. Its coarsest block systems give the p
 * **Column-first tower** (the block system $\{$cosets of $D_j\}$ top): quotient $\mathrm{Sym}(Q_j)$, degree $q_j=|Q_j|$.
 * **Row-first tower** ($\{w\}\times P_j$ top): quotient $\mathrm{Sym}(\widetilde W_j)$, degree $\Theta(k^2)>\lambda$, one-label; no rows retained (Step-4 children clear them, L1207), so `RowStep`. The row normal form (Theorem at L3530) has $H=H_j$ on $B=P_j$, $K$ diagonal, $N=N^*=1$, so $L=1$ intransitive; columns are singletons; `Continue` then exposes $H_j$ on $P_j$, whose coarsest quotient is $\mathrm{Sym}(Q_j)$.
 
-Neither enumeration nor product refinement applies ($\mathrm{Sym}(q_j)$, $q_j>q_0$, order above $\exp(a\log^2q_j)$; $r=1$). After normalization (two cosets; Parity lemma) `GiantStep` runs with $\Gamma=Q_j$, $q_j\le k<\lambda$, and HJ computes `LocalCertificate` for **every** $\kappa$-subset $T\subseteq Q_j$ (L359, L705, Algorithm 3, L1168); the algorithm specifies no memoization. By Lemma 1 each independent $T$ produces a level-$(j+1)$ child. Independent $T$ number at least $\frac12\binom{q_j}{\kappa}$ for $r_j\ge\kappa+2$. With no sharing, the tree has at least $\prod_{j<J}\frac12\binom{q_j}{\kappa}$ leaves, and $\sum_{j<J}\log_2\binom{q_j}{\kappa}\ge\sum_{j<J}\big(\kappa(m-j\kappa)-O_\kappa(1)\big)=m^2/2-O_\kappa(m)$. ∎ (Theorem B1)
+Neither enumeration nor product refinement applies ($\mathrm{Sym}(q_j)$, $q_j>q_1$, order above $\exp(a\log^2q_j)$; $r=1$). After normalization (two cosets; Parity lemma) `GiantStep` runs with $\Gamma=Q_j$, $q_j\le k<\lambda$, and HJ computes `LocalCertificate` for **every** $\kappa$-subset $T\subseteq Q_j$ (L359, L705, Algorithm 3, L1168); the algorithm specifies no memoization. By Lemma 1 each independent $T$ produces a level-$(j+1)$ child. Independent $T$ number at least $\frac12\binom{q_j}{\kappa}$ for $r_j\ge\kappa+2$. With no sharing, the tree has at least $\prod_{j<J}\frac12\binom{q_j}{\kappa}$ leaves, and $\sum_{j<J}\log_2\binom{q_j}{\kappa}\ge\sum_{j<J}\big(\kappa(m-j\kappa)-O_\kappa(1)\big)=m^2/2-O_\kappa(m)$. ∎ (Theorem B1)
 
 **Sanity check of the charging.** Each level costs a $\sigma$-drop of exactly $\kappa$ (L2718–2726), total $\kappa J\approx m=\Theta(\log N)$, within budget $\sigma=O(\log N)$; the multiplicity per level is $q_j^{\kappa}$, so this is the $\sigma x$ term of `docs/moonshot-theory.md` §2.3 being tight: "$\Theta(\log N/\kappa)$ nested visible unaffected steps while giants of degree $N^{\Omega(1)}$ are present". No instance was known; now one is.
 
@@ -171,7 +173,7 @@ Reading across §2: **the chain needs partial-automorphism groups that realize $
 
 ### 3.1 A1: bidirectional collision for quasigroups [PROVEN]
 
-**Theorem A1.** Isomorphism of two quasigroups of order $n$ given by Cayley tables, in deterministic time and space $n^{(1/2)\log_2 n+O(1)}$. Same for Latin-square isotopy, paratopy (and Latin-square graphs of order $k$ above a constant, recovering the net via Bruck's theorem (from memory), in $N^{(1/4)\log_2 N+O(1)}$ for $N=k^2$ vertices), and STS isomorphism (Steiner quasigroup).
+**Theorem A1.** Isomorphism of two quasigroups of order $n$ given by Cayley tables, in deterministic time and space $n^{(1/2)\log_2 n+O(1)}$. Same for Latin-square isotopy, paratopy (and Latin-square graphs of order $k$ above a constant, recovering the net via Bruck's theorem (from memory), in $N^{(1/8)\log_2 N+O(1)}$ for $N=k^2$ vertices), and STS isomorphism (Steiner quasigroup).
 
 *Proof.* (Adapting Rosenbaum 2013, §§2–3, which is stated for groups.) (i) A finite subset closed under the product is a subquasigroup. Proper subquasigroups have order $\le n/2$: for $x\notin S$, $xS\cap S=\emptyset$. So a sequence $x_1,x_2,\dots$ with $x_{i+1}\notin\langle x_1,\dots,x_i\rangle$ has length $\le \log_2 n+1$. (ii) An ordered generating tuple $g$ determines a canonical labelled Cayley table $\Phi_Q(g)$ (close under products in a fixed order) in polynomial time, and $\Phi_Q(g)=\Phi_{Q'}(h)$ iff $g_i\mapsto h_i$ extends to an isomorphism. (iii) Let $d=\lceil\frac12(\log_2 n+1)\rceil$. If $Q$ has a generating set of size $\le d$ (checkable in $n^{d}$), enumerate as in Miller. Otherwise, Alice lists all strictly increasing chains of length $d$ in $Q$ and extends each to a generating tuple arbitrarily; Bob fixes one strictly increasing chain of length $d$ in $Q'$ and lists all its strictly increasing extensions to generating tuples. If $\varphi:Q\to Q'$ is an isomorphism, the preimage of Bob's chain is one of Alice's chains, and $\varphi$ of her extension is one of Bob's. Sorting $\{\Phi_Q(\cdot)\}$ and $\{\Phi_{Q'}(\cdot)\}$ and testing for a collision gives the bound $n^{d}+n^{\log_2n+1-d}$. For isotopy/paratopy: use the three-sorted closure (a closed triple $(R,C,S)$ has $|R|=|C|=|S|$, and a proper one has order $\le n/2$), generators drawn from $\le3n$ elements, $3^{O(\log n)}=n^{O(1)}$. ∎
 

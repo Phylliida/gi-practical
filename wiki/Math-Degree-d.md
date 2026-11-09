@@ -3,12 +3,12 @@
 **Claim.** Graph isomorphism for graphs of maximum degree d is decidable in n^{O(log(d+2))}, *conditional on HJ's analysis being correct*.
 This is the project's Theorem R\* and Corollary R\*.
 
-[Home](Home.md) · Sources: [moonshot-theory](../docs/moonshot-theory.md) §4.1, [verify-theorem-R](../docs/verify-theorem-R.md), [redteam-theorem-R](../docs/redteam-theorem-R.md) · Ledger: [section 2](Results-Ledger.md#2-the-nolog-d-bound-and-analysis-of-hj-conditional)
+[Home](Home.md) · Sources: [moonshot-theory](../docs/moonshot-theory.md) §4.1, [verify-theorem-R](../docs/verify-theorem-R.md), [redteam-theorem-R](../docs/redteam-theorem-R.md), [w36-lean](../docs/w36-lean.md) · Ledger: [section 2](Results-Ledger.md#2-the-nolog-d-bound-and-analysis-of-hj-conditional)
 
 ## Status
 
 Conditional on (H0): HJ's algorithm and analysis, Sections 4–7 and Appendix A, are correct as written. The derivation had one AI verification and one AI red-team, which found
-no hole outside (H0). HJ's own bound is machine-checked modulo axioms, but **the Λ-potential, the dispatcher (M′) and the regrouping below are not machine-checked**. The
+no hole outside (H0). HJ's own bound is machine-checked modulo axioms. Parts of the accounting are now machine-checked as well ([below](#what-is-machine-checked-w36)), but the **dispatcher (M′) and the closure of Γ̂_d are not, and for d < N nothing yet shows the required `Good` runs exist, so the theorem is still conditional and hand-argued there**. The
 Luks/Babai–Luks reduction and the GNS inputs are trusted, not re-proved. No human has checked it. At d = O(1) it matches Luks, at d ≥ n^ε it matches HJ, and at d = polylog n it gives n^{O(log log n)}.
 
 ## Setting
@@ -38,7 +38,17 @@ Theorem R\*: HJ with dispatcher (M′) solves Γ̂_d string isomorphism on N poi
 
 6. **Root.** At a phase root Φ_Λ = O(log(N+2)·log d̃), giving exp(O(log(N+2)·log(d+2))) after the geometric recurrence.
 
-**(H2), the key regrouping.** HJ charge a local test with multiplicity N^a. In fact the windows of one test are pairwise disjoint, so window calls group into at most about 10 q^{2κ} disjoint-domain families (string × test × coset × type). A disjoint-domain family fits `PhaseTree.Hyp.branch_disjoint`, which only requires the child sizes to sum to at most the parent's.
+**(H2), the key regrouping.** HJ charge a local test with multiplicity N^a. In fact the windows of one test are pairwise disjoint, so window calls group into at most about 10 q^{2κ} disjoint-domain families (string × test × coset × type). A disjoint-domain family fits `PhaseTree.Hyp.branch_disjoint`, which only requires the child sizes to sum to at most the parent's. This regrouping is the part checked in Lean: `GI.Algorithm.aggregate_branch_fam` gives ≤ 9 q^{2κ} families on the actual scripts ([w36-lean](../docs/w36-lean.md)).
+
+## What is machine-checked (w36)
+
+`lean/DegreeD/` ([w36-lean](../docs/w36-lean.md), [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36)) checks the following with only `propext`, `Classical.choice`, `Quot.sound`, as re-verified by a fresh compile:
+
+* **Abstract:** `GI.Paper.PhaseTree.HypL.cost_le` (Lemma 7.1 with a parameter Λ) and `GI.DegreeD.abstract_R_star` (the recurrence, constant independent of Λ).
+* **Real scripts:** `GI.Algorithm.aggregate_branch_fam`, the (H2) regrouping.
+* **Real runs, conditional:** `GI.Algorithm.phaseTreeOn_hypL` and `GI.Algorithm.real_runs_cost_le`, for any child-closed `Good` satisfying `Run.VertexBound` and the cost hypotheses.
+
+**Not machine-checked:** for d < N, nothing yet shows the required `Good` runs exist, which needs the closure of Γ̂_d and the dispatcher (M′). The tree also uses HJ's unclipped Q (the root bound needs Q_d), and the tolls are hypotheses. So Theorem R\* and Corollary R\* remain conditional and hand-argued at d < N. Estimated remaining work: 5k–12k lines of Lean for a run-level Theorem R\*, 30k–150k at machine level ([w36-lean](../docs/w36-lean.md) §3).
 
 ## Hypotheses that turned out not to be hypotheses
 
@@ -56,7 +66,7 @@ Theorem R (the first form) assumed (H1), (H2) and had a log log N term. In [veri
 
 ## Residual risk
 
-In the red-team's order: (1) (H0), especially Theorem A.9 and the extra-orbit rule (the Lean build has since machine-checked A.9 and HJ's GI theorem, modulo axioms, but not the Λ version); (2) recognition of all structural option-2 groups (trusted from BLS87 etc.); (3) no machine check of the Λ accounting. What the literature identifies as blocked is the Unaffected Stabilizers Theorem for Γ̂_d with t = O(log d) (Grohe–Neuen §4.4, citing Neuen's thesis Ex. 5.5.10); HJ's constant κ plus σ-budget claims to bypass exactly this.
+In the red-team's order: (1) (H0), especially Theorem A.9 and the extra-orbit rule (the Lean build has since machine-checked A.9 and HJ's GI theorem, modulo axioms, but not the Λ version); (2) recognition of all structural option-2 groups (trusted from BLS87 etc.); (3) the Λ accounting, whose machine check so far covers the abstract bound, the regrouping and the real-run bound under hypotheses, not d < N on real runs. What the literature identifies as blocked is the Unaffected Stabilizers Theorem for Γ̂_d with t = O(log d) (Grohe–Neuen §4.4, citing Neuen's thesis Ex. 5.5.10); HJ's constant κ plus σ-budget claims to bypass exactly this.
 
 ## Novelty
 

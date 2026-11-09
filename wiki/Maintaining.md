@@ -13,8 +13,8 @@
 
 | Branch | When it lands, update |
 |---|---|
-| `w27-tree` (`63372b5`, in progress) | [Core problem](Math-Core-Problem.md), [Moonshots](Moonshots.md), [Open problems](Open-Problems.md), [Results ledger](Results-Ledger.md), [Tried and failed](Tried-and-Failed.md), [Timeline](Timeline.md), and the table on [Home](Home.md) |
-| `w28-sigma` (on master, `27292f8`, not red-teamed) | when its red-team lands: [Moonshots](Moonshots.md), [Barriers](Math-Barriers.md), [Results ledger](Results-Ledger.md), [Corrections](Corrections.md), and the row on [Home](Home.md) |
+| `w38-lean-stage1` (`5fb87e4`, running) | [Lean audit](Lean-Audit.md), [Degree-d bound](Math-Degree-d.md), [Results ledger](Results-Ledger.md) section 2, [Reproduce](Reproduce.md) if the compile steps change, [Timeline](Timeline.md), and the table on [Home](Home.md). State exactly what is machine-checked: the axioms reported, the hypotheses each theorem carries, and the range of d covered |
+| `w32-conference` (on master, `49fec8a`, not red-teamed) | when a red-team lands: [Moonshots](Moonshots.md), [Results ledger](Results-Ledger.md), [Corrections](Corrections.md), and the row on [Home](Home.md) |
 
 After merging: search this directory for "in progress" and "as of", and update the "Work still in progress" table.
 

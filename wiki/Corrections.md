@@ -87,6 +87,14 @@ Theorem X.
 factor. [redteam-w17-affine](../docs/redteam-w17-affine.md): Theorem A is folklore and B is a routine instance of Rosenbaum /
 Le Gall–Rosenbaum; the "+k/2" carries no content because 2^{k/2} = N^{1/2} is absorbed by poly(N).
 
+### The PG-fibration form of w30 is Jungnickel–Tonchev
+
+[w30-sts](../docs/w30-sts.md) cited Jungnickel–Tonchev (arXiv:1709.06044) only for counts. [redteam-w30-sts](../docs/redteam-w30-sts.md) §5, reading its Thms 2.5 and 2.7–2.9, identifies them with w30's "general form" of §6 (one-factorizations and arbitrary Latin squares on lines) and the a = s + 1 branch of T1; the k = 3 gadget regime of T2 is D. Zinoviev (arXiv:1512.00187), and the character-space fact behind the classification is Assmus (ELJC 2, 1995). The cocycle description was already cited in w30 as not new. **What stands:** no reduction from Boolean-function, code or tensor equivalence to STS, quasigroup or design isomorphism was found; the red-team calls T2 "probably folklore-level, apparently not written". Treat T1, T2, T3 as "not found", not as new.
+
+### Alternating tuple isometry in characteristic 2 (w35 E(i)) is Sun 2026
+
+[w35-cubic](../docs/w35-cubic.md) E(i) gives alternating matrix tuple isometry over F₂ from Theorem A plus GIQS, with no prior-art search (the tools were at their limit). [redteam-w35-w34](../docs/redteam-w35-w34.md) §6: Sun, arXiv:2611.05920 (4 Nov 2026, unrefereed), Thm 2.1/A.1, gives alternating tuple isometry over Z/p^τ, including F₂, in p^{O(τ n^{7/4} log(τ n))}·poly(m). The tuple case of E(i) is not new as a statement; the two bounds are incomparable. Theorem A is folklore-adjacent. Theorem B and its composite with Theorem C appear new as far as that limited search could determine.
+
 ### Other novelty corrections
 
 | Item | Correction | Source |
@@ -162,7 +170,7 @@ bijection, not a lower bound on reductions. Natural fixed-width encodings have a
 
 ### Latin squares and HJ on graphs (w18, w26, w28)
 
-[redteam-w18-latin](../docs/redteam-w18-latin.md) found no claim broken and corrected the items below. **[w18-latin](../docs/w18-latin.md) itself was not edited afterwards**: its text still has q₀ as the cutoff, the (1/4) exponent and the single-block rigid variant, so read it together with the red-team's §5. The last three rows come from [w28-sigma](../docs/w28-sigma.md), which is **not yet red-teamed**.
+[redteam-w18-latin](../docs/redteam-w18-latin.md) found no claim broken and corrected the items below. Two of them, the cutoff q₁ and the Latin-square-graph exponent (1/8), were applied to [w18-latin](../docs/w18-latin.md) in `w39` (its header says so). **The rest of the report's §5 has not been applied** (for example m ≥ m₀, the A1 repairs and the single-block rigid variant), so read the memo together with the red-team's §5. The last three rows come from [w28-sigma](../docs/w28-sigma.md), red-teamed by [w31](../docs/redteam-w27-w28.md).
 
 | Item | Correction | Source |
 |---|---|---|
@@ -173,9 +181,64 @@ bijection, not a lower bound on reductions. Natural fixed-width encodings have a
 | Theorem A1 proof | four repairs: chains must be extended strictly increasingly; exhausting Q′ before length d certifies non-isomorphism; the three-sorted closure sentence is false for degenerate triples (start each chain with a pair); the Latin-square-graph exponent is (1/8)log₂ N, not (1/4) | same §3 |
 | Lemma A3 | wording: count or exclude ∅ (M ≥ 2^r vs 2^r − 1); "index" is a size ratio | same §3 |
 | A1 novelty | "not found" stands, but it is a routine one-paragraph application of Rosenbaum's framework | same §3 |
-| w18 §2.9 rigid variant | "switching a single block kills Aut" is false: the stabilizer of a line in GL(m,2) still has order 2^{m²−O(m)}. A corrected variant X_{m,R} deletes O(m) lines. Status of the correction: proven in the memo, not red-teamed | [w28-sigma](../docs/w28-sigma.md) §8 |
-| w18 §2.9: "pruning collapses the chain" | true about the chain only: without also pruning HJ's Case 2b branches, q^{O(1)} continuation branches remain per cap contraction and the tree is again 2^{Ω(m²)} (P2, a sketch) | same §4 |
+| w18 §2.9 rigid variant | "switching a single block kills Aut" is false: the stabilizer of a line in GL(m,2) still has order 2^{m²−O(m)}. A corrected variant X_{m,R} deletes O(m) lines. Status of the correction: proven in the memo, found sound by the w31 red-team | [w28-sigma](../docs/w28-sigma.md) §8, [redteam](../docs/redteam-w27-w28.md) §8 |
+| w18 §2.9: "pruning collapses the chain" | true about the chain only: without also pruning HJ's Case 2b branches, q^{O(1)} continuation branches remain per cap contraction and the tree is again 2^{Ω(m²)} (P2, a sketch; the red-team does not certify it) | same §4 |
 | w18 lead: canonically chosen test sets | on X_m any Aut-invariant rule selects all independent T or none (C1), so no sparse canonical family exists there; the lead is revised, not settled | same §5 |
+
+### Height-2 posets and R1_c (w27, w31)
+
+[redteam-w27-w28](../docs/redteam-w27-w28.md) found no claim broken and narrowed or fixed the items below. [w27-tree](../docs/w27-tree.md) was not edited afterwards, so its text still has them; these rows are what the project now claims.
+
+| Item | Correction | Source |
+|---|---|---|
+| Theorem G "FPT on three sub-classes" (w27 §0) | The cost (b!·b^m)^ρ · b!·2^{O(b)}·N^{O(1)} is correct, but (b^m)^ρ = N^{Θ(ρ)}, so Theorem G is **XP in ρ**: FPT in b for constant ρ (the ρ = 1 case is what w27 uses), not FPT in (b, ρ). The same holds for G+ in ρ; G+ is FPT in r | [redteam](../docs/redteam-w27-w28.md) §2 |
+| Cor N.1 scope | sound as stated, narrower than advertised. It uses Aut-reflection only at identity tanglegrams, which are trees, polynomial, and could be special-cased by a reduction. The sharp form is pointwise: if φ reflects at x, then td(Aut(x)) ≤ ℓ·D(f(b₀)) | same §1, §9 |
+| "Every reduction in the campaign is Aut-reflecting" | unsupported as worded: true for the reductions from R1_c in T2 Theorem A and W8 Prop H (with the caveat that a CI instance has an "Aut" only once one declares it the group of the answer coset). The campaign has reductions that are not many-one at all | same §1 |
+| "Hardness … is impossible, so the question reduces to the FPT side"; "W8's alternative hypothesis survives" (w27 §0, §2.1) | not established. Non-reflecting reductions cannot be excluded this way. What holds: a hardness proof for height-2 posets cannot be of the gadget kind used so far | same §1 |
+| Theorem C citation | Luks 1982 alone gives m_P^{O(b)}, i.e. XP. The absolute exponent needs Pálfy–Wolf (cited from memory), and the memo must name it | same §2 |
+| Theorem C, the set R | the algorithm must know R. (b!)^{r+2}·N^{O(1)} is for a given R; if R must be searched for, the result is FPT in (b, r) with an extra r^{O(r)} | same §2 |
+| Lemma 3.1 "for every code" | a zero column or a weight-1 row leaves a side with no leaf in L₁, so that pair does not straddle (the one failure of 34/35). Fix: a dedicated L₁ leaf per side under a rigid pad, or restrict to H with no zero column and no weight-1 row (still 2^{Ω(s²)} codes) | same §4 |
+| Lemma MD "pays 2^{Ω(b^{m+1})}" (w27 §4) | wording: it bounds the orbit size available, so the 2^{O(orbit)} upper bound becomes useless; it does not say any algorithm must spend that | same §3 |
+
+### The σ channel (w28, w31)
+
+Same report, which found no claim broken. [w28-sigma](../docs/w28-sigma.md) was not edited afterwards.
+
+| Item | Correction | Source |
+|---|---|---|
+| LHJ boundary (w28 §5.1 step 3) | "≤ ¾" should be "< ¾": HJ's hypothesis is "fewer than α times" with α = 3/4. Escalate on ≥ ¾ | [redteam](../docs/redteam-w27-w28.md) §5 |
+| P3 | labelled proven, but the existence of R rested on the union bound w28 itself labels a sketch. Repaired by an explicit R (m ≥ 3κ, \|R\| = O(κ²), independent of m), built from an asymmetric graph on 2κ further basis vectors | same §6 |
+| L2 "the B1 chain never starts" | a statement about the root; the "every chain state" half only matters if such a state arises by another route. The whole-tree claim stays a sketch | same §5 |
+| M1 "saves only n^{O_κ(1)}" | compares to B1's lower-bound product. Clean form: the table of distinct exact states has at least ∏_{i<j} binom(r_i, κ)₂ entries at level j | same §6 |
+| R1 error term | "O(log log n)" is loose; O_κ(1) suffices | same §8 |
+| Theorem U | "product state" should say that the first window being B × T is part of the hypothesis; §7.2's s^{2/κ} is exact for even κ, odd κ gives s^{2/(κ−1)} | same §7 |
+
+### Steiner triple systems (w30, w33)
+
+[redteam-w30-sts](../docs/redteam-w30-sts.md) found no break. [w30-sts](../docs/w30-sts.md) was not edited afterwards, so its text still has the items below.
+
+| Item | Correction | Source |
+|---|---|---|
+| T1 constant | the proof works for λ < (log₂10)/3 ≈ 1.1073, not only (log₂9)/3, because m_W ≡ 1, 3 (mod 6). So r > 0.9031ℓ (not 0.947) suffices, d ≥ r − 9.32c (not 17.7c), and d ≥ (1 − 10.3ε)ℓ with \|S\| ≤ n^{10.3ε} (not 18.7). The threshold is sharp at AG(2,3) | [redteam](../docs/redteam-w30-sts.md) §2.3 |
+| "The hardest instances are recognisably PG-fibred"; "no method can avoid the GL part"; "exactly the barrier" (w30 §0, §6) | overclaims, not made here (the memo's text still has them). T2 is the implication n^{o(log n)} ⇒ 2^{o(d²)} and nothing more; nothing shows these are the hardest instances. On the T2 family the problem is polynomially equivalent to linear equivalence and easier than the general bound: 2^{d²/4+O(d)}·poly(n), given w17 Theorem B | same §1.5 |
+| T2: extra maps from the gauge | isomorphisms do not biject with linear equivalences; they surject onto them with kernel K = Hom(V/⟨supp χ⟩, Z). The reduction is unaffected. w30's "nauty stalls" applies only to the uncoloured graph | same §1.3, §1.4 |
+| Latin-square isotopy (w30 §9) | a sketch; replaced by the red-team's Prop A, with the extra gadget condition (c) | same §1.6 |
+| Prop 2 (C4) | correct as a statement about the Steiner loop L_g, not as written for the Steiner quasigroup, for which PG already fails w18's definition | same §4.1 |
+| T3 | at d = 3 the conclusion is a projective plane of order q, not necessarily PG(2,q). The second term of λ_q can be raised | same §3.1 |
+| T5 | add a sentence rejecting X′ that does not decode to a projective structure within D | same §3.2 |
+
+### Conference graphs and cubics (w34, w35, w37)
+
+[redteam-w35-w34](../docs/redteam-w35-w34.md) found no break in either memo. Neither memo was edited afterwards. **[w32-conference](../docs/w32-conference.md) has not been red-teamed.**
+
+| Item | Correction | Source |
+|---|---|---|
+| Thm 3.2 of w34 | say r ≥ 1: at r = 0 no separation occurs and the statement is empty | [redteam](../docs/redteam-w35-w34.md) §7 |
+| Prop 4.2 of w34 | two notational slips: "P_B ≥ binom(\|B\|,2)⁻¹" conflates the ordered fraction with p₂, and "equivalently d(τ) ≥ ¼ log_v(1/τ) − O(1)" holds only for τ in range. The stated conclusion stands | same §7 |
+| E2 of w34 | should read O(√(A log n) + 1), and assumes log₂(1/τ) in range | same §7 |
+| w35 §1.2 obstacle instance | valid, but not specific to characteristic 2 (it fails over F₃ too, as w35 notes). The report gives an instance that is, over R = F₂[ε]/(ε²) | same §5 |
+| GIQS Thm 4.9, Step 3 (a defect in the preprint, not in w35) | the running-time overclaim w35 flagged is confirmed; w35's repair is correct, and shorter than it says. Thm 1.2's bound is unaffected once repaired; GIQS's other proofs were not re-verified | same §4 |
+| IMQSZ Prop 4.9 in w35's table row O | the row cites it as part of the obstacle while the text treats that step as fine. The text is right: its proof uses no division by 2 | same §5 |
 
 ### Status of the Lean formalization
 
@@ -184,6 +247,8 @@ hypotheses, and `RunningTime.lean` L9 says Sections 4–6 are not formalized. Th
 `main_theorem` takes no such hypotheses, and building and comparator confirm it (see [Lean audit](Lean-Audit.md)). Separately, the string
 theorem 1.2 really is only at "stage 1"; only GI is verified at machine level ([w10-blackbox](../docs/w10-blackbox.md) §2.1).
 Also: the "main residual risk" named in round 4 was HJ's σ-budget; it is now machine-checked modulo the axioms.
+
+The earlier statement that nothing of the project's own accounting is machine-checked is superseded in part by [w36-lean](../docs/w36-lean.md): `lean/DegreeD` machine-checks the abstract Λ bound, its recurrence, the (H2) regrouping on the real scripts, and the real-run bound under explicit hypotheses, with only the three standard axioms. For d < N nothing yet shows the required `Good` runs exist, so the n^{O(log d)} theorem itself is still conditional and hand-argued there. See [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36).
 
 ### Canonization write-ups
 

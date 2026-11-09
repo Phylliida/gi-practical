@@ -5,7 +5,7 @@ correct or the run fails or times out; heuristics affect only speed.
 
 [Home](Home.md) · [Benchmarks](Benchmarks.md) · [Reproduce](Reproduce.md) · Interface reference: [README](../README.md)
 
-**Current as of master `1368fb6`,** including the merged `w22-speed` and `w23-speed2`.
+**Current as of master `b819c8d`** (no file under `gi/`, `bench/` or `tests/` has changed since `1368fb6`), including the merged `w22-speed` and `w23-speed2`.
 
 ## Module map
 

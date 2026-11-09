@@ -85,6 +85,34 @@ To check the axioms: `#print axioms main_theorem` (via a small Lean file importi
 
 **Comparator** (`comparator.json` in the repository sets it up): build comparator and lean4export from their `v4.30.0-rc2` tags and landrun from commit `5ed4a3d`, then `lake env /path/to/comparator comparator.json`. **On NixOS**, comparator needs `--rox /nix/store` added to its landrun arguments, so the toolchain wrappers can execute. Kernel replay took 46 min 22 s.
 
+## Machine-checking the degree-d accounting (`lean/DegreeD`)
+
+**Do not run this casually**: the rule above about Lean applies. It needs the built `~/math/GraphIsomorphismLog2` from the previous section, then each file takes 5–30 s ([w36-lean](../docs/w36-lean.md) §2). This compiles only `lean/DegreeD/`, and does not modify the HJ tree. Put the output outside the repository; nothing here adds anything to commit.
+
+The recorded per-file command is `lake env lean --root=$ROOT -o $OLEAN $FILE` from the HJ tree, with `$ROOT` the repository's `lean/` directory and each file seeing the previous oleans through `LEAN_PATH`. The file order below is read from their `import` lines. This loop was assembled for this page and not itself executed:
+
+```sh
+cd ~/math/GraphIsomorphismLog2
+ROOT=/path/to/repo/lean; OUT=/path/to/scratch/oleans; mkdir -p "$OUT/DegreeD"
+for m in Induction TableLambda HJInstance RStarColumns ListFam ScriptFamilies RealRuns; do
+  LEAN_PATH="$OUT" nix shell nixpkgs#elan -c \
+    lake env lean --root="$ROOT" -o "$OUT/DegreeD/$m.olean" "$ROOT/DegreeD/$m.lean"
+done
+```
+
+To check the axioms, compile a file outside the repository with the same `LEAN_PATH`, containing:
+
+```lean
+import DegreeD.RealRuns
+#print axioms GI.DegreeD.abstract_R_star
+#print axioms GI.Paper.PhaseTree.HypL.cost_le
+#print axioms GI.Algorithm.aggregate_branch_fam
+#print axioms GI.Algorithm.phaseTreeOn_hypL
+#print axioms GI.Algorithm.real_runs_cost_le
+```
+
+Expect exactly `propext`, `Classical.choice`, `Quot.sound` for each, as a fresh compile found ([overnight log](../docs/overnight-log.md)). No comparator run is recorded for these files. What the output does and does not establish is on the [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36) page: in particular, for d < N nothing yet shows the required `Good` runs exist.
+
 ## The paper PDFs
 
 `pdflatex` is not on PATH. Build through Nix:
@@ -95,7 +123,7 @@ nix shell nixpkgs#texlive.combined.scheme-medium -c bash -c \
   'pdflatex -interaction=nonstopmode canon && bibtex canon && pdflatex -interaction=nonstopmode canon && pdflatex -interaction=nonstopmode canon'
 ```
 
-Likewise for `exponent`. `paper/canon.pdf` was last built in `d6db110` and `paper/exponent.pdf` in `9cd1433`. Both are current with their `.tex` at master `1368fb6` (no file under `paper/` has changed since `b1a2d03`). Texlive is a large download; check `df -h` first.
+Likewise for `exponent`. `paper/canon.pdf` was last built in `d6db110` and `paper/exponent.pdf` in `9cd1433`. Both are current with their `.tex` at master `b819c8d` (no file under `paper/` has changed since `b1a2d03`). Texlive is a large download; check `df -h` first.
 
 ## The video
 
@@ -125,5 +153,8 @@ Several memos have an executable check, listed here with what each exercises. Ea
 | [w18-latin-sim.py](../docs/w18-latin-sim.py), [w18-latin-sim-root.py](../docs/w18-latin-sim-root.py) | w18 window structure at κ = 3, m ≤ 7; needs pynauty; [w18-latin](../docs/w18-latin.md) §5 |
 | [redteam-w18-latin-check.py](../docs/redteam-w18-latin-check.py) | exact replay of the B1 windows, count arithmetic, A1 on small cases; up to about 20 min per run; [redteam-w18-latin](../docs/redteam-w18-latin.md) §7 |
 | [w28-sigma-check.py](../docs/w28-sigma-check.py) | w28 statuses, windows at the root, rigid variants under refinement, m ≤ 9; [w28-sigma](../docs/w28-sigma.md) §13 |
+| [redteam-w27-w28-check.py](../docs/redteam-w27-w28-check.py) | exhaustive Theorem G and G+ equivalence tests, Lemma 3.1 on binary tanglegrams (s ≤ 16), P3 with the explicit R; needs pynauty, run from `docs/`; [report](../docs/redteam-w27-w28.md) §10 |
+| [redteam-w30-sts-check.py](../docs/redteam-w30-sts-check.py) | exact T2 checks, subsystem lattices for T1, T3, T5, C4, Prop A; needs pynauty; two passes of 395 s and 429 s; [report](../docs/redteam-w30-sts.md) §8 |
+| [w35-cubic-check.py](../docs/w35-cubic-check.py) | Theorems A, B, C at small n, with broken variants that must be caught; pure Python, under 5 minutes; [w35-cubic](../docs/w35-cubic.md) §4 |
 
-The directories [docs/w8-poset-code](../docs/w8-poset-code/), [docs/w17-affine-code](../docs/w17-affine-code/), [docs/w21-eth-code](../docs/w21-eth-code/) hold experiment code.
+The directories [docs/w8-poset-code](../docs/w8-poset-code/), [docs/w17-affine-code](../docs/w17-affine-code/), [docs/w21-eth-code](../docs/w21-eth-code/) hold experiment code, as do [docs/w27-code](../docs/w27-code/) (w27 §5), [docs/w30-sts-code](../docs/w30-sts-code/) (w30 §10, needs a compiled `wl.c`), [docs/w32-code](../docs/w32-code/) (w32 §6), [docs/w34-code](../docs/w34-code/) (w34 §8) and [docs/redteam-w35-w34-code](../docs/redteam-w35-w34-code/) (the w37 checks; [report](../docs/redteam-w35-w34.md) §8).

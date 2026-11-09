@@ -50,8 +50,19 @@
 | WL, CR, IR, SI, CI | Weisfeiler–Leman, colour refinement, individualization-refinement, string isomorphism, coset intersection | |
 | CLIQUE-LB | k-Clique has no f(k)n^{o(k)} algorithm | |
 | X_m, X_{m,R} | point–line incidence graph of PG(m−1,2); the same with a set R of lines deleted | w18, w28 |
-| q₀, q₁ | HJ's absolute degree cutoff; the largest symmetric degree HJ's enumeration test accepts (q₁ = 486290 at Lean's parameters) | w18 used q₀ where q₁ is meant; see [Corrections](Corrections.md#latin-squares-and-hj-on-graphs-w18-w26-w28) |
+| q₀, q₁ | HJ's absolute degree cutoff; the largest symmetric degree HJ's enumeration test accepts (q₁ = 486290 at Lean's parameters) | w18 first used q₀ where q₁ is meant, corrected in `w39`; see [Corrections](Corrections.md#latin-squares-and-hj-on-graphs-w18-w26-w28) |
 | LHJ | "lazy HJ": HJ with Step 4 delayed until a large uniform class appears | w28 |
+| Y_c, td(G), D(b) | Y_c is the depth-c iterated wreath power of A₅; td(G) is the largest c with Y_c a section of G; D(b) = 1 + log₅ log₆₀ b! | w27, Prop N |
+| HT2 | string isomorphism under G₁ × G₂, G_i = K_i ⋊ T_i, T_i = S_b^m, K_i = S_b^V | w27; the poset (A_m < k) ⊔ (A_m < k) |
+| pinning set | ρ row (or column) blocks that separate the columns of each block modulo twins | w27, Theorem G |
+| ρ(T), rk(X), ℓ, c, Ψ_λ | fewest generators of subsystem T; rk(X) = ρ(X); ℓ = log₂(n+1), c = ℓ − rk(X); the potential log₂(\|T\|+1) − λρ(T) | w30. Another meaning of ρ |
+| λ₀, λ₁ | (log₂9)/3 of w30 and (log₂10)/3 of its red-team, which is the threshold now claimed | w30, w33 |
+| X_χ, X_g, K | STS built from a colouring χ of PG(V), or from a cochain g; K is the gauge kernel Hom(V/⟨supp χ⟩, Z) of the isomorphisms | w30, w33 |
+| T(a,b,v), C, p(v,w), p₂, B_c, B(τ), d(τ) | triple correlation; Seidel matrix J − I − 2A; test failure probability (over pairs, resp. two-round tests); bad-pair graph; VC dimension of the bad-pair subsystem | w32, w34 |
+| W(V,V′), W_L | Turyn product; its L-fold iterate | w32, w34 |
+| Φ(f), f⁺, Γ_a, τ_f | the (n+1) quadratic forms attached to a cubic f; the radical-free extension of f; the zero-diagonal lift of τ(a,·,·); the third derivative of f | w35 |
+| GIQS, IMQSZ, GQ IV | Grochow–Ivanyos–Qiao–Sun arXiv:2610.00874 (unrefereed); Ivanyos–Mendoza–Qiao–Sun–Zhang FOCS 2024; Grochow–Qiao part IV arXiv:2306.16317 | w35, w37 |
+| `HypL`, `Good`, `Run.VertexBound`, `lam d` | Lean: the Λ-parametrized phase-tree hypotheses; a child-closed set of real vertices; the local conditions on them; the weight log(8·max(d,6)) | w36 |
 
 ## Names that are reused
 
@@ -59,12 +70,12 @@ Memo names disambiguate; the [ledger](Results-Ledger.md) gives the memo for each
 
 | Name | Meanings |
 |---|---|
-| Theorem A | canonical strings under Γ̂_d (canonization); T²_full equivalences (w4-t2); AGL canonical form (w17) |
-| Theorem B / Corollary B | canonical graphs (Corollary B); WL lower bound on tanglegrams (w4-t2, Theorem B); bidirectional AGL (w17, Theorem B) |
-| Theorem C | HJ-canon (w3); GNS main recursion (w8); tensor reduction (w17) |
-| Theorem D, Prop D | Corollary D (labelling cosets); Prop D diagonal shape (w4-t2); Prop D prime decomposition (w6); Prop D random bound (w17) |
+| Theorem A | canonical strings under Γ̂_d (canonization); T²_full equivalences (w4-t2); AGL canonical form (w17); squares gadget (w35) |
+| Theorem B / Corollary B | canonical graphs (Corollary B); WL lower bound on tanglegrams (w4-t2, Theorem B); bidirectional AGL (w17, Theorem B); exact cubic reduction (w35, Theorem B) |
+| Theorem C | HJ-canon (w3); GNS main recursion (w8); tensor reduction (w17); soluble surviving top (w27); radical elimination (w35) |
+| Theorem D, Prop D | Corollary D (labelling cosets); Prop D diagonal shape (w4-t2); Prop D prime decomposition (w6); Prop D random bound (w17); Theorem D, conditional cubic equivalence (w35) |
 | Theorem E | bounded entanglement (w1-fpt); weak hereditary budget (w8); Prop E vectorial quadratics (w17) |
-| Theorem G | no t-ary black box (w12); Prop G Sylow (w17) |
+| Theorem G | no t-ary black box (w12); Prop G Sylow (w17); pinning sets (w27); consequence G for T2 instances (w35) |
 | Theorem H | canonical Neuen (w8); frontier hybrid (w3); Prop H width-2 (w8-poset) |
 | Theorem L | level-synchronised towers (w1-structure); Prop L one-sided polynomial (w6); limitation of prefix-determined rules (w28) |
 | Lemma A | composition factors (w8); Lemma S canonical subcoset (w4) |
@@ -75,7 +86,11 @@ Memo names disambiguate; the [ledger](Results-Ledger.md) gives the memo for each
 | Theorem P, P-canon | product actions (w2), its canonical version (w3) |
 | Theorem R, R\*, R\*\* | degree-d conditional bounds; not the same as R1 |
 | Theorem A1, A2, B1 | w18: quasigroups (A1, A2); HJ on PG incidence graphs (B1); not Theorems A, B |
-| M1, M2; P1–P3; C1; L1, L2; Q1; R1, R2; U | w28: memoization; pruning; canonical test rules; lazy HJ; Q channel; rigid variant; Ray-Chaudhuri–Wilson variant. Not tanglegram R1/R2, not Theorem P (w2), not the (M1), (M2) of the referee report |
+| M1, M2; P1–P3; C1; L1, L2; Q1; R1, R2; U | w28: memoization; pruning; canonical test rules; lazy HJ; Q channel; rigid variant; Ray-Chaudhuri–Wilson variant. Not tanglegram R1/R2, not Theorem P (w2), not the (M1), (M2) of the referee report, not w30's L1 and P1 |
+| T1, T2, T3, T5; L1, P1, C4 | w30: projective quotient, the reduction to GL, F_q analogue, near-PG; duality, converse, the refutation of w18's lead. Not w28's L1 and P1 |
+| Prop N, Cor N.1, Lemma MD, Reduction 0 | w27 |
+| Theorem 3.2 | bad-pair reduction (w32); Turyn VC bound (w34). Thm 4.1, Thm 2.1, Prop 3.1, Prop 4.2, Prop 5.2 in the conference memos are w34's unless stated |
+| Lemma 3.1 | w12 (Theorem G); realisation of codes on tanglegrams (w27) |
 | Theorem X | black box (w10) |
 | "Theorem 1" | exponents (w8-gnsexp); poset DP (w8-poset) |
 | Example X, X′ | Cayley-coupled towers (w1-structure, w2-coset) |

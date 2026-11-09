@@ -10,11 +10,11 @@ Several agent runs were interrupted by rate limits and resumed.
 
 ## How work was organized
 
-* Each piece of work ran on its own git worktree and branch, then was merged into `master` by hand: `r1`–`r4` (rounds, 4 Nov) and `w1`–`w28` (waves, 4–9 Nov). See [Timeline](Timeline.md).
-* **Red-team rule.** From the overnight campaign on, every claimed result got an independent agent whose job was to break it. Red-teams record what they checked and what they could not. Results without a red-team are marked "author only" or "not yet red-teamed" in the ledger; `w28-sigma` is one.
+* Each piece of work ran on its own git worktree and branch, then was merged into `master` by hand: `r1`–`r4` (rounds, 4 Nov) and `w1`–`w39` (waves, 4–9 Nov). See [Timeline](Timeline.md).
+* **Red-team rule.** From the overnight campaign on, every claimed result got an independent agent whose job was to break it. Red-teams record what they checked and what they could not. Results without a red-team are marked "author only" or "not yet red-teamed" in the ledger; `w32-conference` is one.
 * **Tags.** Memos label claims `[PROVEN]`, `[PROVEN mod X]`, `[SKETCH]`, `[CONDITIONAL: H]`, `[SPECULATION]`. Some waves also use `[VERIFIED]`, `[TRUST]`, `[ARGUED HERE]`. The [ledger](Results-Ledger.md) uses a single scheme.
 * **Untrusted sources.** Downloaded papers were saved in fresh directories and read as data; no code from them was run. They live in the session scratchpad, not the repository.
-* **CPU rule.** Agents ran under `nice`, one process each, because the user tunes system benchmarks on this machine. No Lean except the single authorized build.
+* **CPU rule.** Agents ran under `nice`, one process each, because the user tunes system benchmarks on this machine. No Lean except the single authorized build and the later `lean/DegreeD` work (`w36-lean`, `w38-lean-stage1`).
 
 ## Literature access
 

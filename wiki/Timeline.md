@@ -1,6 +1,6 @@
 # Project timeline
 
-All dates are 2026. Branches are in `git branch -a`; worktrees are at `~/math/gi-practical-wt/<branch>`. Commit is the branch tip. "Rounds" are the Python implementation work (r1–r4), "waves" the campaign (w1–w28). Wave numbers follow the branch names; [overnight-log.md](../docs/overnight-log.md) groups a few of them differently.
+All dates are 2026. Branches are in `git branch -a`; worktrees are at `~/math/gi-practical-wt/<branch>`. Commit is the branch tip. "Rounds" are the Python implementation work (r1–r4), "waves" the campaign (w1–w39). Wave numbers follow the branch names; [overnight-log.md](../docs/overnight-log.md) groups a few of them differently.
 
 [Home](Home.md)
 
@@ -86,8 +86,23 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 24 | w24-video-review | `4085217` | video fact-check, 31 errors fixed (merged `6dad6a2`) | [REVIEW](../video/REVIEW.md), [Reproduce](Reproduce.md#the-video) |
 | 25 | w25-wiki | `df455f8` | this wiki (merged `1645773`) | |
 | 26 | w26-redteam-pg | `b503900` | red-team of w18 (B1, A1–A3, sketches); merged `ad9c9ef` | [report](../docs/redteam-w18-latin.md) |
-| 27 | w27-tree | `63372b5` | complete-tree tanglegram moonshot R1_c (**in progress**; no commits of its own as of `1368fb6`) | [Core problem](Math-Core-Problem.md) |
-| 28 | w28-sigma | `27292f8` | attempts to remove HJ's σ channel; on master, **not yet red-teamed** (commit at 00:03 on 9 Nov) | [w28-sigma](../docs/w28-sigma.md) |
-| 29 | w29-wiki-refresh | this branch | this refresh of the wiki | |
+| 27 | w27-tree | `b11f2d3` | height-2 posets and R1_c moonshot; neither settled (merged `15b522a`; commit at 00:07 on 9 Nov; red-teamed by w31) | [w27-tree](../docs/w27-tree.md), [Core problem](Math-Core-Problem.md) |
+| 28 | w28-sigma | `27292f8` | attempts to remove HJ's σ channel; on master (commit at 00:03 on 9 Nov; red-teamed by w31) | [w28-sigma](../docs/w28-sigma.md) |
 
-The wiki was first cut from master at `b1a2d03` (w25); this refresh (w29) is current to master `1368fb6`.
+## 9 November
+
+| Wave | Branch | Commit | What | Memo |
+|---|---|---|---|---|
+| 29 | w29-wiki-refresh | `43f3843` | refresh of the wiki to `1368fb6` (merged `c8cb697`) | |
+| 30 | w30-sts | `ffda3f4` | Steiner triple systems; T1, T2 (merged `142aa6f`; red-teamed by w33) | [w30-sts](../docs/w30-sts.md) |
+| 31 | w31-redteam-w27w28 | `894cc10` | red-team of w27 and w28; on master | [report](../docs/redteam-w27-w28.md) |
+| 32 | w32-conference | `49fec8a` | conference graphs (merged `2b54de7`); **not red-teamed** | [w32-conference](../docs/w32-conference.md) |
+| 33 | w33-redteam-sts | `a6d1fcc` | red-team of w30 (merged `20b2451`) | [report](../docs/redteam-w30-sts.md) |
+| 34 | w34-vc | `005ca3c` | VC bounds for conference graphs (merged `12ab032`; red-teamed by w37) | [w34-vc](../docs/w34-vc.md) |
+| 35 | w35-cubic | `8fb152f` | exact reduction of cubic Boolean equivalence to quadratic-form spaces (merged `0ed8fd3`; red-teamed by w37) | [w35-cubic](../docs/w35-cubic.md) |
+| 36 | w36-lean | `719357a` | `lean/DegreeD`: machine-checked parts of the n^{O(log d)} accounting (merged `4bbd0ab`) | [w36-lean](../docs/w36-lean.md), [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36) |
+| 37 | w37-redteam-cubic | `dce72f3` | red-team of w35 and w34 (merged `79aa9c1`) | [report](../docs/redteam-w35-w34.md) |
+| 38 | w38-lean-stage1 | `5fb87e4` | **in progress** as of `5fb87e4`: continues `lean/DegreeD` toward Theorem R\*; not folded in | [Home](Home.md#work-still-in-progress) |
+| 39 | w39-wiki-refresh | this branch | this refresh of the wiki; two value corrections in `docs/w18-latin.md` | |
+
+The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, and this refresh (w39) is current to master `b819c8d`.

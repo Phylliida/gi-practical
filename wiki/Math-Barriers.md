@@ -2,7 +2,7 @@
 
 Why n^{O(log n)} for GI and n^{O(log d)} for degree-d GI are hard to beat. Nothing here is a general lower bound for GI.
 
-[Home](Home.md) · Sources: [moonshot-theory](../docs/moonshot-theory.md), [w1-fpt](../docs/w1-fpt.md), [w1-structure](../docs/w1-structure.md), [w21-eth](../docs/w21-eth.md), [w18-latin](../docs/w18-latin.md), [redteam-w18-latin](../docs/redteam-w18-latin.md), [w28-sigma](../docs/w28-sigma.md) · Ledger: [section 3](Results-Ledger.md#3-lower-bounds-for-specific-algorithms-and-barriers)
+[Home](Home.md) · Sources: [moonshot-theory](../docs/moonshot-theory.md), [w1-fpt](../docs/w1-fpt.md), [w1-structure](../docs/w1-structure.md), [w21-eth](../docs/w21-eth.md), [w18-latin](../docs/w18-latin.md), [redteam-w18-latin](../docs/redteam-w18-latin.md), [w28-sigma](../docs/w28-sigma.md), [redteam-w27-w28](../docs/redteam-w27-w28.md), [w30-sts](../docs/w30-sts.md), [redteam-w30-sts](../docs/redteam-w30-sts.md), [w34-vc](../docs/w34-vc.md), [redteam-w35-w34](../docs/redteam-w35-w34.md) · Ledger: [section 3](Results-Ledger.md#3-lower-bounds-for-specific-algorithms-and-barriers)
 
 ## HJ is tight on string isomorphism
 
@@ -24,16 +24,20 @@ The red-team found it **sound as a statement about HJ as written**, with one con
 
 So the n^{Θ(log n)} behaviour of HJ is not confined to string isomorphism (the upper half being HJ's unrefereed theorem). It implies that a better potential cannot improve HJ; any improvement must change the certificate recursion (or prune tests).
 
-## Can HJ avoid the σx channel? (w28, not yet red-teamed)
+## Can HJ avoid the σx channel? (w28)
 
-[w28-sigma](../docs/w28-sigma.md) attacks the σx channel that B1 exploits. **Not yet red-teamed**; everything assumes HJ correct, and nothing is machine-checked.
+[w28-sigma](../docs/w28-sigma.md) attacks the σx channel that B1 exploits. AI red-teamed by [w31](../docs/redteam-w27-w28.md), which found no claim broken and certifies neither P2, Q1 nor the conjecture below; everything assumes HJ correct, and nothing is machine-checked.
 
-* **Lazy Step 4 (LHJ)** removes the channel on the B1 family: correctness and Lemma 7.1 survive (L1), and on X_m no chain is created (L2 at the root and chain states; the whole tree is a sketch).
+* **Lazy Step 4 (LHJ)** removes the channel on the B1 family: correctness and Lemma 7.1 survive (L1, sound given HJ after the boundary fix: escalate at ≥ ¾), and on X_m no chain is created (L2 at the root and chain states; the whole tree is a sketch; "never starts" is a statement about the root).
 * **The cost moves rather than vanishes.** Unpruned LHJ on X_m still pays 2^{Ω(m²)} through anchors in the Q channel (Q1, a sketch), which is Miller's generator enumeration. Only automorphism pruning removes it on X_m (P1 proven, P2 a sketch).
 * **The per-phase exponent does not change:** O(log N(log w + μ + log log N)), because x² and Q also pay log N·log w. No barrier is contradicted.
-* **Memoization and canonical tests fail on X_m** (M1, M2, C1). A prefix-determined rule either pays B1 or, on the lazy branch, Q1 (Theorem L; the lazy half is a sketch).
+* **Memoization and canonical tests fail on X_m** (M1, M2, C1). Local equivalence of prefixes is unsound as a pruning rule (P3, after the red-team's explicit R). A prefix-determined rule either pays B1 or, on the lazy branch, Q1 (Theorem L; the lazy half is a sketch).
 * **The rigid variant is not a barrier.** A single switched block does not kill Aut (correcting w18 §2.9). The corrected variant X_{m,R} still forces n^{(1/8)log₂ n − O(log log n)} calls on HJ (R1, root entry a sketch), but its rigid instances tested fell to bounded WL (m ≤ 9; experiment only).
 * **Sharpest open statement:** the Uniform Prefix Conjecture (§7.3, speculation). It would make Step 4 polynomial in total under LHJ, and would still not change the exponent.
+
+## Steiner triple systems and GL(d,2) (w30)
+
+**T2** ([w30-sts](../docs/w30-sts.md), AI red-teamed by [w33](../docs/redteam-w30-sts.md)): linear equivalence of Boolean functions on F₂^d many-one reduces to STS isomorphism on n = 2^{d+3} − 1 points. So an n^{o(log n)} algorithm for STS (or quasigroup) isomorphism would give 2^{o(d²)} string isomorphism under GL(d,2), which ties the STS barrier to the affine barrier below. **This is an implication, not a lower bound.** No hardness of the 2^{o(d²)} question is known, and nothing shows the T2 instances are the hardest STS. On those instances the problem is decided in n^{(1/4+o(1))log₂ n} given w17 Theorem B, better than the general n^{(1/2)log₂ n} of A1.
 
 ## Classical barriers for n^{o(log n)}
 
@@ -49,6 +53,9 @@ The exponent factors into giant breaking (log N·log w) and enumeration of class
 
 * **WL**: dimension Ω(n) on degree 3 graphs (CFI), and Ω(|V|) on binary tanglegrams.
 * **Individualization-refinement**: 2^{Ω(n)} search trees for refinement within fixed-dimension WL (Neuen–Schweitzer 2018). This rules out pure IR, including this repo's front end, as a route even to quasipolynomial time.
+* **Gadget-style hardness for bounded-height posets** (w27, Cor N.1): no parameterized reduction from R1_c to SI under S_b^{(P)} with P of height ≤ ℓ can reflect Aut at the identity tanglegrams. As the red-team stresses, this rules out only hardness proofs of the kind used so far; it reduces nothing to the FPT side, and does not constrain reductions that do not reflect Aut.
+* **VC / ε-net proofs for conference graphs** (w34, red-teamed): separation systems have VC dimension Θ(log n), on every conference graph in one round and on iterated Turyn products for every fixed number of rounds. This obstructs that proof technique, not small hitting sets: those graphs have depth 3 at every level tested.
+* **Individualization on Latin squares** (w34 §7): Latin squares of Z₂^k need individualization depth Ω(log n) by base size. It concerns individualization, not isomorphism (for which see w18 A1).
 * **No lower bound is known for any class containing Luks-type coset recursion.** The only bounds are the algorithm-specific ones above. A lower bound for a coset-splitting model with or without memoization is open.
 
 ## The Clique-lower-bound barrier

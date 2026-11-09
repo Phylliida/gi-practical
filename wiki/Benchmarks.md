@@ -4,7 +4,7 @@ Tables, caveats, and where the solver wins or loses. Later numbers supersede ear
 
 [Home](Home.md) · [Software](Software.md)
 
-**Current as of master `1368fb6`,** which includes the merged `w22-speed` and `w23-speed2`. Tables headed "current" hold the latest numbers. Older numbers remain only where they show progress, under a heading or column that says so; do not cite those as current.
+**Current as of master `b819c8d`** (no file under `gi/`, `bench/` or `tests/` has changed since `1368fb6`), which includes the merged `w22-speed` and `w23-speed2`. Tables headed "current" hold the latest numbers. Older numbers remain only where they show progress, under a heading or column that says so; do not cite those as current.
 
 ## Read these caveats first
 
