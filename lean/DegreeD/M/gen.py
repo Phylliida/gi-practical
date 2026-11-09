@@ -76,6 +76,8 @@ def main():
     copy_file('Algorithm/PhaseTree.lean', 'PhaseTree.lean', patch=patch_phasetree)
     gen_scriptfam()
     gen_realruns_prefix()
+    copy_file('Paper/TotalCost.lean', 'TotalCost.lean', patch=patch_totalcost)
+    # PhaseCost.lean was generated once with patch_phasecost and then edited by hand; not regenerated.
     print('ok')
 
 def patch_phasetree(s):
@@ -168,6 +170,105 @@ def gen_realruns_prefix():
                     'exact (hok _ (by simp [giantClasses])).mult.resolve_right (by simp [rowIsEnum])')
     suf=(HERE/'RealRunsSuffix.template').read_text(encoding='utf8')
     (HERE/'RealRuns.lean').write_text(pre+suf, encoding='utf8')
+
+def patch_totalcost(s):
+    # imports: the phase tree copy, and the class
+    s = s.replace('import DegreeD.M.PhaseTree', 'import DegreeD.M.Closure')
+    # RootsOK gets the class parameter, and the Solve clause at each script call
+    s = s.replace("def Run.RootsOK (cσ : ℝ) {m : Mode}", "def Run.RootsOK (cσ : ℝ) (d : ℕ) {m : Mode}")
+    s = s.replace("def Exec.RootsOK (cσ : ℝ) {α : Type}", "def Exec.RootsOK (cσ : ℝ) (d : ℕ) {α : Type}")
+    s = s.replace("(ask := fun _ _ ihr ihe => ihr ∧ ihe)",
+      "(ask := @fun _ Ω' _ m S _ _ _ _ _ ihr ihe => (m = .solve → Finite Ω' ∧ GammaHat d S.G) ∧ ihr ∧ ihe)")
+    s = s.replace("RootsOK cσ", "RootsOK cσ d")
+    s = s.replace("""theorem Exec.rootsOK_calls {cσ : ℝ} {α : Type} {s : Script α} {a : α} (e : Exec P s a)
+    (h : e.RootsOK cσ d) : ∀ nd ∈ e.calls, nd.run.RootsOK cσ d := by""","""theorem Exec.rootsOK_calls {cσ : ℝ} {d : ℕ} {α : Type} {s : Script α} {a : α} (e : Exec P s a)
+    (h : e.RootsOK cσ d) : (∀ nd ∈ e.calls, nd.run.RootsOK cσ d) ∧
+      ∀ nd ∈ e.calls, nd.m = .solve → Finite nd.Ω ∧ GammaHat d nd.S.G := by""")
+    s = s.replace("""    (motive_2 := fun _ _ e => e.RootsOK cσ d → ∀ nd ∈ e.calls, nd.run.RootsOK cσ d)""","""    (motive_2 := fun _ _ e => e.RootsOK cσ d → (∀ nd ∈ e.calls, nd.run.RootsOK cσ d) ∧
+      ∀ nd ∈ e.calls, nd.m = .solve → Finite nd.Ω ∧ GammaHat d nd.S.G)""")
+    s = s.replace("""    (fun _ _ nd hnd => by simp [Exec.calls] at hnd) ?_ e
+  intro α Ω' C' m S k A a r e' _ ih h nd hnd
+  change nd ∈ (⟨m, Ω', C', S, none, A, r⟩ : Node P) :: e'.calls at hnd
+  rcases List.mem_cons.1 hnd with rfl | hnd
+  · exact h.1
+  · exact ih h.2 nd hnd
+""","""    (fun _ _ => ⟨fun nd hnd => by simp [Exec.calls] at hnd, fun nd hnd => by simp [Exec.calls] at hnd⟩) ?_ e
+  intro α Ω' C' m S k A a r e' _ ih h
+  obtain ⟨hcl, hrun, hk⟩ := h
+  have ih' := ih hk
+  refine ⟨fun nd hnd => ?_, fun nd hnd hm => ?_⟩
+  · change nd ∈ (⟨m, Ω', C', S, none, A, r⟩ : Node P) :: e'.calls at hnd
+    rcases List.mem_cons.1 hnd with rfl | hnd
+    · exact hrun
+    · exact ih'.1 nd hnd
+  · change nd ∈ (⟨m, Ω', C', S, none, A, r⟩ : Node P) :: e'.calls at hnd
+    rcases List.mem_cons.1 hnd with rfl | hnd
+    · exact hcl hm
+    · exact ih'.2 nd hnd hm
+""")
+    # NodeBound: node work Eb N, for nodes of the class
+    i = s.index("structure NodeBound (w : Node P → ℝ) (cw af : ℝ) : Prop where")
+    j = s.index("/-! ### The worst-case cost `F` -/")
+    s = s[:i] + """structure NodeBoundE (d : ℕ) (w : Node P → ℝ) (Eb : ℕ → ℝ) (af : ℝ) : Prop where
+  nonneg : ∀ nd, 0 ≤ w nd
+  one_le : ∀ n, 1 ≤ Eb n
+  /-- The work of a node of a phase with phase size `N`, in the class, is at most `Eb N`. -/
+  work : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N → GammaHat d nd.S.G → w nd ≤ Eb nd.S.N
+  calls : ∀ nd : Node P, nd.m ≠ .solve → nd.S.size ≤ nd.S.N →
+    (nd.run.scriptCalls.length : ℝ) ≤ (nd.S.N : ℝ) ^ af
+
+""" + s[j:]
+    # costSet, worstCost: restrict to finite positions and the class; RootsOK needs d in binders
+    s = s.replace("def costSet (w : Node P → ℝ) (cσ : ℝ) (n : ℕ) : Set ℝ :=", "def costSet (d : ℕ) (w : Node P → ℝ) (cσ : ℝ) (n : ℕ) : Set ℝ :=")
+    s = s.replace("""    S.size ≤ n ∧ r.RootsOK cσ d ∧ r.total w = c}""","""    S.size ≤ n ∧ Finite Ω ∧ GammaHat d S.G ∧ r.RootsOK cσ d ∧ r.total w = c}""")
+    s = s.replace("noncomputable def worstCost (w : Node P → ℝ) (cσ : ℝ) (n : ℕ) : ℝ := sSup (costSet w cσ n)",
+                  "noncomputable def worstCost (d : ℕ) (w : Node P → ℝ) (cσ : ℝ) (n : ℕ) : ℝ := sSup (costSet d w cσ n)")
+    s = s.replace("costSet w cσ", "costSet d w cσ").replace("worstCost w cσ", "worstCost d w cσ")
+    s = s.replace("Real.sSup_nonneg fun _ ⟨_, _, _, _, _, r, _, _, hc⟩ => hc ▸ r.total_nonneg hw",
+                  "Real.sSup_nonneg fun _ ⟨_, _, _, _, _, r, _, _, _, _, hc⟩ => hc ▸ r.total_nonneg hw")
+    s = s.replace("""    (hr : r.RootsOK cσ d) :
+    r.total w ≤ worstCost d w cσ n :=
+  le_csSup hb ⟨Ω, C, S, L, A, r, hS, hr, rfl⟩""","""    (hfin : Finite Ω) (hg : GammaHat d S.G) (hr : r.RootsOK cσ d) :
+    r.total w ≤ worstCost d w cσ n :=
+  le_csSup hb ⟨Ω, C, S, L, A, r, hS, hfin, hg, hr, rfl⟩""")
+    s = s.replace("  fun _ ⟨Ω, C, S, L, A, r, hS, hr, hc⟩ => ⟨Ω, C, S, L, A, r, hS.trans h, hr, hc⟩",
+                  "  fun _ ⟨Ω, C, S, L, A, r, hS, hfin, hg, hr, hc⟩ => ⟨Ω, C, S, L, A, r, hS.trans h, hfin, hg, hr, hc⟩")
+    s = s.replace("{w : Node P → ℝ} (hw : ∀ nd, 0 ≤ w nd) (cσ : ℝ) (n : ℕ) :\n    0 ≤ worstCost", "{w : Node P → ℝ} (hw : ∀ nd, 0 ≤ w nd) (d : ℕ) (cσ : ℝ) (n : ℕ) :\n    0 ≤ worstCost")
+    s = s.replace("exact worstCost_nonneg hw cσ n", "exact worstCost_nonneg hw d cσ n")
+    s = s.replace("theorem total_le_worstCost {w : Node P → ℝ} {cσ : ℝ} {n : ℕ}","theorem total_le_worstCost {d : ℕ} {w : Node P → ℝ} {cσ : ℝ} {n : ℕ}")
+    s = s.replace("theorem costSet_mono {w : Node P → ℝ} {cσ : ℝ} {m n : ℕ}","theorem costSet_mono {d : ℕ} {w : Node P → ℝ} {cσ : ℝ} {m n : ℕ}")
+    s = s.replace("theorem worstCost_mono {w : Node P → ℝ} (hw : ∀ nd, 0 ≤ w nd) {cσ : ℝ} {m n : ℕ}","theorem worstCost_mono {d : ℕ} {w : Node P → ℝ} (hw : ∀ nd, 0 ≤ w nd) {cσ : ℝ} {m n : ℕ}")
+    return s
+
+def patch_phasecost(s):
+    # imports and cut the final GI.Paper section (rewritten in Main.lean)
+    s = s.replace('import DegreeD.M.PhaseRun\n', '')
+    k = s.index('/-! ### One fresh phase -/')
+    s = s[:k] + 'end GI.DegreeD.M\n'
+    # the node bound and tolls
+    s = s.replace('expLogSq cw N', 'Eb N')
+    s = s.replace('(hw : NodeBound w cw af)', '(hw : NodeBoundE d w Eb af)')
+    s = s.replace('{w : Node P → ℝ} {cσ cw af : ℝ} {N : ℕ}', '{d : ℕ} {w : Node P → ℝ} {Eb : ℕ → ℝ} {cσ af : ℝ} {N : ℕ}')
+    s = s.replace('{w : Node P → ℝ} {cσ : ℝ} {N : ℕ}', '{d : ℕ} {w : Node P → ℝ} {cσ : ℝ} {N : ℕ}')
+    s = s.replace('{w : Node P → ℝ} {cσ cw af a : ℝ} {N : ℕ}', '{d : ℕ} {w : Node P → ℝ} {Eb : ℕ → ℝ} {cσ af a : ℝ} {N : ℕ}')
+    # vcost and VGood with the class
+    s = s.replace("""def VGood (cσ : ℝ) (N : ℕ) (v : PNode P) : Prop :=
+  v.Inv N ∧ v.leaf.S.size ≤ N ∧ v.leaf.run.RootsOK cσ ∧ v.leaf.run.kind ≠ .floorReset""",
+    """def VGood (d : ℕ) (cσ : ℝ) (N : ℕ) (v : PNode P) : Prop :=
+  v.Inv N ∧ v.leaf.S.size ≤ N ∧ v.leaf.run.RootsOK cσ d ∧ v.leaf.run.kind ≠ .floorReset ∧ VClass d v""")
+    s = s.replace('VGood cσ N', 'VGood d cσ N')
+    s = s.replace("noncomputable def vcost (w : Node P → ℝ) (cσ c : ℝ) (N : ℕ) (v : PNode P) : ℝ :=", "noncomputable def vcost (d : ℕ) (w : Node P → ℝ) (cσ c : ℝ) (N : ℕ) (v : PNode P) : ℝ :=")
+    s = s.replace("vcost w cσ", "vcost d w cσ")
+    # phaseTree -> phaseTreeOn
+    s = s.replace("(phaseTree P N (vcost d w cσ (Eb N) N)).kind v", "(phaseTreeOn P N (vcost d w cσ (Eb N) N) (VClass d) Qf).kind v")
+    s = s.replace("phaseTree_kind_of hinv", "phaseTreeOn_kind_of hinv hcl")
+    # the toll
+    s = s.replace("GI.Paper.phaseToll (cw + 20) P.γ (worstCost w cσ) N", "tollE Eb P.γ (worstCost d w cσ) N")
+    s = s.replace("worstCost w cσ", "worstCost d w cσ").replace("costSet w cσ", "costSet d w cσ")
+    # RootsOK has the class parameter
+    s = s.replace("RootsOK cσ", "RootsOK cσ d")
+    s = s.replace("RootsOK cσ d d", "RootsOK cσ d")
+    return s
 
 if __name__ == '__main__':
     main()
