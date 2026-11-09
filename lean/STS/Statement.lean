@@ -48,7 +48,7 @@ def NonConstant {d : ℕ} (χ : V d → Bool) : Prop :=
 /-! ## The construction `X_χ` (memo §6) -/
 
 /-- `Z = 𝔽₂³`, its elements written `0, …, 7` in binary; addition is bitwise xor `^^^`.
-(This is the encoding the memo's table uses.) -/
+(This is the encoding of the memo's table and of its code, `x_fib` in `docs/w30-sts-code/sts.py`.) -/
 abbrev Z := Fin 8
 
 /-- The memo's 1-factorization `F¹` of the complete graph on `Z`: `F1 z` lists the four pairs
