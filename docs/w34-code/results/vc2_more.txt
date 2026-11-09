@@ -1,0 +1,30 @@
+paley41 n=41 mean_p2=0.0695 max_p2=0.0695 1/sqrt(n)=0.1562
+  c=2.00 th=0.0006 |B_c|=820 distinct_sets=820 d_c=>=4
+  c=1.00 th=0.0244 |B_c|=820 distinct_sets=820 d_c=>=4
+  c=0.75 th=0.0617 |B_c|=820 distinct_sets=820 d_c=>=4
+  c=0.50 th=0.1562 |B_c|=0 d_c=0
+  c=0.40 th=0.2264 |B_c|=0 d_c=0
+  c=0.30 th=0.3282 |B_c|=0 d_c=0
+  c=0.20 th=0.4758 |B_c|=0 d_c=0
+  c=0.10 th=0.6898 |B_c|=0 d_c=0
+  c=0.05 th=0.8305 |B_c|=0 d_c=0
+sp29_0 n=29 mean_p2=0.0780 max_p2=0.1084 1/sqrt(n)=0.1857
+  c=2.00 th=0.0012 |B_c|=406 distinct_sets=406 d_c=4
+  c=1.00 th=0.0345 |B_c|=406 distinct_sets=406 d_c=4
+  c=0.75 th=0.0800 |B_c|=174 distinct_sets=174 d_c=4
+  c=0.50 th=0.1857 |B_c|=0 d_c=0
+  c=0.40 th=0.2600 |B_c|=0 d_c=0
+  c=0.30 th=0.3642 |B_c|=0 d_c=0
+  c=0.20 th=0.5099 |B_c|=0 d_c=0
+  c=0.10 th=0.7141 |B_c|=0 d_c=0
+  c=0.05 th=0.8450 |B_c|=0 d_c=0
+sp29_1 n=29 mean_p2=0.0787 max_p2=0.1084 1/sqrt(n)=0.1857
+  c=2.00 th=0.0012 |B_c|=406 distinct_sets=406 d_c=4
+  c=1.00 th=0.0345 |B_c|=406 distinct_sets=406 d_c=4
+  c=0.75 th=0.0800 |B_c|=187 distinct_sets=187 d_c=4
+  c=0.50 th=0.1857 |B_c|=0 d_c=0
+  c=0.40 th=0.2600 |B_c|=0 d_c=0
+  c=0.30 th=0.3642 |B_c|=0 d_c=0
+  c=0.20 th=0.5099 |B_c|=0 d_c=0
+  c=0.10 th=0.7141 |B_c|=0 d_c=0
+  c=0.05 th=0.8450 |B_c|=0 d_c=0
