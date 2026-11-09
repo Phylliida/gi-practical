@@ -564,3 +564,10 @@ are red-teams, a LaTeX paper, and final integration.
 * "The Third Logarithm": about 64 min, 24 chapters, offline. Derives the n^{O(log n)} running time on screen and
   ends with the n^{O(log d)} chapters and a status card. CLAIMS.md ledger; headless-Firefox sweep.
 * w24-video-review: independent fact-check of the script against the sources.
+
+### w21-eth (done, commit b4d1322; docs/w21-eth.md)
+* No flaw found in what was checked (one adversarial read and small-case exact tests; Appendix D, Appendix B
+  bit sizes and all asymptotics not checked). No reported error found publicly.
+* No transfer to GI: natural fixed-width encodings have about n² variables, and Sec. 4's M ≥ 32b²(b+w) rules out
+  affine equivalence and tensor isomorphism as written.
+* The ETH barrier is re-based on CLIQUE-LB (notes added to the five memos); it survives if ETH fails.

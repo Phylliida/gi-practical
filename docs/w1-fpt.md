@@ -631,3 +631,8 @@ Cited from memory: Dixon–Mortimer, *Permutation Groups*, Lemma 2.7A; the $\mat
 permutation-module submodule lattice; Luks 1993 (DIMACS) and Seress 2003 for intersection with a
 normal subgroup; Kantor–Luks 1990 (quotient groups); Cai–Fürer–Immerman 1992; Berkholz–Grohe
 ICALP'15; Torán (resolution lower bounds on CFI).
+
+---
+**Note added 2026-11-08 (see docs/w21-eth.md).** The "ETH barrier" above should be read as conditional on
+CLIQUE-LB, the hypothesis that k-Clique has no f(k)·n^{o(k)} algorithm. ETH implies CLIQUE-LB but not conversely,
+so the barrier survives even if ETH fails, as an unrefereed October 2026 preprint claims.

@@ -740,3 +740,8 @@ Bardet–Otmani–Saeed-Taha on hull dimension; simplicity of $\mathrm{GL}(r,2)$
 | Prop. 6.1 ($T\,\square\,T$, $P_{\rm graph}\le$ GI$_{\deg}$, TreeSI) | **[PROVEN]** |
 | FPT for TreeCI, for $\hat\Gamma_d$, or for degree-$d$ GI | **not achieved** |
 | hardness reduction for TreeCI | **not achieved** |
+
+---
+**Note added 2026-11-08 (see docs/w21-eth.md).** The "ETH barrier" above should be read as conditional on
+CLIQUE-LB, the hypothesis that k-Clique has no f(k)·n^{o(k)} algorithm. ETH implies CLIQUE-LB but not conversely,
+so the barrier survives even if ETH fails, as an unrefereed October 2026 preprint claims.

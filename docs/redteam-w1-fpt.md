@@ -464,3 +464,8 @@ rather than on per-orbit maximal chains under a virtual root. Novelty is modest 
 5. **(Literature)** FPT for GI by maximum degree is open (Downey–Fellows; GNS; Grohe–Neuen Q4;
    survey §4.1). Survey Q4.8 is as quoted. Under ETH, any W[1]-hardness proof must blow the
    parameter up to $2^{k^{\Omega(1)}}$ infinitely often (to $2^{\Omega(k)}$ if R\* holds).
+
+---
+**Note added 2026-11-08 (see docs/w21-eth.md).** The "ETH barrier" above should be read as conditional on
+CLIQUE-LB, the hypothesis that k-Clique has no f(k)·n^{o(k)} algorithm. ETH implies CLIQUE-LB but not conversely,
+so the barrier survives even if ETH fails, as an unrefereed October 2026 preprint claims.

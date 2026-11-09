@@ -359,3 +359,8 @@ $\lvert\mathrm{Aut}\rvert$ and the leaf orbits of the tanglegram graph.
 | Prop C: coordinate tanglegrams = generalized wreath products over 2-dimensional posets | **[PROVEN]**; E1 21/21 |
 | FPT algorithm for R1 | **not achieved** |
 | hardness / model lower bound | **not achieved**, beyond the trivial no-memo Luks bound |
+
+---
+**Note added 2026-11-08 (see docs/w21-eth.md).** The "ETH barrier" above should be read as conditional on
+CLIQUE-LB, the hypothesis that k-Clique has no f(k)·n^{o(k)} algorithm. ETH implies CLIQUE-LB but not conversely,
+so the barrier survives even if ETH fails, as an unrefereed October 2026 preprint claims.
