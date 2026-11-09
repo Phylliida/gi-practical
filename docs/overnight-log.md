@@ -533,3 +533,10 @@ are red-teams, a LaTeX paper, and final integration.
 * Experiments (k ≤ 10) cannot distinguish k from k² scaling.
 
 ### w20-redteam-affine: adversarial check of w17.
+
+### Note: "The Exponential Time Hypothesis is False" (OpenAI math release, 25 Oct 2026; unrefereed)
+* Claims deterministic #k-SAT in (n+m)^{O_k(1)}·2^{O_k(n log log n/√log n)}, polynomial space.
+* If correct, the "ETH barrier" remarks in w1-fpt, w2-coset, w4-t2 and w6-tanglegram (W[1]-hardness needs a
+  parameter blow-up ≥ 2^{k^Ω(1)}) lose their hypothesis. They are all stated "under ETH". paper/canon.tex and
+  paper/exponent.tex do not use ETH.
+* w21-eth: spot-check the preprint's core and assess relevance to this campaign.
