@@ -695,3 +695,11 @@ are red-teams, a LaTeX paper, and final integration.
 * Still hypotheses: Supply (not shown inhabited), NodeBoundD, RootsOK for arbitrary runs. Not addressed: the machine-level program, the
   Luks reduction, HJ's correctness beyond its Lean theorem.
 * w41-redteam-lean: does the theorem say what is claimed; are the hypotheses satisfiable; is gnsPrimitive faithful?
+
+### w41-redteam-lean (done, commit 16336ad; docs/redteam-lean-stage1.md)
+* Neither axiom found false: gnsPrimitive checked case by case against GNS's O'Nan–Scott analysis, normalizer step re-proved, all 15,100
+  primitive groups of degree ≤ 2500 consistent; bcp true. GammaHat matches GNS Def 2.3. Hypotheses satisfiable: NodeBoundD holds for w ≡ 1;
+  Supply holds for D ≤ q₀; for D > q₀ not built, no obstruction found.
+* "Cost" is Σ w over nodes, a tree-size bound with an abstract weight, not machine time. Nothing in lean/DegreeD/ is about graphs, running
+  time or a machine. Gap to the English claim: no program, w is not time, Supply for d > q₀, Luks reduction, trusted axioms.
+* w42-lean-supply: Supply for D > q₀ and the abstract Luks reduction.
