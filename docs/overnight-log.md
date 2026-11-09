@@ -546,3 +546,10 @@ are red-teams, a LaTeX paper, and final integration.
   Build with `python3 build_ckernel.py`; GI_NO_CKERNEL=1 disables. ASan + UBSan clean; identical outputs.
 * Paired: full hybrid about 2× (xl 10.3s → 4.9s); ir=0 1.5×. Multipedes, CFI, 3-regular, hypercubes barely
   moved (1.00–1.15×), because their hot code is in bounded.py/canon.py/ea2.py, off limits during w14.
+
+### w14-solver (done, commits 7ca2c25–ef6f8ab; docs/w14-solver.md)
+* SparseEA, worklist 1-WL (gi/wl.py), staged root classes, discrete rooted certificates, ir_canon, and
+  graph_iso(method="auto") (bounded if maxdeg ≤ 8 or n > 256, otherwise hybrid; counted work budget).
+* Canon: CFI n=3200 13.5→1.41s; Miyazaki n=3000 66.5→1.86s; 3-reg n=4000 0.46→0.26s; ns n=2464 1.24→0.83s.
+* Traces still wins every non-multipede family (CFI 10–23×, Miyazaki 30–90×, Q12 ~250×, 3-regular 13×).
+  Solvable layers NOT done (profiles pointed elsewhere), so gi.canon has no polynomial guarantee at d ≤ 5.
