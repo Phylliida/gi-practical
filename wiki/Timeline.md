@@ -102,7 +102,15 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 35 | w35-cubic | `8fb152f` | exact reduction of cubic Boolean equivalence to quadratic-form spaces (merged `0ed8fd3`; red-teamed by w37) | [w35-cubic](../docs/w35-cubic.md) |
 | 36 | w36-lean | `719357a` | `lean/DegreeD`: machine-checked parts of the n^{O(log d)} accounting (merged `4bbd0ab`) | [w36-lean](../docs/w36-lean.md), [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36) |
 | 37 | w37-redteam-cubic | `dce72f3` | red-team of w35 and w34 (merged `79aa9c1`) | [report](../docs/redteam-w35-w34.md) |
-| 38 | w38-lean-stage1 | `5fb87e4` | **in progress** as of `5fb87e4`: continues `lean/DegreeD` toward Theorem R\*; not folded in | [Home](Home.md#work-still-in-progress) |
-| 39 | w39-wiki-refresh | this branch | this refresh of the wiki; two value corrections in `docs/w18-latin.md` | |
+| 38 | w38-lean-stage1 | `1c162b8` | Stage-1 degree-d theorem in Lean, for a modified recursion; red-teamed by w41 | [w38-lean-stage1](../docs/w38-lean-stage1.md), [Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42) |
+| 39 | w39-wiki-refresh | | refresh of the wiki to `b819c8d`; two value corrections in `docs/w18-latin.md` | |
+| 40 | w40-solvable | `b6a4d9e` | polynomial canonical forms at bounded degree via Luks's recursion; red-teamed by w44 | [w40-solvable](../docs/w40-solvable.md) |
+| 41 | w41-redteam-lean | `16336ad` | red-team of w38: axioms not found false; "cost" is a tree-size bound, not machine time | [report](../docs/redteam-lean-stage1.md) |
+| 42 | w42-lean-supply | `f03df03` | `Supply` for all D, Luks layer lemmas; found that `graphIso_final` is vacuous | [w42-lean-supply](../docs/w42-lean-supply.md) |
+| 43 | w43-lean-statement | | **running**: restating `graphIso_final` | [Home](Home.md#work-still-in-progress) |
+| 44 | w44-redteam-luks | `0cb2fd5` | red-team of w40 | [report](../docs/redteam-w40-solvable.md) |
+| 45 | w45-quartic | `5a17e2e` | quartic equivalence and 4-tensors; red-teamed by w46 | [w45-quartic](../docs/w45-quartic.md) |
+| 46 | w46-redteam-quartic | `91a1fd4` | red-team of w45 | [report](../docs/redteam-w45-quartic.md) |
+| 47 | w47-mu | | **running**: HJ's enumeration channel on graphs | [Home](Home.md#work-still-in-progress) |
 
-The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, and this refresh (w39) is current to master `b819c8d`.
+The wiki was first cut from master at `b1a2d03` (w25); w29 refreshed it to `1368fb6`, w39 refreshed it to `b819c8d`, and the latest refresh is current to master `1e596e0`.

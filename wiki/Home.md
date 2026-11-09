@@ -31,7 +31,7 @@ of graphs of maximum degree d, (4) produced two draft papers and an animated exp
 | Topic | Strongest statement | Status | Page |
 |---|---|---|---|
 | HJ's theorem | GI in exp(C·log(n+2)²) on a log-cost RAM, with isomorphism and Aut generators | Lean kernel accepts it, modulo 10 axioms; paper unrefereed | [Lean audit](Lean-Audit.md) |
-| Degree d, using HJ | GI of maximum degree d in n^{O(log(d+2))} (Corollary R\*) | conditional on HJ's analysis; one AI verifier and one AI red-team. Parts of the accounting are machine-checked, the whole theorem is not: for d < N it is still hand-argued | [Degree-d bound](Math-Degree-d.md), [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36) |
+| Degree d, using HJ | GI of maximum degree d in n^{O(log(d+2))} (Corollary R\*) | conditional on HJ's analysis; one AI verifier and one AI red-team. Parts of the accounting are machine-checked, the whole theorem is not. The Lean statements `graphIso_final`, `graphIso_general` and `graphIso_connected` are vacuous as written and must not be cited | [Degree-d bound](Math-Degree-d.md), [Lean audit](Lean-Audit.md#the-degree-d-accounting-in-lean-w36) |
 | Canonization | canonical forms for maximum degree d in n^{O((log d)^c)} (Theorem A, Corollary B) | proof modulo listed literature, depends on Babai's preliminary STOC 2019 report; three AI reviews; no expert | [Canonization](Math-Canonization.md) |
 | Hypergraphs, treewidth | Theorem H (time only sketched), Theorem TW (sketch) | see ledger | [Canonization](Math-Canonization.md) |
 | Exponent c, no HJ | c ≤ 10/3 for all d (Theorem X); c = 3 for all d (Theorem G) | X: AI red-teamed. G: one AI red-team pass, provisional | [Exponent](Math-Exponent.md) |
@@ -41,6 +41,8 @@ of graphs of maximum degree d, (4) produced two draft papers and an animated exp
 | Steiner triple systems | no n^{o(log n)} algorithm. An n^{o(log n)} algorithm for STS isomorphism would give 2^{o(d²)} string isomorphism under GL(d,2) (T2, w30); rank above 0.9031·log₂(n+1) forces a projective quotient (T1, improved by the red-team) | proven by hand; AI red-teamed; T2 confirmed by exact checks to d = 4. An implication, not a lower bound | [Moonshots](Moonshots.md#steiner-triple-systems-and-the-gl-barrier-w30-w33) |
 | Conference graphs | no n^{o(log n)} algorithm; the VC route cannot give o(log n) depth (w34); depth 2 or 3 in every tested graph, to n = 6561 (w32) | w34 AI red-teamed; **w32 not red-teamed**; the depth figures are data only | [Moonshots](Moonshots.md#conference-graphs-w32-w34) |
 | Cubic Boolean equivalence | decided in 2^{Õ(n^{1.5})} (w35), or 2^{O(n^{51/26} log n)} by a second route | **conditional** on an unrefereed preprint (arXiv:2610.00874; second route arXiv:2611.05920); the reductions are proven by hand and AI red-teamed | [Moonshots](Moonshots.md#cubic-boolean-equivalence-w35-w37) |
+| Quartic Boolean equivalence | no 2^{o(d²)} algorithm for general quartics and no CFI-style barrier. With s the minimum pair-contraction rank, Theorem H decides equivalence in 2^{(2√2+o(1))d²/√min(s,d/2)} poly(d), which beats 2^{d²/4} from s = 132 with the printed parameters (w45) | AI red-teamed by w46: threshold repaired, nothing else broken. No experiment reaches the regime where H wins | [Moonshots](Moonshots.md#quartic-equivalence-and-4-tensors-w45-w46) |
+| Polynomial canonization at small degree | deterministic polynomial canonical forms at every fixed d ≤ 5 (`gi/luks.py`, w40); n^{O(d²)} with `guarantee=True` | hand proof, AI red-teamed by w44. Needs d fixed; the exponent about 53 is an estimate | [Software](Software.md) |
 | Practice | on Neuen–Schweitzer multipedes we beat nauty and Traces from n ≈ 1100 (n = 2464: 0.34 s; nauty and Traces exceed 120 s in the latest run and exceeded 600 s in the earlier w1 run) | measured; answers proved by a lemma checked per instance; Traces wins on every other family, about 3–29× | [Benchmarks](Benchmarks.md) |
 
 ## Pages
@@ -58,7 +60,7 @@ of graphs of maximum degree d, (4) produced two draft papers and an animated exp
 * [The exponent c](Math-Exponent.md)
 * [The core problem: TreeCI and tanglegrams](Math-Core-Problem.md)
 * [Barriers](Math-Barriers.md)
-* [Moonshots: affine equivalence, ETH, Latin squares, STS, conference graphs, cubics, the σ channel](Moonshots.md)
+* [Moonshots: affine equivalence, ETH, Latin squares, STS, conference graphs, cubics, quartics, the σ channel](Moonshots.md)
 * [What we tried that did not work](Tried-and-Failed.md)
 
 **Software**
@@ -75,8 +77,9 @@ of graphs of maximum degree d, (4) produced two draft papers and an animated exp
 
 ## Work still in progress
 
-This wiki is current to master `b819c8d`. Every branch through `w37-redteam-cubic` is on master and folded in. `w32-conference` is on master but has **not been red-teamed** (`w37` re-ran one of its lemmas numerically and leaned on two others; that is not a review of the memo). The branch below is the only unfinished one. Nothing in this wiki depends on it. See [Maintaining](Maintaining.md) for how to fold it in.
+This wiki is current to master `1e596e0`. Every branch through `w46-redteam-quartic` is on master and folded in, except `w43-lean-statement`. `w32-conference` is on master but has **not been red-teamed** (`w37` re-ran one of its lemmas numerically and leaned on two others; that is not a review of the memo). Nothing in this wiki depends on the branches below. See [Maintaining](Maintaining.md) for how to fold them in.
 
-| Branch | Commit | State | Area |
-|---|---|---|---|
-| `w38-lean-stage1` | `5fb87e4` | in progress as of `5fb87e4`: continues `lean/DegreeD` toward Theorem R\*. Its commit message reports a Γ̂_d class with closure, the (M′) dispatcher and a generated run type; its worktree also has uncommitted files, so this is not its final state. Not reviewed or folded in here | [Lean audit](Lean-Audit.md), [Degree-d bound](Math-Degree-d.md) |
+| Branch | State | Area |
+|---|---|---|
+| `w43-lean-statement` | running: restates `graphIso_final` so that the zero-call script fails, and audits `lean/DegreeD` for the same defect. Not reviewed | [Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42) |
+| `w47-mu` | running: does any graph family force HJ's enumeration channel, or is there a structural reason it cannot? | [Barriers](Math-Barriers.md) |

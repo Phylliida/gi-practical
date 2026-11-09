@@ -87,7 +87,17 @@ Paper parameters are on the [HJ page](Math-HJ-Algorithm.md#3-the-running-time-an
 * The tolls (`leaf_cost`, `toll`) are hypotheses. For d ≤ N^α they need E_N = N^{O(1)}.
 * Nothing is done at the machine level: no (M′) program, no Luks reduction.
 
-Estimated remaining work, from the memo: 5k–12k lines of Lean for a run-level Theorem R\*, 30k–150k for a machine-level one. `w38-lean-stage1` is the running branch for this; see [Home](Home.md#work-still-in-progress).
+Estimated remaining work, from the memo: 5k–12k lines of Lean for a run-level Theorem R\*, 30k–150k for a machine-level one. `w38-lean-stage1` continued this; see the next section.
+
+## Stage 1 in Lean, and a vacuous statement (w38, w41, w42)
+
+**What is real.** [w38-lean-stage1](../docs/w38-lean-stage1.md) (`1c162b8`, fresh compile 3m22s): for a modified recursion `M.Run`, any run on a Γ̂_d state returns the exact transporter at cost ≤ exp(C′·log(8·max(d,6))·log(s+2)), with C′ independent of d. `degreeD_stage1` uses only the 3 standard axioms and takes BCP and GNS 3.13 as hypotheses. `degreeD_stage1_ax` adds the axioms `bcp` and `gnsPrimitive`; `gnsPrimitive` states the product form from GNS's proof plus a normalizer step, not GNS's literal Theorem 3.13.
+
+[The w41 red-team](../docs/redteam-lean-stage1.md) (`16336ad`) found neither axiom false: `gnsPrimitive` was checked case by case against GNS's O'Nan–Scott analysis, and all 15,100 primitive groups of degree ≤ 2500 are consistent with it. [w42-lean-supply](../docs/w42-lean-supply.md) (`f03df03`) then added `Supply.ofGiant` and `degreeD_stage1_cited`, so runs exist for every d, plus the Luks layer lemmas `extf_isIso`, `readStep_*` and `gammaHat_wreath`.
+
+**What "cost" means.** It is Σ w over the nodes of a tree, with an abstract weight. It is not machine time, and nothing in `lean/DegreeD/` is about a machine or a program.
+
+**The defect.** `graphIso_final`, `graphIso_general` and `graphIso_connected` are trivially true as stated. `Script.done a` may carry any value, built classically, so the script `done {iso set}` satisfies the conclusion with zero calls and C = 0. [docs/vacuity-graphIso-final.lean.txt](../docs/vacuity-graphIso-final.lean.txt) proves this in Lean, using only the 3 standard axioms. The proof does build a real reduction, but the statement does not expose it. **Do not cite these theorems as they stand.** `w43-lean-statement` is restating them; see [Home](Home.md#work-still-in-progress).
 
 ## Disclosure
 

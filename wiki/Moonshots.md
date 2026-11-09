@@ -90,6 +90,17 @@ Source: [w35-cubic](../docs/w35-cubic.md) (`8fb152f`), AI red-teamed by [redteam
 * **Consequences, conditional:** alternating tuple and space isometry, 3-tensor isomorphism and ATF equivalence over F₂, and T2 instances with cubic colourings in n^{Õ(√log n)}. **Nothing for general STS**; hard T2 instances, if any, need degree ≥ 4.
 * Decision only, not a canonical form. Novelty: Theorem B and the composite appear new as far as a limited search could determine; E(i)'s tuple case is not ([Corrections](Corrections.md#alternating-tuple-isometry-in-characteristic-2-w35-ei-is-sun-2026)).
 
+## Quartic equivalence and 4-tensors (w45, w46)
+
+Source: [w45-quartic](../docs/w45-quartic.md) (`5a17e2e`), AI red-teamed by [redteam-w45-quartic](../docs/redteam-w45-quartic.md) (`91a1fd4`).
+
+* **Outcome:** no 2^{o(d²)} algorithm for general quartics, and no CFI-style barrier either.
+* **Why the cubic results do not carry over:** kernel reductions blow up to L = O(n³), so a 3-tensor bound transfers only if its exponent is below 3/2, and today's is exactly 3/2. The red-team narrows this: the claim holds for time bounds in L alone, with a single field and one-input reductions. A format-sensitive bound escapes it.
+* **T1:** 4-tensor isomorphism in q^{n²} poly, sound modulo Qiao–Sun Theorem 1.1 (statement verified, proof not re-derived).
+* **T2:** h-tuples of 3-tensors reduce to one 3-tensor of length O(hn). Reverse direction tested by exact isomorphism decisions, with no disagreement.
+* **T3:** a subclass result, conditional. T3′ additionally needs f_i(0) = 0.
+* **Theorem H (proven, AI-checked):** with s the minimum rank of pair contractions, equivalence is decided in 2^{(2√2+o(1))d²/√min(s,d/2)} poly(d). Ranks are even. The printed parameters first beat 2^{d²/4} at s = 132; s = 130 needs R = 8 chosen by hand; s = 128 fails. Random quartics have s ≥ d − 2√d − O(1) with high probability, and there the printed parameters beat 2^{d²/4} only from d = 282. No experiment reaches the regime where H wins.
+
 ## Practical moonshots
 
 See [hardness.md](../docs/hardness.md) and the [benchmarks](Benchmarks.md). The headline practical result, beating nauty and Traces on multipedes, came from linear algebra over F₂ in the Luks layers, not from the HJ recursion.

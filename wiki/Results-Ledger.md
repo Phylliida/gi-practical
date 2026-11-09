@@ -253,6 +253,18 @@ See [Math: core problem](Math-Core-Problem.md). None of these gives FPT for degr
 | G (w35), STS with cubic colourings | T2 instances with cubic χ are decided in n^{Õ(√log n)}; nothing for general STS. Hard T2 instances, if any, need degree ≥ 4 | conditional on GIQS Thm 1.2 | GIQS Thm 1.2 | AI red-team | same §5, §4 |
 | Char-2 obstacle (w35 §1) | located at the *-symmetric decomposition X\*X = E; explicit instance on F₂⁶. The instance is valid but not char-2-specific; w37 gives one that is | proven (the instance) | | AI red-team | same §1.2, [redteam](../docs/redteam-w35-w34.md) §5 |
 
+### Waves 38–46
+
+| Claim | Statement | Status | Checked by | Source |
+|---|---|---|---|---|
+| `degreeD_stage1` (w38) | any `M.Run` on a Γ̂_d state returns the exact transporter at tree cost ≤ exp(C′·log(8·max(d,6))·log(s+2)) | machine-checked; 3 standard axioms, BCP and GNS 3.13 as hypotheses. Cost is an abstract weight | fresh compile; AI red-team w41 | [w38](../docs/w38-lean-stage1.md), [w41](../docs/redteam-lean-stage1.md) |
+| `graphIso_final` and variants (w42) | as stated, trivially true | **do not cite**; being restated by w43 | Lean proof of the trivial witness | [w42](../docs/w42-lean-supply.md) |
+| Polynomial canonization (w40) | deterministic polynomial canonical forms at fixed d ≤ 5; n^{O(d²)} with `guarantee=True` | hand proof; needs d fixed; exponent about 53 is an estimate | AI red-team w44 | [w40](../docs/w40-solvable.md), [w44](../docs/redteam-w40-solvable.md) |
+| T1 (w45) | 4-tensor isomorphism in q^{n²} poly | proven modulo Qiao–Sun Thm 1.1 | AI red-team w46 | [w45](../docs/w45-quartic.md), [w46](../docs/redteam-w45-quartic.md) |
+| T2 (w45) | h-tuples of 3-tensors reduce to one 3-tensor of length O(hn) | proven | AI red-team w46; exact tests | same |
+| T3, T3′ (w45) | a quartic subclass; T3′ needs f_i(0) = 0 | conditional | AI red-team w46 | same |
+| Theorem H (w45) | quartic equivalence in 2^{(2√2+o(1))d²/√min(s,d/2)} poly(d); beats 2^{d²/4} from s = 132 as printed | proven, threshold repaired | AI red-team w46 | same §1 |
+
 ## 8. Practical claims
 
 See [Benchmarks](Benchmarks.md) for tables and caveats. All timings are one machine.
@@ -280,4 +292,5 @@ See [Benchmarks](Benchmarks.md) for tables and caveats. All timings are one mach
 * Transfer of the w1 HJ string lower bounds to graphs (Theorem B1 of w18 is a separate graph-level bound).
 * An n^{o(log n)} algorithm for general Latin squares, Steiner triple systems or conference graphs.
 * An unconditional 2^{o(n²)} algorithm for cubic Boolean equivalence (Theorem D of w35 is conditional).
-* A machine-checked Theorem R\*: for d < N nothing yet shows the required `Good` runs exist.
+* A machine-checked Theorem R\*. Runs now exist for every d (w42), but `graphIso_final` and its variants are vacuous as stated, and cost is an abstract tree weight rather than machine time ([Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42)).
+* A 2^{o(d²)} algorithm for general quartic Boolean equivalence (w45).

@@ -48,7 +48,7 @@
 
 ## Moonshots
 
-* Cubic Boolean equivalence: 2^{Õ(n^{1.5})} is now conditional on unrefereed preprints ([w35-cubic](../docs/w35-cubic.md)); an unconditional proof, or a check of arXiv:2610.00874, remains. Colourings of degree ≥ 4 are where hard T2 instances, if any, must live. Also 4-TI below 2^{o(k²)}, and an "affine CFI" ([w17-affine](../docs/w17-affine.md) §8).
+* Cubic Boolean equivalence: 2^{Õ(n^{1.5})} is now conditional on unrefereed preprints ([w35-cubic](../docs/w35-cubic.md)); an unconditional proof, or a check of arXiv:2610.00874, remains. Colourings of degree ≥ 4 are where hard T2 instances, if any, must live. Also 4-TI below 2^{o(k²)}, a degree-preserving reduction from 4-TI to quartics, low-rank quartics beyond Theorem H ([w45-quartic](../docs/w45-quartic.md)), and an "affine CFI" ([w17-affine](../docs/w17-affine.md) §8).
 * STS: extend T1 past (log₂10)/3 to a structure theorem allowing AG(2,3)-type planes ([redteam-w30-sts](../docs/redteam-w30-sts.md) §2.3); the rank dichotomy for rk ≥ ε log n ([w30-sts](../docs/w30-sts.md) §9); the near-top bound written out.
 * Conference graphs: Levet's Question 6.5 (an individualization set of size O(1) or o(log n)); an upper bound on d(τ), on Turyn iterates or in general ([w34-vc](../docs/w34-vc.md) §9); grid detection as the structured side of a dichotomy ([w32-conference](../docs/w32-conference.md) §7).
 * Ask whether the "ETH is False" preprint survives review; then update [Moonshots](Moonshots.md).

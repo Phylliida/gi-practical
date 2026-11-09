@@ -312,6 +312,19 @@ The earlier statement that nothing of the project's own accounting is machine-ch
 | "The kernel does not help bounded or canonical paths" (1.00–1.15×) | true of w16, when that code was off limits; w23 compiled it | [w16-ckernel](../docs/w16-ckernel.md), [w23-speed2](../docs/w23-speed2.md) §2–3 |
 | Traces gaps at w14 (CFI 10–23×, Miyazaki 30–90×, Q12 about 250×, 3-regular about 13×) | narrowed by w23 to about 7×, 23×, 14–29× and 3–6×; Traces is still ahead on every family except multipedes | [w23-speed2](../docs/w23-speed2.md) §3, §6 |
 
+### Lean statements, the small-degree guarantee and quartics (w42, w44, w46)
+
+| Item | Correction | Source |
+|---|---|---|
+| `graphIso_final`, `graphIso_general`, `graphIso_connected` | vacuous as stated: a zero-call script satisfies them with C = 0. Withdrawn as evidence until restated | [w42](../docs/w42-lean-supply.md), [Lean audit](Lean-Audit.md#stage-1-in-lean-and-a-vacuous-statement-w38-w41-w42) |
+| w40 Theorem A, "polynomial when twin blocks ≤ 4" | false as stated for unbounded degree; needs d fixed. Sound at every fixed d ≤ 5 | [redteam-w40-solvable](../docs/redteam-w40-solvable.md) |
+| w40 exponent | 3.2439 should be 3.244. "About 53" is an estimate, because g(m) = m⁶ is asserted | same |
+| w40 §2.1, "true worst case is Schreier–Sims" | false | same |
+| Theorem H threshold, "s ≥ 128" and "s > 128" | "s ≥ 128" is false. Printed parameters first win at s = 132; "s > 128" holds only with R = 8 chosen by hand at s = 130 | [redteam-w45-quartic](../docs/redteam-w45-quartic.md) §1 |
+| w45 blow-up claim, "any kernel reduction" | holds for time bounds in L alone, single field, one-input reductions | same §2 |
+| T3′ of w45 | needs f_i(0) = 0 | same |
+| arXiv:2604.00591 as described in w45 | its 4-tensor algorithm is not "via eigenvalue-free slices" | same §7 |
+
 ### The video
 
 Fact-checked by `w24-video-review` (`4085217`, merged `6dad6a2`), which fixed 31 errors (10 wrong, 12 misleading, 9 minor) in the narration, cards and code; [REVIEW.md](../video/REVIEW.md) lists each with its source, and what could not be verified. Running time 65:31. Differences between planning documents and data, as of `b1a2d03` (not changed by the fact-check, which left STORYBOARD.md alone):
