@@ -1,0 +1,350 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\emergencystretch=2em
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=green!35!black,urlcolor=blue!50!black]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Sym}{\operatorname{Sym}}
+\newcommand{\Alt}{\operatorname{Alt}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\Iso}{\operatorname{Iso}}
+\newcommand{\polylog}{\operatorname{polylog}}
+\newcommand{\C}{\mathcal C}
+\newcommand{\T}{\mathbb T}
+\newcommand{\fT}{\mathfrak T}
+\newcommand{\fD}{\mathfrak D}
+\newcommand{\fE}{\mathfrak E}
+\newcommand{\fA}{\mathfrak A}
+\newcommand{\fX}{\mathfrak X}
+\newcommand{\Gammahat}{\widehat\Gamma}
+\newcommand{\Proven}{\textsc{[proven]}}
+\newcommand{\ProvenM}{\textsc{[proven, modulo the ledger]}}
+
+\title{On the exponent of the isomorphism test\\ for graphs of maximum degree $d$\\[4pt]
+\large A note for expert checking}
+\author{[Author names to be added]\\[2pt]
+\small Unrefereed draft, prepared with substantial AI assistance. Version of 8 November 2026.}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Grohe, Neuen and Schweitzer showed that isomorphism of graphs of maximum degree $d$ is decidable in time $n^{O((\log d)^c)}$ for an absolute constant $c$, without determining $c$. We record what we can establish about $c$. A variant of a lemma of Pago, whose primitive case Pago credits to Wiebking, makes the giant degree of the Grohe--Neuen--Schweitzer recursion fall by a constant factor per round, and so shortens that recursion to height $O(\log d)$. Together with an elementary treatment of the one place where their algorithm calls Babai's isomorphism test as a black box, this gives the running time $n^{O(\log^3 d)}\cdot 2^{O(\log^5 d)}$, so $c\le 10/3$ for all $d$. We then give an argument that replaces this black box by Babai's Design Lemma and Split-or-Johnson inside the recursion, charging them to Helfgott's tower potential, and yields $n^{O(\log^3 d)}$ for all $d$. The status of each statement is given explicitly: the $10/3$ statement has been through a separate AI red-team pass, the argument for exponent $3$ has not, and no human expert has checked any of this.
+\end{abstract}
+
+\tableofcontents
+
+\section{Results and status}
+
+Throughout, $\log=\log_2$, $L:=\log(d+2)$ with $d\ge2$, and $n$ is the number of vertices or points. ``Exponent $c$'' means time $n^{O(L^c)}$. Grohe, Neuen and Schweitzer \cite{GNS} (hereafter GNS) proved the theorem with $c$ unspecified; the same holds for its surveys \cite{GN21,Neu26} and for Neuen's generalization \cite{Neu20}.
+
+\medskip
+\noindent\begin{tabularx}{\linewidth}{@{}p{2.7cm}Xp{3.4cm}@{}}
+\toprule
+statement & content & status\\
+\midrule
+Lemma~\ref{lem:A} & large alternating composition factors of permutation groups give large alternating subgroups; a variant of Pago's lemma \cite{Pago23}, credit to Pago and Wiebking & \Proven\\
+Prop.~\ref{prop:k} & the giant degree drops by a factor $3/4$ per round, under the block-system rule of \S\ref{sec:tower} & \ProvenM\\
+Thm~\ref{thm:C} & running time $n^{O(L^3)}\cdot(1+X(d))$, where $X(d)$ bounds the cost of one black-box call & \ProvenM\\
+Thm~\ref{thm:X} & $X(d)\le 2^{O(L^5)}$, so running time $n^{O(L^3)}2^{O(L^5)}$; so $c\le 10/3$ for all $d$, and $c=3$ for $d\le 2^{\sqrt{\log n}}$ & \ProvenM; AI red-teamed\\
+Thm~\ref{thm:G} & running time $n^{O(L^3)}$ for all $d$ & \ProvenM; \emph{not red-teamed} (\S\ref{sec:status})\\
+\S\ref{sec:question} & a question about the proof of GNS Lemma~7.2 & a question\\
+\bottomrule
+\end{tabularx}
+\medskip
+
+Here [proven] means a complete argument is given here, relying only on the inputs listed in the ledger of \S\ref{sec:ledger}. Theorem~\ref{thm:G} is presented with a full proof, but it is new, has had only the single pass of the (AI) author who wrote it, and should be regarded as provisional until someone else has attacked it. If it fails, Theorem~\ref{thm:X} is unaffected. For $d\ge 2^{(\log n)^{2/3}}$ the Babai--Helfgott bound $\exp(O(\log^3 n))$ of \cite{HBD} is $n^{O(L^{3})}$ or better, and we use nothing new there.
+
+\section{Setting and inputs}\label{sec:setting}
+
+\paragraph{String isomorphism.} For $G\le\Sym(\Omega)$ and strings $x,y\colon\Omega\to\Sigma$, $\Iso_G(x,y)$ is the set of $g\in G$ with $x(\alpha)=y(\alpha^g)$ for all $\alpha$. It is empty or a coset of $\Aut_G(x)$. A coset $G\tau$ is reduced to $G$ by replacing $y$ with $y^{\tau^{-1}}$. Writing $\Gammahat_d$ for the class of groups all of whose composition factors are isomorphic to subgroups of $S_d$, GNS reduce isomorphism of graphs of maximum degree $d$ to string isomorphism for $\Gammahat_d$ groups \cite[Thm~8.1]{GNS}.
+
+\paragraph{Towers.} A \emph{tower} for $H\le\Sym(\Omega)$ is a chain $\{\Omega\}=\fT_0\succ\fT_1\succ\dots\succ\fT_m$ of $H$-invariant partitions of $\Omega$ ending at the discrete partition. It is \emph{almost $d$-ary} if for every $i$ and every $B\in\fT_{i-1}$ either $H_B$ acts semi-regularly on $\fT_i[B]$ or $|\fT_i[B]|\le d$. By \cite[Obs.~4.2]{GNS} the property passes to subgroups and to restrictions to invariant sets. For a transitive group, each level has a well-defined branching number $r_i$.
+
+\paragraph{Giant representations.} A homomorphism $\varphi\colon H\to S_k$ is a \emph{giant representation} if $\varphi(H)\ge A_k$. We use the notation of GNS for fullness, local certificates and comparisons.
+
+\paragraph{Inputs.} We use the following results as stated in their sources (see \S\ref{sec:ledger} for the full list).
+\begin{enumerate}
+\item[(G1)] Change of action \cite[Thms~4.3,~4.6]{GNS} with the sharper count \cite[Thm~4.16]{GN21}: a transitive $\Gammahat_d$ instance on $n$ points reduces to one instance on $N\le n^{O(L)}$ points carrying an almost $d$-ary tower.
+\item[(G2)] Unaffected stabilizers and aggregation \cite[Thm~5.8, Lemmas~6.2, 6.3, 6.6, 6.7, 6.9, App.~A]{GNS}.
+\item[(G3)] \cite[Lemma~7.1]{GNS}, i.e.\ \cite[Thm~3.2.1]{Bab15}, resting on CFSG.
+\item[(H)] From Helfgott--Bajpai--Dona \cite{HBD} (hereafter HBD): the Weisfeiler--Leman functors, the Design Lemma, and Split-or-Johnson (with its supporting Bipartite and Coherent Split-or-Johnson propositions), together with Babai--Helfgott's bound $\exp(O(\log^3 n))$ for graph isomorphism.
+\end{enumerate}
+
+\section{Lemma A: alternating sections become alternating subgroups}\label{sec:A}
+
+\begin{lemma}[\Proven]\label{lem:A}
+Let $L_0\le S_k$ have $A_m$ as a composition factor, where $m>3k/4$ and $m\ge16$. Then there is $\Delta\subseteq[k]$ with $|\Delta|\ge m$ such that $\Alt(\Delta)\le L_0$, the group $\Alt(\Delta)$ acting on $\Delta$ and fixing $[k]\setminus\Delta$ pointwise.
+\end{lemma}
+
+The proof follows the induction of Pago \cite[Lemma~\texttt{G\_groupInduction}]{Pago23}, whose primitive case he credits to Daniel Wiebking. For $m>3k/4$, Bochert's bound removes the alternative of large index that appears in Pago's statement. (Conversely, the conclusion fails for $m=5$, $k=6$, by $\mathrm{PSL}(2,5)$ acting on six points.)
+
+\begin{proof}
+Induction on the degree. Every degree $n'$ occurring satisfies $n'\le k<4m/3$, hence $m>n'/2$.
+
+\emph{Intransitive.} Let $O$ be an orbit, $R$ its complement and $K=(L_0)_{(R)}\trianglelefteq L_0$. Then $K$ is faithful on $O$, and $L_0/K\cong L_0^R$; so $A_m$ is a composition factor of $K$ or of $L_0^R$. In the first case induction gives $\Delta\subseteq O$ with $\Alt(\Delta)\le K$, and $K$ fixes $R$ pointwise. In the second, induction gives $\Delta\subseteq R$ with $\Alt(\Delta)\le L_0^R$ fixing $R\setminus\Delta$; let $L_1$ be its preimage in $L_0$ and $M\trianglelefteq L_1$ the elements fixing $O$ pointwise. Since $M^R\trianglelefteq\Alt(\Delta)$, either $M^R=\Alt(\Delta)$, giving $M=\Alt(\Delta)\le L_0$, or $M=1$. In the latter case $L_1$ embeds in $\Sym(O)$, so $\Alt(\Delta)$ is a quotient of a subgroup of $\Sym(O)$, which is impossible as $|O|\le k-|\Delta|<k/4<|\Delta|$.
+
+\emph{Transitive imprimitive} with $b'$ blocks of size $b$, $b,b'\ge 2$. Then $b,b'\le k/2<m$, and the composition factors of the kernel and of the block action have order at most $\max(b,b')!<m!/2$. So $A_m$ cannot occur.
+
+\emph{Primitive of degree $n'$.} Then $n'\ge m$. If $L_0\ge A_{n'}$ take $\Delta$ to be the whole orbit. If $n'=m$ then $|L_0|\ge m!/2$ forces $L_0\ge A_m$. Otherwise $m<n'<4m/3$, and by Bochert's theorem \cite[Thm~3.3B]{DM96} we have $|L_0|\le n'!/\lfloor(n'+1)/2\rfloor!$, which is less than $m!/2$. For $m\ge40$ this follows from $n'!/\lfloor(n'+1)/2\rfloor!\le n'^{\,n'/2}\le(4m/3)^{2m/3}<(m/e)^m/2$, and for $16\le m<40$ by direct evaluation. So $L_0$ cannot have $A_m$ as a section, a contradiction.
+\end{proof}
+
+\section{The tower and the block-system rule}\label{sec:tower}
+
+\subsection{The tower potential}
+
+Let $f(1)=0$ and $f(r)=2\lfloor\log r\rfloor-1$ for $r\ge2$. For a transitive group with tower $\T$ put $\rho(\T):=\sum_i f(r_i)$ (repeated levels are dropped); for intransitive groups take the maximum over orbits. This is Helfgott's potential \cite[Appendix]{HBD}.
+
+\begin{lemma}[\Proven]\label{lem:rho}
+\textup{(a)} $\rho(\T)\le 2\log|\Omega|$. \textup{(b)} If $H^\circ\le H$ and $\Omega'$ is an $H^\circ$-orbit, then $\rho(\T[\Omega'])\le\rho(\T)$. \textup{(c)} If $H$ is transitive and $\fT_{i-1}\succ\fE\succ\fT_i$ strictly, with $\fE$ being $H$-invariant, then inserting $\fE$ lowers $\rho$ by at least $1$; a non-strict insertion leaves $\rho$ unchanged.
+\end{lemma}
+\begin{proof}
+(a) $\sum\log r_i=\log|\Omega|$ and $f(r)\le2\log r$. (b) $r_i$ does not increase and $f$ is non-decreasing. (c) $r_i=ab$ with $a,b\ge2$ and $f(a)+f(b)\le 2\lfloor\log ab\rfloor-2=f(ab)-1$.
+\end{proof}
+
+\subsection{Algorithm G}\label{sec:algG}
+
+Fix $t:=\max\{9,3+\lceil\log d\rceil\}$ and $\tau_0:=\max\{40t,k_0\}$, for an absolute constant $k_0$ fixed in \S\ref{sec:heavy}. (GNS use $10t$; raising the threshold is free, because below it the Luks step costs $k!\le 2^{O(L\log L)}$.) Algorithm G takes an instance $(H,\T,x,y)$ with $H\le\Sym(\Omega)$, $|\Omega|=n$, and $\T$ an almost $d$-ary tower for $H$.
+
+\begin{enumerate}
+\item[G1.] If $H$ is intransitive, process orbits one by one (chain rule), with restricted towers.
+\item[G2.] Let $\fT_1$ be the top non-trivial level. If $H^{\fT_1}$ is semi-regular, apply Luks reduction to $H_{(\fT_1)}$.
+\item[G3.] \textbf{Rule.} Otherwise $|\fT_1|\le d$. Choose a maximal proper $H$-invariant partition $\fD\succeq\fT_1$. So $P:=H^{\fD}$ is primitive. If $|P|\le d^{1+\log d}$, apply Luks reduction to $H_{(\fD)}$.
+\item[G4.] Apply (G3) to $P$ to obtain $N\trianglelefteq P$ of index at most $d$, an $N$-invariant partition $\C$ of $\fD$ and a giant representation $\psi\colon N\to S_k$ with $\ker\psi=N_{(\C)}$. Let $G':=\{g\in H:g^{\fD}\in N\}$, let $\varphi:=\psi\circ(\text{action on }\fD)$ and let $\C'$ be the lift of $\C$ to $\Omega$. Then $\ker\varphi=G'_{(\C')}$. Split over the cosets of $G'$. If $G'$ is intransitive, go to G1 (its orbits are blocks of $H$ of size at most $n/2$). If $k\le\tau_0$, apply Luks reduction to $\ker\varphi$.
+\item[G5.] Compute the local certificates and comparisons of \cite[\S6]{GNS} for all $t$-subsets of $[k]$, and determine the case (i)--(v) of \cite[App.~A]{GNS}. Different cases on the two strings mean $\Iso=\emptyset$.
+\item[G6.] \emph{Light rounds.} In cases (i)--(iv) use \cite[Lemmas~6.7, 6.9]{GNS}: at most $k^6$ cosets of one group $R\le G'$. Case (iv) calls the Babai--Helfgott test on graphs with at most $k$ vertices.
+\item[G7.] \emph{Heavy round.} Case (v) is treated in \S\ref{sec:heavy} (or, for Theorem~\ref{thm:C}, by the black box of \cite[Lemma~6.7]{GNS}).
+\item[G8.] For each child coset $R\tau$, process the orbits of $R$, a largest one first, so that the large orbit is processed under $R$ itself. The orbit $O$ receives the tower
+\[
+\T_O:=\bigl([\fE\ \text{if a tower round produced it and } O=\Omega'],\ \C'[O],\ \fD[O],\ \T[O]\bigr),
+\]
+with repeated partitions removed.
+\end{enumerate}
+
+\begin{lemma}[\Proven]\label{lem:maintained}
+$\T_O$ is an almost $d$-ary tower of $R^O$-invariant partitions, and $\rho(\T_O)\le\rho(\T)$. If $\fE$ is present then $\rho(\T_O)\le\rho(\T)-1$.
+\end{lemma}
+\begin{proof}
+All listed partitions are invariant, and $\C'\succeq\fD\succeq\fT_1$ makes this a chain. The levels above $\fT_1[O]$ have at most $|\fT_1|\le d$ classes, and the lower levels are inherited. Inserting $\fD$ and $\C'$ does not raise $\rho$ and restriction does not raise it, by Lemma~\ref{lem:rho}. Inserting $\fE$, which is strict by Lemma~\ref{lem:partition}, lowers it by at least 1.
+\end{proof}
+
+The rule in G3 is a legal run of GNS's algorithm, since GNS leave the block system unspecified. We checked every use of the block system in GNS. The local certificates and comparisons need only \emph{some} almost $d$-ary invariant sequence, and $\T$ is one. Lemma 7.1 of GNS needs only primitivity of $P$ and degree at most $d$, and $|\fD|\le|\fT_1|\le d$. The windows, kernels and restrictions use only inheritance by subgroups and invariant subsets. The only place the choice matters is the inequality $H'_{(\C')}\le\ker\varphi'$ in the proof of Lemma~7.2 of GNS, which holds here by construction: the next $\fD'$ is above $\C'[\Omega']$. See \S\ref{sec:question}.
+
+\subsection{Classes as subsets of $[k]$}
+
+\begin{lemma}[\Proven]\label{lem:subset}
+Let $k>\tau_0$ in \textup{G4}. There are $1\le s<t$ and a $\varphi(G')$-equivariant surjection $\sigma\colon\C'\to\binom{[k]}{s}$ with fibres of equal size, such that for every class $c$ the stabilizer of $c$ in $\varphi(G')$ contains $\Alt([k]\setminus\sigma(c))$. The classes have equal size, and $k\le|\C'|\le n$.
+\end{lemma}
+\begin{proof}
+$N$ is a non-trivial normal subgroup of the primitive group $P$, hence transitive on $\fD$, so $\varphi(G')$ is transitive on $\C'$; it is faithful since $\ker\varphi=G'_{(\C')}$; classes have equal size by transitivity. Let $S_c$ be the stabilizer of $c$. Its index is at most $|\C'|\le d<2^{r}\le\binom kr$ for $r:=\lceil\log d\rceil+1<k/2$. By \cite[Thm~6.4]{GNS} there is $\Delta$ with $|\Delta|>k-r$ and $\Alt(\Delta)\le S_c$. Two such sets meet, since $|\Delta|>k/2$, and $\Alt$ of their union lies in $S_c$ because a transitive group generated by $3$-cycles is alternating; so there is a unique maximal $\Delta(c)$. Put $\sigma(c):=[k]\setminus\Delta(c)$, of size $s<r<t$. Equivariance is $\Delta(c^h)=\Delta(c)^h$, transitivity gives equal fibres, and $s=0$ would make $A_k$ act trivially on $\C'$, against faithfulness. Finally $|\C'|\ge\binom ks\ge k$.
+\end{proof}
+
+\section{Light rounds and Theorem C}\label{sec:light}
+
+\begin{proposition}[\ProvenM]\label{prop:k}
+Let a node have giant degree $k>\tau_0$ and let $R$ be a child obtained in \textup{G6}, or in \textup{G7} by the black box of \cite[Lemma~6.7]{GNS}. If the next node on an orbit $\Omega'$ of more than $n/2$ points has a giant of degree $k'$, then $k'\le 3k/4$.
+\end{proposition}
+\begin{proof}
+With $\fD'\succeq\C'[\Omega']$ (rule G3), $A_{k'}$ is a composition factor of a quotient of $(R^{\Omega'})^{\C'[\Omega']}$, hence of $R^{\C'}\cong R/(R\cap\ker\varphi)\cong\varphi(R)$. If $k'>3k/4$, Lemma~\ref{lem:A} yields $\Alt(\Delta)\le\varphi(R)$ with $|\Delta|>3k/4$. This contradicts the relative symmetry defect at least $1/4$ of the structures of cases (i), (ii), (iv), (v) \cite[Lemma~6.6]{GNS}; in case (iii) the group $\varphi(R)$ fixes at least $3k/4$ points.
+\end{proof}
+
+\begin{theorem}[\ProvenM]\label{thm:C}
+Let $X(d)$ bound the cost of one call in case \textup{(v)}. Then string isomorphism for $\Gammahat_d$ groups, and so isomorphism of graphs of maximum degree $d$, is decidable in time $n^{O(L^3)}\cdot(1+X(d))$.
+\end{theorem}
+\begin{proof}
+Run Algorithm G with the black box in G7. By Prop.~\ref{prop:k} every path of same-domain nodes has $O(L)$ aggregation nodes, each branching at most $2d\,k^6$, so a macro step has $2^{O(L^2)}$ nodes. Exits per node total at most $2^{O(L^2)}n$ with parts of size at most $n/2$. The induction of Theorem~\ref{thm:T}, with the type-(S) and type-(T) rounds removed, gives $N^{O(L^2)}$ macro steps on $N$ points; (G1) gives $N\le n^{O(L)}$. The non-recursive cost per node is $\mathrm{poly}(N)$ plus at most $k^6$ calls to the black box or to Babai--Helfgott on graphs with at most $k$ vertices, and $2^{O(\log^3 k)}\le N^{O(L^2)}$ since $k\le N$.
+\end{proof}
+
+\section{Theorem X: the black box in time $2^{O(\log^5 d)}$}\label{sec:X}
+
+Let $X(m,t)$ be the worst-case cost of computing $\Iso(\fA_1,\fA_2)$ for pairs of $t$-ary structures on at most $m$ points such that every injective $t$-tuple has exactly one colour and every twin class has size at most $\tfrac34 m$. GNS's case-(v) structures qualify \cite[proof of Lemma~6.6]{GNS}.
+
+\begin{theorem}[\ProvenM]\label{thm:X}
+$X(m,t)\le 2^{O(t\log^3 m+\log^5 m)}$. Consequently $X(d)\le 2^{O(\log^5 d)}$ and isomorphism of graphs of maximum degree $d$ is decidable in time $n^{O(\log^3 d)}2^{O(\log^5 d)}$; this is $n^{O(\log^3 d)}$ for $d\le 2^{\sqrt{\log n}}$, and, with the Babai--Helfgott bound, $n^{O(\log^{10/3}d)}$ for all $d$.
+\end{theorem}
+
+\begin{proof}
+Let $\fA_1,\fA_2$ be structures on $D_1,D_2$ of size $m$ (if $m\le 20t$, try all bijections). Apply $t$-dimensional Weisfeiler--Leman with one colour-naming scheme to obtain $t$-ary coherent configurations $\fX_i$ with $\Aut(\fX_i)=\Aut(\fA_i)$. The Design Lemma \cite[Prop.~\texttt{design}]{HBD}, with $\alpha=3/4$, gives on side 1 a tuple $\vec x$ of length less than $t$ such that either $\fX_{1,\vec x}^{(1)}$ has no $\tfrac34$-dominant colour, or it has a dominant class $C$ and $(\fX_{1,\vec x})^{(2)}[C]$ is not a clique. In the second case, an imprimitive configuration yields a canonical equipartition by the first disconnected colour, and a uniprimitive one is fed to Split-or-Johnson with $\alpha'=3/4$, which yields a coloured $\tfrac34$-partition or a Johnson scheme on a canonical $\Gamma_0\subseteq C$ with $|\Gamma_0|\ge\tfrac34|C|$. Let $Y_1$ be the resulting structure with individualized points $I_1$, and let $H:=\Aut(Y_1)\cap\Sym(D_1)_{(I_1)}$.
+
+On side 2, enumerate all tuples $\vec y$ of the same length and all choice sequences of the Split-or-Johnson procedure (the choice tree has $m^{O(\log m)}$ leaves \cite{HBD}). Each surviving candidate gives a coset $H\tau$. Since every step is functorial, $\Iso(\fA_1,\fA_2)$ is the union of the sets $\Iso_{H\tau}(x_1,x_2)$ of isomorphisms of the colour strings on $D^{\langle t\rangle}$. This union is a coset of $\Aut(\fA_1)$, and a generating set follows in polynomial time once the pieces are known.
+
+\emph{Lemma S.} For $m$ at least an absolute constant, any composition factor $A_j$ ($j\ge5$) of a subgroup of $H$ has $j\le\tfrac34 m$. Indeed, individualized points are fixed, and otherwise $H$ embeds in a product of symmetric groups on colour classes of size at most $\tfrac34m$, or of $\Sym(b)\wr\Sym(p)$ with $b\le\tfrac34m$ and $p\le|C|/2$ (admissibility of partitions, block size at least 2), or of $\Sym(D\setminus\Gamma_0)$ of degree at most $\tfrac7{16}m$ with $\Sym(\Lambda)$ for a Johnson scheme $\mathcal J(r,s)$, $s\ge 2$, $r\le1+\sqrt{2m}$. Composition factors of subgroups of products and wreath products come from subgroups of the factors.
+
+Each $\Iso_{H\tau}$ is computed by the algorithm of Theorem~\ref{thm:C}, with parameter $d:=m$ and tower ``agree on the first $i$ coordinates'' (its almost $m$-ary part, so no change of action is needed); there are at most $m^t$ points, so $2^{O(t\log^3 m)}$ nodes, and each node makes at most $k^6$ black-box calls. Case-(iv) calls cost $2^{O(\log^3 m)}$ and case-(v) calls are made on at most $\tfrac34 m$ points by Lemma~S, with arity $t'\le\log m+4$, and with twin classes at most $t'+1$. Hence
+\[
+X(m,t)\le 2^{O(t\log^3 m)}\bigl(1+X(\tfrac34m,\,\max\{9,3+\lceil\log m\rceil\})\bigr).
+\]
+Unrolling over the $O(\log m)$ levels gives $O(t\log^3m+\sum_j\log^4m_j)=O(t\log^3m+\log^5m)$ in the exponent.
+
+With the notation of Theorem~\ref{thm:C}, the running time is $n^{O(L^3)}2^{O(L^5)}$. When $\log n\ge L^2$ this is $n^{O(L^3)}$; with the switch to Babai--Helfgott, the exponent of $L$ is $\min\{\max(3,5-x),2x\}$ for $\log n=L^x$, with maximum $10/3$ at $x=5/3$.
+\end{proof}
+
+\section{Theorem G: the heavy round}\label{sec:heavy}
+
+We now replace the case-(v) black box of G7 by a Design-Lemma round.
+
+\subsection{Inputs from Helfgott--Bajpai--Dona}
+
+We use Split-or-Johnson in the following form, read from HBD's proofs of Split-or-Johnson and of its Bipartite and Coherent versions (this reading is the part of the argument most in need of independent checking):
+
+\begin{quote}
+There is a deterministic procedure $\mathrm{Proc}$ taking a uniprimitive classical coherent configuration $\fX$ on $m$ points and a stream $\zeta$ of points, with the following properties: \textup{(i)} $\mathrm{Proc}(\fX^\pi,\zeta^\pi)=\mathrm{Proc}(\fX,\zeta)^\pi$ for all bijections $\pi$; \textup{(ii)} along every path of the tree of valid streams, the product of the numbers of options at the choice points is at most $m^{c_H\log m}$, so the tree has at most $m^{c_H\log m}$ leaves; \textup{(iii)} at most $c_H\log^2m$ points with at least two options are read along any path; \textup{(iv)} the output is either a coloured $\tfrac34$-partition (each colour class equipartitioned, blocks of size between $2$ and $\tfrac34 m$, except for singleton colour classes) or a Johnson scheme $\mathcal J(r,s')$, $s'\ge2$, $r\ge2s'$, on $\Gamma_0$ with $|\Gamma_0|\ge\tfrac34m$, with an explicit identification with the $s'$-subsets of an $r$-set $\Lambda$.
+\end{quote}
+
+The bound (ii) is HBD's index bound, which is a worst-case bound over executions, hence holds along every path; the leaf count follows, since the number of leaves below a node is at most its number of children times the maximum below a child. Then (iii) follows from (ii), since each point read from a set with at least two options contributes a factor at least $2$ to the product along its path, while points read from singleton sets are canonical and are fixed in any case. Fix $k_0$ such that $c_H\log^2 k\le k/40$ for all $k\ge k_0$.
+
+\subsection{The pairwise round}
+
+Consider a node in case (v) with $|D_1|=|D_2|=m>3k/4$ (else output $\emptyset$), and the $t$-ary structures $\fA_1,\fA_2$ with colours named jointly \cite[App.~A]{GNS}. By \cite[Lemma~6.6]{GNS}, every $g\in\Iso_{G'}(x_1,x_2)$ has $\varphi(g)|_{D_1}\in\Iso(\fA_1,\fA_2)$ and the twin classes of $\fA_i$ have size at most $t-1$.
+
+\begin{enumerate}
+\item Apply the Weisfeiler--Leman functors with joint colour names, obtaining $\fX_1,\fX_2$.
+\item Apply the Design Lemma with $\alpha=3/4$ to $\fX_1$, taking the lexicographically first tuple $\vec x\in D_1^{<t}$ meeting an outcome. Build $\mathrm{Proc}^+(\fX,\vec x,\zeta)$: output the colouring in outcome (1); output the colouring and the partition by the first disconnected colour if outcome (2) is imprimitive; output the colouring and $\mathrm{Proc}(\fX'',\zeta)$ if it is uniprimitive. Take the first valid $\zeta$ on side 1. The output $Y_1$ also records the set $I$ of individualized points and the colour of $[k]\setminus D_1$.
+\item Let $L_Y$ be the group of permutations in $\varphi(G')$ that preserve $D_1$ and act on $[k]$ preserving $Y_1$, fixing $I$ pointwise, and let $R:=\varphi^{-1}(L_Y)$.
+\item For each $\vec y\in D_2^{|\vec x|}$ and each leaf $\zeta'$ of the stream tree, compute $Y_2=\mathrm{Proc}^+(\fX_2,\vec y,\zeta')$; discard mismatched types and parameters; otherwise compute the set of $g\in G'$ with $\varphi(g)$ carrying $(D_1,Y_1,I_1)$ to $(D_2,Y_2,I_2)$. This is empty or a coset $R\tau_j$.
+\end{enumerate}
+
+\begin{lemma}[\ProvenM]\label{lem:pairwise}
+$\Iso_{G'}(x_1,x_2)=\bigcup_j\Iso_{R\tau_j}(x_1,x_2)$; the number of children is at most $C_h:=m^{t+c_H\log m}=2^{O(L^2)}$; steps \textup{1--4} take time $2^{O(L^2)}$; and $\Iso_{G'}(x_1,x_2)$ is recovered from the children in polynomial time.
+\end{lemma}
+\begin{proof}
+For $g\in\Iso_{G'}(x_1,x_2)$ put $\pi:=\varphi(g)|_{D_1}$. Then $\pi\in\Iso(\fX_1,\fX_2)$, and functoriality gives $\mathrm{Proc}^+(\fX_2,\vec x^{\,\pi},\zeta^\pi)=Y_1^\pi$, so $g$ lies in the corresponding coset. Each nonempty $\Iso_{R\tau_j}$ is a coset of $K:=\Aut_R(x_1)$, say $K\rho_j$, and $\Aut_{G'}(x_1)=\langle K,\rho_j\rho_0^{-1}\rangle$. The count is tuples ($m^t$) times stream leaves.
+\end{proof}
+
+In particular the two sides are compared only by aligning explicit objects; no isomorphism of $t$-ary structures is computed. This is the case-3 reduction of HBD with $G'$ in place of $\Sym(D)$. Heavy rounds and the case-(iv) family never compose: the cases of \cite[App.~A]{GNS} are invariant and mutually exclusive.
+
+\subsection{The trichotomy}
+
+Write $\mu$ for the uniform measure on $\binom{[k]}{s}$, and let $L$ be the group $L_Y$ acting on $s$-subsets. For an $R$-orbit $\Omega'$, its image $P=\{\sigma(c):c\text{ meets }\Omega'\}$ is an $L$-orbit and $|\Omega'|/n\le\mu(P)$ by Lemma~\ref{lem:subset}. We call the round a \emph{shrink} if every $R$-orbit has at most $\tfrac56n$ points. Throughout, a uniform $s$-subset is realized as a uniform injective tuple $(u_1,\dots,u_s)$, and $s<t\le k/40$.
+
+\begin{lemma}[\Proven]\label{lem:colouring}
+If $L$ preserves a colouring of $[k]$ whose classes have size at most $\tfrac34k$, the round is a shrink.
+\end{lemma}
+\begin{proof}
+The colour-count vector of $S$ is $L$-invariant. Given $u_2,\dots,u_s$, it forces the colour of $u_1$, an event of probability at most $(\tfrac34k)/(k-s+1)<\tfrac56$.
+\end{proof}
+
+\begin{lemma}[\Proven]\label{lem:partition}
+Let $Y$ be a coloured partition with $L\ge\Aut(Y)\cap A_k\cap\Sym([k])_{(I)}$ and $|I|\le k/20$. Assume that every colour class of size greater than $\tfrac34k$ carries a partition into blocks of equal size $b$ with $2\le b\le\tfrac34k$. Then either the round is a shrink, or the orbit $\Omega'$ with more than $\tfrac56n$ points carries an $R^{\Omega'}$-invariant partition $\fE$ with $\C'[\Omega']\prec\fE\prec\{\Omega'\}$, both strict.
+\end{lemma}
+\begin{proof}
+If all colour classes have size at most $\tfrac34k$, use Lemma~\ref{lem:colouring}. Otherwise there is a unique class $E$ of size greater than $\tfrac34k$; let $\Pi_E$ be its partition. Put $E^\circ:=E\setminus I$ and $Q:=[k]\setminus E^\circ$, so $|Q|<k/4+|I|$; let $\Pi^\circ:=\{B\setminus I:B\in\Pi_E\}\setminus\{\emptyset\}$ and define $\Psi(S):=(|S\cap B^\circ|)_{B^\circ\in\Pi^\circ}$. The fibres of $\Psi$ are permuted by $L$. Let $P$ be the $L$-orbit with $\mu(P)>\tfrac56$ and let $\fE$ be the partition of $\Omega'$ into fibres of $\Psi\circ\sigma$; it is $R^{\Omega'}$-invariant and coarser than $\C'[\Omega']$.
+
+\emph{$\fE\ne\{\Omega'\}$.} Fix a value of $\Psi$ and condition on $u_2,\dots,u_s$. Then $u_1$ must lie in one specified block of $\Pi^\circ$, or in $Q$, of size at most $\tfrac34k$, so the probability is at most $(\tfrac34 k)/(0.9k)=\tfrac56$. So every fibre has measure at most $\tfrac56$, and $P$ meets at least two fibres, whence $\fE$ has at least two blocks.
+
+\emph{$\fE\ne\C'[\Omega']$.} It suffices that some fibre of $\Psi$ contains two elements of $P$. Suppose not. Then every $g\in L$ preserving all blocks of $\Pi^\circ$ fixes every $S\in P$. If $B^\circ$ has at least three points and is split by $S$, a $3$-cycle inside $B^\circ$ moves $S$. If $B^\circ=\{a,b'\}$ with $a\in S$, $b'\notin S$, there is another block of size at least $2$: otherwise every other block of $\Pi_E$ lost a point to $I$, and then $|E^\circ|\le 2+|I|$, contrary to $|E^\circ|>\tfrac34k-|I|$. Taking a transposition $(c\,c')$ inside that block, the element $g=(a\,b')(c\,c')\in A_k$ fixes $I$ pointwise, preserves all blocks and satisfies $b'\in S^g\setminus S$. So every $S\in P$ meets each block of size at least 2 in nothing or in the whole block. Conditioning on $u_1$: if $u_1$ lies in a block of size at least $2$, a fixed other point of that block must be among $u_2,\dots,u_s$, of probability $(s-1)/(k-1)<\tfrac1{10}$. There are at most $|I|$ singleton blocks. So $\mu(P)\le(|Q|+|I|)/k+\tfrac1{10}\le\tfrac14+\tfrac1{10}+\tfrac1{10}<\tfrac56$, a contradiction.
+\end{proof}
+
+\begin{lemma}[\Proven]\label{lem:johnson}
+Let $Y$ be a Johnson structure, $\mathcal J(r,s')$ on $\Gamma_0$ with $O:=[k]\setminus\Gamma_0$ coloured. Then either the round is a shrink, or any giant at the next node on the large orbit has degree $k'\le r\le1+\sqrt{2k}$.
+\end{lemma}
+\begin{proof}
+If $|\Gamma_0|\le\tfrac34k$, use Lemma~\ref{lem:colouring}. Otherwise $K:=|O|<k/4$. The quantity $j:=|S\cap O|$ is $L$-invariant. Let $N_i:=\binom Ki\binom{k-K}{s-i}$. For $1\le j\le\min(K,s)$: if $Ks\le3.25jk$ then $N_{j-1}/N_j\ge 0.65jk/(Ks)\ge\tfrac15$, and if $Ks>3.25jk$ then $(K-j)(s-j)>2.9jk>0$ and $N_{j+1}/N_j\ge1.45$. In both cases $N_j<\tfrac56\binom ks$. So a large orbit has $j=0$, i.e.\ every class meeting $\Omega'$ has $\sigma(c)\subseteq\Gamma_0$. Then $\Alt(O)\le\Alt([k]\setminus\sigma(c))$ fixes each such class (Lemma~\ref{lem:subset}), so $(R^{\Omega'})^{\C'[\Omega']}$ is a quotient of $L/(L\cap\Alt(O))$, and its alternating composition factors are of degree at most $r$, because the restriction to $\Gamma_0$ lands in $\Aut(\mathcal J(r,s'))$, which is $\Sym(\Lambda)$ or $\Sym(\Lambda)\times C_2$, and $L\cap\Sym(O)$ contains $L\cap\Alt(O)$ with index at most $2$. Since $\fD'\succeq\C'[\Omega']$, we get $k'\le r$. Finally $\binom r2\le\binom r{s'}=|\Gamma_0|\le k$.
+\end{proof}
+
+\begin{proposition}[\ProvenM]\label{prop:trichotomy}
+A heavy round is one of: \textup{(S)} a shrink; \textup{(T)} an orbit of more than $\tfrac56n$ points and a partition $\fE$ to be inserted, so that $\rho$ drops by at least $1$; \textup{(J)} an orbit of more than $\tfrac56n$ points, with next giant of degree at most $1+\sqrt{2k}$.
+\end{proposition}
+\begin{proof}
+Outcome (1) of the Design Lemma gives a colouring with classes below $\tfrac34m\le\tfrac34k$, plus $[k]\setminus D$ of size below $k/4$: Lemma~\ref{lem:colouring}. Outcome (2) with a partition: a colour class exceeding $\tfrac34k$ lies in $C$, and Lemma~\ref{lem:partition} applies, because $L$ contains $\Aut(Y)\cap A_k\cap\Sym([k])_{(I)}$ and $|I|\le t+c_H\log^2k\le k/20$. Outcome (2) with a Johnson scheme: Lemma~\ref{lem:johnson}.
+\end{proof}
+
+\section{The recurrence and Theorem G}\label{sec:recurrence}
+
+Let $T(n,\rho)$ be the maximum running time of Algorithm G on instances with at most $n$ points and $\rho(\T)\le\rho$.
+
+\begin{lemma}[\ProvenM]\label{lem:Z}
+For a transitive instance reaching \textup{G5}, let $\mathcal T$ be its tree of same-domain nodes (following orbits of more than $n/2$ points through light rounds and type-\textup{(J)} rounds, and stopping at type-\textup{(S)} or \textup{(T)} rounds). Then $|\mathcal T|\le Z:=2^{O(L^2)}$.
+\end{lemma}
+\begin{proof}
+Along a path the giant degree decreases: $k'\le 3k/4$ by Prop.~\ref{prop:k}, or $k'\le1+\sqrt{2k}$ by Prop.~\ref{prop:trichotomy}(J). So a path has $O(L)$ aggregation nodes. Light branching $2d\,k^6$ per node contributes $2^{O(L^2)}$. Type-(J) nodes have $C_h(k)=k^{t+O(\log k)}$ children; with $k_{i+1}\le k_i^{2/3}$ (valid as $k_i>360$) we get $\sum_i(t\log k_i+O(\log^2k_i))=O(L^2)$.
+\end{proof}
+
+\begin{theorem}[\ProvenM]\label{thm:T}
+There are $A,B=O(L^2)$ with $T(n,\rho)\le n^A2^{B\rho}$ for all $n\ge1$, $\rho\ge0$.
+\end{theorem}
+\begin{proof}
+Induct on $n+\rho$. Let $U=n^A2^{B\rho}$. Every recursive call has $\rho'\le\rho$ by Lemma~\ref{lem:maintained}. The intransitive step and the semi-regular step of G2 are routine: $\sum_iT(n_i,\rho)$ with $\sum n_i=n$, respectively $b^2T(n/b,\rho)\le b^{2-A}U$. For a macro step sum over $\mathcal T$. Each node has exits with $\sum n_i\le2^{O(L^2)}n$ and $n_i\le n/2$ (certificates, comparisons, small orbits, the Luks steps G3, G4), contributing at most $Z2^{O(L^2)}2^{-(A-1)}U$. Rounds of type (S) contribute at most $ZC_h(5/6)^{A-1}U$. Rounds of type (T) contribute at most $ZC_h2^{-B}U$ for the large orbit (at $\rho-1$) and $ZC_h6^{-(A-1)}U$ for small orbits. The non-recursive work per node is $\mathrm{poly}(n)\cdot2^{O(L^2)}$ plus at most $k^6$ Babai--Helfgott calls of cost $\exp(O(\log^3k))$; since $k\le n$, $\log^3k\le L^2\log n$, and these terms are absorbed in $n^A$. All constraints hold for suitable $A,B=O(L^2)$.
+\end{proof}
+
+\begin{theorem}[\ProvenM; not red-teamed]\label{thm:G}
+String isomorphism for $\Gammahat_d$ groups on $n$ points, and isomorphism of graphs of maximum degree $d\ge2$, are decidable in time $n^{O(\log^3d)}$ for all $d$.
+\end{theorem}
+\begin{proof}
+By (G1), and orbit-by-orbit processing, one instance on $N\le n^{O(L)}$ points with an almost $d$-ary tower suffices. Lemma~\ref{lem:rho}(a) gives $\rho\le2\log N$, and Theorem~\ref{thm:T} gives $N^{A}2^{2B\log N}=N^{O(L^2)}=n^{O(L^3)}$.
+\end{proof}
+
+\section{Bounds in all regimes}\label{sec:regimes}
+
+Write $\log n=L^x$, with $x\ge 1$.
+
+\medskip
+\noindent\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+range & bound & source\\
+\midrule
+$x\ge2$ & $n^{O(L^3)}$ & Theorem~\ref{thm:C} with Theorem~\ref{thm:X}\\
+$3/2\le x<2$ & $n^{O(L^3)}$ & Theorem~\ref{thm:G} only\\
+$1\le x<3/2$ & $\exp(O(\log^3 n))=n^{O(L^{2x})}$, better than $L^3$ & Babai--Helfgott \cite{HBD}\\
+\bottomrule
+\end{tabularx}
+\medskip
+
+Thus Theorem~\ref{thm:G} gives $n^{O(\min\{\log^3d,\ \log^2n\})}$ in all regimes. Without Theorem~\ref{thm:G}, the range $3/2<x<2$ remains at exponent $\min\{5-x,2x\}$, with worst case $10/3$ at $x=5/3$. Going below exponent $2$ for all $d$ would beat the best published bound for general graph isomorphism, since $d\le n$. The exponent $3$ is a limit of this accounting, namely $\log N=\Theta(L\log n)$ times $K=\Theta(L^2)$ per macro step. It is not a lower bound for any algorithm.
+
+\section{Status of Theorem G}\label{sec:status}
+
+We have written a complete argument for Theorem~\ref{thm:G}, but we regard it as provisional. These are the points a referee should look at first.
+
+\begin{enumerate}
+\item The functorial reading of Split-or-Johnson (the quoted statement at the start of \S\ref{sec:heavy}, in particular its leaf bound), derived by reading the proofs in \cite{HBD}, not re-proved. If the leaf bound were weaker, the exponent would change accordingly.
+\item The maintained tower (\S\ref{sec:algG}) and its compatibility with the local certificates. This is checked in the text, but it is new.
+\item The trichotomy (Prop.~\ref{prop:trichotomy}), which applies the combinatorial Lemmas~\ref{lem:partition}--\ref{lem:johnson} through Lemma~\ref{lem:subset}. The elementary inequalities have been machine-checked on small parameters. The group-theoretic inputs have not been checked by machine.
+\end{enumerate}
+
+Theorem~\ref{thm:X} and the facts of \S\S\ref{sec:A}--\ref{sec:X} went through a separate AI red-team pass during the work leading to this note. Theorem~\ref{thm:G} has not. No human expert has checked any statement here.
+
+\section{A question about GNS Lemma 7.2}\label{sec:question}
+
+\textbf{Question for the authors of \cite{GNS}.} In the proof of Lemma~7.2 of \cite{GNS} (arXiv v3, line 2126 of the source) one needs $H'_{(\C')}\le\ker\varphi'$, that is, that the block system chosen on the next level is coarser than $\C'$. As written (and in the corresponding passage of \cite{Neu20}, which refers to ``a minimal block system''), any block system above the given $\fT_1$ may be chosen. For the group $G=(S_m\wr S_2)\times C_q$ in product action on $[m]^2\times[q]$, the partition $\fT_1$ into the cells $\{(a,b)\}\times[q]$, and the string $x(a,b,c)=[a\in U]$ with $|U|\approx 0.3\,m$, the column system gives $k'=k$ on the next level, so the inequality $k'\le k-k/(3\log k)$ fails for that choice. The running time is not contradicted, and choosing the next block system above $\C'$ (always possible, and the rule of \S\ref{sec:tower}) restores the inequality. Is this the intended reading, and is it addressed in the journal version? We could not access the SICOMP text, so we do not claim it is an error.
+
+\section{Ledger of assumptions}\label{sec:ledger}
+
+\noindent\begin{tabularx}{\linewidth}{@{}p{4.9cm}Xp{2.2cm}@{}}
+\toprule
+input & used for & status\\
+\midrule
+\cite{GNS}, Thms~4.3, 4.6; \cite[Thm~4.16]{GN21} & change of action, $N\le n^{O(L)}$ & published; CFSG\\
+\cite{GNS}, Thm~5.8, Lemmas~6.2, 6.3, 6.6, 6.7, 6.9, App.~A (including its Thm~A.2) & local certificates, aggregation & published; CFSG for Thm~A.2\\
+\cite{GNS}, Lemma~7.1 (\cite[Thm~3.2.1]{Bab15}) & giant representations & published; CFSG\\
+\cite[Thm~6.4]{GNS} (from \cite[Thm~5.2A,B]{DM96}) & Lemma~\ref{lem:subset} & published\\
+\cite[Thm~8.1]{GNS} & reduction from graphs & published\\
+\cite{HBD}, Design Lemma, Split-or-Johnson, WL functors & Theorems~\ref{thm:X},~\ref{thm:G} & published; our reading of the proofs in \S\ref{sec:heavy}\\
+\cite{HBD}, $\exp(O(\log^3 n))$ for GI & case (iv), and the switch & published\\
+Bochert via \cite[Thm~3.3B]{DM96} & Lemma~\ref{lem:A} & classical\\
+\cite{Pago23} (Wiebking) & Lemma~\ref{lem:A}, method of proof & credited\\
+\bottomrule
+\end{tabularx}
+\medskip
+
+\paragraph{Not checked.} The SICOMP text of \cite{GNS} and Neuen's thesis \cite{Neu19} were not available to us; we rely on \cite{GN21} for the $n^{O(\log d)}$ count. Theorem~\ref{thm:G} and its supporting Lemmas of \S\S\ref{sec:heavy},\ref{sec:recurrence} have not been red-teamed. We searched \cite{GNS,Neu20,GN21,Neu26}, Pago's paper, and citing papers on the dates of the search, and we found no explicit value of $c$; absence of evidence is all we can report, particularly for the two inaccessible sources.
+
+\bibliographystyle{alpha}
+\bibliography{refs}
+
+\end{document}
