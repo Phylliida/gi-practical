@@ -1,0 +1,10 @@
+turyn_skew3_L2 n=81 mean_p2=0.0836 max_p2=0.1429 1/sqrt(n)=0.1111
+  c=2.00 th=0.0002 |B_c|=3240 distinct_sets=3240 d_c=>=5
+  c=1.00 th=0.0123 |B_c|=3240 distinct_sets=3240 d_c=>=5
+  c=0.75 th=0.0370 |B_c|=3240 distinct_sets=3240 d_c=>=5
+  c=0.50 th=0.1111 |B_c|=648 distinct_sets=648 d_c=>=5
+  c=0.40 th=0.1724 |B_c|=0 d_c=0
+  c=0.30 th=0.2676 |B_c|=0 d_c=0
+  c=0.20 th=0.4152 |B_c|=0 d_c=0
+  c=0.10 th=0.6444 |B_c|=0 d_c=0
+  c=0.05 th=0.8027 |B_c|=0 d_c=0

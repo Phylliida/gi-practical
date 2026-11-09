@@ -1,0 +1,50 @@
+paley13 n=13 mean_p2=0.0513 max_p2=0.0513 1/sqrt(n)=0.2774
+  c=2.00 th=0.0059 |B_c|=78 distinct_sets=78 d_c=2
+  c=1.00 th=0.0769 |B_c|=0 d_c=0
+  c=0.75 th=0.1461 |B_c|=0 d_c=0
+  c=0.50 th=0.2774 |B_c|=0 d_c=0
+  c=0.40 th=0.3584 |B_c|=0 d_c=0
+  c=0.30 th=0.4633 |B_c|=0 d_c=0
+  c=0.20 th=0.5987 |B_c|=0 d_c=0
+  c=0.10 th=0.7738 |B_c|=0 d_c=0
+  c=0.05 th=0.8796 |B_c|=0 d_c=0
+paley17 n=17 mean_p2=0.0662 max_p2=0.0662 1/sqrt(n)=0.2425
+  c=2.00 th=0.0035 |B_c|=136 distinct_sets=136 d_c=3
+  c=1.00 th=0.0588 |B_c|=136 distinct_sets=136 d_c=3
+  c=0.75 th=0.1194 |B_c|=0 d_c=0
+  c=0.50 th=0.2425 |B_c|=0 d_c=0
+  c=0.40 th=0.3220 |B_c|=0 d_c=0
+  c=0.30 th=0.4274 |B_c|=0 d_c=0
+  c=0.20 th=0.5674 |B_c|=0 d_c=0
+  c=0.10 th=0.7533 |B_c|=0 d_c=0
+  c=0.05 th=0.8679 |B_c|=0 d_c=0
+paley25 n=25 mean_p2=0.0833 max_p2=0.0833 1/sqrt(n)=0.2000
+  c=2.00 th=0.0016 |B_c|=300 distinct_sets=300 d_c=3
+  c=1.00 th=0.0400 |B_c|=300 distinct_sets=300 d_c=3
+  c=0.75 th=0.0894 |B_c|=0 d_c=0
+  c=0.50 th=0.2000 |B_c|=0 d_c=0
+  c=0.40 th=0.2759 |B_c|=0 d_c=0
+  c=0.30 th=0.3807 |B_c|=0 d_c=0
+  c=0.20 th=0.5253 |B_c|=0 d_c=0
+  c=0.10 th=0.7248 |B_c|=0 d_c=0
+  c=0.05 th=0.8513 |B_c|=0 d_c=0
+paley29 n=29 mean_p2=0.0887 max_p2=0.0887 1/sqrt(n)=0.1857
+  c=2.00 th=0.0012 |B_c|=406 distinct_sets=406 d_c=4
+  c=1.00 th=0.0345 |B_c|=406 distinct_sets=406 d_c=4
+  c=0.75 th=0.0800 |B_c|=406 distinct_sets=406 d_c=4
+  c=0.50 th=0.1857 |B_c|=0 d_c=0
+  c=0.40 th=0.2600 |B_c|=0 d_c=0
+  c=0.30 th=0.3642 |B_c|=0 d_c=0
+  c=0.20 th=0.5099 |B_c|=0 d_c=0
+  c=0.10 th=0.7141 |B_c|=0 d_c=0
+  c=0.05 th=0.8450 |B_c|=0 d_c=0
+paley37 n=37 mean_p2=0.0781 max_p2=0.0781 1/sqrt(n)=0.1644
+  c=2.00 th=0.0007 |B_c|=666 distinct_sets=666 d_c=>=4
+  c=1.00 th=0.0270 |B_c|=666 distinct_sets=666 d_c=>=4
+  c=0.75 th=0.0667 |B_c|=666 distinct_sets=666 d_c=>=4
+  c=0.50 th=0.1644 |B_c|=0 d_c=0
+  c=0.40 th=0.2359 |B_c|=0 d_c=0
+  c=0.30 th=0.3385 |B_c|=0 d_c=0
+  c=0.20 th=0.4857 |B_c|=0 d_c=0
+  c=0.10 th=0.6969 |B_c|=0 d_c=0
+  c=0.05 th=0.8348 |B_c|=0 d_c=0

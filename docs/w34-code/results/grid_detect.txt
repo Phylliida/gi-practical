@@ -1,0 +1,8 @@
+base 9 n=81 v=9 row: pairs 8 min|T| range [2,2], distinct-T range [7,7], max|T| range [18,18]
+base 9 n=81 v=9 col: pairs 8 min|T| range [2,2], distinct-T range [7,7], max|T| range [18,18]
+base 9 n=81 v=9 other: pairs 64 min|T| range [2,2], distinct-T range [10,10], max|T| range [30,30]
+base 13 n=169 v=13 row: pairs 12 min|T| range [2,2], distinct-T range [11,11], max|T| range [26,26]
+base 13 n=169 v=13 col: pairs 12 min|T| range [2,2], distinct-T range [11,11], max|T| range [26,26]
+base 13 n=169 v=13 other: pairs 144 min|T| range [2,2], distinct-T range [14,14], max|T| range [38,38]
+limit/2-round shatter L=2 base 5 n=625 d=3 rounds=2: OK
+limit/2-round shatter L=2 base 5 n=625 d=3 rounds=None: OK

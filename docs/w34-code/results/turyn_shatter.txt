@@ -1,0 +1,11 @@
+--- 9 1
+base 9 order 9: config (2, 4, 3, 2, 0, 1)
+Thm B shattering check (2-round tests): base 9, L=1, m=2, n=81, d=1, patterns tested 2: OK
+--- 13 1
+base 13 order 13: config (4, 6, 2, 3, 0, 1)
+Thm B shattering check (2-round tests): base 13, L=1, m=2, n=169, d=1, patterns tested 2: OK
+--- 5 1
+base 5 order 5: config None
+--- 9 2
+base 9 order 9: config (2, 4, 3, 2, 0, 1)
+Thm B shattering check (2-round tests): base 9, L=2, m=4, n=6561, d=3, patterns tested 8: OK

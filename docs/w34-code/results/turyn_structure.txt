@@ -1,0 +1,11 @@
+row-pair formula, base 9: 3905 triples, 0 mismatches
+row-pair formula, base 13: 3941 triples, 0 mismatches
+product-coarsening check, base 9: 200 cases, 0 violations (product cell not monochromatic in W)
+product-coarsening check, base skew3: 200 cases, 0 violations (product cell not monochromatic in W)
+product-coarsening check, base 5: 200 cases, 0 violations (product cell not monochromatic in W)
+limit-rounds k=2 shattering: base 5, L=1, m=2, n=25, d=1: OK
+limit-rounds k=2 shattering: base 9, L=1, m=2, n=81, d=1: OK
+base 9, k=2: samples 117, projections discrete 0, W discrete 0, proj-discrete-but-W-not (converse failures): 0
+base 9, k=3: samples 119, projections discrete 44, W discrete 44, proj-discrete-but-W-not (converse failures): 0
+base 5, k=2: samples 285, projections discrete 181, W discrete 0, proj-discrete-but-W-not (converse failures): 181
+base 5, k=3: samples 266, projections discrete 253, W discrete 230, proj-discrete-but-W-not (converse failures): 23

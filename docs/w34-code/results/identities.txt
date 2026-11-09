@@ -1,0 +1,14 @@
+paley13 n=13 partitions 60: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+paley17 n=17 partitions 60: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+paley29 n=29 partitions 60: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+paley37 n=37 partitions 60: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+paley41 n=41 partitions 60: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+paley25 n=25 partitions 60: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0 (n square: parity/trace not asserted)
+sp29_0 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_1 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_2 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_3 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_4 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_5 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_6 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
+sp29_7 n=29 partitions 40: identity failures 0; cell-bound failures 0; nonsquare parity failures 0, trace failures 0
