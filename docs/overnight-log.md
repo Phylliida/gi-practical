@@ -710,3 +710,9 @@ are red-teams, a LaTeX paper, and final integration.
   classically, so `s := done {iso set}` with zero calls satisfies the conclusion with C = 0. Proved in Lean: docs/vacuity-graphIso-final.lean.txt
   (axioms: the 3 standard ones). The proof does build a real reduction, but the statement does not expose it. Do NOT cite these theorems as they stand.
 * w43-lean-statement: restate so that the trivial witness fails.
+
+### w40-solvable (done, commits 6737822, b6a4d9e; docs/w40-solvable.md), NOT yet red-teamed
+* The old canonical labeler was exponential at degree 3 (binary tree + random leaf matching: n=66 > 60s). gi/luks.py gives a deterministic polynomial
+  guarantee when twin blocks ≤ 4 (every d ≤ 5; hand proof, crude exponent about 53, group-order bounds cited from memory); guarantee=True gives
+  n^{O(d²)}. Remaining exponential paths at d ≥ 6 are counted. nauty and Traces solve these families easily.
+* w44-redteam-luks: adversarial check of the polynomial guarantee.
