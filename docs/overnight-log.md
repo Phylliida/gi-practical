@@ -664,3 +664,8 @@ are red-teams, a LaTeX paper, and final integration.
 * Thm 4.1: depth ≤ 2⌈3 ln n / ln(1/τ)⌉ + 88 d(τ) + 22; conditional on d(τ) = o(log n), conference graphs are in n^{o(log n)}.
 * Latin squares of Z_2^k need depth Ω(log n), so that analogue of Levet's question is negative.
 * w36-lean: scope machine-checking the n^{O(log d)} re-accounting against the HJ Lean development.
+
+### w35-cubic (done, commit 8fb152f; docs/w35-cubic.md), NOT yet red-teamed
+* Theorems A, B, C [claimed PROVEN by hand]: exact reductions from cubic Boolean equivalence to quadratic-form tuple isometry over F_2.
+* Conditional on arXiv:2610.00874 Thm 1.2 (unrefereed, partly audited): AGL/GL equivalence of cubics decided in 2^{Õ(n^{1.5})}.
+  T2 instances with cubic colourings would be decided in n^{Õ(√log n)}; nothing for general STS. Prior-art search not completed.
