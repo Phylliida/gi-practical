@@ -743,13 +743,17 @@ class RootedCanon:
         # the blocks): the inner-edge string is a colored graph (see ir_canon)
         fixed = bool(sym) and bool(E2)
         if sparse:
-            if table is None:           # (U1 was restricted: its action on the positions)
+            if table is None:           # (U1 is new: its action on the positions with blocks)
                 table = {}
                 gens = U1.gens
-                for gid in U1.active_on(set().union(*pos) if pos else ()):
+                pts = set()
+                for p in blocks:
+                    pts.update(pos[p])
+                for gid in U1.active_on(pts):
                     g = gens[gid]
                     mv = {}
-                    for p, S in enumerate(pos):
+                    for p in blocks:
+                        S = pos[p]
                         q = pidx[frozenset([g.get(i, i) for i in S])]
                         if q != p:
                             mv[p] = q
@@ -984,14 +988,19 @@ def _probe_automorphism(G, f0, f1, stats):
     for v in range(n):
         if col0[v] != col0[phi[v]]:
             return None
-    nset = [set(r) for r in nbr]
-    for v in range(n):
-        pv = nset[phi[v]]
-        for w in nbr[v]:
-            if phi[w] not in pv:
-                return None
+    phi = tuple(phi)
+    ok = _ck.is_automorphism(nbr, phi) if _ck is not None else None
+    if ok is None:
+        nset = [set(r) for r in nbr]
+        for v in range(n):
+            pv = nset[phi[v]]
+            for w in nbr[v]:
+                if phi[w] not in pv:
+                    return None
+    elif not ok:
+        return None
     stats["canon_probe_ok"] += 1
-    return tuple(phi)
+    return phi
 
 
 PROBE_MIN_ROOTS = 16                    # root class sizes at which a probe is tried

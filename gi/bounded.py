@@ -975,6 +975,10 @@ BFS_ENDS = 64                           # at most this many BFS runs per stage
 
 def _bfs_dist(g, s):
     """Distances from s in the connected graph g (a list)."""
+    if _ck is not None:
+        d = _ck.bfs_dist(g.nbr, s)
+        if d is not None:
+            return d
     n, nbr = g.n, g.nbr
     dist = [-1] * n
     dist[s] = 0
@@ -1153,13 +1157,18 @@ def root_class(g, edges, keys=None, stats=None):
     n, col = g.n, g.col
     ncol = _nc(g)
     use_col = 1 < ncol <= 4
-    k0 = [(col[u], col[v]) for u, v in edges]
-    cnt = Counter(k0)
-    if keys is None:
-        best = min(cnt, key=lambda k: (cnt[k], k))
+    if ncol == 1 and edges:             # (all pairs equal: skip the tally)
+        k00 = (col[0], col[0])
+        best = k00 if keys is None else keys[0][0]
+        C = list(range(len(edges))) if best == k00 else []
     else:
-        best = keys[0][0]
-    C = [f for f, k in enumerate(k0) if k == best]
+        k0 = [(col[u], col[v]) for u, v in edges]
+        cnt = Counter(k0)
+        if keys is None:
+            best = min(cnt, key=lambda k: (cnt[k], k))
+        else:
+            best = keys[0][0]
+        C = [f for f, k in enumerate(k0) if k == best]
     out = [(best, len(C))]
     if keys is not None and len(C) != keys[0][1]:
         return None
@@ -1167,8 +1176,12 @@ def root_class(g, edges, keys=None, stats=None):
         stats["luks_root_stage0"] = max(stats["luks_root_stage0"], len(C))
     if len(C) <= 1:
         return C, out
-    ends = sorted(set(v for f in C for v in edges[f]))
-    if len(ends) <= BFS_ENDS:
+    # (ends only matters when it has at most BFS_ENDS vertices; a vertex is the source of
+    # at most maxdeg oriented edges of C and the target of as many)
+    ends = None
+    if len(C) <= BFS_ENDS * 2 * max(map(len, g.nbr)):
+        ends = sorted(set(v for f in C for v in edges[f]))
+    if ends is not None and len(ends) <= BFS_ENDS:
         prof = _profile_keys(g, ends, use_col)
         k1 = [(prof[edges[f][0]], prof[edges[f][1]]) for f in C]
     else:
@@ -1469,6 +1482,10 @@ def bounded_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine=True, 
 
 
 def _check_lists(nbr):
+    if _ck is not None:                 # (sorted lists; otherwise the body below)
+        r = _ck.check_lists(nbr)
+        if r is not None:
+            return r
     n = len(nbr)
     sets = [set(r) for r in nbr]
     for i, r in enumerate(nbr):

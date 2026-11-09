@@ -1998,7 +1998,7 @@ static PyObject *ck_balls_new(PyObject *m_, PyObject *const *args, Py_ssize_t na
     if (nargs != 3 || !PyList_CheckExact(args[0]))
         Py_RETURN_NONE;
     n = PyList_GET_SIZE(args[0]);
-    if (n == 0)
+    if (n == 0 || n >= CK_INTS_MAX)
         Py_RETURN_NONE;
     W = (n + 63) / 64;
     if ((size_t)n > SIZE_MAX / 16 / (size_t)W)
@@ -2518,6 +2518,9 @@ static void sort_sets(int32_t *idx, int32_t *tmp, Py_ssize_t s, const setstore_t
         memcpy(idx, src, (size_t)s * sizeof(int32_t));
 }
 
+static Py_ssize_t set_ints(PyObject *s, int32_t **pbuf, Py_ssize_t *pcap, Py_ssize_t len0,
+                           PyObject ***pobj, int *nomem);
+
 static PyObject *ck_closure_dense(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
 {
     PyObject *seeds, *gensobj, *res = NULL, *pos = NULL, *acts = NULL;
@@ -2590,57 +2593,28 @@ static PyObject *ck_closure_dense(PyObject *m_, PyObject *const *args, Py_ssize_
             Py_ssize_t len = 0, idx;
             int isnew;
             if (kind == 0) {
-                PyObject *key;
-                Py_ssize_t pos2 = 0;
-                Py_hash_t h;
+                int nomem = 0;
                 if (!PyFrozenSet_CheckExact(s)) {
                     free(buf);
                     goto use_python;
                 }
-                len = PySet_GET_SIZE(s);
-                if (len > cap) {
-                    int32_t *nb;
-                    cap = len * 2;
-                    nb = realloc(buf, (size_t)cap * sizeof(int32_t));
-                    if (!nb) {
-                        free(buf);
+                len = set_ints(s, &buf, &cap, 0, NULL, &nomem);
+                if (len < 0) {
+                    free(buf);
+                    if (nomem) {
                         PyErr_NoMemory();
                         goto done;
                     }
-                    buf = nb;
+                    goto use_python;
                 }
-                len = 0;
-#if PY_VERSION_HEX < 0x030D0000
-                while (_PySet_NextEntry(s, &pos2, &key, &h)) {
-#else
                 {
-                    PyObject *it = PyObject_GetIter(s);
-                    if (it == NULL) {
-                        free(buf);
-                        goto done;
-                    }
-                    (void)pos2; (void)h;
-                    while ((key = PyIter_Next(it)) != NULL) {
-                        Py_DECREF(key);         /* (the set holds a reference) */
-#endif
-                    Py_ssize_t v;
-                    if (!read_index(key, n, &v)) {
-#if PY_VERSION_HEX >= 0x030D0000
-                        Py_DECREF(it);
-#endif
-                        free(buf);
-                        goto use_python;
-                    }
-                    buf[len++] = (int32_t)v;
+                    Py_ssize_t q0;
+                    for (q0 = 0; q0 < len; q0++)
+                        if (buf[q0] >= n) {
+                            free(buf);
+                            goto use_python;
+                        }
                 }
-#if PY_VERSION_HEX >= 0x030D0000
-                    Py_DECREF(it);
-                    if (PyErr_Occurred()) {
-                        free(buf);
-                        goto done;
-                    }
-                }
-#endif
                 sort_i32(buf, len, &sortscratch, &sortcap);
                 if (sortcap < 0) {
                     free(buf);
@@ -2740,8 +2714,14 @@ static PyObject *ck_closure_dense(PyObject *m_, PyObject *const *args, Py_ssize_
     acts = PyList_New(ng);
     if (!pos || !acts)
         goto done;
-    if (ints_ensure(st.size) < 0)
+    i = ints_ensure(st.size);
+    if (i < 0)
         goto done;
+    if (i == 0) {
+        Py_DECREF(pos); pos = NULL;
+        Py_DECREF(acts); acts = NULL;
+        goto use_python;
+    }
     for (i = 0; i < st.size; i++) {
         int32_t o = order[i];
         PyObject *obj;
@@ -2901,7 +2881,9 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
     who = args[2];
     ns = PyList_GET_SIZE(seeds);
     seedobj = malloc((size_t)(ns ? ns : 1) * sizeof(PyObject *));
-    if (!seedobj) {
+    imgcap = 16;
+    imgbuf = malloc((size_t)imgcap * sizeof(int32_t));
+    if (!seedobj || !imgbuf) {
         PyErr_NoMemory();
         goto done;
     }
@@ -2925,12 +2907,6 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
             sort_i32(imgbuf, len, &sortscratch, &sortcap);
         } else {
             Py_ssize_t a, b;
-            if (imgcap < 2) {
-                int32_t *nb = realloc(imgbuf, 16 * sizeof(int32_t));
-                if (!nb) { PyErr_NoMemory(); goto done; }
-                imgbuf = nb;
-                imgcap = 16;
-            }
             if (!PyTuple_CheckExact(s) || PyTuple_GET_SIZE(s) != 2
                 || !read_small(PyTuple_GET_ITEM(s, 0), &a) || a < 0
                 || !read_small(PyTuple_GET_ITEM(s, 1), &b) || b <= a)
@@ -2942,9 +2918,12 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
         if (sortcap < 0) { PyErr_NoMemory(); goto done; }
         {
             Py_ssize_t q;
-            for (q = 0; q < len; q++)
+            for (q = 0; q < len; q++) {
+                if (imgbuf[q] >= CK_INTS_MAX)
+                    goto use_python;
                 if (imgbuf[q] > maxlab)
                     maxlab = imgbuf[q];
+            }
         }
         idx = store_find(&st, imgbuf, len, &isnew);
         if (idx < 0) { PyErr_NoMemory(); goto done; }
@@ -3046,9 +3025,12 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
             }
             sort_i32(imgbuf, len, &sortscratch, &sortcap);
             if (sortcap < 0) { PyErr_NoMemory(); goto done; }
-            for (q = 0; q < len; q++)
+            for (q = 0; q < len; q++) {
+                if (imgbuf[q] >= CK_INTS_MAX)
+                    goto use_python;
                 if (imgbuf[q] > maxlab)
                     maxlab = imgbuf[q];
+            }
             if (kind == 1 && (len != 2 || imgbuf[0] >= imgbuf[1]))
                 goto use_python;
             idx = store_find(&st, imgbuf, len, &isnew);
@@ -3081,8 +3063,11 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
     sort_sets(order, itmp, st.size, &st);
     for (i = 0; i < st.size; i++)
         rank_[order[i]] = (int32_t)i;
-    if (ints_ensure(st.size) < 0)
+    i = ints_ensure(st.size);
+    if (i < 0)
         goto done;
+    if (i == 0)
+        goto use_python;
     pos = PyList_New(st.size);
     table = PyDict_New();
     if (!pos || !table)
@@ -3266,7 +3251,9 @@ static PyObject *ck_ea_who_add(PyObject *m_, PyObject *const *args, Py_ssize_t n
                 return NULL;
             }
             Py_DECREF(s);
-        } else if (PySet_Add(w, gid) < 0) {
+        } else if (!PySet_CheckExact(w) || PySet_Add(w, gid) < 0) {
+            if (!PyErr_Occurred())
+                PyErr_SetString(PyExc_TypeError, "ea_who_add: who holds a non-set");
             return NULL;
         }
     }
@@ -3287,7 +3274,11 @@ static PyObject *ck_ea_who_remove(PyObject *m_, PyObject *const *args, Py_ssize_
         PyObject *w = PyDict_GetItemWithError(who, p);   /* who[p] */
         if (w == NULL) {
             if (!PyErr_Occurred())
-                _PyErr_SetKeyError(p);
+                PyErr_SetObject(PyExc_KeyError, p);
+            return NULL;
+        }
+        if (!PySet_CheckExact(w)) {
+            PyErr_SetString(PyExc_TypeError, "ea_who_remove: who holds a non-set");
             return NULL;
         }
         if (PySet_GET_SIZE(w) == 1) {
@@ -3298,7 +3289,7 @@ static PyObject *ck_ea_who_remove(PyObject *m_, PyObject *const *args, Py_ssize_
             if (r < 0)
                 return NULL;
             if (r == 0) {
-                _PyErr_SetKeyError(gid);
+                PyErr_SetObject(PyExc_KeyError, gid);
                 return NULL;
             }
         }
@@ -3923,6 +3914,190 @@ done:
 }
 /* ===== end of w23-speed2 block (5) ===== */
 
+/* gi.bounded._check_lists: nbr symmetric, without loops or repeats. Only the
+ * common case is handled: every row strictly increasing. Returns the list of
+ * new rows (lists), or None: the Python body decides (and raises NotSimple). */
+static PyObject *ck_check_lists(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *nbr, *out;
+    Py_ssize_t n, v, ok;
+    int32_t *off = NULL, *adj = NULL;
+    (void)m_;
+    if (nargs != 1 || !PyList_CheckExact(args[0]))
+        Py_RETURN_NONE;
+    nbr = args[0];
+    n = PyList_GET_SIZE(nbr);
+    if (n == 0)
+        return PyList_New(0);
+    ok = read_adj(nbr, n, 1, &off, &adj);
+    if (ok < 0)
+        return NULL;
+    if (ok == 0)
+        Py_RETURN_NONE;
+    for (v = 0; v < n; v++) {
+        int32_t j;
+        for (j = off[v]; j < off[v + 1]; j++) {
+            int32_t w = adj[j], lo = off[w], hi = off[w + 1] - 1;
+            int found = 0;
+            if (w == v)
+                goto bad;
+            while (lo <= hi) {
+                int32_t mid = lo + (hi - lo) / 2;
+                if (adj[mid] == (int32_t)v) { found = 1; break; }
+                if (adj[mid] < (int32_t)v) lo = mid + 1; else hi = mid - 1;
+            }
+            if (!found)
+                goto bad;
+        }
+    }
+    free(off);
+    free(adj);
+    out = PyList_New(n);
+    if (out == NULL)
+        return NULL;
+    for (v = 0; v < n; v++) {
+        PyObject *row = PyList_GET_ITEM(nbr, v);
+        Py_ssize_t len = PySequence_Fast_GET_SIZE(row), j;
+        PyObject *r2 = PyList_New(len);
+        if (r2 == NULL) {
+            Py_DECREF(out);
+            return NULL;
+        }
+        for (j = 0; j < len; j++) {
+            PyObject *o = PySequence_Fast_GET_ITEM(row, j);
+            Py_INCREF(o);
+            PyList_SET_ITEM(r2, j, o);
+        }
+        PyList_SET_ITEM(out, v, r2);
+    }
+    return out;
+bad:
+    free(off);
+    free(adj);
+    Py_RETURN_NONE;
+}
+
+/* gi.bounded._bfs_dist on neighbour lists: bfs_dist(nbr, s) -> list, or None. */
+static PyObject *ck_bfs_dist(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *nbr, *res = NULL;
+    Py_ssize_t n, s, v, ok, qh = 0, qt = 0;
+    int32_t *off = NULL, *adj = NULL, *dist = NULL, *queue = NULL;
+    (void)m_;
+    if (nargs != 2 || !PyList_CheckExact(args[0]))
+        Py_RETURN_NONE;
+    nbr = args[0];
+    n = PyList_GET_SIZE(nbr);
+    if (n == 0 || !read_index(args[1], n, &s))
+        Py_RETURN_NONE;
+    ok = read_adj(nbr, n, 0, &off, &adj);
+    if (ok < 0)
+        return NULL;
+    if (ok == 0)
+        Py_RETURN_NONE;
+    dist = malloc((size_t)n * sizeof(int32_t));
+    queue = malloc((size_t)n * sizeof(int32_t));
+    if (!dist || !queue) {
+        free(off); free(adj); free(dist); free(queue);
+        return PyErr_NoMemory();
+    }
+    ok = ints_ensure(n + 1);
+    if (ok <= 0) {
+        free(off); free(adj); free(dist); free(queue);
+        if (ok < 0)
+            return NULL;
+        Py_RETURN_NONE;
+    }
+    memset(dist, 0xff, (size_t)n * sizeof(int32_t));
+    dist[s] = 0;
+    queue[qt++] = (int32_t)s;
+    while (qh < qt) {
+        int32_t u = queue[qh++], j;
+        for (j = off[u]; j < off[u + 1]; j++) {
+            int32_t w = adj[j];
+            if (dist[w] < 0) {
+                dist[w] = dist[u] + 1;
+                queue[qt++] = w;
+            }
+        }
+    }
+    res = PyList_New(n);
+    if (res) {
+        for (v = 0; v < n; v++) {
+            int32_t d = dist[v];
+            PyList_SET_ITEM(res, v, d >= 0 ? int_ref(d) : PyLong_FromSsize_t(d));
+        }
+    }
+    free(off); free(adj); free(dist); free(queue);
+    return res;
+}
+
+/* Whether the permutation phi (a tuple on range(n)) maps the sorted neighbour
+ * lists nbr onto themselves: True/False, or None for unusual input. */
+static PyObject *ck_is_automorphism(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
+{
+    PyObject *nbr, *phi;
+    Py_ssize_t n, ok, v;
+    int32_t *off = NULL, *adj = NULL, *p = NULL;
+    (void)m_;
+    if (nargs != 2 || !PyList_CheckExact(args[0]) || !PyTuple_CheckExact(args[1]))
+        Py_RETURN_NONE;
+    nbr = args[0];
+    phi = args[1];
+    n = PyList_GET_SIZE(nbr);
+    if (PyTuple_GET_SIZE(phi) != n)
+        Py_RETURN_NONE;
+    ok = read_adj(nbr, n, 1, &off, &adj);
+    if (ok < 0)
+        return NULL;
+    if (ok == 0)
+        Py_RETURN_NONE;
+    p = malloc((size_t)(n ? n : 1) * sizeof(int32_t));
+    if (p == NULL) {
+        free(off); free(adj);
+        return PyErr_NoMemory();
+    }
+    {
+        uint8_t *seen = calloc((size_t)(n ? n : 1), 1);
+        if (seen == NULL) {
+            free(off); free(adj); free(p);
+            return PyErr_NoMemory();
+        }
+        for (v = 0; v < n; v++) {
+            Py_ssize_t x;
+            if (!read_index(PyTuple_GET_ITEM(phi, v), n, &x) || seen[x]) {
+                free(off); free(adj); free(p); free(seen);
+                Py_RETURN_NONE;         /* not a permutation */
+            }
+            seen[x] = 1;
+            p[v] = (int32_t)x;
+        }
+        free(seen);
+    }
+    for (v = 0; v < n; v++) {
+        int32_t pv = p[v], j;
+        if (off[pv + 1] - off[pv] != off[v + 1] - off[v])
+            goto no;
+        for (j = off[v]; j < off[v + 1]; j++) {
+            int32_t w = p[adj[j]], lo = off[pv], hi = off[pv + 1] - 1;
+            int found = 0;
+            while (lo <= hi) {
+                int32_t mid = lo + (hi - lo) / 2;
+                if (adj[mid] == w) { found = 1; break; }
+                if (adj[mid] < w) lo = mid + 1; else hi = mid - 1;
+            }
+            if (!found)
+                goto no;
+        }
+    }
+    free(off); free(adj); free(p);
+    Py_RETURN_TRUE;
+no:
+    free(off); free(adj); free(p);
+    Py_RETURN_FALSE;
+}
+/* ===== end of w23-speed2 block (6) ===== */
+
 #define FAST(name) {#name, (PyCFunction)(void (*)(void))ck_##name, METH_FASTCALL, NULL}
 static PyMethodDef methods[] = {
     FAST(set_fallbacks), FAST(mul), FAST(inv), FAST(act), FAST(maps), FAST(orbits),
@@ -3934,6 +4109,7 @@ static PyMethodDef methods[] = {
     FAST(closure_sparse),
     FAST(ea_compose), FAST(ea_who_add), FAST(ea_who_remove),
     FAST(ea_canon),
+    FAST(check_lists), FAST(bfs_dist), FAST(is_automorphism),
     {NULL, NULL, 0, NULL}
 };
 

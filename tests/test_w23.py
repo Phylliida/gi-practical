@@ -248,6 +248,66 @@ def test_orbit_absorb_rejects_non_automorphism():
     assert parent == before
 
 
+# -- check_lists, BFS, automorphism test --------------------------------------------------
+def py_check(nbr):
+    handle, bounded._ck = bounded._ck, None
+    try:
+        return bounded._check_lists(nbr)
+    finally:
+        bounded._ck = handle
+
+
+@needs_ck
+def test_check_lists():
+    rng = random.Random(6)
+    for t in range(100):
+        nbr = [sorted(r) for r in GRAPHS[t % len(GRAPHS)](rng)]
+        r = ck.check_lists(nbr)
+        assert r == py_check(nbr) and r is not nbr and all(a is not b for a, b in zip(r, nbr))
+    assert ck.check_lists([]) == []
+    for bad in ([[0]], [[1], []], [[1, 1], [0]], [[2, 1], [0], [0]], [[5], [0]], [[1.0], [0]], [(1,), (0,), 3]):
+        assert ck.check_lists(bad) is None      # (the Python body raises or sorts)
+    assert ck.check_lists([(1,), (0,)]) == [[1], [0]] == py_check([(1,), (0,)])
+    with pytest.raises(bounded.NotSimple):
+        bounded._check_lists([[0]])
+    assert bounded._check_lists([[2, 1], [0], [0]]) == [[1, 2], [0], [0]]
+
+
+@needs_ck
+def test_bfs_dist():
+    rng = random.Random(7)
+    for t in range(100):
+        nbr = GRAPHS[t % len(GRAPHS)](rng)
+        g = _Graph(nbr, [0] * len(nbr))
+        s = rng.randrange(len(nbr))
+        handle, bounded._ck = bounded._ck, None
+        try:
+            ref = bounded._bfs_dist(g, s)
+        finally:
+            bounded._ck = handle
+        assert ck.bfs_dist(nbr, s) == ref
+    assert ck.bfs_dist([[1], [0]], 2) is None
+
+
+@needs_ck
+def test_is_automorphism():
+    rng = random.Random(8)
+    for t in range(200):
+        nbr = [sorted(r) for r in GRAPHS[t % len(GRAPHS)](rng)]
+        n = len(nbr)
+        p = list(range(n))
+        rng.shuffle(p)
+        phi = tuple(p)
+        ref = all(sorted(phi[w] for w in nbr[v]) == nbr[phi[v]] for v in range(n))
+        assert ck.is_automorphism(nbr, phi) is ref
+        assert ck.is_automorphism(nbr, tuple(range(n))) is True
+    d = 4
+    nbr = cube(d)
+    assert ck.is_automorphism(nbr, tuple(v ^ 5 for v in range(16))) is True
+    assert ck.is_automorphism(nbr, (0, 0) + tuple(range(2, 16))) is None   # not a permutation
+    assert ck.is_automorphism(nbr, tuple(range(15))) is None
+
+
 # -- closures -------------------------------------------------------------------------
 def rand_perm(rng, n):
     p = list(range(n))
@@ -590,11 +650,31 @@ def test_lazy_group_gens_equal_permgroup(monkeypatch):
             checked[0] += 1
 
     monkeypatch.setattr(canon, "_LazyGroup", Checked)
-    for G in (cube(3), cube(4), cube(5), nx_to(nx.complete_bipartite_graph(3, 4)),
-              nx_to(nx.ladder_graph(7)), nx_to(nx.cycle_graph(12))):
-        canonical_labeling_lists(G)
     rng = random.Random(0)
-    canonical_labeling_lists(relabel(cube(5), rng))
+    graphs = [(cube(3), None), (cube(4), None), (cube(5), None), (relabel(cube(5), rng), None),
+              (nx_to(nx.complete_bipartite_graph(3, 4)), None), (nx_to(nx.ladder_graph(7)), None),
+              (nx_to(nx.cycle_graph(12)), None), (nx_to(nx.johnson_graph(6, 2)) if hasattr(nx, "johnson_graph")
+                                                  else cube(2), None)]
+    # twin classes in several colors and sizes: trees of stars and blown-up cycles, colored
+    for t in range(30):
+        m = rng.randint(3, 7)
+        k = rng.randint(2, 5)
+        nb = [[] for _ in range(m + m * k)]
+        for i in range(m):                      # a cycle of hubs, each with k leaves
+            j = (i + 1) % m
+            nb[i].append(j)
+            nb[j].append(i)
+            for l in range(k):
+                v = m + i * k + l
+                nb[i].append(v)
+                nb[v].append(i)
+        nb = [sorted(set(r)) for r in nb]
+        cols = None
+        if t % 2:
+            cols = [0] * m + [rng.randrange(2) for _ in range(m * k)]
+        graphs.append((nb, cols))
+    for G, cols in graphs:
+        canonical_labeling_lists(G, cols)
     assert checked[0] > 0
 
 
