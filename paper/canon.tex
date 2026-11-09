@@ -1768,7 +1768,7 @@ $\widehat s((Z^\pi)_*,W^*)=\sum_{P'}|P'\setminus W'|\,m_{Z''}(P')^{f(d)+1}\,|(f'
 an orbit $A$ of $(A''')_{B_P}$ on the copies of $P$ the value $m_{Z''}(P')=:m(A)$ is constant. So by (IV) the contribution of $P$ is at most
 $|P\setminus W|\sum_A(|A|\,m(A))^{f(d)+1}\le|P\setminus W|\,(\sum_A|A|\,m(A))^{f(d)+1}=|P\setminus W|\,m_{Z^\pi}(P)^{f(d)+1}$, and the sum over $P$ is
 $\widehat s(Z^\pi,W)=\widehat s(Z,W)$, since $\pi\in A$ and $W$ is $A$-invariant.
-(Neuen's property (G), the same bound for the virtual size of the restriction $(Z^\pi)_*[\Omega^*\setminus W^*]$, is false in general; see Remark~\ref{rem:neu20}(3). It is not used.)
+(Neuen's property (G) asks for the same bound for the virtual size of the restriction $(Z^\pi)_*[\Omega^*\setminus W^*]$; we could not verify it for this construction, see Remark~\ref{rem:neu20}(3). It is not used.)
 
 In the language of ECMs: $C$ is an $A$-ECM because $x(Z'^{\psi'(a)})=x(Z')^{\psi'(a)}$ (action on $\fP'$) and the Theorem~A
 canonizer of $x(Z')$ is equivariant; and $Z\mapsto Z'$ and $Z''\mapsto(Z^\pi)_*$ are the changes of action of Lemma~E3 (using
@@ -1841,7 +1841,7 @@ hypothesis and is preserved by Lemma~SIMP, whose objects are completely occupied
 (I4): the bound on the virtual size of $(Z^\pi)_*$ is (S4). For the second statement let $Y:=(Z^\pi)_*$ at round $i$. Since $F_i$ is simple,
 $s'_i=\widehat s(Y,W_i)$. Extending the window gives $\widehat s(Y,W_i\cup W')\le s'_i-|W'|$ by (I5) (the object changes only by elements of the right
 group during the round, which does not change $\widehat s$), and Simplify does not raise $\widehat s$ (S4), so
-$s'_{i+1}=\widehat s(Y_{i+1},W_{i+1})\le\widehat s(Y,W_i\cup W')<s'_i$. This corrects Neuen's argument \src{Neu20}{2400--2412}, which uses his property (G) (Remark~\ref{rem:neu20}(3)). Hence there are at most $s$ rounds.
+$s'_{i+1}=\widehat s(Y_{i+1},W_{i+1})\le\widehat s(Y,W_i\cup W')<s'_i$. This replaces the appeal to property (G) in Neuen's argument \src{Neu20}{2400--2412} (see the question in Remark~\ref{rem:neu20}(3)). Hence there are at most $s$ rounds.
 
 \emph{(LC2)} holds by the tests at (a) and (c).
 
@@ -2051,7 +2051,7 @@ missing is a written transfer of Neuen's accounting \cite[Lemma~4.36, Lemma~2.6]
 recursion, including the three points of Remark~\ref{rem:neu20}.
 \end{proofsketch}
 \status{Correctness (algorithm CanHyp, Proposition~\ref{prop:canhyp}): proof modulo Theorem~A; \cite[Thms.~4.8, 4.9, 4.17]{Neu20} (constructions and the listed
-properties, except (G) of Thm.~4.17, which is not used and which fails as stated, Remark~\ref{rem:neu20}(3)), \cite[Lemma~4.16]{Neu20}, the virtual-size facts \cite[Obs.~4.12, 4.13, Lemma~4.14]{Neu20};
+properties, except (G) of Thm.~4.17, which is not used, Remark~\ref{rem:neu20}(3)), \cite[Lemma~4.16]{Neu20}, the virtual-size facts \cite[Obs.~4.12, 4.13, Lemma~4.14]{Neu20};
 \cite[Thm.~5.8]{GNS}; \cite[Thm.~6(b)]{Bab16}; the CFSG facts of the aggregation \cite[Thm.~4.31,
 Lemma~4.32]{Neu20}; \cite[Lemma~7.1]{GNS}; BC; canonical generating sets; and requirement~\ref{D3}, which
 includes the structure-graph lemma of Neuen's dissertation \cite[Lemma~6.1.17]{Neu19}, which we have not
@@ -2071,15 +2071,13 @@ seen. Running time: \textbf{proof sketch}.}
   small, and the bound $s_i\le s/2$ is not justified as written. Testing $\psi(\Lambda')$ immediately after
   balancing, as in step (c) of CanLC, fixes this; correctness of Neu20 is unaffected. Whether the journal
   version handles this we do not know.
-\item \emph{Virtual size outside the window (bound on the iterations and the cost accounting).} Property~(G) of \cite[Thm.~4.17]{Neu20}
-  \src{Neu20}{1961} is false as stated. Take $\Gamma=1$, $\fP=\{\{a,b\},\{c,d\}\}$, $W=\{a,c\}$ and let $\fX$ consist of the strings
+\item \emph{Virtual size outside the window (bound on the iterations and the cost accounting): a question for the author.} We could not verify property~(G) of \cite[Thm.~4.17]{Neu20}
+  \src{Neu20}{1961} for the objects constructed in its proof, which treats it in one word (``analogously'', \src{Neu20}{2141}); perhaps we misread the definitions. We read $\fX[A]$ as a \emph{set} of restricted strings \src{Neu20}{1042}, so that strings agreeing on $A$ coincide in $\fX[A]$. Take $\Gamma=1$, $\fP=\{\{a,b\},\{c,d\}\}$, $W=\{a,c\}$ and let $\fX$ consist of the strings
   $(a,b)\mapsto(0,0),(1,0)$ on the first block and $(c,d)\mapsto(0,0)$ on the second. Then $\fX[\Omega\setminus W]$ has virtual size $2$, but the two
-  copies of $\{a,b\}$ made in Simplify each carry one string on the copy of $b$, so $\fX'[\Omega'\setminus W']$ has virtual size $3$, and Renormalize cannot lower
-  this because $f'$ is onto and $|P^*|=|f'(P^*)|$. The proof of (F) does not carry over (``analogously'', \src{Neu20}{2141}): strings on one block with different
-  window parts may agree outside the window, so the multiplicities of the copies may add up to more than the
-  multiplicity of the block's outside part. The loop bound and the size sum in the proof of
-  \cite[Thm.~4.24]{Neu20} \src{Neu20}{2400--2434} rest on (G); they survive with $\widehat s$ (property (S4) of Lemma~SIMP), which on the simplified
-  instances equals the virtual size of the outside part. We do not use (G).
+  copies of $\{a,b\}$ made in Simplify each carry one string on the copy of $b$, so $\fX'[\Omega'\setminus W']$ has virtual size $3$, and Renormalize does not lower
+  this, since $f'$ is onto, $|(f')^{-1}(P')|\le|A|^{f(d)}=1$ and $|P^*|=|f'(P^*)|$. The computation for (F) does not seem to carry over, because
+  strings on one block with different window parts may agree outside the window, so the multiplicities of the copies may add up to more than the
+  multiplicity of the block's outside part. The same happens at the call of Simplify in the proof of \cite[Thm.~4.24]{Neu20}: for $\Gamma=\Sym(T)$ on $T\sqcup\{u,v\}$, $|T|=9$, $d=10$, with blocks $T\cup\{u\}$, $\{v\}$ and two strings on $T\cup\{u\}$ that are constant on $T$, differ there and agree at $u$, one gets $W'=T$ and virtual size $2$ before and $3$ after. This concerns the construction only. Property~(G) is part of an existence statement, which this example does not refute: for $\Gamma^*:=\Aut_\Gamma(\fX_r)$, $\Omega^*=W^*:=\Omega$ and one constant string per block, properties (A)--(G) hold for every input. But that witness is the solution of the problem itself, so the proof of \cite[Thm.~4.24]{Neu20} needs (G) for the constructed objects. Is the virtual size in (G) meant with the multiplicities of $\fX$, that is $\sum_P|P\setminus W|\,m_\fX(P)^{f(d)+1}=\widehat s(\fX,W)$? For that quantity the computation for (F) does carry over (property (S4) of Lemma~SIMP), and it equals the virtual size of the outside part whenever the window part is simple. The loop bound and the size sum \src{Neu20}{2400--2434} then hold with $t_i$ read as $\widehat s$, and the step $t_{p+2}\le t'$ becomes $t_{p+2}\le\widehat s(\mathfrak Z_1',W\cup W')$, with $s_{p+1}+\widehat s(\mathfrak Z_1',W\cup W')\le t_{p+1}$; the statements of \cite[Thm.~4.24]{Neu20} and of the main theorem are unaffected. We use $\widehat s$ and not (G).
 \end{enumerate}
 There is also a harmless typo: ``$\ker\psi=N_{(\mathfrak B)}$'' \src{Neu20}{2687} should read $N_{(\mathfrak C)}$.
 \end{remark}
@@ -2549,7 +2547,7 @@ Question~\ref{q:gap1} (GNS Lemma 7.2) should be checked first.
 \begin{question}
 (Neuen.) Is the ``all pairs in parallel'' device of \cite{Neu20} needed for any reason other than making
 renormalization consistent? Our single-object loop at the setwise stabilizer of $T_0$ claims to make it
-unnecessary. Is the order of the giant test (Remark~\ref{rem:neu20}(2)) handled in the journal version?
+unnecessary. Is the order of the giant test (Remark~\ref{rem:neu20}(2)) handled in the journal version? Is the virtual size in property (G) of \cite[Thm.~4.17]{Neu20} meant with the multiplicities of the whole instance (Remark~\ref{rem:neu20}(3))?
 \end{question}
 
 \begin{question}
