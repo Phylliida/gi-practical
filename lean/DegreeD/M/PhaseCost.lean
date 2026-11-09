@@ -1,3 +1,5 @@
+-- Generated from upstream `Workspace/Paper/PhaseCost.lean` by gen.py, then edited by hand
+-- (node work `Eb`, the class Γ̂, the toll `tollE`). Not regenerated.
 import DegreeD.M.TotalCost
 
 /-!
