@@ -50,7 +50,7 @@ import itertools
 import math
 from itertools import chain
 from collections import Counter, OrderedDict, namedtuple
-from operator import add
+from operator import add, itemgetter
 
 from .kernel import ck as _ck
 from .perm import identity, mul, inv, act, maps, parity, cycle, alt_gens, sym_gens
@@ -260,8 +260,11 @@ class Solver:
         D = sorted(D)
         if not D:
             return Coset(list(G.gens), G.idn)
-        xs = tuple(x[d] for d in D)
-        ys = tuple(y[d] for d in D)
+        if len(D) > 1:
+            get = itemgetter(*D)
+            xs, ys = get(x), get(y)
+        else:
+            xs, ys = (x[D[0]],), (y[D[0]],)
         if sorted(xs) != sorted(ys):
             return None
         if len(set(xs)) == 1:

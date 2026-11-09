@@ -219,6 +219,7 @@ class PermGroup:
         self.base, self.S, self.T, self.Ti = [], [], [], []
         self._par, self._ok = [], []    # BFS tree edges; verified Schreier pairs
         self._ginv = {}                 # id(s) -> (s, s^-1) for strong generators
+        self._scanned = {}              # level -> (T, generators covered by a complete scan)
         self._order = 1                 # product of the orbit lengths
         self._ord_T = self.T            # (_order is valid while T is this list)
         self._nt, self._nt_T = [], self.T
@@ -279,6 +280,7 @@ class PermGroup:
         G._par = [_NO_PAR] * len(G.base)
         G._ok = [None] * len(G.base)
         G._ginv = {}
+        G._scanned = {}
         G._order = math.prod(len(t) for t in G.T)
         G._ord_T = G.T
         G._nt, G._nt_T = [l for l, t in enumerate(G.T) if len(t) > 1], G.T
@@ -296,6 +298,7 @@ class PermGroup:
         self.T, self.Ti, self._par = list(c.T), list(c.Ti), list(c.par)
         self._ok = [None] * len(c.base)
         self._ginv = {}
+        self._scanned = {}
         self._order = c.order
         self._ord_T = self.T
         self._nt, self._nt_T = list(c.nt), self.T
@@ -334,11 +337,15 @@ class PermGroup:
     def _orbit(self, l):
         """Recompute the BFS orbit and transversal of level l, reusing the old
         transversal elements whose tree path is unchanged. The tree edge of q
-        is stored as si * n + p (q = S[l][si][p])."""
+        is stored as si * n + p (q = S[l][si][p]). When nothing changed (the
+        same points in the same order, all elements reused) the old dicts are
+        kept: their contents are what would be built, and _schreier can see
+        by identity that the level's transversal is unchanged."""
         b, S, idn, n = self.base[l], self.S[l], self.idn, self.n
         oT, oTi, opar = self.T[l], self.Ti[l], self._par[l]
         T, Ti, par, queue = {b: idn}, {b: idn}, {}, [b]
         ginv = self._ginv
+        same_all = True
         for p in queue:
             u = T[p]
             same = oT.get(p) is u
@@ -350,6 +357,7 @@ class PermGroup:
                         T[q] = oT[q]
                         Ti[q] = oTi[q]
                     else:
+                        same_all = False
                         T[q] = mul(u, s)
                         si = ginv.get(id(s))
                         if si is None or si[0] is not s:
@@ -358,6 +366,8 @@ class PermGroup:
                     par[q] = e
                     queue.append(q)
                 e += n
+        if same_all and len(T) == len(oT) and queue == list(oT):
+            return
         if len(oT) == 1 and len(T) > 1:
             self._plans = None
             insort(self._nontrivial(), l)
@@ -522,19 +532,30 @@ class PermGroup:
         so its Schreier generator at the base point lies in <S[i+1]>."""
         idn, base, n = self.idn, self.base, self.n
         amb = self._amb is not None
+        scanned = self._scanned
         while i >= 0:
             T = self.T[i]
             if len(T) == 1:             # all Schreier generators are in S[i+1]
                 i -= 1
                 continue
+            S = self.S[i]
+            d = scanned.get(i)
+            start = d[1] if d is not None and d[0] is T else 0
+            if start == len(S):
+                i -= 1                  # nothing new since the last complete scan
+                continue
+            # A complete scan verified every (p, s) with s in S[:start] against
+            # this T; those stay verified (<S[i+1]> only grows), so a rescan of
+            # them does nothing. Only the generators appended since matter.
             restart = False
-            Ti, par, S, b = self.Ti[i], self._par[i], self.S[i], base[i]
+            Ti, par, b = self.Ti[i], self._par[i], base[i]
             ok = self._ok[i]
             if ok is None:
                 ok = self._ok[i] = {}
+            news = S[start:]
             for p, u in list(T.items()):
-                e = p - n
-                for s in S:
+                e = p - n + start * n
+                for s in news:
                     e += n                      # e = si * n + p
                     q = s[p]
                     if par.get(q) == e:         # tree edge: trivial Schreier generator
@@ -564,6 +585,7 @@ class PermGroup:
                 if restart:
                     break
             if not restart:
+                scanned[i] = (T, len(S))
                 i -= 1
 
     # -- queries -------------------------------------------------------------

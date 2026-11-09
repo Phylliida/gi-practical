@@ -514,3 +514,68 @@ def test_chain_with_prescribed_base_matches_reference(seed):
     for g in gens:
         H.add(g)
     assert chain_of(G)[1:] == chain_of(H)[1:]
+
+
+def test_cont_leaves_the_shared_orbits_alone():
+    """_cont sorts its copy of the orbit list; the cached list keeps its order."""
+    n = 6
+    G = PermGroup(n, [(1, 0, 3, 2, 5, 4)])
+    before = [list(o) for o in G.orbits_shared()]
+    x = tuple(range(n))
+    Solver(certificates=False)._cont(G, x, x, None)
+    assert [list(o) for o in G.orbits_shared()] == before
+    assert G.orbits() == sorted(G.orbits())
+
+
+@pytest.mark.parametrize("seed", range(160))
+def test_schreier_scan_skip_matches_the_reference(seed):
+    """Levels skipped by _scanned must not change the chain: base, orbit sizes
+    and order against the unoptimized reference (tests/_ref_group.py)."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import _ref_group as ref
+    rng = random.Random(seed)
+    kind = seed % 4
+    if kind == 0:                        # imprimitive: long chains, many restarts
+        a, b = rng.choice([(2, 5), (3, 4), (2, 6), (4, 3)])
+        n = a * b
+        gens = []
+        for _ in range(rng.randint(2, 4)):
+            top = list(range(b))
+            rng.shuffle(top)
+            p = [0] * n
+            for i in range(b):
+                inner = list(range(a))
+                rng.shuffle(inner)
+                for j in range(a):
+                    p[i * a + j] = top[i] * a + inner[j]
+            gens.append(tuple(p))
+    elif kind == 1:                      # intransitive products
+        n = rng.randint(6, 16)
+        cut = rng.randint(2, n - 2)
+        gens = []
+        for _ in range(rng.randint(2, 4)):
+            left, right = list(range(cut)), list(range(cut, n))
+            rng.shuffle(left)
+            rng.shuffle(right)
+            gens.append(tuple(left + right))
+    elif kind == 2:                      # generic
+        n = rng.randint(5, 12)
+        gens = [rperm(rng, n) for _ in range(rng.randint(2, 3))]
+    else:                                # sparse, with an element order hint
+        n = rng.randint(5, 12)
+        gens = []
+        for _ in range(rng.randint(3, 6)):
+            k = rng.randint(2, min(4, n))
+            pts = rng.sample(range(n), k)
+            img = pts[:]
+            rng.shuffle(img)
+            p = list(range(n))
+            for u, v in zip(pts, img):
+                p[u] = v
+            gens.append(tuple(p))
+    clear_chain_cache()
+    G, R = PermGroup(n, gens), ref.PermGroup(n, gens)
+    assert G.order() == R.order()
+    assert list(G.base) == list(R.base)
+    assert [len(t) for t in G.T] == [len(t) for t in R.T]
+    assert [list(t) for t in G.T] == [list(t) for t in R.T]     # (element order)
