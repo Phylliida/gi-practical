@@ -582,3 +582,6 @@ are red-teams, a LaTeX paper, and final integration.
 
 ### w24-video-review (done, commit 4085217; video/REVIEW.md)
 * 31 errors found and fixed (10 wrong, 12 misleading, 9 minor). Runtime 65:31.
+
+## Wave 26
+* w26-redteam-pg: adversarial check of w18 Theorem B1 (PG(m-1,2) lower bound for HJ) and A1.
