@@ -29,6 +29,13 @@ root="class", rooted_wl=True, ea=True, layers="class")` is Luks's bounded-degree
 the same for neighbour lists; see "Bounded degree" below, docs/bounded-degree.md and
 docs/w1-scale.md.
 
+`gi.canon.canonical_form(X, colors=None)` returns a canonical form of a simple undirected graph (a
+hashable tuple, equal for two graphs iff they are isomorphic), and `canonical_labeling(X, colors=None)`
+returns `(lab, aut_gens)`: the canonical labelling (vertex v gets label `lab[v]`) and generators of
+Aut(X). `canonical_form_lists`, `canonical_labeling_lists` take neighbour lists, `canon_iso(X, Y)` has
+the return value of `bounded_iso`. This is the canonical version of Luks's reduction; see "Canonical
+labeling" below and docs/w9-canontool.md.
+
 `graph_iso(X, Y, solver=None, vcolors_x=None, vcolors_y=None, refine="2wl", staged=True, ir=3,
 ir_min=6, ir_max="auto", ir_budget=2.0)`: adjacency entries may be edge colors, graphs may be
 directed and have loops. The keyword arguments control the front end (below); `ir=0` hands every
@@ -46,7 +53,11 @@ stage to the recursion.
   composition factors in Sym(d − 1), layer by layer from an edge, each layer through `Solver.solve`
   or, while the layer groups are elementary abelian 2-groups, by linear algebra (`gi/ea2.py`).
 * `gi/ea2.py`: elementary abelian 2-groups by a basis; string isomorphism under them by Gaussian
-  elimination over F_2 (int bitmasks), no Schreier–Sims.
+  elimination over F_2 (int bitmasks), no Schreier–Sims; `EAAction.canon`: the least image of a
+  string over the group (orbit-major order), by the same linear algebra.
+* `gi/canon.py`: canonical labeling of bounded-degree graphs (components, edge rooting, layers),
+  with string canonizers per layer: invariant strings, elementary abelian groups (`EAAction.canon`)
+  and a least-image search over a stabilizer chain (`perm_canon`) for the rest.
 * `gi/refine.py`: joint canonical color refinement of two graphs (1-WL and 2-WL), with colors named
   by one content-based rule for both graphs.
 * `gi/graph.py`: the graph wrapper (paper Algorithm 1). Positions are the ordered vertex pairs and
@@ -335,6 +346,23 @@ dense and sparse nauty and Traces from n ≈ 1100 on (n = 2464: 1.4 s against > 
 three). `rooted_wl=False, ea=False` restores the previous pipeline.
 `bench/bounded.py` measures it against `graph_iso` and nauty; the results are in
 docs/bounded-degree.md.
+
+## Canonical labeling (`gi/canon.py`)
+
+`canonical_form(X)` is equal for two graphs exactly when they are isomorphic, so it serves as a
+database or deduplication key. The method is the canonical version of Luks's reduction (Babai–Luks
+1983; docs/canonization-bounded-degree.md §8): components sorted by form, the least rooted form over
+a canonical class of oriented edges, and per layer two string canonizations on the label side.
+Strings fixed by the layer group need no work, elementary abelian layers take the least image over
+an affine F_2 coset by Gaussian elimination (`EAAction.canon`), and other groups a least-image search
+over a stabilizer chain with automorphism pruning (`perm_canon`, exact but exponential in the worst
+case).
+
+On Neuen–Schweitzer's rigid multipedes, computing both forms of a pair takes 1.25 s at n = 2464 and
+4.2 s at n = 5632, while pynauty, dense nauty, sparse nauty and Traces each exceed 600 s from
+n = 2464 on. Traces remains far ahead elsewhere (random 3-regular n = 4000: 0.01 s per graph against
+0.24 s; CFI n = 3200: 0.06 s per pair against 13 s), and sparse nauty and Traces on hypercubes. See
+docs/w9-canontool.md, including §3.4 on where it loses; `bench/canon.py` reproduces the tables.
 
 ## Benchmark protocol
 

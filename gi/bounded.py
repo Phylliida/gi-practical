@@ -843,6 +843,53 @@ class _Chain:
 
 
 # -- connected graphs -------------------------------------------------------------
+def edge_invariants(g, edges):
+    """For each oriented edge (u, v) in edges: the colors of u and v and the
+    multiset of (d(u, w), d(v, w), color of w) over all vertices w (with
+    more than 4 colors, of (d(u, w), d(v, w)) only: still an invariant,
+    and far cheaper; the chains then test a few more roots). The
+    distances come from bit-parallel balls (ball_{t+1}(v) = the union of
+    ball_t over v and its neighbours, as int bitmasks), so the cost is
+    about diameter * |E| big-int operations instead of n BFS runs."""
+    n, nbr, col = g.n, g.nbr, g.col
+    cur = [1 << v for v in range(n)]
+    spheres = [cur]
+    while True:
+        nxt = []
+        for v in range(n):
+            b = cur[v]
+            for w in nbr[v]:
+                b |= cur[w]
+            nxt.append(b)
+        if nxt == cur:
+            break
+        spheres.append([b ^ a for a, b in zip(cur, nxt)])
+        cur = nxt
+    D = len(spheres)
+    masks = {}
+    for v in range(n):
+        masks[col[v]] = masks.get(col[v], 0) | (1 << v)
+    cmasks = sorted(masks.items())
+    out = []
+    for u, v in edges:
+        items = []
+        for i in range(D):
+            su = spheres[i][u]
+            for j in (i - 1, i, i + 1):
+                if 0 <= j < D:
+                    x = su & spheres[j][v]
+                    if x:
+                        if len(cmasks) == 1 or len(cmasks) > 4:
+                            items.append((i, j, -1, x.bit_count()))
+                        else:
+                            for c, m in cmasks:
+                                k = (x & m).bit_count()
+                                if k:
+                                    items.append((i, j, c, k))
+        out.append((col[u], col[v], tuple(items)))
+    return out
+
+
 class _Connected:
     """A connected graph with its oriented-edge invariants; with aut=True also
     Aut(X), the orbits of Aut(X) on oriented edges and the chains used."""
@@ -863,51 +910,7 @@ class _Connected:
             self.compute_aut()
 
     def invariants(self):
-        """For each oriented edge (u, v): the colors of u and v and the
-        multiset of (d(u, w), d(v, w), color of w) over all vertices w (with
-        more than 4 colors, of (d(u, w), d(v, w)) only: still an invariant,
-        and far cheaper; the chains then test a few more roots). The
-        distances come from bit-parallel balls (ball_{t+1}(v) = the union of
-        ball_t over v and its neighbours, as int bitmasks), so the cost is
-        about diameter * |E| big-int operations instead of n BFS runs."""
-        g = self.g
-        n, nbr, col = g.n, g.nbr, g.col
-        cur = [1 << v for v in range(n)]
-        spheres = [cur]
-        while True:
-            nxt = []
-            for v in range(n):
-                b = cur[v]
-                for w in nbr[v]:
-                    b |= cur[w]
-                nxt.append(b)
-            if nxt == cur:
-                break
-            spheres.append([b ^ a for a, b in zip(cur, nxt)])
-            cur = nxt
-        D = len(spheres)
-        masks = {}
-        for v in range(n):
-            masks[col[v]] = masks.get(col[v], 0) | (1 << v)
-        cmasks = sorted(masks.items())
-        out = []
-        for u, v in self.edges:
-            items = []
-            for i in range(D):
-                su = spheres[i][u]
-                for j in (i - 1, i, i + 1):
-                    if 0 <= j < D:
-                        x = su & spheres[j][v]
-                        if x:
-                            if len(cmasks) == 1 or len(cmasks) > 4:
-                                items.append((i, j, -1, x.bit_count()))
-                            else:
-                                for c, m in cmasks:
-                                    k = (x & m).bit_count()
-                                    if k:
-                                        items.append((i, j, c, k))
-            out.append((col[u], col[v], tuple(items)))
-        return out
+        return edge_invariants(self.g, self.edges)
 
     def rooted(self, f):
         u0, u1 = self.edges[f]

@@ -1,0 +1,462 @@
+{
+ "label": "w9-cube",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "Q4",
+   "family": "cube",
+   "size": 4,
+   "n": 16,
+   "seed": 0,
+   "maxdeg": 4,
+   "edges": 32,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 384.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 384.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 384.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.012,
+    "t_x": 0.006,
+    "t_y": 0.006,
+    "same": true,
+    "ngens": 5,
+    "aut_order": "384"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.007,
+    "same": true
+   },
+   "iso": true,
+   "aut": 384.0
+  },
+  {
+   "name": "Q5",
+   "family": "cube",
+   "size": 5,
+   "n": 32,
+   "seed": 0,
+   "maxdeg": 5,
+   "edges": 80,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3840.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3840.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3840.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.03,
+    "t_x": 0.017,
+    "t_y": 0.013,
+    "same": true,
+    "ngens": 6,
+    "aut_order": "3840"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.016,
+    "same": true
+   },
+   "iso": true,
+   "aut": 3840.0
+  },
+  {
+   "name": "Q6",
+   "family": "cube",
+   "size": 6,
+   "n": 64,
+   "seed": 0,
+   "maxdeg": 6,
+   "edges": 192,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 46080.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 46080.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 46080.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.053,
+    "t_x": 0.024,
+    "t_y": 0.029,
+    "same": true,
+    "ngens": 7,
+    "aut_order": "46080"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.024,
+    "same": true
+   },
+   "iso": true,
+   "aut": 46080.0
+  },
+  {
+   "name": "Q7",
+   "family": "cube",
+   "size": 7,
+   "n": 128,
+   "seed": 0,
+   "maxdeg": 7,
+   "edges": 448,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.001,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 645120.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 645120.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 645120.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.119,
+    "t_x": 0.059,
+    "t_y": 0.06,
+    "same": true,
+    "ngens": 8,
+    "aut_order": "645120"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.055,
+    "same": true
+   },
+   "iso": true,
+   "aut": 645120.0
+  },
+  {
+   "name": "Q8",
+   "family": "cube",
+   "size": 8,
+   "n": 256,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1024,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.003,
+    "t_x": 0.002,
+    "t_y": 0.001,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 10321920.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 10321920.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 10321920.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.236,
+    "t_x": 0.119,
+    "t_y": 0.118,
+    "same": true,
+    "ngens": 9,
+    "aut_order": "10321920"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.133,
+    "same": true
+   },
+   "iso": true,
+   "aut": 10321920.0
+  },
+  {
+   "name": "Q9",
+   "family": "cube",
+   "size": 9,
+   "n": 512,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 2304,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.016,
+    "t_x": 0.008,
+    "t_y": 0.008,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 185794560.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 185794560.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 185794560.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.702,
+    "t_x": 0.27,
+    "t_y": 0.432,
+    "same": true,
+    "ngens": 10,
+    "aut_order": "185794560"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.32,
+    "same": true
+   },
+   "iso": true,
+   "aut": 185794560.0
+  },
+  {
+   "name": "Q10",
+   "family": "cube",
+   "size": 10,
+   "n": 1024,
+   "seed": 0,
+   "maxdeg": 10,
+   "edges": 5120,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.103,
+    "t_x": 0.052,
+    "t_y": 0.051,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.1,
+    "t_x": 0.05,
+    "t_y": 0.05,
+    "same": true,
+    "aut": 3715891200.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3715891200.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 3715891200.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 1.733,
+    "t_x": 0.701,
+    "t_y": 1.032,
+    "same": true,
+    "ngens": 11,
+    "aut_order": "3715891200"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.783,
+    "same": true
+   },
+   "iso": true,
+   "aut": 3715891200.0
+  },
+  {
+   "name": "Q11",
+   "family": "cube",
+   "size": 11,
+   "n": 2048,
+   "seed": 0,
+   "maxdeg": 11,
+   "edges": 11264,
+   "cert": "formula",
+   "pyn": {
+    "status": "ok",
+    "time": 0.794,
+    "t_x": 0.387,
+    "t_y": 0.407,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.73,
+    "t_x": 0.35,
+    "t_y": 0.38,
+    "same": true,
+    "aut": 81749606400.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 81749606400.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 81749606400.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 4.609,
+    "t_x": 1.959,
+    "t_y": 2.65,
+    "same": true,
+    "ngens": 12,
+    "aut_order": "81749606400"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 2.048,
+    "same": true
+   },
+   "iso": true,
+   "aut": 81749606400.0
+  }
+ ]
+}

@@ -1,0 +1,676 @@
+{
+ "label": "w9-reg3",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "3reg100",
+   "family": "reg3",
+   "size": 100,
+   "n": 100,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 150,
+   "cert": "relabel",
+   "pyn": {
+    "status": "ok",
+    "time": 0.007,
+    "t_x": 0.003,
+    "t_y": 0.004,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.009,
+    "t_x": 0.005,
+    "t_y": 0.004,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.02,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg100-other",
+   "family": "reg3",
+   "size": 100,
+   "n": 100,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 150,
+   "cert": "bounded_iso",
+   "pyn": {
+    "status": "ok",
+    "time": 0.005,
+    "t_x": 0.003,
+    "t_y": 0.003,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.008,
+    "t_x": 0.004,
+    "t_y": 0.004,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.015,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg200",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "relabel",
+   "pyn": {
+    "status": "ok",
+    "time": 0.035,
+    "t_x": 0.017,
+    "t_y": 0.017,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.028,
+    "t_x": 0.014,
+    "t_y": 0.014,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.041,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg200-other",
+   "family": "reg3",
+   "size": 200,
+   "n": 200,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 300,
+   "cert": "bounded_iso",
+   "pyn": {
+    "status": "ok",
+    "time": 0.035,
+    "t_x": 0.018,
+    "t_y": 0.018,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.04,
+    "t_x": 0.02,
+    "t_y": 0.02,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.01,
+    "t_x": 0.01,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.026,
+    "t_x": 0.013,
+    "t_y": 0.013,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.037,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg500",
+   "family": "reg3",
+   "size": 500,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "relabel",
+   "pyn": {
+    "status": "ok",
+    "time": 0.499,
+    "t_x": 0.249,
+    "t_y": 0.25,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.5,
+    "t_x": 0.25,
+    "t_y": 0.25,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.06,
+    "t_x": 0.03,
+    "t_y": 0.03,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.062,
+    "t_x": 0.036,
+    "t_y": 0.026,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.09,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg500-other",
+   "family": "reg3",
+   "size": 500,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "bounded_iso",
+   "pyn": {
+    "status": "ok",
+    "time": 0.502,
+    "t_x": 0.249,
+    "t_y": 0.253,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.5,
+    "t_x": 0.25,
+    "t_y": 0.25,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.06,
+    "t_x": 0.03,
+    "t_y": 0.03,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.064,
+    "t_x": 0.038,
+    "t_y": 0.027,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.075,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg1000",
+   "family": "reg3",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "relabel",
+   "pyn": {
+    "status": "ok",
+    "time": 4.621,
+    "t_x": 2.312,
+    "t_y": 2.309,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 4.48,
+    "t_x": 2.24,
+    "t_y": 2.24,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.34,
+    "t_x": 0.17,
+    "t_y": 0.17,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.102,
+    "t_x": 0.067,
+    "t_y": 0.035,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.227,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg1000-other",
+   "family": "reg3",
+   "size": 1000,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "bounded_iso",
+   "pyn": {
+    "status": "ok",
+    "time": 4.627,
+    "t_x": 2.332,
+    "t_y": 2.295,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 4.46,
+    "t_x": 2.24,
+    "t_y": 2.22,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 0.34,
+    "t_x": 0.17,
+    "t_y": 0.17,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.102,
+    "t_x": 0.067,
+    "t_y": 0.034,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.179,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg2000",
+   "family": "reg3",
+   "size": 2000,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "relabel",
+   "pyn": {
+    "status": "ok",
+    "time": 51.424,
+    "t_x": 25.58,
+    "t_y": 25.845,
+    "same": true
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 47.56,
+    "t_x": 23.83,
+    "t_y": 23.73,
+    "same": true,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 2.0,
+    "t_x": 1.0,
+    "t_y": 1.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.19,
+    "t_x": 0.113,
+    "t_y": 0.077,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.483,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg2000-other",
+   "family": "reg3",
+   "size": 2000,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "bounded_iso",
+   "pyn": {
+    "status": "ok",
+    "time": 52.066,
+    "t_x": 25.858,
+    "t_y": 26.208,
+    "same": false
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 48.43,
+    "t_x": 24.07,
+    "t_y": 24.36,
+    "same": false,
+    "aut": 1.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 2.0,
+    "t_x": 1.0,
+    "t_y": 1.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.192,
+    "t_x": 0.112,
+    "t_y": 0.08,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.423,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg4000",
+   "family": "reg3",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 6000,
+   "cert": "relabel",
+   "pyn": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 12.78,
+    "t_x": 6.39,
+    "t_y": 6.39,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.479,
+    "t_x": 0.259,
+    "t_y": 0.219,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.328,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "3reg4000-other",
+   "family": "reg3",
+   "size": 4000,
+   "n": 4000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 6000,
+   "cert": "bounded_iso",
+   "pyn": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 200.0
+   },
+   "dns": {
+    "status": "ok",
+    "time": 12.8,
+    "t_x": 6.42,
+    "t_y": 6.38,
+    "same": false,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": false,
+    "aut": 1.0
+   },
+   "canon": {
+    "status": "ok",
+    "time": 0.483,
+    "t_x": 0.263,
+    "t_y": 0.22,
+    "same": false,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 1.178,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0
+  }
+ ]
+}

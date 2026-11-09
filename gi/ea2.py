@@ -71,6 +71,16 @@ class XorBasis:
     def rank(self):
         return len(self.rows)
 
+    def full_reduce(self, v):
+        """The canonical representative of v + span(rows): v with every pivot
+        bit cleared (pivots in decreasing order; a row only touches bits up to
+        its pivot). Linear in v."""
+        rows = self.rows
+        for p in sorted(rows, reverse=True):
+            if v >> p & 1:
+                v ^= rows[p][0]
+        return v
+
     def solution(self, k):
         """One solution in F_2^k (free variables 0); the system must be
         consistent (add never returned False)."""
@@ -144,7 +154,7 @@ class EA2:
 
 
 class _Orbit:
-    __slots__ = ("pts", "steps", "lam", "K", "dimK")
+    __slots__ = ("pts", "steps", "lam", "K", "dimK", "red")
 
 
 class EAAction:
@@ -177,7 +187,7 @@ class EAAction:
                             pts.append(u)
                             steps.append((u, q, i))
                 O.pts, O.steps, O.lam = pts, steps, lam
-                O.K = None
+                O.K = O.red = None
                 out.append(O)
             self._orbits = out
         return self._orbits
@@ -254,3 +264,84 @@ class EAAction:
                 if not eqs.add(r, _parity(r & c0)):
                     return None
         return eqs.solution(k), eqs.kernel(k)
+
+    def _reduced(self, O):
+        """(sorted points of O, rl, pt): rl[q] is lam(q) fully reduced modulo
+        K_O (the canonical representative of its coset), and pt maps reduced
+        labels back to points. Reduction is linear, so g(a) maps q to
+        pt[reduce(a) ^ rl[q]]."""
+        if O.red is None:
+            K = self._kernel(O)
+            rl = {q: K.full_reduce(v) for q, v in O.lam.items()}
+            O.red = (sorted(O.pts), rl, {v: q for q, v in rl.items()})
+        return O.red
+
+    def canon(self, x):
+        """A canonical form of x under G (x^g = act(x, g); every g is an
+        involution, so x^g[q] = x[g[q]]): the lexicographically least x^g over
+        all g in G, positions read in orbit-major order (the orbits by their
+        least point, each orbit's points increasing). This order depends on G
+        only, so the least image depends only on the G-orbit of x.
+
+        Returns (c, N): x^g(c) is the least image, and the g(a) attaining it
+        are exactly a in c + span(N), so N is a basis of Aut_G(x) in
+        coordinates (G is abelian, so Aut_G(x) = Aut_G(least image)).
+
+        Orbit by orbit: the minimizers so far form an affine subspace c + U.
+        On an orbit O, g(a) acts through a mod K_O, and the translates
+        t = reduce(c + u) (u in U) are at most |O|; the least string on O is
+        found by filtering the translates position by position. The
+        minimizing translates form a coset m0 + D of (U + K_O)/K_O (the
+        minimizers of an invariant set's restriction are a coset of its
+        stabilizer), so the new minimizer set is c + U intersected with
+        m0 + D + K_O, added as linear equations (the annihilator of D + K_O)."""
+        k = self.k
+        eqs = XorBasis()
+        c, U = 0, [1 << i for i in range(k)]
+        for O in self.orbits():
+            pts = O.pts
+            if len(pts) == 1 or not U:
+                continue
+            x0 = x[pts[0]]
+            for q in pts:
+                if x[q] != x0:
+                    break
+            else:
+                continue                # x constant on O: every translate gives the same
+            K = self._kernel(O)
+            D, basis = XorBasis(), []
+            for u in U:
+                v = K.full_reduce(u)
+                if D.reduce(v):         # (a membership test: v not in span(basis))
+                    D.add(v)
+                    basis.append(v)
+            if not basis:
+                continue                # one translate only: nothing to choose
+            srt, rl, pt = self._reduced(O)
+            cands = [K.full_reduce(c)]
+            for v in basis:
+                cands += [t ^ v for t in cands]
+            for q in srt:
+                rq = rl[q]
+                best, keep = None, None
+                for t in cands:
+                    val = x[pt[t ^ rq]]
+                    if best is None or val < best:
+                        best, keep = val, [t]
+                    elif val == best:
+                        keep.append(t)
+                cands = keep
+                if len(cands) == 1:
+                    break
+            m0 = cands[0]
+            W = XorBasis()
+            W.rows = dict(K.rows)
+            for t in cands[1:]:
+                W.add(t ^ m0)
+            if W.rank() == k:
+                continue
+            for r in W.kernel(k):       # a in m0 + D + K_O
+                if not eqs.add(r, _parity(r & m0)):
+                    raise AssertionError("EAAction.canon: inconsistent minimizers")
+            c, U = eqs.solution(k), eqs.kernel(k)
+        return c, U
