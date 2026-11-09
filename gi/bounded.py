@@ -169,6 +169,8 @@ def _components(nbr):
 
 
 def _induced(g, part):
+    if len(part) == g.n:                # (part is sorted: the whole graph, same names)
+        return g
     loc = {v: i for i, v in enumerate(part)}
     return _Graph([[loc[w] for w in g.nbr[v]] for v in part], [g.col[v] for v in part])
 
@@ -392,6 +394,19 @@ class _LayerEA:
 _FALLBACK = object()
 
 
+def _acts_from_table(table, ids, m):
+    """The permutations of the positions 0..m-1 of the generators ids, from a
+    table {id: {moved position: image}} (ck.closure_sparse)."""
+    idn = list(range(m))
+    acts = []
+    for gid in ids:
+        a = idn[:]
+        for p, q in table[gid].items():
+            a[p] = q
+        acts.append(tuple(a))
+    return acts
+
+
 class _Chain:
     """The groups G_r = Aut_f(X_r) of one rooted graph X (built lazily, as far
     as some target got) and the isomorphism cosets towards targets."""
@@ -593,26 +608,38 @@ class _Chain:
         for s, S in enumerate(L.A):
             for k, t in enumerate(att[S]):
                 L.slot[t] = (s, k)
-        S_list = list(L.A)
-        sidx = dict(L.aidx)
-        for S in S_list:
-            for gid in G.active_on(S):
-                g = gens[gid]
-                S2 = frozenset([g.get(i, i) for i in S])
-                if S2 not in sidx:
-                    sidx[S2] = len(S_list)
-                    S_list.append(S2)
+        res = _ck.closure_sparse(L.A, gens, G.who, 2) if _ck is not None else None
+        if res is not None:             # (the same BFS order; table on the position indices)
+            S_list, table = res
+            sidx = {S: i for i, S in enumerate(S_list)}
+        else:
+            table = None
+            S_list = list(L.A)
+            sidx = dict(L.aidx)
+            for S in S_list:
+                for gid in G.active_on(S):
+                    g = gens[gid]
+                    S2 = frozenset([g.get(i, i) for i in S])
+                    if S2 not in sidx:
+                        sidx[S2] = len(S_list)
+                        S_list.append(S2)
         L.S, L.sidx = S_list, sidx
         xS = [0] * len(S_list)
         for s, S in enumerate(L.A):
             xS[s] = self.code(tuple(X.col[t] for t in att[S]))
         L.xS = tuple(xS)
-        act_ids = G.active_on(set().union(*S_list) if S_list else ())
-        L.act_ids = act_ids
-        L.act_dicts = [gens[g] for g in act_ids]
-        acts = []
-        for g in L.act_dicts:
-            acts.append(tuple([sidx[frozenset([g.get(i, i) for i in S])] for S in S_list]))
+        if table is not None:
+            act_ids = sorted(table)
+            L.act_ids = act_ids
+            L.act_dicts = [gens[g] for g in act_ids]
+            acts = _acts_from_table(table, act_ids, len(S_list))
+        else:
+            act_ids = G.active_on(set().union(*S_list) if S_list else ())
+            L.act_ids = act_ids
+            L.act_dicts = [gens[g] for g in act_ids]
+            acts = []
+            for g in L.act_dicts:
+                acts.append(tuple([sidx[frozenset([g.get(i, i) for i in S])] for S in S_list]))
         L.act1 = EAAction(len(act_ids), acts, len(S_list))
         st["luks_phase1_max_degree"] = max(st["luks_phase1_max_degree"], len(S_list))
         self.L.append(L)
@@ -704,24 +731,32 @@ class _Chain:
                     pairs.append((t, u))
         ne = len(pairs)
         gens = G.gens
-        for p, q in pairs:
-            for gid in G.active_on((p, q)):
-                h = gens[gid]
-                hp, hq = h.get(p, p), h.get(q, q)
-                pq = (hp, hq) if hp < hq else (hq, hp)
-                if pq not in pidx:
-                    pidx[pq] = len(pairs)
-                    pairs.append(pq)
-        h_ids = G.active_on(set().union(*pairs))
-        L.h_ids = h_ids
-        L.h_dicts = [gens[g] for g in h_ids]
-        act = []
-        for h in L.h_dicts:
-            img = []
+        res = _ck.closure_sparse(pairs, gens, G.who, 3) if _ck is not None else None
+        if res is not None:             # (the same BFS order; table on the pair indices)
+            pairs, table = res
+            h_ids = sorted(table)
+            L.h_ids = h_ids
+            L.h_dicts = [gens[g] for g in h_ids]
+            act = _acts_from_table(table, h_ids, len(pairs))
+        else:
             for p, q in pairs:
-                hp, hq = h.get(p, p), h.get(q, q)
-                img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
-            act.append(tuple(img))
+                for gid in G.active_on((p, q)):
+                    h = gens[gid]
+                    hp, hq = h.get(p, p), h.get(q, q)
+                    pq = (hp, hq) if hp < hq else (hq, hp)
+                    if pq not in pidx:
+                        pidx[pq] = len(pairs)
+                        pairs.append(pq)
+            h_ids = G.active_on(set().union(*pairs))
+            L.h_ids = h_ids
+            L.h_dicts = [gens[g] for g in h_ids]
+            act = []
+            for h in L.h_dicts:
+                img = []
+                for p, q in pairs:
+                    hp, hq = h.get(p, p), h.get(q, q)
+                    img.append(pidx[(hp, hq) if hp < hq else (hq, hp)])
+                act.append(tuple(img))
         L.pairs, L.act2 = pairs, EAAction(len(h_ids), act, len(pairs))
         L.x2 = tuple([1] * ne + [0] * (len(pairs) - ne))
         st["luks_phase2_max_degree"] = max(st["luks_phase2_max_degree"], len(pairs))
@@ -1284,6 +1319,8 @@ class _Connected:
         return c
 
     def vertex_map(self, X, Z, sigma):
+        if _ck is not None:             # (order^-1, then sigma, then Z's order)
+            return _ck.mul(_ck.mul(_ck.inv(tuple(X.order)), tuple(sigma)), tuple(Z.order))
         out = [0] * len(sigma)
         for i, s in enumerate(sigma):
             out[X.order[i]] = Z.order[s]
@@ -1326,10 +1363,16 @@ class _Connected:
             return v
 
         comps = [len(C)]                # number of orbits on C of the group found so far
+        tbl = _ck.orbit_table(self.g.nbr, C) if _ck is not None else None
 
         def absorb(g):
             if comps[0] == 1:           # (one orbit: more generators change nothing)
                 return
+            if tbl is not None:         # (compiled; parent stays valid for find)
+                r = _ck.orbit_absorb(tbl, parent, comps[0], g)
+                if r is not None:
+                    comps[0] -= r
+                    return
             for i, f in enumerate(C):   # (Aut(X) maps the class onto itself)
                 u, v = self.edges[f]
                 a, b = find(i), find(pos[self.eidx[(g[u], g[v])]])
@@ -1342,6 +1385,8 @@ class _Connected:
         failed = []
         i0 = pos[f0]
         for f in C:
+            if comps[0] == 1:           # (one orbit: every other edge is an image of f0)
+                break
             if f == f0:
                 continue
             rf = find(pos[f])

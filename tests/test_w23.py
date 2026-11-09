@@ -404,6 +404,39 @@ def test_closure_sparse(seed):
 
 
 @needs_ck
+@pytest.mark.parametrize("seed", range(80))
+def test_closure_sparse_keeps_bfs_order(seed):
+    """kind & 2: the order of the closures of gi/bounded.py (seeds, then images in
+    BFS order, generators by increasing id)."""
+    rng = random.Random(seed)
+    n = rng.randint(4, 30)
+    kind = seed % 2
+    G = rand_sparse_group(rng, n, rng.randint(1, 5))
+    gens = G.gens
+    if kind == 0:
+        seeds = list({frozenset(rng.sample(range(n), rng.randint(1, min(n, 5)))) for _ in range(rng.randint(1, 6))})
+        image = canon._set_image_sparse
+    else:
+        seeds = list(dict.fromkeys(tuple(sorted(rng.sample(range(n), 2))) for _ in range(rng.randint(1, 6))))
+        image = canon._pair_image_sparse
+    S_list = list(seeds)
+    sidx = {S: i for i, S in enumerate(S_list)}
+    for S in S_list:
+        for gid in G.active_on(S):
+            S2 = image(gens[gid], S)
+            if S2 not in sidx:
+                sidx[S2] = len(S_list)
+                S_list.append(S2)
+    res = ck.closure_sparse(seeds, gens, G.who, kind | 2)
+    assert res[0] == S_list
+    ids = G.active_on(set().union(*S_list))
+    assert sorted(res[1]) == ids
+    for gid in ids:
+        want = {i: sidx[image(gens[gid], S)] for i, S in enumerate(S_list) if image(gens[gid], S) != S}
+        assert res[1][gid] == want
+
+
+@needs_ck
 def test_closure_sparse_rejects_unusual():
     G = SparseEA([{0: 1, 1: 0}])
     assert ck.closure_sparse([{0}], G.gens, G.who, 0) is None       # a set

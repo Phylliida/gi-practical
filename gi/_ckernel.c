@@ -2854,6 +2854,8 @@ static inline PyObject *label_obj(Py_ssize_t v)
 /* Closure of positions under a SparseEA (gi.canon._closure_sparse, plus the
  * sort of the positions and the move of the table to their indices).
  * closure_sparse(seeds, gens, who, kind) -> (pos, table) or None.
+ * kind & 2: no sort; pos is the seeds then the images in BFS order, generators
+ * taken in increasing id (the order of the closures in gi/bounded.py).
  * seeds: frozensets (kind 0) or int pairs (kind 1); gens: the dict {id: {moved
  * point: image}}; who: {point: set of ids}. pos: the closure sorted (see
  * closure_dense); table: {id: {index of a position it moves: index of its
@@ -2862,7 +2864,7 @@ static inline PyObject *label_obj(Py_ssize_t v)
 static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize_t nargs)
 {
     PyObject *seeds, *gens, *who, *res = NULL, *pos = NULL, *table = NULL;
-    Py_ssize_t ns, i, kind, maxlab = 0, trip_n = 0, trip_cap = 0, ids_cap = 0, sortcap = 0;
+    Py_ssize_t ns, i, kind, sorted_out, maxlab = 0, trip_n = 0, trip_cap = 0, ids_cap = 0, sortcap = 0;
     int32_t *imgbuf = NULL, *idsbuf = NULL, *order = NULL, *rank_ = NULL, *itmp = NULL, *trip = NULL;
     int32_t *sortscratch = NULL;
     PyObject **seedobj = NULL, **idobj = NULL, **uobj = NULL;
@@ -2874,8 +2876,10 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
     memset(&st, 0, sizeof(st));
     if (nargs != 4 || !PyList_CheckExact(args[0]) || !PyDict_CheckExact(args[1])
         || !PyDict_CheckExact(args[2]) || !read_small(args[3], &kind)
-        || (kind != 0 && kind != 1))
+        || kind < 0 || kind > 3)
         Py_RETURN_NONE;
+    sorted_out = !(kind & 2);
+    kind &= 1;
     seeds = args[0];
     gens = args[1];
     who = args[2];
@@ -3060,7 +3064,8 @@ static PyObject *ck_closure_sparse(PyObject *m_, PyObject *const *args, Py_ssize
     }
     for (i = 0; i < st.size; i++)
         order[i] = (int32_t)i;
-    sort_sets(order, itmp, st.size, &st);
+    if (sorted_out)
+        sort_sets(order, itmp, st.size, &st);
     for (i = 0; i < st.size; i++)
         rank_[order[i]] = (int32_t)i;
     i = ints_ensure(st.size);
