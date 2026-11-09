@@ -453,3 +453,11 @@ are red-teams, a LaTeX paper, and final integration.
 * w12-paperfix: apply referee issues M1 and M2 and the proposed minor fixes to paper/canon.tex.
 * w12-theoremg: close the gaps in Theorem G (c = 3 for all d); write up the exponent results as a note.
 * Disk: 11 GB free at start of this wave (not from this project); agents told not to write large files.
+
+### w9-canontool (done, commit 5809a0f; docs/w9-canontool.md)
+* gi/canon.py: canonical_form / canonical_labeling for bounded-degree graphs (canonical Luks reduction,
+  elementary-abelian least-image canonizer, stabilizer-chain search with automorphism pruning elsewhere).
+  perm_canon is exponential in the worst case. 146 new tests (exhaustive against brute force for n ≤ 5).
+* Multipede canonical forms: n=2464 in 1.25s (all nauty modes and Traces > 600s), n=5632 in 4.23s; fit n^1.25.
+* Traces beats us on everything except the multipede families (24× on 3-regular, 220× on CFI, 230× on Q11).
+  All nauty modes win on hypercubes. Python wall time vs C CPU time; one seed per size.
