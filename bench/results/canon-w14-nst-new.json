@@ -1,0 +1,84 @@
+{
+ "label": "pair-nst-new",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "nst16",
+   "family": "nst",
+   "size": 16,
+   "n": 192,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 1572,
+   "cert": "flip",
+   "canon": {
+    "status": "ok",
+    "time": 0.246,
+    "t_x": 0.124,
+    "t_y": 0.123,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.143,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst32",
+   "family": "nst",
+   "size": 32,
+   "n": 384,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 3156,
+   "cert": "flip",
+   "canon": {
+    "status": "ok",
+    "time": 0.732,
+    "t_x": 0.372,
+    "t_y": 0.361,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.306,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst64",
+   "family": "nst",
+   "size": 64,
+   "n": 768,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 6244,
+   "cert": "flip",
+   "canon": {
+    "status": "ok",
+    "time": 2.69,
+    "t_x": 1.351,
+    "t_y": 1.338,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 2.513,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  }
+ ]
+}

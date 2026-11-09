@@ -1,0 +1,214 @@
+{
+ "label": "pair-mz-base",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "mz25",
+   "family": "mzgen",
+   "size": 25,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 1.081,
+    "t_x": 0.543,
+    "t_y": 0.538,
+    "same": true,
+    "ngens": 54,
+    "aut_order": "9007199254740992"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.848,
+    "same": true
+   },
+   "iso": true,
+   "aut": 9007199254740992.0
+  },
+  {
+   "name": "mz25-twist",
+   "family": "mzgen",
+   "size": 25,
+   "n": 500,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 750,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 1.055,
+    "t_x": 0.522,
+    "t_y": 0.533,
+    "same": false,
+    "ngens": 54,
+    "aut_order": "9007199254740992"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.822,
+    "same": false
+   },
+   "iso": false,
+   "aut": 9007199254740992.0
+  },
+  {
+   "name": "mz50",
+   "family": "mzgen",
+   "size": 50,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 3.975,
+    "t_x": 2.302,
+    "t_y": 1.672,
+    "same": true,
+    "ngens": 104,
+    "aut_order": "10141204801825835211973625643008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 3.657,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0141204801825835e+31
+  },
+  {
+   "name": "mz50-twist",
+   "family": "mzgen",
+   "size": 50,
+   "n": 1000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 1500,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 3.973,
+    "t_x": 2.29,
+    "t_y": 1.683,
+    "same": false,
+    "ngens": 104,
+    "aut_order": "10141204801825835211973625643008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 3.606,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.0141204801825835e+31
+  },
+  {
+   "name": "mz100",
+   "family": "mzgen",
+   "size": 100,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 19.547,
+    "t_x": 11.238,
+    "t_y": 8.309,
+    "same": true,
+    "ngens": 204,
+    "aut_order": "12855504354071922204335696738729300820177623950262342682411008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 17.035,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.2855504354071922e+61
+  },
+  {
+   "name": "mz100-twist",
+   "family": "mzgen",
+   "size": 100,
+   "n": 2000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 3000,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 22.751,
+    "t_x": 11.14,
+    "t_y": 11.611,
+    "same": false,
+    "ngens": 204,
+    "aut_order": "12855504354071922204335696738729300820177623950262342682411008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 16.528,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.2855504354071922e+61
+  },
+  {
+   "name": "mz150",
+   "family": "mzgen",
+   "size": 150,
+   "n": 3000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4500,
+   "cert": "relabel",
+   "canon": {
+    "status": "ok",
+    "time": 66.545,
+    "t_x": 32.649,
+    "t_y": 33.896,
+    "same": true,
+    "ngens": 304,
+    "aut_order": "16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 44.695,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.629628781067589e+91
+  },
+  {
+   "name": "mz150-twist",
+   "family": "mzgen",
+   "size": 150,
+   "n": 3000,
+   "seed": 0,
+   "maxdeg": 3,
+   "edges": 4500,
+   "cert": "bounded_iso",
+   "canon": {
+    "status": "ok",
+    "time": 56.258,
+    "t_x": 32.332,
+    "t_y": 23.926,
+    "same": false,
+    "ngens": 304,
+    "aut_order": "16296287810675888690147565507275025288411747149327490005089123594835050398106693649467179008"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 43.79,
+    "same": false
+   },
+   "iso": false,
+   "aut": 1.629628781067589e+91
+  }
+ ]
+}

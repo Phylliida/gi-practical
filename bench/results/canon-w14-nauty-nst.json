@@ -1,0 +1,102 @@
+{
+ "label": "nauty-nst",
+ "timeout": 120.0,
+ "rows": [
+  {
+   "name": "nst16",
+   "family": "nst",
+   "size": 16,
+   "n": 192,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 1572,
+   "cert": "flip",
+   "dns": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.0,
+    "t_x": 0.0,
+    "t_y": 0.0,
+    "same": true,
+    "aut": 1.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst32",
+   "family": "nst",
+   "size": 32,
+   "n": 384,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 3156,
+   "cert": "flip",
+   "dns": {
+    "status": "ok",
+    "time": 0.02,
+    "t_x": 0.01,
+    "t_y": 0.01,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "ok",
+    "time": 0.23,
+    "t_x": 0.11,
+    "t_y": 0.12,
+    "same": true,
+    "aut": 1.0
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nst64",
+   "family": "nst",
+   "size": 64,
+   "n": 768,
+   "seed": 0,
+   "maxdeg": 21,
+   "edges": 6244,
+   "cert": "flip",
+   "dns": {
+    "status": "ok",
+    "time": 79.47,
+    "t_x": 34.0,
+    "t_y": 45.47,
+    "same": true,
+    "aut": 1.0
+   },
+   "dnt": {
+    "status": "skipped",
+    "time": 120.0
+   },
+   "dnd": {
+    "status": "timeout",
+    "time": 120.0
+   },
+   "iso": true,
+   "aut": 1.0
+  }
+ ]
+}

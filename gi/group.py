@@ -32,6 +32,32 @@ def _identity(n):
 # shared; the lists are copied. Bounded by the number of stored transversal
 # entries times the degree (LRU eviction).
 CHAIN_CACHE_LIMIT = 1 << 24
+class OverBudget(Exception):
+    """A budgeted computation ran out of work (see gi/graph.py); partial work is discarded."""
+
+
+class WorkBudget:
+    """An optional deterministic work counter charged by the expensive parts of
+    Schreier-Sims (see gi/graph.py: dispatch). left is None when not in use;
+    charge raises OverBudget when it would drop below zero. Exception safety:
+    a group under construction is only used by the frames being unwound, and
+    the caches hold finished groups only."""
+    __slots__ = ("left",)
+
+    def __init__(self):
+        self.left = None
+
+
+WORK = WorkBudget()
+
+
+def _charge(u):
+    if WORK.left is not None:
+        WORK.left -= u
+        if WORK.left < 0:
+            raise OverBudget
+
+
 _CHAINS = OrderedDict()
 _chains_size = 0
 
@@ -454,6 +480,8 @@ class PermGroup:
                 continue
             restart = False
             Ti, par, ok, S, b = self.Ti[i], self._par[i], self._ok[i], self.S[i], base[i]
+            if WORK.left is not None:
+                _charge(len(T) * len(S) * n // 32)
             for p, u in list(T.items()):
                 e = p - n
                 for s in S:

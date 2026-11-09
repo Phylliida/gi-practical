@@ -30,7 +30,7 @@ the convention of gi.perm) is computed orbit by orbit:
 """
 from .perm import identity
 
-__all__ = ["EA2", "EAAction", "is_ea2", "XorBasis", "nullspace"]
+__all__ = ["EA2", "SparseEA", "EAAction", "is_ea2", "XorBasis", "nullspace", "compose"]
 
 
 def _parity(v):
@@ -151,6 +151,129 @@ class EA2:
             a >>= 1
             i += 1
         return identity(self.n) if g is None else g
+
+
+def compose(dicts):
+    """The product of commuting involutions given as dicts {moved point: image}
+    (each maps its keys among themselves): a dict of the moved points of the
+    product. Costs O(sum of the supports). (Involutions are their own
+    inverses, so the x with c(x) = y is c(y); order does not matter.)"""
+    c = {}
+    for g in dicts:
+        ups = [(c.get(y, y), g[y]) for y in g]
+        for x, z in ups:
+            if z == x:
+                c.pop(x, None)
+            else:
+                c[x] = z
+    return c
+
+
+class SparseEA:
+    """An elementary abelian 2-group on points given by an independent basis of
+    commuting involutions, each stored sparsely as a dict {moved point: image}
+    (gens: {id: dict}), with who[p] = the set of generator ids moving p. Work
+    on a layer depends on the generators that actually move its points, not
+    on |G| * n. Generators may be extended to new points in place: their
+    images of old points never change, so older code that holds a dict can
+    keep reading the old points."""
+    __slots__ = ("gens", "who", "_next")
+
+    def __init__(self, gens=()):
+        self.gens, self.who, self._next = {}, {}, 0
+        for g in gens:
+            self.add(g)
+
+    @classmethod
+    def from_tuples(cls, gens):
+        """From permutations given as tuples (identity points are dropped)."""
+        return cls({p: q for p, q in enumerate(g) if p != q} for g in gens)
+
+    def __len__(self):
+        return len(self.gens)
+
+    def order(self):
+        return 1 << len(self.gens)
+
+    def add(self, g):
+        """Add the involution g (a dict {moved point: image}); returns its id."""
+        gid = self._next
+        self._next = gid + 1
+        self.gens[gid] = g
+        who = self.who
+        for p in g:
+            w = who.get(p)
+            if w is None:
+                who[p] = {gid}
+            else:
+                w.add(gid)
+        return gid
+
+    def remove(self, gid):
+        g = self.gens.pop(gid)
+        who = self.who
+        for p in g:
+            w = who[p]
+            if len(w) == 1:
+                del who[p]
+            else:
+                w.remove(gid)
+
+    def extend(self, gid, moves):
+        """Add entries {new point: image} to generator gid."""
+        g, who = self.gens[gid], self.who
+        g.update(moves)
+        for p in moves:
+            w = who.get(p)
+            if w is None:
+                who[p] = {gid}
+            else:
+                w.add(gid)
+
+    def active_on(self, points):
+        """Sorted ids of the generators moving some point of `points`."""
+        who = self.who
+        ids = set()
+        for p in points:
+            w = who.get(p)
+            if w:
+                ids.update(w)
+        return sorted(ids)
+
+    def restrict(self, ids, N):
+        """Replace the generators `ids` by the combinations N (bitmasks over
+        the indices of ids); returns the new ids parallel to N. A combination
+        of one generator keeps that generator."""
+        gens = self.gens
+        out, kept, make = [None] * len(N), set(), []
+        for i, v in enumerate(N):
+            if v & (v - 1) == 0:
+                out[i] = ids[v.bit_length() - 1]
+                kept.add(out[i])
+            else:
+                c = []
+                while v:
+                    b = v & -v
+                    c.append(gens[ids[b.bit_length() - 1]])
+                    v ^= b
+                make.append((i, compose(c)))
+        for gid in ids:
+            if gid not in kept:
+                self.remove(gid)
+        for i, c in make:
+            out[i] = self.add(c)
+        return out
+
+    def dense(self, gid, n):
+        """Generator gid as a tuple on range(n)."""
+        g = list(range(n))
+        for p, q in self.gens[gid].items():
+            g[p] = q
+        return tuple(g)
+
+    def tuples(self, n):
+        """All generators as tuples on range(n)."""
+        return [self.dense(gid, n) for gid in self.gens]
 
 
 class _Orbit:

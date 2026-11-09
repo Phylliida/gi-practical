@@ -1,0 +1,162 @@
+{
+ "label": "pair-cube-base",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "Q6",
+   "family": "cube",
+   "size": 6,
+   "n": 64,
+   "seed": 0,
+   "maxdeg": 6,
+   "edges": 192,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.042,
+    "t_x": 0.018,
+    "t_y": 0.024,
+    "same": true,
+    "ngens": 7,
+    "aut_order": "46080"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.025,
+    "same": true
+   },
+   "iso": true,
+   "aut": 46080.0
+  },
+  {
+   "name": "Q8",
+   "family": "cube",
+   "size": 8,
+   "n": 256,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1024,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.223,
+    "t_x": 0.106,
+    "t_y": 0.118,
+    "same": true,
+    "ngens": 9,
+    "aut_order": "10321920"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.129,
+    "same": true
+   },
+   "iso": true,
+   "aut": 10321920.0
+  },
+  {
+   "name": "Q9",
+   "family": "cube",
+   "size": 9,
+   "n": 512,
+   "seed": 0,
+   "maxdeg": 9,
+   "edges": 2304,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 0.685,
+    "t_x": 0.255,
+    "t_y": 0.43,
+    "same": true,
+    "ngens": 10,
+    "aut_order": "185794560"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.319,
+    "same": true
+   },
+   "iso": true,
+   "aut": 185794560.0
+  },
+  {
+   "name": "Q10",
+   "family": "cube",
+   "size": 10,
+   "n": 1024,
+   "seed": 0,
+   "maxdeg": 10,
+   "edges": 5120,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 1.732,
+    "t_x": 0.674,
+    "t_y": 1.058,
+    "same": true,
+    "ngens": 11,
+    "aut_order": "3715891200"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.796,
+    "same": true
+   },
+   "iso": true,
+   "aut": 3715891200.0
+  },
+  {
+   "name": "Q11",
+   "family": "cube",
+   "size": 11,
+   "n": 2048,
+   "seed": 0,
+   "maxdeg": 11,
+   "edges": 11264,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 4.618,
+    "t_x": 1.94,
+    "t_y": 2.677,
+    "same": true,
+    "ngens": 12,
+    "aut_order": "81749606400"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 2.076,
+    "same": true
+   },
+   "iso": true,
+   "aut": 81749606400.0
+  },
+  {
+   "name": "Q12",
+   "family": "cube",
+   "size": 12,
+   "n": 4096,
+   "seed": 0,
+   "maxdeg": 12,
+   "edges": 24576,
+   "cert": "formula",
+   "canon": {
+    "status": "ok",
+    "time": 24.257,
+    "t_x": 7.559,
+    "t_y": 16.699,
+    "same": true,
+    "ngens": 13,
+    "aut_order": "1961990553600"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 6.176,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1961990553600.0
+  }
+ ]
+}

@@ -1,0 +1,84 @@
+{
+ "label": "pair-nsr-base",
+ "timeout": 200.0,
+ "rows": [
+  {
+   "name": "nsr16",
+   "family": "nsr",
+   "size": 16,
+   "n": 288,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 576,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.097,
+    "t_x": 0.048,
+    "t_y": 0.048,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.067,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nsr32",
+   "family": "nsr",
+   "size": 32,
+   "n": 576,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 1152,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.261,
+    "t_x": 0.13,
+    "t_y": 0.131,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.228,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  },
+  {
+   "name": "nsr64",
+   "family": "nsr",
+   "size": 64,
+   "n": 1152,
+   "seed": 0,
+   "maxdeg": 8,
+   "edges": 2304,
+   "cert": "lemma",
+   "canon": {
+    "status": "ok",
+    "time": 0.784,
+    "t_x": 0.394,
+    "t_y": 0.39,
+    "same": true,
+    "ngens": 0,
+    "aut_order": "1"
+   },
+   "biso": {
+    "status": "ok",
+    "time": 0.702,
+    "same": true
+   },
+   "iso": true,
+   "aut": 1.0
+  }
+ ]
+}
