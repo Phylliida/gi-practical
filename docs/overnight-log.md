@@ -540,3 +540,9 @@ are red-teams, a LaTeX paper, and final integration.
   parameter blow-up ≥ 2^{k^Ω(1)}) lose their hypothesis. They are all stated "under ETH". paper/canon.tex and
   paper/exponent.tex do not use ETH.
 * w21-eth: spot-check the preprint's core and assess relevance to this campaign.
+
+### w16-ckernel (done, commits 26e2a7a–87745ce; docs/w16-ckernel.md)
+* gi/_ckernel.c: wl2_single, wl2 final check, mul/inv/act/maps, sift, sifts_to_id, make_fast_plan, orbits.
+  Build with `python3 build_ckernel.py`; GI_NO_CKERNEL=1 disables. ASan + UBSan clean; identical outputs.
+* Paired: full hybrid about 2× (xl 10.3s → 4.9s); ir=0 1.5×. Multipedes, CFI, 3-regular, hypercubes barely
+  moved (1.00–1.15×), because their hot code is in bounded.py/canon.py/ea2.py, off limits during w14.
