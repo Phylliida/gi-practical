@@ -1,0 +1,28 @@
+# e3b
+n=5 E=D_n                |image in S_n|=      10 odd cycle fixed: True
+n=5 E=Z_n                |image in S_n|=       5 odd cycle fixed: True
+n=5 E=S_{n-1}            |image in S_n|=      24 odd cycle fixed: False
+n=5 E=A_{n-1}            |image in S_n|=      12 odd cycle fixed: False
+n=5 E=S_a x S_{n-a}      |image in S_n|=      12 odd cycle fixed: False
+n=5 E=S_n                |image in S_n|=     120 odd cycle fixed: False
+n=5 E=A_n                |image in S_n|=      60 odd cycle fixed: False
+n=7 E=D_n                |image in S_n|=      14 odd cycle fixed: True
+n=7 E=Z_n                |image in S_n|=       7 odd cycle fixed: True
+n=7 E=S_{n-1}            |image in S_n|=     720 odd cycle fixed: False
+n=7 E=A_{n-1}            |image in S_n|=     360 odd cycle fixed: False
+n=7 E=S_a x S_{n-a}      |image in S_n|=     144 odd cycle fixed: False
+n=7 E=S_n                |image in S_n|=    5040 odd cycle fixed: False
+n=7 E=A_n                |image in S_n|=    2520 odd cycle fixed: False
+n=7 E=7:3 (fixes vertex 0) |image in S_n|=      21 odd cycle fixed: True
+n=7 E=7:6 (fixes vertex 0) |image in S_n|=      42 odd cycle fixed: True
+n=7 E=7:3                |image in S_n|=      21 odd cycle fixed: False
+n=7 E=7:6                |image in S_n|=      42 odd cycle fixed: False
+n=7 E=S_3-involution+Singer |image in S_n|=    2520 odd cycle fixed: False
+n=9 E=D_n                |image in S_n|=      18 odd cycle fixed: True
+n=9 E=Z_n                |image in S_n|=       9 odd cycle fixed: True
+n=9 E=S_{n-1}            |image in S_n|=   40320 odd cycle fixed: False
+n=9 E=A_{n-1}            |image in S_n|=   20160 odd cycle fixed: False
+n=9 E=S_a x S_{n-a}      |image in S_n|=    2880 odd cycle fixed: False
+n=9 E=S_n                |image in S_n|=  362880 odd cycle fixed: False
+n=9 E=A_n                |image in S_n|=  181440 odd cycle fixed: False
+n=9 E=3 wr 3             |image in S_n|=      81 odd cycle fixed: True

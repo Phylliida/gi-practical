@@ -1,0 +1,10 @@
+# e5
+n=3 M=2 F=[(0, 1)]: |S_F|=9 dim C=5 dim C_0=4 rank(rect+cross)=4 dim C-dim C_0=1 rank(D)=1
+n=5 M=2 F=[(0, 1)]: |S_F|=25 dim C=17 dim C_0=16 rank(rect+cross)=16 dim C-dim C_0=1 rank(D)=1
+n=5 M=3 F=[(0, 1), (1, 2)]: |S_F|=50 dim C=38 dim C_0=36 rank(rect+cross)=36 dim C-dim C_0=2 rank(D)=2
+n=5 M=3 F=[(0, 1, 2)]: |S_F|=125 dim C=113 dim C_0=112 rank(rect+cross)=112 dim C-dim C_0=1 rank(D)=1
+n=7 M=3 F=[(0, 1), (1, 2)]: |S_F|=98 dim C=80 dim C_0=78 rank(rect+cross)=78 dim C-dim C_0=2 rank(D)=2
+n=5 M=3 F=[(0,), (1,), (2,)]: |S_F|=15 dim C=3 dim C_0=0 rank(rect+cross)=0 dim C-dim C_0=3 rank(D)=3
+n=5 M=2 F=[(0,), (1,), (0, 1)]: |S_F|=35 dim C=27 dim C_0=25 rank(rect+cross)=24 dim C-dim C_0=2 rank(D)=2
+n=5 M=3 F=[(0, 1), (1, 2), (0, 2)]: |S_F|=75 dim C=63 dim C_0=61 rank(rect+cross)=60 dim C-dim C_0=2 rank(D)=2
+n=5 M=4 F=[(0, 1, 2), (1, 2, 3)]: |S_F|=250 dim C=234 dim C_0=232 rank(rect+cross)=232 dim C-dim C_0=2 rank(D)=2
