@@ -96,16 +96,21 @@ canonical-subcoset device: an ordered test tuple is moved to a reference tuple c
 alone, and canonization takes place under the stabilizer of the reference tuple. The use of a canonical
 test set over an ordered group is due to Wiebking (dissertation, Lemma~5.34).
 We also give a canonical version of Neuen's hypergraph isomorphism test for such groups
-(Theorem~H; correctness proved, running time only sketched), and a proof sketch that graphs of
-treewidth $k$ admit canonical forms in time $n^{O((\log k)^c)}$, which needs Theorem~A but not
-Theorem~H (Theorem~TW). While writing out the running time we found a step in the written potential
+(Theorem~H; correctness proved, modulo Neuen's constructions as listed in
+Section~\ref{sec:assumptions}, which include a lemma of his dissertation that we have not seen; running
+time only sketched), and a proof sketch that graphs of treewidth $k$ admit canonical forms in time $n^{(\log k)^{O(1)}}$, which needs
+Theorem~A but not Theorem~H (Theorem~TW). While writing out the running time we found a step in the written potential
 argument of GNS (proof of Lemma~7.2) that we could not justify for the algorithm as written. We describe
 a choice of block system under which the step holds, and ask whether this is the intended reading; the
 GNS theorem itself is not affected.
 
 This is an unrefereed draft, prepared with substantial AI assistance. Every result is conditional on the
-published results listed in Section~\ref{sec:assumptions}, and each statement carries its status. It is
-offered for expert checking.
+published results listed in Section~\ref{sec:assumptions}, among them Babai's canonical form for strings
+(STOC 2019), whose published account is a preliminary report that sketches the proof (Theorem~A needs it
+only for $S_k$, $k\le d$, on relational structures of arity $O(\log d)$), and on the requirements
+\ref{D1}--\ref{D4} of Section~\ref{sec:P1} that the group-theoretic subroutines we use be run
+deterministically on canonical generating sets. Each statement carries its status. The draft is offered
+for expert checking.
 \end{abstract}
 
 \tableofcontents
@@ -196,13 +201,13 @@ The algorithm runs in time $n^{O((\log d)^c)}$, where $n=|\Omega|$ and $c$ is an
 
 \begin{named}[Corollary B (graphs of maximum degree $d$)]
 Canonical forms and canonical labelings of $n$-vertex graphs of maximum degree $d$ can be computed in
-time $n^{O((\log d)^c)}$.
+time $n^{O((\log d)^c)}$, with $c$ as in Theorem~A.
 \end{named}
 
 \begin{named}[Corollary D (labeling cosets)]
 Given a graph (or a string on $V^2$) and a labeling coset $\Delta\rho$ with $\Delta\in\Gd$, a canonical
 labeling coset relative to $\Delta\rho$ in the sense of Schweitzer and Wiebking can be computed in time
-$|V|^{O((\log d)^c)}$.
+$|V|^{O((\log d)^c)}$, with $c$ as in Theorem~A.
 \end{named}
 
 Corollary D is the canonical counterpart of the form in which Wiebking imports GNS
@@ -212,12 +217,12 @@ Corollary D is the canonical counterpart of the form in which Wiebking imports G
 Given $\Gamma\in\Gd$ on $\Omega$ ($|\Omega|=n$), a coset $\sigma\Gamma$, a partition $\fP$ with
 $\fP^\sigma$ $\Gamma$-invariant, and a set $\fX$ of $m$ $\fP$-strings (in particular, a hypergraph with
 $m$ edges), a canonical form of $\fX$ under $\sigma\Gamma$ and its canonical placement coset can be
-computed in time $(n+m)^{O((\log d)^c)}$.
+computed in time $(n+m)^{O((\log d)^{c'})}$, where $c'$ is an absolute constant.
 \end{named}
 
 \begin{named}[Theorem TW (treewidth; Section~\ref{sec:TW}; proof sketch)]
 Canonical forms and canonical labelings of $n$-vertex graphs of treewidth $k$ can be computed in time
-$n^{O((\log k)^c)}$.
+$n^{O((\log k)^{c''})}$, where $c''$ is an absolute constant.
 \end{named}
 
 \begin{table}[ht]
@@ -226,10 +231,10 @@ $n^{O((\log k)^c)}$.
 \toprule
 statement & status\\
 \midrule
-Theorem A & proof modulo \S\ref{sec:assumptions} (Sections~\ref{sec:framework}--\ref{sec:time}), including the running time\\
+Theorem A & proof modulo \S\ref{sec:assumptions} (Sections~\ref{sec:framework}--\ref{sec:time}), including the running time. Depends on Babai's canonical form \cite[Thm.~2.2]{Bab19}, whose published account is a preliminary report that sketches the proof, and on requirements \ref{D1}--\ref{D4} (deterministic subroutines on canonical generating sets). Babai's result is needed only for $S_k$, $k\le d$, on structures of arity $O(\log d)$ (Remark~\ref{rem:BC})\\
 Corollary B & proof modulo Theorem A (Section~\ref{sec:luks})\\
 Corollary D & proof modulo Theorem A (Section~\ref{sec:D})\\
-Theorem H & correctness: proof modulo Theorem A, the constructions of~\cite{Neu20} and the other results listed in \S\ref{sec:assumptions}; running time: \textbf{proof sketch}\\
+Theorem H & correctness: proof modulo Theorem A, the constructions of~\cite{Neu20} and the other results listed in \S\ref{sec:assumptions}, including the structure-graph lemma of \cite{Neu19}, which we have not seen (algorithm CanHyp and Proposition~\ref{prop:canhyp}, \S\ref{sec:canhyp}); running time: \textbf{proof sketch}\\
 Theorem TW & \textbf{proof sketch}, modulo Theorem A (via Corollary D) and canonical tools of Wiebking; it incorporates three repairs TW-1--TW-3 found in an internal review\\
 H1 (coset-labeled hypergraphs) & proof modulo Theorem H (so its running time is only as good as the sketch for Theorem H)\\
 H2 ($t$-CR-bounded graphs), H3 ($K_{3,h}$-minor-free, genus) & \textbf{proof sketches}\\
@@ -420,8 +425,10 @@ polynomial-time versions of:
   \cite[Lemma~6.1.17]{Neu19};
 \item\label{D4} Babai's canonical form of strings \cite[Thm.~2.2]{Bab19}. BC's canonical form takes
   ``(a set of generators of) the group $G$'' as input, and its invariance property is stated for a fixed
-  input group. We therefore always call it on the canonical generating set of the group in question.
-  If BC's form is known to depend on $G$ only, this precaution is unnecessary.
+  input group. Theorem~A calls it only for the group $S_k$ ($k\le d$) in its action on
+  $[k]\sqcup[k]^2\sqcup[k]^t$, on the fixed generating set determined by $(k,t)$
+  (Proposition~\ref{prop:opt1} and Remark~\ref{rem:BC}), so its output is a function of $(k,t)$ and the
+  string, whatever BC does on other generating sets. We also require the computation to be deterministic.
 \end{enumlab}
 
 \subsection{Windowed and layered strings}\label{sec:tags}
@@ -541,7 +548,7 @@ sequence:
 All of these are standard (\cite[\S2]{BL83}; \cite[\S\S5, 8]{Bab19}). We restate and prove them in the
 conventions of Section~\ref{sec:prelim}, because the left/right conventions matter.
 
-\begin{named}[Lemma F1 (restriction)]\label{lem:F1}
+\begin{named}[Lemma F1 (restriction)]
 Let $U\subseteq\Omega$ be $H$-invariant and let $\rho_U\colon H\to H^U$ be restriction. Let $(F',\Lambda')$ be
 an $H^U$-canonizer for $x|_U$. Define $F(\alpha):=(1,F'(\alpha))$ for $\alpha\in U$, $F(\alpha):=(0,*)$ otherwise,
 and $\Lambda:=\rho_U^{-1}(\Lambda')$. Then $(F,\Lambda)$ is an $H$-canonizer for $\win{x}{U}$. Its right subgroup is
@@ -554,7 +561,7 @@ Since $U$ is $H$-invariant, $h\in H$ maps $\win{x}{U}$ to $F$ iff $\rho_U(h)$ ma
 because $F'$ is constant on $H^U$-orbits. The last statement is Lemma~\ref{lem:canon-basic}(2).
 \end{proof}
 
-\begin{named}[Lemma F2 (sequential chain rule with input-dependent windows)]\label{lem:F2}
+\begin{named}[Lemma F2 (sequential chain rule with input-dependent windows)]
 Suppose windows $V_{i+1}$ are given as functions of the layered string $\lay{x}{U_i}$, with
 $V_{i+1}\subseteq\Omega\setminus U_i$, that are $H$-equivariant ($V_{i+1}(y^h)=V_{i+1}(y)^h$), and put
 $U_{i+1}:=U_i\sqcup V_{i+1}$; suppose the number of layers $r(x)$ is $H$-invariant. Given an $H$-canonizer
@@ -597,8 +604,8 @@ a transitive instance, which is used in Sections~\ref{sec:potential} and~\ref{se
 that ``least point'' is not $H$-invariant on the input side; this is why the window is defined in the
 canonical frame and pulled back.)
 
-\begin{named}[Lemma F3 (descent)]\label{lem:F3}
-Let $K\le H$ with $H=\bigsqcup_{\rho\in R}\rho K$. Put $m:=\min_\rho F_K(x^\rho)$ and
+\begin{named}[Lemma F3 (descent)]
+Let $K\le H$ with $H=\bigsqcup_{\rho\in Q}\rho K$. Put $m:=\min_\rho F_K(x^\rho)$ and
 $\Lambda_H(x):=\bigcup_{\rho:F_K(x^\rho)=m}\rho\Lambda_K(x^\rho)$. This is an $H$-canonizer with $F_H(x)=m$,
 and $\Lambda_H(x)=\{h\in H:x^h=m\}$.
 \end{named}
@@ -613,7 +620,7 @@ The output depends only on the branch values, so branches whose values are known
 be evaluated separately (Lemma~\ref{lem:K} uses this). The right subgroup is generated by $\Aut_K(m)$ and
 one element $\lambda_1^{-1}\lambda_j$ per further minimizing branch, where $\lambda_j\in\rho_j\Lambda_K(x^{\rho_j})$.
 
-\begin{named}[Lemma F4 (equivariant branch families)]\label{lem:F4}
+\begin{named}[Lemma F4 (equivariant branch families)]
 Let $x\mapsto\fF(x)$ assign to each $x$ a finite set of objects with $\fF(x^h)=\fF(x)^h$, and suppose an
 $H$-canonizer for pairs $(x,b)$, $b\in\fF(x)$, is given. Let $F:=\min_{b\in\fF(x)}F_H(x,b)$ (pairs compared
 lexicographically), let $F^x$ be its first component, and let $\Lambda_H(x)$ be the union of
@@ -627,7 +634,7 @@ $b:=(F^b)^{h^{-1}}\in\fF(x)$ and $(x,b)^h=F$. Since $F_H(F)=F$, we get $F_H(x,b)
 $h\in\Lambda_H(x,b)$.
 \end{proof}
 
-\begin{named}[Lemma R (change of action)]\label{lem:R}
+\begin{named}[Lemma R (change of action)]
 Let $\iota\colon G\to\Sym(\Omega^*)$, $g\mapsto g^*$, be a homomorphism and $x\mapsto x^*$ an injective map
 with $(x^g)^*=(x^*)^{g^*}$. Given a $G^*$-canonizer $(F_{G^*},\Lambda_{G^*})$, $G^*:=\iota(G)$, on the
 $G^*$-invariant set $\{x^*\}$ of encoded strings, put
@@ -645,7 +652,7 @@ computed from $G$ alone (P1; rows 1--5 of Table~\ref{tab:choices}).
 % =====================================================================
 \section{The canonical subcoset lemma and tuple colours}\label{sec:subcoset}
 
-\begin{named}[Lemma S (canonical subcoset)]\label{lem:S}
+\begin{named}[Lemma S (canonical subcoset)]
 Let $H\le\Sym(\Omega)$ and let $\varphi\colon H\to\Sym(\Gamma)$ be a homomorphism. Let $\cS$ be a
 $\varphi(H)$-invariant set of structures on $\Gamma$ with a $\varphi(H)$-canonizer $(F',\Lambda')$. Let
 $x\mapsto S(x)\in\cS$ satisfy $S(x^h)=S(x)^{\varphi(h)}$, and write $S_{\mathrm{can}}=S_{\mathrm{can}}(x):=F'(S(x))$
@@ -669,7 +676,7 @@ Isomorphic inputs $x$ and $x^h$ lead to the children $\sigma R$ and $h^{-1}\sigm
 to the same group node $(R,x^\sigma)$: the same group as a set, on the same ordered domain, with inputs
 in one $R$-orbit. Every (P1) choice made at that node is therefore the same for both inputs.
 
-\begin{named}[Lemma T (tuple colours)]\label{lem:T}
+\begin{named}[Lemma T (tuple colours)]
 Let $H$ and $\varphi\colon H\to\Sym(\Gamma)$ be as above, let $\vT_0$ be an injective $t$-tuple of $\Gamma$
 chosen by (P1), let $\cO:=\vT_0^{\varphi(H)}$, and let $J_0:=\{h\in H:\vT_0^{\varphi(h)}=\vT_0\}$. Let $\mathcal P$
 be an $H$-invariant set of pairs $(y,\vT)$ with $\vT\in\cO$, let $\cY_0:=\{y:(y,\vT_0)\in\mathcal P\}$ (a
@@ -736,8 +743,9 @@ counts.
 
 \subsection{The fullness group and the case analysis}
 
-Put $F(x):=\langle K(T,x):T\text{ full}\rangle\le\Aut_H(x)$ and $S(x):=\supp(\varphi(F(x)))\subseteq[k]$. Both
-are equivariant: $F(x^h)=F(x)^h$ and $S(x^h)=S(x)^{\varphi(h)}$ by \ref{L4}. We follow
+Put $\Phi(x):=\langle K(T,x):T\text{ full}\rangle\le\Aut_H(x)$ (the \emph{fullness group}) and
+$\supp_x:=\supp(\varphi(\Phi(x)))\subseteq[k]$ (its \emph{support}). Both are equivariant: $\Phi(x^h)=\Phi(x)^h$ and
+$\supp_{x^h}=(\supp_x)^{\varphi(h)}$ by \ref{L4}. We follow
 \cite[App.~A]{GNS}, canonically.
 
 \begin{center}\small
@@ -745,15 +753,15 @@ are equivariant: $F(x^h)=F(x)^h$ and $S(x^h)=S(x)^{\varphi(h)}$ by \ref{L4}. We 
 \toprule
 case & GNS (App.~A) & canonical object & count\\
 \midrule
-(i) $k/4\le|S|\le3k/4$ & colouring by $S$ & $\fA=([k];S)$ & $r=1$\\
-(ii) $|S|>3k/4$, no $\varphi(F)$-orbit $\ge3k/4$ & orbit partition & $\fA=([k];\text{orbit partition})$ & $r=1$\\
-(iii) $|S|>3k/4$, orbit $C$ with $|C|\ge3k/4$ and $\varphi(F)|_C\ge\Alt(C)$ & ``Option 2'' & $\Delta(x):=C$, $K(x):=F(x)$ & ---\\
-(iv) as (iii), $\varphi(F)|_C$ not a giant & individualize $I$, an orbital $R$, possibly a vertex $v$ & the family of \emph{all} structures over all choices of $(I,R,v)$, each on $[k]$ with $C'=C\setminus I$ marked & $r\le k^6$\\
-(v) $|S|<k/4$ & joint comparison classes (pairwise) & $\fA(x)$ of Definition~\ref{def:Ax} & $r=1$\\
+(i) $k/4\le|\supp_x|\le3k/4$ & colouring by $\supp_x$ & $\fA=([k];\supp_x)$ & $r=1$\\
+(ii) $|\supp_x|>3k/4$, no $\varphi(\Phi)$-orbit $\ge3k/4$ & orbit partition & $\fA=([k];\text{orbit partition})$ & $r=1$\\
+(iii) $|\supp_x|>3k/4$, orbit $C$ with $|C|\ge3k/4$ and $\varphi(\Phi)|_C\ge\Alt(C)$ & ``Option 2'' & $\Delta(x):=C$, $K(x):=\Phi(x)$ & ---\\
+(iv) as (iii), $\varphi(\Phi)|_C$ not a giant & individualize $I$, an orbital $R$, possibly a vertex $v$ & the family of \emph{all} structures over all choices of $(I,R,v)$, each on $[k]$ with $C'=C\setminus I$ marked & $r\le k^6$\\
+(v) $|\supp_x|<k/4$ & joint comparison classes (pairwise) & $\fA(x)$ of Definition~\ref{def:Ax} & $r=1$\\
 \bottomrule
 \end{tabularx}
 \end{center}
-In case (iv), $|I|$ is the degree of transitivity of $\varphi(F)|_C$ minus one, which is at most $4$ by
+In case (iv), $|I|$ is the degree of transitivity of $\varphi(\Phi)|_C$ minus one, which is at most $4$ by
 \cite[Thm.~A.2]{GNS} (a consequence of the classification of finite simple groups). In every structure,
 the relevant domain $D\subseteq[k]$ is marked by a unary relation.
 
@@ -767,7 +775,7 @@ the relevant domain $D\subseteq[k]$ is marked by a unary relation.
 \end{enumerate}
 \end{proposition}
 \begin{proof}
-\emph{Equivariance.} All ingredients are equivariant: $F$, $S$, the orbits, the degree of transitivity,
+\emph{Equivariance.} All ingredients are equivariant: $\Phi$, $\supp_x$, the orbits, the degree of transitivity,
 the orbitals, and in case (v) Lemma~\ref{lem:Tprime}(1). The family in case (iv) is the set of all
 choices, so it is equivariant as a set. GNS's ``without loss of generality $R_1$ is the diagonal''
 \src{GNS}{2357} is harmless since the diagonal is an invariant. GNS's ``it can be assumed that
@@ -775,12 +783,12 @@ $|D_1|=|D_2|$'' \src{GNS}{2368} is not needed, since $|D(x)|$ is an invariant.
 
 \emph{Defects.} Let $\Alt(\Delta)\le\Aut(\fA)$ with $|\Delta|\ge3$. Since $D$ is a unary relation and $\Alt(\Delta)$
 is transitive on $\Delta$, either $\Delta\subseteq D$ or $\Delta\cap D=\emptyset$.
-(i) $|\Delta|\le\max(|S|,k-|S|)\le3k/4$.
+(i) $|\Delta|\le\max(|\supp_x|,k-|\supp_x|)\le3k/4$.
 (ii) $\Alt(\Delta)$ preserves the orbit partition and is primitive on $\Delta$. If $\Delta$ lies in one class,
 $|\Delta|<3k/4$. Otherwise $\Delta$ meets each class in at most one point, and a class $P$ meeting $\Delta$ with
 $|P|\ge2$ would contain a point fixed by $\Alt(\Delta)$, forcing $P^a=P$ for all $a\in\Alt(\Delta)$, which is
-impossible; so every class meeting $\Delta$ is a singleton, i.e.\ a point of $[k]\setminus S$, and
-$|\Delta|\le|[k]\setminus S|<k/4$.
+impossible; so every class meeting $\Delta$ is a singleton, i.e.\ a point of $[k]\setminus\supp_x$, and
+$|\Delta|\le|[k]\setminus\supp_x|<k/4$.
 (iv) If $\Delta\cap C'=\emptyset$ then $|\Delta|\le k-|C'|\le k/4+4$. If $\Delta\subseteq C'$, then either $\Alt(\Delta)$
 preserves a non-trivial regular graph on $C'$, whose relative symmetry defect is at least $1/2$
 \cite[Lemma~A.3]{GNS} (= \cite[Cor.~2.4.13]{Bab15}), or it preserves the colouring by in- and
@@ -789,13 +797,13 @@ out-neighbours of an individualized vertex, whose classes have size $\le|C'|/2$.
 This also covers a small slip in GNS: \src{GNS}{2324} asserts $|D_{i,j}|\ge3k/4$, whereas
 $C'=C\setminus I$ only has at least $3k/4-4$ elements; the defect bound is unaffected.
 
-\emph{Case (iii).} This is GNS's Option~2: $F\le\Aut_H(x)$, and $C$ is a $\varphi(F)$-orbit, so $F\le H_C$.
+\emph{Case (iii).} This is GNS's Option~2: $\Phi(x)\le\Aut_H(x)$, and $C$ is a $\varphi(\Phi)$-orbit, so $\Phi(x)\le H_C$.
 \end{proof}
 
 \subsection{The canonical structure in case (v)}\label{sec:colours}
 
-Let $D(x):=[k]\setminus S(x)$, so $|D(x)|>3k/4$. Every $t$-set $T\subseteq D(x)$ is non-full: a full $T$ has a
-certificate in $F(x)$ acting on $T$ as at least $\Alt(T)$, with $t\ge3$, so $T\subseteq S(x)$. Let
+Let $D(x):=[k]\setminus\supp_x$, so $|D(x)|>3k/4$. Every $t$-set $T\subseteq D(x)$ is non-full: a full $T$ has a
+certificate in $\Phi(x)$ acting on $T$ as at least $\Alt(T)$, with $t\ge3$, so $T\subseteq\supp_x$. Let
 $\vT_0:=(1,\dots,t)$ be the first $t$ labels of $[k]$ (P1). Since $\varphi(H)\ge A_k$ is $(k-2)$-transitive, it
 is transitive on injective $t$-tuples. Put $J_0:=H_{(\vT_0)}=\ker(\psi_{T_0}\colon H_{T_0}\to\Sym(T_0))$.
 
@@ -878,24 +886,51 @@ $\binom kt^2t!\,n$ on comparisons; we spend at most $k^t n$.
 
 \begin{proposition}\label{prop:opt1}
 In cases (i), (ii), (iv), (v), an $H$-canonizer for $x$ is obtained as follows. For each $\fA\in\fF(x)$, let
-$s_\fA$ be the string encoding $\fA$ on $[k]\sqcup[k]^2\sqcup[k]^t$, and let $\varphi(H)$ act on this domain in the
-induced way. Let $F^{\mathrm{BC}}$ be Babai's canonical form \cite[Thm.~2.2]{Bab19}, called on the
-\emph{canonical generating set} of this induced group (requirement~\ref{D4}), and put
-$\Lambda'(\fA):=\Iso_{\varphi(H)}(s_\fA,F^{\mathrm{BC}}(s_\fA))$, computed by Babai's string isomorphism test
-\cite[Thm.~2.1]{Bab19}. Then $\varphi^{-1}(\Lambda'(\fA))=\sigma_\fA R_\fA$ with
+$s_\fA$ be the string encoding $\fA$ on $[k]\sqcup[k]^2\sqcup[k]^t$. Let $F^{\mathrm{BC}}$ be Babai's canonical form
+\cite[Thm.~2.2]{Bab19}, called only for the group $S_k$ in its induced action on this domain, on the
+generating set determined by $(k,t)$ (requirement~\ref{D4}), and put
+$\Lambda^{S_k}(\fA):=\Iso_{S_k}(s_\fA,F^{\mathrm{BC}}(s_\fA))$, computed by Babai's string isomorphism test
+\cite[Thm.~2.1]{Bab19}. If $\varphi(H)=S_k$, put $\Lambda'(\fA):=\Lambda^{S_k}(\fA)$. If $\varphi(H)=A_k$, then
+\begin{itemize}
+\item if $\Aut_{S_k}(s_\fA)$ contains an odd permutation, put $\Lambda'(\fA):=\Lambda^{S_k}(\fA)\cap A_k$, with form
+  $F^{\mathrm{BC}}(s_\fA)$;
+\item otherwise the elements of $\Lambda^{S_k}(\fA)$ all have one parity; if it is even, put
+  $\Lambda'(\fA):=\Lambda^{S_k}(\fA)$, with form $F^{\mathrm{BC}}(s_\fA)$, and if it is odd, put
+  $\Lambda'(\fA):=\Lambda^{S_k}(\fA)\,(1\,2)$, with form $F^{\mathrm{BC}}(s_\fA)^{(1\,2)}$.
+\end{itemize}
+Then $\varphi^{-1}(\Lambda'(\fA))=\sigma_\fA R_\fA$ with
 $R_\fA=\varphi^{-1}(\Aut_{\varphi(H)}(\fA_{\mathrm{can}}))$. Recursively canonize $x^{\sigma_\fA}$ under $R_\fA$, and
 combine over $\fA\in\fF(x)$ by Lemma~S (for pairs $(x,\fA)$) and Lemma~F4.
 \end{proposition}
 \begin{proof}
-$\Lambda'$ is a $\varphi(H)$-canonizer on structures, since $F^{\mathrm{BC}}$ depends only on the group (by
-\ref{D4}) and is constant on its orbits. Lemma~S with $S(x,\fA)=\fA$ is equivariant on pairs; then apply
-Lemma~F4.
+$\Lambda'$ is a $\varphi(H)$-canonizer on structures: for $\varphi(H)=S_k$ because $F^{\mathrm{BC}}$, on a generating set
+determined by $(k,t)$, is constant on $S_k$-orbits and takes values in them; for $\varphi(H)=A_k$ because
+$\Lambda^{S_k}(s^a)=a^{-1}\Lambda^{S_k}(s)$ for $a\in A_k$, so the case distinction and the parity are constant on
+$A_k$-orbits, and in each case the displayed coset is exactly the set of $g\in A_k$ mapping $s_\fA$ to the stated
+form (in the odd case, $s^g=F^{(1\,2)}$ iff $g(1\,2)\in\Lambda^{S_k}(s)$). Lemma~S with $S(x,\fA)=\fA$ is equivariant
+on pairs; then apply Lemma~F4.
 \end{proof}
 Each $R_\fA$ satisfies $|\varphi(H):\varphi(R_\fA)|\ge(4/3)^k$, by Proposition~\ref{prop:cases}(2) and
 \cite[Cor.~6.5]{GNS} ($k\ge24$). The number of branches is $r\le k^6$, as in \cite[Lemma~6.7]{GNS}, where
 $\fA_{1,1}$ is paired with each $\fA_{2,j}$. The calls of BC are on domains of size at most $2k^t=d^{O(\log d)}$,
-so each costs $\exp(O((\log d)^{2c_{\mathrm{BC}}}))$, where $n^{O((\log n)^{c_{\mathrm{BC}}})}$ is the running time
+so each costs $\exp(O((\log d)^{2c_{\mathrm{BC}}}))$, where $\exp(O((\log n)^{c_{\mathrm{BC}}}))$ is the running time
 of BC.
+
+\begin{remark}[What Theorem~A needs from BC]\label{rem:BC}
+BC is called only in Proposition~\ref{prop:opt1}, only at Option~1 nodes, where $\varphi(H)\in\{A_k,S_k\}$ and
+$k\le d$ (\S\ref{sec:gnsrecap}), and the case $A_k$ is obtained from $S_k$ by the parity argument above. So
+Theorem~A needs exactly: a canonical form, under $S_k$ with $k\le d$, of relational structures on $[k]$ of
+arity at most $t=O(\log d)$ (arity at most $2$ in cases (i), (ii), (iv), and $t$ in case (v)), together with Babai's
+string isomorphism test \cite[Thm.~2.1]{Bab19} (the main result of \cite{Bab15}) for $\Lambda^{S_k}$. Through
+the standard encoding of a $t$-ary structure by a graph on $k^{O(t)}$ vertices (cf.\ \cite[proof of
+Lemma~4.33]{Neu20}), this is a special case of \cite[Cor.~2.3]{Bab19} on graphs with $k^{O(t)}=d^{O(\log d)}$
+vertices. It is \emph{not} a reduction to graphs on at most $d$ vertices: for $t\ge3$ there are more $t$-ary
+structures on $[k]$ than graphs on $[k]$, so case (v) cannot be encoded on $k$ vertices. Since
+\cite[Cor.~2.3]{Bab19} is deduced from \cite[Thm.~2.2]{Bab19}, the dependency is also no lighter in
+status: the published account of both is the preliminary report \cite{Bab19}, which says of its
+main theorem, ``we sketch the proof''. This is why the dependency is flagged in the abstract and in
+the status of Theorem~A.
+\end{remark}
 
 \subsection{Option 2: canonical find-symmetry}
 
@@ -912,8 +947,9 @@ $K(z)\le\Aut(z)\cap H_{\Delta_0}$.
 
 \emph{Collapse to two cosets.} $L\trianglelefteq H_{\Delta_0}$, and the image of $K(z)$ on $\Delta_0$ contains
 $\Alt(\Delta_0)$, so $K(z)L$ has index at most $2$ in $H_{\Delta_0}$ and is normal. Hence
-$H_{\Delta_0}=K(z)L\cup K(z)L\tau$, where $\tau$ is any element inducing an odd permutation on $\Delta_0$ (omit the
-second part if there is none; this also covers the case $\varphi(H)=A_k$, which GNS do not discuss).
+$H_{\Delta_0}=K(z)L\cup K(z)L\tau$, where, if $K(z)L\ne H_{\Delta_0}$, $\tau$ is any element of
+$H_{\Delta_0}\setminus K(z)L$ (one inducing an odd permutation on $\Delta_0$); if $K(z)L=H_{\Delta_0}$, omit the
+second part (this also covers the case $\varphi(H)=A_k$, which GNS do not discuss).
 
 \emph{Branch values.} In the descent (Lemma~F3) from $H_{\Delta_0}$ to $L$, a coset $\rho L$ with
 $\rho=\kappa l\in K(z)L$ has branch value $F_L(z^{\kappa l})=F_L(z)$. A coset in $K(z)L\tau$ has a representative
@@ -961,7 +997,7 @@ recursion and never from $x$, so isomorphic strings lead to instances that diffe
   \begin{itemize}
   \item If $k\le10t$: descend to $\ker\varphi=G'_{(\Cp)}$ over at most $k!$ cosets, then apply the chain rule.
     The windows lie inside $\Cp$-classes, of size $\le n/2$.
-  \item Otherwise compute the local certificates (Lemma~\ref{lem:51}), $F$, $S$, and the case
+  \item Otherwise compute the local certificates (Lemma~\ref{lem:51}), $\Phi$, $\supp_x$, and the case
     (Proposition~\ref{prop:cases}). In cases (i), (ii), (iv), (v) apply Proposition~\ref{prop:opt1}
     (for (v) the colours come from Lemma~\ref{lem:Tpp}). In case (iii) apply Lemma~\ref{lem:K}.
   \item Every recursive call \emph{on the same domain}, under some $R_\fA$ or $L$, is made with the
@@ -1020,7 +1056,7 @@ and how CanAD treats it. Line numbers refer to the arXiv~v3 source.
 10 & Lemma 7.2; 2090--2093 & $N,\cC,\psi$ (Lemma~7.1); $G'$; labels of $[k]$ & P1, then descent over $\le d$ cosets\\
 11 & Lemma 7.2; 2101 & $k\le10t$: Luks reduction to $\ker\varphi$ & descent over $\le k!$ cosets\\
 12 & Lemma 7.2, Alg.~1; 2121--2122 & order of orbits & chain rule (Definition~\ref{def:chain})\\
-13 & App.~A; 2337--2349 & $F$, $S$, case split & equivariant (Proposition~\ref{prop:cases})\\
+13 & App.~A; 2337--2349 & $\Phi$, $\supp_x$, case split & equivariant (Proposition~\ref{prop:cases})\\
 14 & App.~A; 2352, 2359, 2364 & $I$, orbital $R_i$, vertex & equivariant family and F4\\
 15 & App.~A; 2357--2358 & ``WLOG $R_1$ is the diagonal'' & the diagonal is an invariant\\
 16 & App.~A; 2368 & ``WLOG $|D_1|=|D_2|$'' & pairwise only; $|D(x)|$ is an invariant\\
@@ -1049,15 +1085,18 @@ $(\Omega^*,G^*,\vec\fB^*,x^*)$, and pull back by Lemma~R. The almost $d$-ary rec
 change of action \cite[Obs.~4.2]{GNS}. Correctness follows from Proposition~\ref{prop:correct} and
 Lemma~R. The time bound is proved in Section~\ref{sec:timebound}.
 \end{proof}
-\status{Proof modulo the results listed in Section~\ref{sec:assumptions}, in particular the internal
-constructions of \cite[Thms.~4.3, 4.6]{GNS} and requirement~\ref{D3}; see Question~\ref{q:changeofaction}.}
+\status{Proof modulo the results listed in Section~\ref{sec:assumptions}, in particular Babai's canonical form
+\cite[Thm.~2.2]{Bab19}, whose published account is a preliminary report that sketches the proof (used only for
+$S_k$, $k\le d$, on structures of arity $O(\log d)$; Remark~\ref{rem:BC}), the internal constructions of
+\cite[Thms.~4.3, 4.6]{GNS}, and requirements \ref{D1}--\ref{D4} (deterministic subroutines on canonical
+generating sets); see Questions~\ref{q:changeofaction}, \ref{q:BC}.}
 
 % =====================================================================
 \section{Running time}\label{sec:time}
 
 \subsection{A recursion lemma}
 
-\begin{lemma}\label{lem:rec}
+\begin{named}[Lemma REC (a recursion lemma)]
 Let $\tau\colon\mathbb N\to\mathbb N$ with $\tau(1)=1$ and let $K\ge1$. Suppose every $n\ge2$ satisfies
 $\tau(n)\le\sum_{i=1}^\ell\tau(n_i)$ with $1\le n_i<n$, where either
 \begin{enumlab}{\Alph}
@@ -1065,11 +1104,14 @@ $\tau(n)\le\sum_{i=1}^\ell\tau(n_i)$ with $1\le n_i<n$, where either
 \item $\sum_in_i\le n$.
 \end{enumlab}
 Then $\tau(n)\le n^{K+1}$.
-\end{lemma}
+\end{named}
 \begin{proof}
 By induction: $\sum n_i^{K+1}=n^{K+1}\sum(n_i/n)^{K+1}\le n^{K+1}$ in case (A), and
 $\sum n_i^{K+1}\le(\sum n_i)^{K+1}\le n^{K+1}$ in case (B).
 \end{proof}
+We apply the lemma to $\tau(n):=$ the maximum, over all instances with domain of size $n$, of the
+number of leaves of the recursion tree of the algorithm on that instance. The hypothesis is a statement
+about one instance at a time, and each instance of size $n$ has children of sizes $n_i$ as in (A) or (B).
 
 The hypothesis of (A) holds in two situations.
 \begin{itemize}
@@ -1082,7 +1124,7 @@ The hypothesis of (A) holds in two situations.
 \begin{remark}\label{rem:gap2}
 \cite[Lemma~2.8]{GNS} requires $\sum n_i\le2^Kn$. The semi-regular step of \cite[Alg.~4]{GNS} has
 recursive sizes summing to $b\cdot n$ with $b$ unbounded (e.g.\ $C_n$ acting regularly), so the appeal to
-Lemma~2.8 in the proof of \cite[Thm.~7.3]{GNS} does not literally cover it. Lemma~\ref{lem:rec}
+Lemma~2.8 in the proof of \cite[Thm.~7.3]{GNS} does not literally cover it. Lemma~REC
 covers it. This is a point of presentation only.
 \end{remark}
 
@@ -1112,7 +1154,7 @@ with $|U|\approx0.3m$, and $x((a,b),c):=[a\in U]$.
   $N\le S_m\times S_m$, $k=m$, and $\cC$ the rows (up to swapping coordinates), so $G'=S_m\times S_m\times C_q$ and
   $\ker\varphi=1\times S_m\times C_q$.
 \item \emph{Aggregation.} A test set $T\subseteq[k]$ (a set of rows) is full iff $T\subseteq U$ or
-  $T\subseteq U^c$. So $\varphi(F(x))$ has orbits $U$ and $U^c$, $S=[k]$, and no orbit has $\ge3k/4$ points:
+  $T\subseteq U^c$. So $\varphi(\Phi(x))$ has orbits $U$ and $U^c$, $\supp_x=[k]$, and no orbit has $\ge3k/4$ points:
   case (ii), with structure $\{U,U^c\}$ and $H=\varphi^{-1}(\Sym(U)\times\Sym(U^c))\cap G'$.
 \item \emph{Next round.} The large $H$-orbit is $\Omega'=(U^c\times[m])\times[q]$, of size about $0.7n$. The
   group $H'$ induced on the cells of $\Omega'$ is $\Sym(U^c)\times S_m$ in product action, which has exactly two
@@ -1197,7 +1239,7 @@ node $H'$ on the window of size $>n/2$. Calls on domains of size $\le n/2$ are t
 step. If Step~3 (semi-regular) applies at an inner node $H'$, that node is a leaf of $\cT$; its children
 have size $\le|\Omega'|/b\le n/2$ and total size $\le b|\Omega'|\le d\,n$, since $b=|\Cp[\Omega']|\le|\cC|\le d$, and
 they are exits. (A semi-regular step at the \emph{root} of an instance, with $b$ unbounded, is a separate
-(A)-node of Lemma~\ref{lem:rec}.)
+(A)-node of Lemma~REC.)
 
 \begin{center}\small
 \begin{tabularx}{\linewidth}{@{}L{4.1cm}L{3.2cm}YL{2.3cm}@{}}
@@ -1241,7 +1283,7 @@ only, which costs the same.
 
 \begin{proof}[Proof of Theorem A (running time)]
 \emph{Almost $d$-ary instances} with domain size $N$ (and $d\le N$). A macro step satisfies
-Lemma~\ref{lem:rec}(A) with $K:=K_0\log^3d$, by \cite[Lemma~2.6]{GNS}. The semi-regular step satisfies (A).
+Lemma~REC(A) with $K:=K_0\log^3d$, by \cite[Lemma~2.6]{GNS}. The semi-regular step satisfies (A).
 The intransitive step satisfies (B), with $\ell\ge2$. So the recursion tree has at most $N^{K+1}$ leaves. Its
 depth is at most $2\log N+1$: by the choice of chain rule, every child of a (B)-node is transitive, and a
 transitive node is an (A)-node, so sizes halve at least every two levels. Hence there are at most
@@ -1255,7 +1297,7 @@ $c:=c_2+2$. The coset rule and Lemma~R add polynomial overhead (preimages, \cite
 \end{proof}
 
 The only changes to GNS's analysis are the choice of Remark~\ref{rem:gap1} and the recursion lemma
-(Lemma~\ref{lem:rec}).
+(Lemma~REC).
 
 \begin{remark}[The exponent]
 We have not tried to optimize $c$, and we make no claim about its value here. A separate analysis of
@@ -1457,6 +1499,19 @@ structure graphs). Neuen notes that renormalization ``is not isomorphism-invaria
 \src{Neu20}{1930}, and therefore runs the local certificates routine on all pairs of test objects
 simultaneously \src{Neu20}{270--275}.
 
+\paragraph{Sets of strings as objects.} For $U\subseteq\Omega$ put
+$\fP[U]:=\{P\cap U:P\in\fP,\ P\cap U\ne\emptyset\}$, and for a set $Z$ of $\fP$-strings let
+$Z[U]:=\{(P\cap U,x[P\cap U]):(P,x)\in Z,\ P\cap U\ne\emptyset\}$, a set of $\fP[U]$-strings. A permutation acts by
+$Z^g:=\{(P^g,x^g):(P,x)\in Z\}$. We call $Z$ \emph{completely occupied} if $m_Z(P)\ge1$ for all blocks $P$
+of its partition; this is Neuen's standing assumption \src{Neu20}{1036}, it is inherited by every
+$Z[U]$, and we need it for \cite[Obs.~4.12]{Neu20}: if $Z$ is completely occupied and $U\subsetneq U'$, then the
+$d$-virtual size of $Z[U]$ is strictly smaller than that of $Z[U']$. Sets of strings on a fixed $\Omega$ are
+compared in a fixed total order (the sorted list of the strings, compared along the order of $\Omega$). The
+notions of canonizer (Definition~\ref{def:canonizer}), Lemma~\ref{lem:canon-basic}, the coset rule, and the
+statements and proofs of Lemmas F3, F4, R, S, Lemma~\ref{lem:K} and Proposition~\ref{prop:opt1} use only a
+right group action and this total order on the objects, so they apply verbatim to sets of strings in place
+of strings.
+
 \subsection{Equivariant coset maps}
 
 \begin{definition}\label{def:ECM}
@@ -1468,14 +1523,14 @@ the right subgroup of a canonizer).
 The $\Lambda_H$ of a canonizer is an ECM with $R=\Aut_H(F_H(x))$. ECMs are the weak notion of canonical
 labeling used by Schweitzer and Wiebking.
 
-\begin{named}[Lemma E1]\label{lem:E1}
+\begin{named}[Lemma E1]
 For an $H$-ECM, $R(Z^h)=R(Z)$, and $\Aut_H(Z)\le C(Z)C(Z)^{-1}=\pi R(Z)\pi^{-1}$ for any $\pi\in C(Z)$.
 \end{named}
 \begin{proof}
 $h^{-1}C(Z)$ has right group $R(Z)$. If $a\in\Aut_H(Z)$ then $C(Z)=C(Z^a)=a^{-1}C(Z)$, so $a\in C(Z)C(Z)^{-1}$.
 \end{proof}
 
-\begin{named}[Lemma E2 (composition at a prefix)]\label{lem:E2}
+\begin{named}[Lemma E2 (composition at a prefix)]
 Let $C_1$ be an $H$-ECM on $\cZ$ with right group $R_1(Z)$. A \emph{prefix} is a value $\bar p(Z)$ that is
 computed from $Z^\pi$ and is the same for every $\pi\in C_1(Z)$, satisfies $\bar p(Z^h)=\bar p(Z)$, and
 determines $R_1(Z)$. For each prefix value $p$ with right group $R$, the set
@@ -1491,7 +1546,7 @@ When $C_1$ and $C_2$ come from canonizers, this is Lemma~F2. The point of E2 is 
 from the prefix by a deterministic procedure, for example a renormalization, is identical for every object
 in the $H$-orbit.} This replaces Neuen's synchronization of pairs.
 
-\begin{named}[Lemma E3 (change of action at a prefix)]\label{lem:E3}
+\begin{named}[Lemma E3 (change of action at a prefix)]
 In the setting of E2, suppose the prefix $p$ determines an injective homomorphism
 $\iota_p\colon R\to\Sym(\Omega_p)$ and an injective map $Z'\mapsto Z'_*$ on $\cZ_p$ with
 $(Z'^r)_*=(Z'_*)^{\iota_p(r)}$. If $C^*$ is an $\iota_p(R)$-ECM on $\{Z'_*:Z'\in\cZ_p\}$, then
@@ -1501,6 +1556,25 @@ $C_2(Z'):=\iota_p^{-1}(C^*(Z'_*))$ is an $R$-ECM on $\cZ_p$.
 $\iota_p^{-1}(C^*((Z'^r)_*))=\iota_p^{-1}(\iota_p(r)^{-1}C^*(Z'_*))=r^{-1}C_2(Z')$.
 \end{proof}
 
+\begin{named}[Lemma E4 (from an ECM to a canonizer)]
+Let $C$ be an $H$-ECM on an $H$-invariant set $\cZ$ with right group $R(Z)$. Suppose that for every value $R$ of
+the right group an $R$-canonizer $(F_R,\Lambda_R)$ is given on the $R$-invariant set
+$\{Z^\pi:\pi\in C(Z),\ R(Z)=R\}$. Then
+\[ F_H(Z):=F_{R(Z)}(Z^\pi),\qquad \Lambda_H(Z):=\pi\,\Lambda_{R(Z)}(Z^\pi)\qquad(\pi\in C(Z)) \]
+defines an $H$-canonizer on $\cZ$. Its right subgroup is $\Aut_{R(Z)}(F_H(Z))$, and $\Lambda_H(Z)\subseteq C(Z)$.
+\end{named}
+\begin{proof}
+\emph{Independence of $\pi$.} Let $\pi'=\pi r$ with $r\in R$. Then $F_R(Z^{\pi r})=F_R(Z^\pi)$, and
+$\pi r\,\Lambda_R(Z^{\pi r})=\pi r\,r^{-1}\Lambda_R(Z^\pi)$.
+\emph{(C2).} For $Z^h$ use $h^{-1}\pi\in C(Z^h)$; then $Z^{hh^{-1}\pi}=Z^\pi$, and $R(Z^h)=R(Z)$ by Lemma~E1.
+\emph{(C1).} Every element of $\Lambda_H(Z)$ maps $Z$ to $F:=F_H(Z)$. Conversely, let $Z^h=F$. Write $F=Z^{\pi\lambda}$
+with $\lambda\in\Lambda_R(Z^\pi)$. Then $C(F)=(\pi\lambda)^{-1}C(Z)=\lambda^{-1}R=R$, so $1\in C(F)$; on the other hand
+$C(F)=C(Z^h)=h^{-1}C(Z)$, so $h\in C(Z)$, say $h=\pi r$ with $r\in R$. Then $(Z^\pi)^r=F$, so $r\in\Lambda_R(Z^\pi)$.
+\emph{Right subgroup.} If $h\in\Aut_H(F)$, the same computation gives $h\in C(F)=R$.
+\end{proof}
+This is Lemma~S in the language of ECMs: an ECM combined with canonizers at the right group gives a
+canonizer.
+
 \subsection{Ordered colours from a setwise reference test set}
 
 This is Lemma~T moved from the pointwise stabilizer of a reference \emph{tuple} to the setwise stabilizer
@@ -1508,7 +1582,7 @@ of a reference \emph{set}, which is the form of Wiebking's canonical test set \c
 (``$T^{\mathrm{can}}:=\{1,\dots,m\}\subseteq W^{\mathrm{can}}$''; the group ``stabilize[s] the test set
 $T^{\mathrm{can}}$ setwise'').
 
-\begin{named}[Lemma T$^{\text{set}}$]\label{lem:Tset}
+\begin{named}[Lemma T$^{\text{set}}$]
 Let $H\le\Sym(\Omega)$ and $\varphi\colon H\to\Sym([k])$ with $\varphi(H)\ge A_k$ and $k\ge t+2$. Let
 $T_0:=\{1,\dots,t\}$ (P1), $H_0:=\varphi^{-1}(\mathrm{Stab}(T_0))$, and $\psi\colon H_0\to\Sym(T_0)$ the induced action.
 Let $C$ be an $H_0$-ECM with right group $R$ on an $H$-invariant set $\cZ$. For $Z\in\cZ$ and an ordered tuple
@@ -1554,75 +1628,150 @@ subroutines CombineWindows and BalanceOrbits (Lemmas~W and~B below). All group-o
 subject to requirement~\ref{D3}: they must be deterministic functions of the group and the ordered domain,
 computed from canonical generating sets.
 
-\subsection{Lemmas W and B}
+\subsection{Lemmas W, F2\texorpdfstring{$^{\text{set}}$}{-set} and B}
 
-\begin{named}[Lemma W (canonical CombineWindows)]\label{lem:W}
-Let $A\le\Sym(\Omega)$ be in $\Gd$, let $\fP$ be $A$-invariant, let $W_1,W_2$ be disjoint and $A$-invariant, and
-suppose $A[W_j]\le\Aut(\fX[W_j])$ for $j=1,2$. Let $A$ act on $V:=\fX[W_1]\sqcup\fX[W_2]$ through $\theta$ (so
-$\theta(A)\in\Gd$), let $G(\fX)$ be the linking graph of \src{Neu20}{1648--1651}, and apply Lemma~S with
-$S(\fX):=G(\fX)$, using Corollary~D under $\theta(A)$. Then $E(\fX)=\sigma R$ is the canonical placement coset of
-$\fX[W_1\cup W_2]$ under $A$, with $R=\theta^{-1}(\Aut(G_{\mathrm{can}}))$. Cost: one call of Theorem~A on a graph
-with at most $2m$ vertices, i.e.\ on a string on at most $(2m)^2$ points (through a homomorphism).
+Theorem~A is a canonizer for strings under a group. Below it is also applied to strings on a set $\Gamma$ on
+which the current group $A$ acts through a homomorphism $\theta\colon A\to\Sym(\Gamma)$. This is Lemma~S with
+$S(x)$ the string and $\Lambda'$ the Theorem~A canonizer under $\theta(A)\in\Gd$ (quotients stay in $\Gd$).
+
+\begin{named}[Lemma W (canonical CombineWindows)]
+Let $A\le\Sym(\Omega)$ be in $\Gd$, let $\fP$ be $A$-invariant, let $W_1,W_2\subseteq\Omega$ be disjoint and $A$-invariant, let
+$F_j$ be a set of $\fP[W_j]$-strings with $A[W_j]\le\Aut(F_j)$ ($j=1,2$), and put $W:=W_1\cup W_2$. Let $\cZ$ be the
+$A$-invariant set of sets $Z$ of $\fP$-strings with $Z[W_j]=F_j$ for $j=1,2$. Let $V:=F_1\sqcup F_2$, let $\theta\colon
+A\to\Sym(V)$ be the induced action, and for $Z\in\cZ$ let the \emph{linking graph} $G(Z)$ be the graph on $V$ with
+edges $\{(P\cap W_1,x[W_1]),(P\cap W_2,x[W_2])\}$ for $(P,x)\in Z$ with $P\cap W_1\ne\emptyset\ne P\cap W_2$
+\src{Neu20}{1648--1651}. Let $(F_G,\Lambda_G)$ be the $\theta(A)$-canonizer on these graphs given by Corollary~D
+under $\theta(A)\in\Gd$. Then there is a set $F_W(Z)$ of $\fP[W]$-strings, depending only on $V$ and
+$F_G(G(Z))$, such that for $Z\in\cZ$ and $E(Z):=\theta^{-1}(\Lambda_G(G(Z)))$, a left coset $\sigma R$ with
+$R=\theta^{-1}(\Aut_{\theta(A)}(F_G(G(Z))))$,
+\[ E(Z)=\{h\in A: Z^h[W]=F_W(Z)\},\qquad F_W(Z^a)=F_W(Z)\quad\text{for }a\in A. \]
+Thus $(F_W,E)$ is an $A$-canonizer of $Z\mapsto Z[W]$ on $\cZ$. Cost: one call of Theorem~A on a graph with at most
+$2|Z[W]|$ vertices, i.e.\ on a string on at most $(2|Z[W]|)^2$ points (through $\theta$).
 \end{named}
 \begin{proof}
-For $\sigma\in E(\fX)$ the strings $\fX^\sigma[W_j]=\fX[W_j]$ are unchanged, since $\sigma\in A$. The ``other direction''
-of the proof of \cite[Lemma~4.15]{Neu20} \src{Neu20}{1669--1676} shows that every element of $A$ preserving
-$\fX[W_1]$, $\fX[W_2]$ and the linking graph preserves $\fX[W_1\cup W_2]$. So $R\le\Aut(\fX^\sigma[W_1\cup W_2])$ and
-$\fX^\sigma[W_1\cup W_2]$ is the canonical form; the forward direction gives the converse.
+For $h\in A$ we have $F_j^h=F_j$, so $\theta(h)$ permutes $V$, $Z^h\in\cZ$, and $G(Z^h)=G(Z)^{\theta(h)}$. A set $Z\in\cZ$
+is recovered on $W$ from its linking graph: $Z[W]$ consists of the strings $(Q_1\cup Q_2,z_1\cup z_2)$ over the edges
+$\{(Q_1,z_1),(Q_2,z_2)\}$, together with the strings of $F_1\cup F_2$ on blocks that meet only one of $W_1,W_2$;
+and $G(Z)$ is determined by $Z[W]$ and $V$. So $Z[W]\leftrightarrow G(Z)$ is a bijection; let $F_W(Z)$ be the set of
+strings corresponding to the graph $F_G(G(Z))$. For $h\in A$ this gives $Z^h[W]=F_W(Z)$ iff $G(Z)^{\theta(h)}=F_G(G(Z))$
+iff $\theta(h)\in\Lambda_G(G(Z))$ iff $h\in E(Z)$. The remaining statements follow from (C1), (C2) for
+$(F_G,\Lambda_G)$. (This is the forward and backward direction of the proof of \cite[Lemma~4.15]{Neu20}.)
 \end{proof}
 
-\begin{named}[Lemma B (canonical BalanceOrbits)]\label{lem:B}
-Repeat while some orbit $O$ of the current right group $A$ has $\fX[O]$ unbalanced: take the first such
-orbit in the order (size, least point); apply Lemma~S to the multiplicity string
-$\mu\colon\fP[O]\to\mathbb N$, $P\mapsto m_{\fX[O]}(P)$, canonized under $A[\fP[O]]$ by Theorem~A; continue with the
-transported object and the new right group. Each round passes to a proper subgroup, so there are at
-most $n\log n$ rounds. The output is a canonizer of the balancing data whose right group has only
-balanced orbits; this is \cite[Lemma~4.3]{Neu20} made canonical.
+\begin{named}[Lemma F2$^{\text{set}}$ (one step of the chain rule for sets of strings)]
+Let $A\le\Sym(\Omega)$ be in $\Gd$, let $\fP$ be $A$-invariant, and let $\cZ$ be an $A$-invariant set of sets of $\fP$-strings. Let
+$C$ be an $A$-ECM on $\cZ$ with right group $R$, and suppose that there is a prefix $(U,F,R)$, constant on $A$-orbits,
+where $U$ is $R$-invariant and $Z^\pi[U]=F$ for all $\pi\in C(Z)$ (so $R[U]\le\Aut(F)$). Let $V\subseteq\Omega\setminus U$ be $R$-invariant,
+given by a function of the prefix, and let $(F_V,\Lambda_V)$ be an $R$-canonizer on the $R$-invariant set
+$\{Z^\pi[V]:\pi\in C(Z)\}$. For $\pi\in C(Z)$ put $w:=Z^\pi$, take $\lambda\in\Lambda_V(w[V])$, put $y:=w^\lambda$ and
+$R_2:=\Aut_R(F_V(w[V]))$, and apply Lemma~W to $R_2$, $W_1:=U$, $W_2:=V$, $F_1:=F$, $F_2:=F_V(w[V])$ and the
+object $y$, obtaining $E(y)=\sigma R_3$ and $F_+:=F_W(y)$. Then $C_+(Z):=\pi\lambda E(y)$ is an $A$-ECM on $\cZ$ with right group
+$R_3$ and $C_+(Z)\subseteq C(Z)$; and $(U\cup V,F_+,R_3)$ is a prefix of the same kind: it is constant on $A$-orbits,
+and $Z^{\pi'}[U\cup V]=F_+$ for all $\pi'\in C_+(Z)$.
 \end{named}
+\begin{proof}
+Since $V\cap U=\emptyset$, we have $y[U]=F$ and $y[V]=F_V(w[V])$, and $R_2$ preserves both $F$ and $F_V(w[V])$, so Lemma~W
+applies. By Lemma~E2 with $C_1:=C$ (prefix $(U,F,R)$) it suffices that $w\mapsto\lambda E(w^\lambda)$ is an $R$-ECM on
+$\{Z^\pi\}$. This is again Lemma~E2, now with $C_1:=(w\mapsto\Lambda_V(w[V]))$, an $R$-ECM by
+Lemma~\ref{lem:canon-basic}(1) and $(w^r)[V]=(w[V])^r$, with prefix $(F_V(w[V]),R_2)$, and with the
+$R_2$-ECM $y\mapsto E(y)$ of Lemma~W. For $\pi'=\pi\lambda e$ with $e\in E(y)$ we get $Z^{\pi'}[U\cup V]=y^e[U\cup V]=F_+$ by Lemma~W. Replacing
+$(\pi,\lambda)$ by another choice replaces $y$ by an element of $y^{R_2}$, and $Z$ by $Z^h$ leaves $y$ unchanged, so
+$F_+=F_W(y)$ and $R_3$ are constant on $A$-orbits by Lemma~W.
+\end{proof}
+This is the analogue of Lemma~F2 for sets of strings; Lemma~W replaces the concatenation of canonical
+forms. The chain rule itself is the iteration of this step in the subroutine Chain of \S\ref{sec:canhyp}.
 
-Theorem~A is a canonizer for strings under a group. Above and below it is also applied to strings on a set
-$\Gamma$ on which the current group $A$ acts through a homomorphism $\theta\colon A\to\Sym(\Gamma)$. This is Lemma~S
-with $S(x)$ the string and $\Lambda'$ the Theorem~A canonizer under $\theta(A)\in\Gd$ (quotients stay in $\Gd$).
+\begin{named}[Lemma B (canonical BalanceOrbits)]
+Let $A\le\Sym(\Omega)$ be in $\Gd$, let $\fP$ be $A$-invariant, and let $\cZ$ be an $A$-invariant set of sets of $\fP$-strings. There is
+an $A$-ECM $C_{\mathrm B}$ on $\cZ$, with right group $R$, such that for every $Z\in\cZ$, every $\pi\in C_{\mathrm B}(Z)$ and every
+$R$-orbit $O$, the set $Z^\pi[O]$ is balanced. It is computed by at most $n\log n$ calls of Theorem~A on at most
+$n$ points, with $n=|\Omega|$. (This is \cite[Lemma~4.3]{Neu20} made canonical.)
+\end{named}
+\begin{proof}
+Start with $C_0(Z):=A$, $R_0:=A$. Suppose $C_i$ is an $A$-ECM with right group $R_i$; let $\pi\in C_i(Z)$ and $z:=Z^\pi$. For
+$r\in R_i$ and an $R_i$-orbit $O$ we have $z^r[O]=(z[O])^r$, so whether $z[O]$ is balanced depends only on the
+$R_i$-orbit of $z$. If all $R_i$-orbits are balanced, stop. Otherwise let $O$ be the first $R_i$-orbit in the order
+(size, least point) with $z[O]$ unbalanced; it depends only on $R_i$ and the $R_i$-orbit of $z$. Let
+$\mu\colon\fP[O]\to\mathbb N$, $Q\mapsto m_{z[O]}(Q)$, and let $\rho\colon R_i\to R_i[\fP[O]]=:B\in\Gd$ be the natural
+homomorphism. Then $B$ is transitive on $\fP[O]$ and $\mu$ is not constant. Let $(F_\mu,\Lambda_\mu)$ be the Theorem~A
+canonizer of $\mu$ under $B$ and $E(z):=\rho^{-1}(\Lambda_\mu(\mu))$, a coset $\sigma R_{i+1}$ with
+$R_{i+1}:=\rho^{-1}(\Aut_B(F_\mu))$. Since $\mu_{z^r}=\mu_z^{\rho(r)}$, we have $E(z^r)=r^{-1}E(z)$, so $E$ is an $R_i$-ECM and
+Lemma~E2 (with prefix $R_i$) makes $C_{i+1}(Z):=\pi E(z)$ an $A$-ECM with right group $R_{i+1}$. Moreover $R_{i+1}$ is a
+proper subgroup of $R_i$, since $F_\mu$ is not constant and $B$ is transitive. A subgroup chain in $\Sym(\Omega)$ has length
+at most $\log_2 n!\le n\log n$, which bounds the number of rounds.
+\end{proof}
 
 \subsection{Canonical simplification and renormalization}
 
-\begin{named}[Lemma SIMP]\label{lem:SIMP}
-Inside the loop of Lemma~LC, let the prefix $p$ determine a group $A\le\Sym(\Omega)$ (the current right group),
-an almost $d$-ary $A$-invariant sequence containing $\fP$, an $A$-invariant window $W$, and the windowed part
-$F=\fX[W]$ of every object in $\cZ_p$, with $A[W]\le\Aut(F)$. If $F$ is simple, nothing is done. Otherwise:
-\begin{enumerate}
-\item \emph{Copy blocks} \src{Neu20}{1974--1985}: $\Omega'=\bigcup_PP\times\{x[W\cap P]:(P,x)\in F\}$, with
-  partition $\fP'$, faithful action $\psi'\colon A\to\Sym(\Omega')$ and map $\fX\mapsto\fX'$. All of these are functions
-  of $(A,F)$, i.e.\ of the prefix. $\fX\mapsto\fX'$ is injective and equivariant (claim
-  \texttt{preserve-isomorphisms} in the proof of \cite[Thm.~4.17]{Neu20}, \src{Neu20}{1987--2002}); apply
-  Lemma~E3. With $W':=W\times(\cdot)$, $W'$ is invariant, $\psi'(A)[W']\le\Aut(\fX'[W'])$, and $\fX'[W']$ is simple
-  \src{Neu20}{2006--2029}.
-\item \emph{Lift the sequence} \src{Neu20}{2031--2040}, a function of the sequence and $F$. Only the level of
-  $\fP'$ can violate almost $d$-arity \src{Neu20}{2041--2046}.
-\item \emph{Balance.} Apply Lemma~S to the string $x(\fX')\colon\fP'\to\mathbb N^2$,
-  $P'\mapsto(m_{\fX'}(P'),m_{\fX'[\Omega'\setminus W']}(P'\setminus W'))$ \src{Neu20}{2048}, canonized under $\psi'(A)[\fP']$ by
-  Theorem~A, with right group $A''$. The claim \texttt{respect-block-sizes} \src{Neu20}{2069--2074} holds for
-  $A''$, and it is all that the virtual-size estimate needs.
-\item \emph{Renormalize.} \cite[Thm.~4.9]{Neu20} applied to $(A'',\fP',\text{sequence})$ is a construction from
-  these data only: in its proof \src{Neu20}{1455--1554} the strings enter only through the definition of
-  $\fX^*$ \src{Neu20}{1521--1525}. So it is a (P1) function of the new prefix. The map $\fX'\mapsto\fX'^*$ is
-  injective (each $P^*$ maps bijectively onto $f'(P^*)$, and $f'$ is onto) and equivariant (property (VIII));
-  apply Lemma~E3.
-\end{enumerate}
-The new prefix has the properties (A)--(G) of \cite[Thm.~4.17]{Neu20} for the single object: almost
-$d$-ary; the window is invariant, respected and simple; isomorphisms transfer; the virtual size does not
-increase, overall or outside the window.
+\begin{named}[Lemma SIMP]
+Let $A\le\Sym(\Omega)$ be in $\Gd$, with an almost $d$-ary $A$-invariant sequence $\vec\fB$ having $\fP$ as a level; let $W\subseteq\Omega$ be
+$A$-invariant, let $F$ be a set of $\fP[W]$-strings with $A[W]\le\Aut(F)$, and let $\cZ_F$ be the $A$-invariant set of
+completely occupied sets $Z$ of $\fP$-strings with $Z[W]=F$. From these data one computes an $A$-ECM $C$ on $\cZ_F$ with
+right group $A''\le A$ (by one call of Theorem~A) and, from $(A,\fP,\vec\fB,W,F)$ and the canonical string of step~3
+below, a domain $\Omega^*$, a partition $\fP^*$ with a sequence $\vec\fB^*$, a window $W^*$, a monomorphism
+$\iota\colon A''\to\Sym(\Omega^*)$ with image $\Lambda^*$, and, for each $\pi\in C(Z)$, a completely
+occupied set $(Z^\pi)_*$ of $\fP^*$-strings, such that
+\begin{enumlab}[S]{\arabic}
+\item $\vec\fB^*$ is an almost $d$-ary sequence of $\Lambda^*$-invariant partitions having $\fP^*$ as a level;
+\item $W^*$ is $\Lambda^*$-invariant, $\Lambda^*[W^*]\le\Aut(F^*)$, where $F^*:=(Z^\pi)_*[W^*]$ is simple and depends only on the
+  computed data, not on $Z$ or $\pi$;
+\item $Z^\pi\mapsto(Z^\pi)_*$ is injective and $(Z^{\pi r})_*=((Z^\pi)_*)^{\iota(r)}$ for $r\in A''$;
+\item the $d$-virtual size of $(Z^\pi)_*$ is at most that of $Z$, and that of $(Z^\pi)_*[\Omega^*\setminus W^*]$ is at most
+  that of $Z[\Omega\setminus W]$.
+\end{enumlab}
+If $F$ is simple, put $C:=A$, $\Omega^*:=\Omega$, $(Z^\pi)_*:=Z^\pi$ (nothing is done).
 \end{named}
+\begin{proof}
+We follow the proof of \cite[Thm.~4.17]{Neu20} for a single object.
+
+\emph{Step 1 (copy blocks).} $\Omega':=\bigcup_PP\times\{z:(P\cap W,z)\in F\}$, where a block $P$ with $P\cap W=\emptyset$ gets the
+single copy $P\times\{\emptyset\}$ \src{Neu20}{1974--1985}; since $Z$ is completely occupied, $\Omega'$ depends only on $\fP$ and $F$.
+Since $A[W]\le\Aut(F)$, the rule $(\alpha,z)^\gamma:=(\alpha^\gamma,z^\gamma)$ defines an action $\psi'\colon A\to\Sym(\Omega')$, faithful because
+every point of $\Omega$ occurs as a first coordinate. The partition $\fP'$, the copies $Z\mapsto Z'$, and $W':=W\times(\cdot)$ are as in
+\src{Neu20}{1974--2003}: $(P,x)\mapsto(P\times\{x[W\cap P]\},(\alpha,x[W\cap P])\mapsto x(\alpha))$, so $Z'$ determines $Z$ and $(Z^\gamma)'=(Z')^{\psi'(\gamma)}$
+(claim \texttt{preserve-isomorphisms}, \src{Neu20}{1987--2002}). Moreover $Z'$ is completely occupied, $Z'[W']$ depends only on $F$,
+$\psi'(A)[W']\le\Aut(Z'[W'])$ and $Z'[W']$ is simple \src{Neu20}{2006--2029}.
+
+\emph{Step 2 (lift the sequence)} to $\vec\fB'$ \src{Neu20}{2031--2040}, a function of $(\vec\fB,F)$; only the level $\fP'$ can violate almost
+$d$-arity \src{Neu20}{2041--2046}.
+
+\emph{Step 3 (balance).} Apply Lemma~S to the string $x(Z'):\fP'\to\mathbb N^2$,
+$P'\mapsto(m_{Z'}(P'),m_{Z'[\Omega'\setminus W']}(P'\setminus W'))$ \src{Neu20}{2048}, canonized by Theorem~A under $\psi'(A)[\fP']$. This
+yields a coset $E(Z')=\sigma A'''$, with $A'''\le\psi'(A)$ the preimage of the stabilizer of the canonical string, and we put
+$C(Z):=(\psi')^{-1}(E(Z'))$, $A'':=(\psi')^{-1}(A''')$. For $\pi\in C(Z)$ put $Z'':=(Z^\pi)'=Z'^{\psi'(\pi)}$. Then
+$x(Z'')$ is the canonical string, so the claim \texttt{respect-block-sizes} \src{Neu20}{2069--2074} holds for $A'''$ and $Z''$.
+
+\emph{Step 4 (renormalize).} Apply \cite[Thm.~4.9]{Neu20} to $(A''',\fP',\vec\fB')$. The construction in its proof
+\src{Neu20}{1455--1554} uses these data only; the strings enter only through the definition of $\fX^*$
+\src{Neu20}{1521--1525}. So $\Omega^*,\fP^*,\vec\fB^*,f,f'$ and $\iota_0\colon A'''\to\Sym(\Omega^*)$ are functions of the prefix, and
+$\iota:=\iota_0\circ\psi'|_{A''}$. Define $(Z^\pi)_*:=\{(P^*,\alpha^*\mapsto x(f(\alpha^*))):(f'(P^*),x)\in Z''\}$ (property (VII)) and
+$W^*:=f^{-1}(W')$.
+
+\emph{Verification.} (S1) is (I), (VI) of \cite[Thm.~4.9]{Neu20}, whose hypothesis is met by Step~2. (S2): invariance of $W^*$ follows from (II); $\Lambda^*[W^*]\le\Aut(F^*)$ from (IX),
+applied to the relation $\psi'(A)[W']\le\Aut(Z'[W'])$ of Step 1. Since $Z''[W']$ is simple and equals the object
+$Z'[W']$ of Step 1 (a function of $F$), and the strings of $(Z^\pi)_*$ on a block $P^*$ are $x\circ f$ with
+$(f'(P^*),x)\in Z''$, the set $F^*$ is simple and determined by the computed data.
+Complete occupancy of $(Z^\pi)_*$ is immediate from (VII) and the complete occupancy of $Z''$. (S3): $f'$ is
+onto $\fP'$ (otherwise (VIII) fails for two sets differing on a block outside the image); each $P^*$ is mapped
+bijectively onto $f'(P^*)$ by $f$ ((III), (V)), so $x\circ f$ determines $x$; equivariance is (VIII) applied to $\fX:=Z''$,
+$\mathfrak Y:=Z''^{r}$, together with Step~1. (S4) is the estimate in the proof of properties (F), (G) of
+\cite[Thm.~4.17]{Neu20} \src{Neu20}{2115--2141}, which uses only (I)--(V) and \texttt{respect-block-sizes}; it holds with
+$\fX_1:=Z^\pi$, $\fX_1'=\fX_1'':=Z''$ and $\Gamma'':=A'''$; (S4) for $(Z^\pi)_*[\Omega^*\setminus W^*]$ is proved in the same way.
+
+In the language of ECMs: $C$ is an $A$-ECM because $x(Z'^{\psi'(a)})=x(Z')^{\psi'(a)}$ (action on $\fP'$) and the Theorem~A
+canonizer of $x(Z')$ is equivariant; and $Z\mapsto Z'$ and $Z''\mapsto(Z^\pi)_*$ are the changes of action of Lemma~E3 (using
+the injectivity of Step~1 and (S3)) that transport canonizers back along $\psi'$ and $\iota_0$.
+\end{proof}
 Neuen runs steps 3 and 4 once per equivalence class of pairs, with a representative group $\Gamma''_1$. Here
 step 3 is a canonizer and step 4 is computed from its canonical output.
 
 \subsection{Canonical local certificates}
 
-\begin{named}[Lemma LC]\label{lem:LC}
+\begin{named}[Lemma LC]
 Assume the hypotheses of \cite[Thm.~4.24]{Neu20}: $\Gamma\in\Gd$ on $\Omega$ with an almost $d$-ary sequence
 containing $\fP$, a giant representation $\varphi\colon\Gamma\to S_k$ with $\max\{8,2+\log d\}<t\le k-2$, and
-$T_0$, $H_0=\Gamma_{T_0}$, $\psi$ as in Lemma~T$^{\text{set}}$. Let $\cZ$ be the set of sets of $\fP$-strings of
-$d$-virtual size at most $s$. Algorithm CanLC below computes an $H_0$-ECM $C$ on $\cZ$ with right group $R$, and
+$T_0$, $H_0=\Gamma_{T_0}$, $\psi$ as in Lemma~T$^{\text{set}}$. Let $\cZ$ be the set of completely occupied sets of
+$\fP$-strings of $d$-virtual size at most $s$. Algorithm CanLC below computes an $H_0$-ECM $C$ on $\cZ$ with right group $R$, and
 an $H_0$-invariant flag, such that:
 \begin{enumlab}[LC]{\arabic}
 \item $C(Z^g)=g^{-1}C(Z)$ for $g\in H_0$;
@@ -1645,7 +1794,8 @@ Invariants:
 \item $W_i$ is $\Lambda_i$-invariant, $\Lambda_i[W_i]\le\Aut(F_i)$, and $F_i$ is simple;
 \item for $\lambda\in\Lambda_i$: $\lambda\in\Aut((Z^\pi)_*)$ iff $\tau_i(\lambda)\in\Aut(Z^\pi)$;
 \item the virtual size of $(Z^\pi)_*$ is at most $s$, and the virtual size $s'_i$ of $(Z^\pi)_*[\Omega_i\setminus W_i]$
-  strictly decreases with $i$.
+  strictly decreases with $i$;
+\item $(Z^\pi)_*$ is completely occupied.
 \end{enumlab}
 Start: $C_0=H_0$, $\Omega_0=\Omega$, $W_0=\emptyset$, $\Lambda_0=H_0$, $\tau_0=\mathrm{id}$.
 
@@ -1656,11 +1806,12 @@ Start: $C_0=H_0$, $\Omega_0=\Omega$, $W_0=\emptyset$, $\Lambda_0=H_0$, $\tau_0=\
   and $\Delta(Z):=\pi\,\tau_i\big((\Lambda_i)_{(\Omega_i\setminus W_i)}\big)\,\pi^{-1}$.
 \item \emph{Balance}: Lemma~B on $(Z^\pi)_*$ under $\Lambda_i$, giving the group $\Lambda'$. If $\psi\tau_i(\Lambda')$ is not
   $\ge\Alt(T_0)$, stop with \emph{nonfull}.
-\item \emph{Window}: canonize $(Z^\pi)_*[W']$ under $\Lambda'$. Take the $\Lambda'$-orbits of $W'$ in (P1) order (chain
-  rule). For an orbit $O$, processed under the current right group $R\le\Lambda'$, descend (F3) from $R$ to
-  $R\cap N'$, where $N':=\ker(\psi\tau_i|_{\Lambda'})$; this has index at most $t!$ in $R$. Then apply the chain
-  rule over the $(R\cap N')$-orbits in (P1) order; each is a recursive call of the main canonizer (Theorem~H
-  at smaller virtual size), and Lemma~W joins the pieces. Finally join $W_i$ and $W'$ by Lemma~W.
+\item \emph{Window}: canonize $(Z^\pi)_*[W']$ under $\Lambda'$, joining it to the window part $F_i$ on $W_i$, by iterating
+  Lemma~F2$^{\text{set}}$ from the prefix $(W_i,F_i,\Lambda')$ over the $\Lambda'$-orbits $O$ of $W'$ in (P1) order. For an
+  orbit $O$, processed under the current right group $R\le\Lambda'$, the required $R$-canonizer of the object on $O$ is
+  obtained by descent (F3) from $R$ to $R\cap N'$, where $N':=\ker(\psi\tau_i|_{\Lambda'})$ (index at most $t!$ in $R$), and
+  by the subroutine Chain of \S\ref{sec:canhyp} under $(R\cap N')^O$ (intransitive on $O$) on the object in each
+  branch; its windows are recursive calls of the main canonizer (CanHyp, at smaller virtual size).
 \item \emph{Simplify and renormalize}: Lemma~SIMP at the new prefix (window $W_i\cup W'$). Lemma~E3 yields
   $\Lambda_{i+1}$, $\tau_{i+1}$, $\Omega_{i+1}$, $W_{i+1}$.
 \end{enumlab}
@@ -1671,11 +1822,12 @@ Start: $C_0=H_0$, $\Omega_0=\Omega$, $W_0=\emptyset$, $\Lambda_0=H_0$, $\tau_0=\
 (Lemma~E3, Lemma~SIMP). The stopping tests depend only on $R_i$ and the prefix, which are
 $H_0$-invariant.
 
-\emph{Invariants.} (I1) and (I2) are properties (A), (B), (E) of Lemma~SIMP's output. (I3) follows from the
-claim \texttt{preserve-isomorphisms}, property (VIII) of \cite[Thm.~4.9]{Neu20}, and the fact that balancing
-and windowing only pass to subgroups containing the relevant automorphisms (Lemma~E1). (I4) is Neuen's
-argument \src{Neu20}{2400--2412}: $W'\neq\emptyset$ strictly lowers $s'$ \cite[Obs.~4.12]{Neu20}, and Simplify does
-not raise it (property (G)). Hence there are at most $s$ rounds.
+\emph{Invariants.} (I1) and (I2) are (S1), (S2) of Lemma~SIMP. (I3) follows from (S3), the claim
+\texttt{preserve-isomorphisms} and property (VIII) of \cite[Thm.~4.9]{Neu20}, and the fact that balancing
+and windowing only pass to subgroups containing the relevant automorphisms (Lemma~E1). (I5) holds at the start by
+hypothesis and is preserved by (S3); it is needed for strict monotonicity of the virtual size. (I4) is Neuen's
+argument \src{Neu20}{2400--2412}: $W'\neq\emptyset$ strictly lowers $s'$ \cite[Obs.~4.12]{Neu20} (using (I5)), and Simplify does
+not raise it (S4). Hence there are at most $s$ rounds.
 
 \emph{(LC2)} holds by the tests at (a) and (c).
 
@@ -1712,7 +1864,7 @@ canonizing at the level $H_0$ at which the windows are defined.
 
 \subsection{Canonical aggregation}
 
-\begin{named}[Lemma AGG]\label{lem:AGG}
+\begin{named}[Lemma AGG]
 In the setting of \cite[Lemma~4.29]{Neu20}, for a single $\fX$ (and $\Gamma'$, $\varphi$, $t<k/10$ as there), one
 computes one of:
 \begin{enumlab}{\roman}
@@ -1722,41 +1874,150 @@ computes one of:
 \item a pair $(M(\fX),\Delta(\fX))$ with $|M|\ge3k/4$, $\Delta\le\Aut_{\Gamma'_M}(\fX)$ and $\varphi(\Delta)[M]\ge\Alt(M)$, both
   equivariant.
 \end{enumlab}
-In the case $|S|<k/4$ the structure has relative symmetry defect at least $3/4$.
+In the case $|\supp_\fX|<k/4$ the structure has relative symmetry defect at least $3/4$.
 \end{named}
 \begin{proof}
 Run CanLC on $\fX^\sigma$ for each $t$-set $T$. This gives the canonical fullness certificates
 $\Delta(T,\fX):=\sigma\Delta(\fX^\sigma)\sigma^{-1}$ for routine-full $T$ (equivariant, since
 $\Delta(\fX^{\sigma g})=g^{-1}\Delta(\fX^\sigma)g$), and the colours $c(\fX,\vT)$ of Lemma~T$^{\text{set}}$ for all orderings
 of routine-nonfull $T$. By (LC2), (LC3) and Lemma~E1, ``routine-full'' coincides with Neuen's ``full''. The
-fullness group $\Lambda_\fX:=\langle\Delta(T,\fX):T\text{ routine-full}\rangle$ and its support $S$ are equivariant. The
-cases $|S|\in[k/4,3k/4]$ and $|S|>3k/4$ \src{Neu20}{2554--2582} produce GNS's structures from $\Lambda_\fX$ alone, and
+fullness group $\Lambda_\fX:=\langle\Delta(T,\fX):T\text{ routine-full}\rangle$ and its support $\supp_\fX$ are equivariant. The
+cases $|\supp_\fX|\in[k/4,3k/4]$ and $|\supp_\fX|>3k/4$ \src{Neu20}{2554--2582} produce GNS's structures from $\Lambda_\fX$ alone, and
 each individualization is a member of an equivariant branch family of size at most $k^6$
-(Proposition~\ref{prop:cases}). In the case $|S|<k/4$, put $D:=[k]\setminus S$ and
+(Proposition~\ref{prop:cases}). In the case $|\supp_\fX|<k/4$, put $D:=[k]\setminus\supp_\fX$ and
 $\fA(\fX):=([k];\text{unary }D;\ \vT\mapsto\text{rank of }c(\fX,\vT)\text{ for }\vT\in D^{\langle t\rangle})$. Every
 $T\subseteq D$ is routine-nonfull. $\fA$ is strongly canonical by Lemma~T$^{\text{set}}$(b), and the ranking is
 canonical because the set of colour values is an invariant. If $\Alt(M)\le\Aut(\fA)$ with $|M|\ge t+2$ and
 $M\subseteq D$, then for a $t$-set $T\subseteq M$ all orderings are induced by $\Alt(M)$ and have equal colour, so
-Lemma~T$^{\text{set}}$(c) gives $\psi(R)=\Sym(T_0)$, contradicting (LC2). Hence every such $M$ lies in $S$ or has at
+Lemma~T$^{\text{set}}$(c) gives $\psi(R)=\Sym(T_0)$, contradicting (LC2). Hence every such $M$ lies in $\supp_\fX$ or has at
 most $t+1$ points, and the relative defect is at least $1-\max(1/4,1/10+1/k)=3/4$ for $k\ge7$.
 \end{proof}
 Neuen uses the comparison classes only to build his structures \src{Neu20}{2583--2597}, and find-structure
 uses only the invariance of the family and the defect bound \src{Neu20}{2610--2630}; exactness of the colour
 classes is not needed.
 
+\subsection{The algorithm CanHyp}\label{sec:canhyp}
+
+This is the counterpart of Section~\ref{sec:algo} for sets of strings. \emph{Instances} are tuples
+$(\Omega,\Gamma,\fP,\vec\fB,\fX)$, where $\Omega$ is ordered, $\Gamma\le\Sym(\Omega)$ is in $\Gd$ and given by its
+canonical generating set, $\vec\fB$ is a $\Gamma$-invariant almost $d$-ary sequence with $\fP$ as a level, and $\fX$ is a
+completely occupied set of $\fP$-strings. As in Section~\ref{sec:algo}, $d$ and $t:=\max\{9,3+\lceil\log d\rceil\}$ are fixed
+globally, and $(\fP,\vec\fB)$ are auxiliary data: they are functions of the group data above the node, or of
+canonical prefixes (Lemma~E2), and never depend on $\fX$ directly. The \emph{measure} of an instance is
+\[ \mu(\Omega,\Gamma,\fP,\vec\fB,\fX):=(s,|\Gamma|)\in\mathbb N^2,\qquad s:=\text{the $d$-virtual size of }\fX, \]
+ordered lexicographically; this order is a well-order. All recursive calls of CanHyp below are made on
+instances of strictly smaller measure (Proposition~\ref{prop:canhyp}).
+
+\paragraph{Chain.} For $A\le\Sym(\Omega)$ intransitive and $Z$ a completely occupied set of $\fP$-strings,
+$\mathrm{Chain}(A,Z)$ (with $\Omega,\fP,\vec\fB$ understood from the context) is the iteration of Lemma~F2$^{\text{set}}$ over orbits of the right groups:
+put $C_0(Z):=A$, $R_0:=A$, $U_0:=\emptyset$, $F_0:=\emptyset$. At stage $i$, if $U_i=\Omega$, stop and return $(F_i,C_i(Z))$.
+Otherwise let $V$ be the first $R_i$-orbit in $\Omega\setminus U_i$ in the order (size, least point), let $\pi\in C_i(Z)$, and
+call CanHyp on the transitive instance $(V,R_i^V,\fP[V],\vec\fB[V],Z^\pi[V])$ (a valid instance, by \cite[Obs.~4.2]{GNS}, and
+the restriction of a completely occupied set is completely occupied). Its output, lifted through the restriction
+$R_i\to R_i^V$ to an $R_i$-canonizer of $Z^\pi[V]$, is the input of Lemma~F2$^{\text{set}}$; this gives
+$C_{i+1},R_{i+1},F_{i+1}$ and $U_{i+1}:=U_i\cup V$.
+
+\paragraph{Luks.} For an $A$-invariant partition $\fD$ with at least two classes,
+$\mathrm{Luks}(A,\fD,Z)$ is: apply Lemma~B to $(A,\fP,Z)$, obtaining $C_{\mathrm B}$ with right group $B$; let
+$\pi\in C_{\mathrm B}(Z)$ and $y:=Z^\pi$. If $B$ is intransitive, let $(F,\Lambda):=\mathrm{Chain}(B,y)$. Otherwise descend
+(Lemma~F3) from $B$ to $B_{(\fD)}$ over at most $|B^\fD|$ cosets and run $\mathrm{Chain}(B_{(\fD)},y^\rho)$ on each branch
+($B_{(\fD)}$ is intransitive, as its orbits lie in classes of $\fD$), obtaining a $B$-canonizer $(F,\Lambda)$ of $y$. Return
+$(F,\pi\Lambda)$, an $A$-canonizer by Lemma~E4.
+
+\paragraph{Algorithm CanHyp.} On an instance $(\Omega,\Gamma,\fP,\vec\fB,\fX)$, with
+$\vec\fB=(\{\Omega\}=\fB_0\succ\fB_1\succ\dots)$:
+\begin{description}
+\item[Step 0.] If $|\Omega|=1$, return $(\fX,\Gamma)$.
+\item[Step 1. Intransitive $\Gamma$.] Return $\mathrm{Chain}(\Gamma,\fX)$.
+\item[Step 2. Transitive $\Gamma$, $\Gamma^{\fB_1}$ semi-regular.] Return $\mathrm{Luks}(\Gamma,\fB_1,\fX)$.
+\item[Step 3. Transitive $\Gamma$, $|\fB_1|\le d$.] Choose (P1) a block system $\fB\succeq\fB_1$ of $\Gamma$ with $|\fB|\ge2$ on which
+  $P:=\Gamma^{\fB}$ is primitive, and put $b:=|\fB|\le d$.
+  \begin{enumlab}{\alph}
+  \item If $|P|\le b^{1+\log b}$, or $b$ is below the constant of \cite[Lemma~4.35]{Neu20}: return
+    $\mathrm{Luks}(\Gamma,\fB,\fX)$.
+  \item Otherwise apply \cite[Lemma~4.35]{Neu20} (= \cite[Lemma~7.1]{GNS}) to $P$ (P1), obtaining $N$, $\cC$, $\psi$ and $k$.
+    Put $G':=\{g\in\Gamma:g^{\fB}\in N\}$, $\varphi:=\psi\circ(g\mapsto g^{\fB})$, and let $\Cp$ be the lift of $\cC$, so that
+    $\ker\varphi=G'_{(\Cp)}$, $|\Cp|\ge2$ and $\Cp\succeq\fB\succeq\fB_1$. Descend (Lemma~F3) from $\Gamma$ to $G'$ over at most $b$
+    cosets, and in each branch $\rho$ run $\mathrm{Agg}(G',\fX^\rho)$.
+  \end{enumlab}
+\item[Step 4. $\mathrm{Agg}(G',y)$] (with $\varphi,\Cp,\vec\fB$ from Step~3) returns a $G'$-canonizer of $y$.
+  \begin{itemize}
+  \item If $k\le10t$: return $\mathrm{Luks}(G',\Cp,y)$ (its descent is to $B_{(\Cp)}\le\ker\varphi$, of index
+    at most $k!$).
+  \item If $k>10t$: run CanLC for every $t$-set of $[k]$ (with recursive calls of CanHyp, Lemma~LC) and apply
+    Lemma~AGG to $y$. In case (i) apply Proposition~\ref{prop:opt1} with the family of Lemma~AGG, each structure
+    encoded on $[k]$ with its domain marked by a unary relation; for each member $\fA$ of the family, call
+    CanHyp on $(\Omega,R_\fA,\fP,\vec\fB\oplus\Cp,y^{\sigma_\fA})$, and combine by Lemma~S and Lemma~F4. In case (ii) apply
+    Lemma~\ref{lem:K} with $\Delta(y):=M(y)$ and $K(y):=\Delta(y)$ and call CanHyp on its two children
+    $(\Omega,L,\fP,\vec\fB\oplus\Cp,\cdot)$.
+  \end{itemize}
+\item[Step 5. Top partition of same-domain children.] Put
+  $\vec\fB\oplus\Cp:=(\{\Omega\}\succ\Cp\succ\fB_1\succ\fB_2\succ\cdots)$, with duplicates removed. As in Step~6 of
+  \S\ref{sec:canad}, this is an almost $d$-ary sequence for every subgroup of $G'$, since $|\Cp|\le b\le d$ and each
+  $\Cp$-class contains at most $|\fB_1|\le d$ blocks of $\fB_1$; and $\fP$ is still a level.
+\end{description}
+
+\begin{proposition}\label{prop:canhyp}
+CanHyp terminates on every instance $(\Omega,\Gamma,\fP,\vec\fB,\fX)$, and it returns a $\Gamma$-canonizer for $\fX$
+(on the completely occupied sets of $\fP$-strings): its output $(F,\Lambda)$ satisfies $\Lambda=\{g\in\Gamma:\fX^g=F\}\ne\emptyset$, and
+$F$ depends only on $(\Omega,\Gamma,\fP,\vec\fB)$ (with $\Gamma$ taken as a set) and on the $\Gamma$-orbit of $\fX$.
+\end{proposition}
+\begin{proof}
+\emph{Well-foundedness.} We show that every recursive call of CanHyp on an instance $I$, made directly or inside
+Chain, Luks, Agg or CanLC, has strictly smaller measure than $I$.
+\begin{enumerate}
+\item \emph{Windows of Chain.} Chain is entered only for an intransitive group, so every window $V$ is a proper
+  subset of the current domain (at stage $0$ because the group is intransitive, later because $U_i\ne\emptyset$ and
+  $V\cap U_i=\emptyset$). Since $\fX$ is completely occupied and transported copies have the same virtual size,
+  \cite[Obs.~4.12]{Neu20} gives that $s$ strictly decreases. (Chain is entered in Step~1, inside Luks, and in step (d)
+  of CanLC; in the last case the objects are completely occupied by (I5).)
+\item \emph{Calls inside CanLC.} They are the windows of Chain in step (d), on subsets of $W'\subseteq\Omega_i$ of
+  $(Z^\pi)_*$, which has virtual size at most $s$ by (I4). Each is a proper subset of $\Omega_i$, because every
+  $N'$-orbit in a $\Lambda'$-orbit $O$ has size at most $|O|/t$ (Cost paragraph of Lemma~LC). So by (I5)
+  and \cite[Obs.~4.12]{Neu20} their virtual size is strictly smaller than $s$.
+\item \emph{Same-domain children} in Step~4 are on proper subgroups: $R_\fA$ and $L$ have index at least
+  $(4/3)^k>1$ in $G'\le\Gamma$ (Proposition~\ref{prop:opt1}, Lemma~\ref{lem:K}, \cite[Cor.~4.28]{Neu20}), and the virtual size is unchanged,
+  since the object is only transported.
+\end{enumerate}
+Calls of Theorem~A, Corollary~D and BC are calls of other algorithms, which terminate. So CanHyp terminates, and we
+may prove the rest by induction on $\mu$, assuming that the recursive calls of CanHyp return canonizers
+(Lemma~LC and Lemma~AGG were stated and proved under this assumption).
+
+\emph{Each step returns a canonizer.}
+\begin{itemize}
+\item Step~0 is trivial.
+\item \emph{Chain.} By induction, Lemma~F2$^{\text{set}}$ applies at every stage, so each $C_i$ is an $A$-ECM with prefix
+  $(U_i,F_i,R_i)$. At the end $U_r=\Omega$, so $C_r$ is an $A$-ECM with right group $R_r$ and $Z^\pi=F_r$ for all $\pi\in C_r(Z)$;
+  thus $R_r\le\Aut(F_r)$. Lemma~E4, with the trivial $R_r$-canonizer on $\{F_r\}$, shows that $(F_r,C_r(Z))$ is an
+  $A$-canonizer.
+\item \emph{Luks} and Steps~2, 3(a): Lemma~B, Lemma~E4, Lemma~F3 and the previous item.
+\item \emph{Step~3(b).} The objects $\fB,N,\psi,\Cp,G',\varphi$ are (P1) functions of $\Gamma$, and Lemma~F3 is applied to the
+  $G'$-canonizers returned by Agg.
+\item \emph{Step~4.} If $k\le10t$ this is Luks. If $k>10t$, Lemma~AGG gives the equivariant data needed: an equivariant
+  family of structures of relative symmetry defect at least $1/4$, or an equivariant pair $(M(y),\Delta(y))$ with
+  $\Delta(y)\le\Aut_{G'_{M(y)}}(y)$ and $\varphi(\Delta(y))[M(y)]\ge\Alt(M(y))$. By induction the children return canonizers, and
+  Proposition~\ref{prop:opt1} (through Lemma~S and Lemma~F4), respectively Lemma~\ref{lem:K}, give a $G'$-canonizer.
+  Step~5 keeps the instance valid.
+\end{itemize}
+
+\emph{Canonicity of auxiliary data.} Every auxiliary object is a (P1) function of the current group, or of a prefix
+of an ECM (Lemma~E2), or an equivariant function of the current object (Lemmas~W, B, SIMP, LC, AGG). Hence, for
+fixed $(\Omega,\Gamma,\fP,\vec\fB)$, the output depends only on the $\Gamma$-orbit of $\fX$.
+\end{proof}
+
 \subsection{Theorem H}
 
 \begin{proof}[Proof of Theorem H (correctness)]
 For a coset $\sigma\Gamma$, the coset rule gives $\Lambda_{\sigma\Gamma}(\fX)=\sigma\Lambda_\Gamma(\fX^\sigma)$, and $\fX^\sigma$ is a set of
-$\fP^\sigma$-strings, which is why $\fP^\sigma$ must be $\Gamma$-invariant. The algorithm is Neuen's
-\cite[Lemma~4.36, Thm.~4.37]{Neu20} with the canonical replacements above: normalization by Lemma~R
-(the encoding $\fX\mapsto\fX^*$ of \cite[Thm.~4.8]{Neu20} is injective, since $f$ maps each $P^*$ onto a block of
-$\fP$, every block is hit, and $x^*=x\circ f$; it is equivariant by the proof there); intransitive groups by the
-chain rule and Lemma~W; a semi-regular top by Lemma~B, descent and the chain rule; otherwise a (P1) giant
-representation, descent to $G'$, and then either descent to $\ker\varphi$ ($k\le10t$) or Lemma~AGG followed by
-Option~1 (Lemma~S with BC per branch, Lemma~F4) or Option~2 (Lemma~\ref{lem:K}); the next round uses $\Cp$ as top
-partition (Step~6). Every step maps canonizers of sub-instances to a canonizer of the instance.
-Induction on the virtual size, and then on the $k$-potential, gives (C1) and (C2).
+$\fP^\sigma$-strings, which is why $\fP^\sigma$ must be $\Gamma$-invariant; so let $\sigma=1$. Let $\fX^+$ be $\fX$ together with
+the constant string $\bot$ (a new letter) on every block of $\fP$ that carries no string of $\fX$; the map $\fX\mapsto\fX^+$
+is injective and equivariant and $\fX^+$ is completely occupied. Compute (P1), from $(\Gamma,\fP)$ alone, the
+normalization of \cite[Thm.~4.8]{Neu20}: a set $\Omega^*$, a monomorphism $\iota\colon\Gamma\to\Sym(\Omega^*)$, an almost $d$-ary
+sequence $\vec\fB^*$ of $\iota(\Gamma)$-invariant partitions, and a level $\fP^*$ of it. The map $\fX^+\mapsto(\fX^+)^*$ of that theorem is injective,
+since $f$ maps each $P^*$ onto a block of $\fP$, every block is hit, and $x^*=x\circ f$; it is equivariant by the proof
+there, and $(\fX^+)^*$ is completely occupied. Run CanHyp on $(\Omega^*,\iota(\Gamma),\fP^*,\vec\fB^*,(\fX^+)^*)$; by
+Proposition~\ref{prop:canhyp} it returns an $\iota(\Gamma)$-canonizer. Lemma~R (with $\iota$ and the map $\fX\mapsto(\fX^+)^*$) gives a
+$\Gamma$-canonizer for $\fX$.
 \end{proof}
 
 \begin{proofsketch}[running time of Theorem H]
@@ -1771,11 +2032,11 @@ orbit-by-orbit processing is sequential too \src{Neu20}{1677--1686}, so the chai
 recursion, and the potential argument \src{Neu20}{2710--2725} only needs upper bounds on $|\Lambda[\Cp]|$,
 which pass to subgroups. With the choice of Remark~\ref{rem:gap1}, \cite[Lemma~4.36]{Neu20} should give
 $\sum s_i\le2^{O(\log^3d)}s$ at a node with $s_i\le s/2$, and \cite[Lemma~2.6]{Neu20} then gives
-$s^{O(\log^3d)}(n+m)^{\polylog d}$. With $s\le(n+m)^{O(\log d)}$ this is $(n+m)^{O((\log d)^c)}$. What is
+$s^{O(\log^3d)}(n+m)^{\polylog d}$. With $s\le(n+m)^{O(\log d)}$ this is $(n+m)^{O((\log d)^{c'})}$. What is
 missing is a written transfer of Neuen's accounting \cite[Lemma~4.36, Lemma~2.6]{Neu20} to the canonical
 recursion, including the two points of Remark~\ref{rem:neu20}.
 \end{proofsketch}
-\status{Correctness: proof modulo Theorem~A; \cite[Thms.~4.8, 4.9, 4.17]{Neu20} (constructions and the listed
+\status{Correctness (algorithm CanHyp, Proposition~\ref{prop:canhyp}): proof modulo Theorem~A; \cite[Thms.~4.8, 4.9, 4.17]{Neu20} (constructions and the listed
 properties), \cite[Lemma~4.16]{Neu20}, the virtual-size facts \cite[Obs.~4.12, 4.13, Lemma~4.14]{Neu20};
 \cite[Thm.~5.8]{GNS}; \cite[Thm.~6(b)]{Bab16}; the CFSG facts of the aggregation \cite[Thm.~4.31,
 Lemma~4.32]{Neu20}; \cite[Lemma~7.1]{GNS}; BC; canonical generating sets; and requirement~\ref{D3}, which
@@ -1868,13 +2129,16 @@ computed by \cite[Lemma~33]{Wie20}, so the hypothesis holds there. Only the cose
 earlier version of our notes listed \texttt{cosetHyper} as an obstacle requiring canonical Neu20; that was
 wrong for this application.)
 
-\begin{named}[Lemma CH]\label{lem:CH}
+\begin{named}[Lemma CH]
 Let $\Delta\rho$ be a labeling coset of $V$ with $\Delta\le\Sym(V)$, $\Delta\in\Gd$. Let $\cS\subseteq2^V$ and $\chi\colon\cS\to\mathbb N$
 be preserved by $\Delta$. Let each $S\in\cS$ carry a labeling coset $\tau_S\Theta_S$ of $S$, with
 $\tau_S\colon S\to[|S|]$, $\Theta_S\le\Sym([|S|])$, and $\Theta_S=\Theta_{S'}$ whenever $\chi(S)=\chi(S')$. Let
 $d':=\max_S\cw(\Theta_S)\le\max_S|S|$. Then a canonical labeling coset of $X=(V,\cS,\chi,\{\tau_S\Theta_S\})$ relative
-to $\Delta\rho$ can be computed in time $(|V|+\sum_S|S|)^{O((\log\max(d,d'))^c)}$.
+to $\Delta\rho$ can be computed in time $(|V|+\sum_S|S|)^{O((\log\max(d,d'))^c)}$, with $c$ as in Theorem~A.
 \end{named}
+Note the two conventions in this statement: in $\Delta\rho$ the group sits on the side of $V$ (as in
+Schweitzer and Wiebking), whereas in $\tau_S\Theta_S$ it sits on the label side (as in \cite{GNSW}); both are
+consistent with their sources.
 \begin{proof}
 This is the second case of \cite[Lemma~23]{GNSW} (arXiv~v1 numbering; ``we can assume that $\Delta$
 preserves $\mathcal S$ and $\chi$''). Let $U:=\bigsqcup_S\{S\}\times S$ and let $\hat\Lambda$ be the labeling coset of
@@ -1984,7 +2248,7 @@ Assemble (a)--(c). Each node of the clique-separator decomposition makes polynom
 Corollary~D with composition width at most $k+1$ on domains of polynomial size, polynomially many calls of
 Theorem~A through homomorphisms (TW-1), and calls of \cite[Thm.~9, Cor.~27]{Wie20} on at most $k+1$
 points. There are polynomially many nodes and at most $n$ branches per bag. The total is
-$n^{O((\log k)^c)}$ with $k\le\max(1,2\tw(G))$.
+$n^{O((\log k)^{c''})}$ with $k\le\max(1,2\tw(G))$.
 \end{proofsketch}
 \status{\textbf{Proof sketch}, conditional on Theorem~A (via Corollary~D); \cite[Lemma~29, Thm.~30, Thm.~9,
 Cor.~27]{Wie20}; the canonical-extension construction in the proof of \cite[Thm.~6.11]{Wie21}; and
@@ -2004,7 +2268,7 @@ Every statement in this section is conditional or a sketch, as marked.
 \begin{named}[Corollary H1 (coset-labeled hypergraphs)]
 Given a coset-labeled hypergraph $(V,\mathcal E,\mathfrak p)$ in the sense of \cite{GNW} (labeling cosets of the
 hyperedges, and colours) with $|E|\le d$ for all $E\in\mathcal E$, and a labeling coset $\Delta\rho$ of $V$ with $\Delta\in\Gd$,
-a canonical labeling coset can be computed in time $(n+m)^{O((\log d)^c)}$.
+a canonical labeling coset can be computed in time $(n+m)^{O((\log d)^{c'})}$, with $c'$ as in Theorem~H.
 \end{named}
 \begin{proof}
 Refine each edge colour $c$ to $(c,\Theta)$; this is invariant, since isomorphisms in the sense of \cite{GNW}
@@ -2108,14 +2372,14 @@ labels quoted.
 10 & \cite[Thm.~A.2]{GNS} (CFSG: non-giants are at most 5-transitive); \cite[Lemma~A.3]{GNS} = \cite[Cor.~2.4.13]{Bab15} & case (iv)\\
 11 & \cite[Lemma~7.1]{GNS} = \cite[Thm.~3.2.1]{Bab15}, deterministic \ref{D2}; with $|\cC|\ge2$, $\cC$ an equipartition, and $k\le d$ & Step~4, \S\ref{sec:potential}\\
 12 & \cite[Lemma~2.6]{GNS} (an inequality) & \S\ref{sec:time}\\
-13 & \cite[Thm.~2.2]{Bab19} (canonical form of strings under any group, quasipolynomial), called on canonical generators \ref{D4}, only on domains of size $\le2k^t=d^{O(\log d)}$; and Babai's string isomorphism test \cite[Thm.~2.1]{Bab19} & Prop.~\ref{prop:opt1}\\
+13 & \cite[Thm.~2.2]{Bab19} (canonical form of strings under any group, quasipolynomial; a preliminary report that sketches the proof), called only for $S_k$, $k\le d$, on relational structures of arity $O(\log d)$ on $[k]$ (domains of size $\le2k^t=d^{O(\log d)}$; \ref{D4}, Remark~\ref{rem:BC}); and Babai's string isomorphism test \cite[Thm.~2.1]{Bab19} & Prop.~\ref{prop:opt1}\\
 14 & Canonical generating sets: \cite[Lemma~6.2]{AGMMM18} = \cite[Lemma~21]{GNSW} = \cite[Lemma~15]{SW19} (arXiv numbering) & (P1)\\
 15 & Lexicographically least element of a coset in polynomial time (standard; point-stabilizer chain) & (P1)\\
 \midrule
 \multicolumn{3}{@{}l}{\emph{Additionally for Theorem H}}\\
 16 & \cite[Thm.~4.8]{Neu20} (normalize), \cite[Thm.~4.9]{Neu20} (renormalize), \cite[Thm.~4.17]{Neu20} (simplify on window), with their constructions and listed properties, and the claims in their proofs; deterministic \ref{D3} & Lemma~SIMP, Theorem~H\\
 17 & \cite[Lemma~6.1.17]{Neu19} (structure graphs), as used by \cite{Neu20}; \textbf{not seen by us} & normalization\\
-18 & \cite[Lemma~4.16]{Neu20} (extending window automorphisms); the forward and backward directions of the proof of \cite[Lemma~4.15]{Neu20}; \cite[Lemma~4.3]{Neu20} & Lemmas~LC, W, B\\
+18 & \cite[Lemma~4.16]{Neu20} (extending window automorphisms) & Lemma~LC\\
 19 & \cite[Obs.~4.12, 4.13, Lemma~4.14]{Neu20} (virtual size); \cite[Lemma~4.36, Lemma~2.6]{Neu20} for the time sketch & Lemma~LC, Theorem~H\\
 20 & \cite[Thm.~4.31, Lemma~4.32, Cor.~4.28]{Neu20} (as items 9, 10) & Lemma~AGG\\
 \midrule
@@ -2131,7 +2395,8 @@ labels quoted.
 
 \paragraph{Not assumed; reproved here.} The Babai--Luks framework lemmas F1--F4; the canonical bounded-degree
 reduction of \cite{BL83} (Section~\ref{sec:luks}), including \cite[Lemma~4.3]{BL83}; the recursion lemma
-(Lemma~\ref{lem:rec}); the potential argument (Lemma~\ref{lem:potential}).
+(Lemma~REC); the potential argument (Lemma~\ref{lem:potential}); the canonical versions of \cite[Lemmas~4.3, 4.15]{Neu20}
+(Lemmas~B and~W, which we prove directly).
 
 \paragraph{New here, as far as we know.} Lemma~T and its use in Definition~\ref{def:Ax} and
 Lemmas~\ref{lem:Tprime}, \ref{lem:Tpp}; Lemmas~T$^{\text{set}}$, LC, SIMP and AGG (the single-object local
@@ -2189,13 +2454,14 @@ statement & status\\
 \midrule
 Lemmas F1--F4, R, S, T, \ref{lem:K}; Prop.~\ref{prop:cases}, \ref{prop:opt1}; Lemmas~\ref{lem:51}, \ref{lem:Tprime}, \ref{lem:Tpp} & proofs given\\
 Proposition~\ref{prop:correct} (correctness of CanAD) & proof modulo \S\ref{sec:assumptions}\\
-Lemma~\ref{lem:rec}, Lemma~\ref{lem:potential} & proofs given\\
+Lemma~REC, Lemma~\ref{lem:potential} & proofs given\\
 Theorem~A & proof modulo \S\ref{sec:assumptions}\\
 Corollary~B & proof modulo Theorem~A; small computer check of the construction\\
 Corollary~D & proof modulo Theorem~A\\
-Lemmas E1--E3, T$^{\text{set}}$ & proofs given\\
-Lemmas W, B, SIMP, LC, AGG & proofs modulo Theorem~A and the results of Neu20 listed in \S\ref{sec:assumptions}\\
-Theorem~H & correctness: proof modulo \S\ref{sec:assumptions}; running time: \textbf{proof sketch}\\
+Lemmas E1--E4, T$^{\text{set}}$ & proofs given\\
+Lemmas W, F2$^{\text{set}}$, B, SIMP, LC, AGG & proofs modulo Theorem~A and the results of Neu20 listed in \S\ref{sec:assumptions}\\
+Proposition~\ref{prop:canhyp} (correctness of CanHyp) & proof modulo \S\ref{sec:assumptions}, including the unseen \cite[Lemma~6.1.17]{Neu19}\\
+Theorem~H & correctness: proof modulo \S\ref{sec:assumptions} (Proposition~\ref{prop:canhyp}); running time: \textbf{proof sketch}\\
 Lemma~CH & proof modulo Corollary~D and \cite[Lemma~23]{GNSW}\\
 Theorem~TW & \textbf{proof sketch}, conditional on Theorem~A, with fixes TW-1--TW-3\\
 H1 & proof modulo Theorem~H\\
@@ -2203,7 +2469,7 @@ H2, H3 & \textbf{proof sketches}\\
 H4 & \textbf{conditional} on Theorem~H, H1, H2; \textbf{sketch}; parameter-free form not written\\
 FPT treewidth canonization & speculation; no claim\\
 Remark~\ref{rem:gap1} & question about the written proof of \cite[Lemma~7.2]{GNS}; the proposed choice is proved to work (Lemma~\ref{lem:potential})\\
-Remark~\ref{rem:gap2} & presentation point in \cite[Thm.~7.3]{GNS}; covered by Lemma~\ref{lem:rec}\\
+Remark~\ref{rem:gap2} & presentation point in \cite[Thm.~7.3]{GNS}; covered by Lemma~REC\\
 Remark~\ref{rem:neu20} & two points in the cost analysis of \cite{Neu20}; correctness of Neu20 unaffected\\
 \bottomrule
 \end{tabularx}
@@ -2229,6 +2495,9 @@ Three internal adversarial reviews were carried out (all AI-assisted, none of th
   parameter-free form of H4, and the missing prior art \cite{Gro12,Gro17,LPPS22}. All are incorporated.
 \end{itemize}
 A separate check of Remark~\ref{rem:gap1} reproduced the example by computer for small $m$.
+The written-out algorithm CanHyp of \S\ref{sec:canhyp}, Lemma~E4, Lemma~F2$^{\text{set}}$ and the proofs of Lemmas~W, B and
+SIMP were added after these reviews, in response to an internal referee report, and have not been independently
+checked.
 
 \subsection{Questions for experts}
 
@@ -2248,9 +2517,8 @@ proofs but did not re-verify \cite[Thm.~3.13]{GNS} or the group theory behind \c
 \end{question}
 
 \begin{question}\label{q:BC}
-Is \cite[Thm.~2.2]{Bab19} accepted as proved? BC is a preliminary report; Theorem~A uses it only for
-structures with at most $d$ points and arity $O(\log d)$. BC's canonical form takes a generating set as input,
-and we call it on canonical generators; is its output known to depend on the group only?
+Is \cite[Thm.~2.2]{Bab19} accepted as proved? BC is a preliminary report that sketches its proof; Theorem~A
+uses it only for $S_k$, $k\le d$, on relational structures of arity $O(\log d)$ (Remark~\ref{rem:BC}).
 \end{question}
 
 Question~\ref{q:gap1} (GNS Lemma 7.2) should be checked first.
@@ -2276,11 +2544,14 @@ Do the experts know of unpublished work on Question~9.6 of \cite{Wie21}? The dev
 \begin{itemize}
 \item We have not seen the SIAM journal version of GNS, Neuen's dissertation \cite{Neu19}, or the journal
   versions of \cite{Neu20} and \cite{GNSW}.
-\item BC is a preliminary report. Theorem~A depends on it for small structures; Wiebking's work uses it in
-  the same way.
+\item BC is a preliminary report that sketches its proof. Theorem~A depends on it only for structures of
+  arity $O(\log d)$ on at most $d$ points (Remark~\ref{rem:BC}); Wiebking's work uses it in the same way.
 \item We did not re-verify the group theory in \cite[Thm.~3.13, Lemma~4.5]{GNS}, or the internals of
   \cite[Thms.~4.8, 4.9, 4.17]{Neu20} beyond the facts used.
-\item The running time of Theorem~H, Theorem~TW and H2--H4 are sketches.
+\item The running time of Theorem~H, Theorem~TW and H2--H4 are sketches. The correctness proof of
+  Theorem~H (Proposition~\ref{prop:canhyp}) is written out, but it relies on the structure-graph lemma of
+  \cite{Neu19}, which we have not seen, and on the constructions of \cite{Neu20} as listed in
+  \S\ref{sec:assumptions}.
 \item No formal verification was attempted, and the computer checks cover only small instances of
   Section~\ref{sec:luks} and of the example in Remark~\ref{rem:gap1}.
 \end{itemize}
