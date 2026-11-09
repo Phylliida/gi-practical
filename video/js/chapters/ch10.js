@@ -8,8 +8,8 @@
       'Sometimes a step is special. Say the step from H i to H i plus one is marked when H i plus one is normal in H i, the quotient is Alt of k, with k at least kappa, the smaller group is still transitive on the current orbit, and the quotient is visible: the part of the group that fixes the whole active orbit lies inside H i plus one.',
       'Sigma of G is the largest total weight of marks that any chain can collect. It is a definition about the group, over all chains. The algorithm never computes it.',
       'Three properties. One: sigma never increases when you restrict to a subgroup, or to one orbit. Because a chain in the smaller group can be lifted, and prefixed by that restriction: it was already a chain in the bigger one.',
-      'Two: if the group has a normal subgroup that is still transitive, with a quotient Alt of k, then sigma drops by at least k when you pass to it. That is just prefixing the chain by one marked step. This is exactly our visible-endpoint step, and it is why it pays.',
-      'Three: and this is the theorem: sigma of G is at most C log of the degree, minus B. There are absolute constants. The total weight of all the marks along any chain is logarithmic.',
+      'Two: if the group has a normal subgroup that is still transitive, with a quotient Alt of k and k at least kappa, then sigma drops by at least k when you pass to it. That is just prefixing the chain by one marked step. This is exactly our visible-endpoint step, and it is why it pays.',
+      'Three: and this is the theorem: sigma of G is at most C log of the degree, minus B. C and B are absolute constants. The total weight of all the marks along any chain is logarithmic.',
     ],
     draw(c_, b) {
       D.title('The hereditary budget σ', { alpha: b.on(0) });
@@ -41,7 +41,7 @@
       // Properties
       const rows = [
         { y: 440, tex: '\\sigma\\text{ nonincreasing under subgroups and orbit images}', on: 3 },
-        { y: 490, tex: '\\sigma(N)\\le\\sigma(G)-k\\ \\text{ for } N\\trianglelefteq G,\\ G/N\\cong\\mathrm{Alt}(k),\\ N\\text{ transitive}', on: 4 },
+        { y: 490, tex: '\\sigma(N)\\le\\sigma(G)-k\\ \\text{ for } N\\trianglelefteq G,\\ G/N\\cong\\mathrm{Alt}(k),\\ k\\ge\\kappa,\\ N\\text{ transitive}', on: 4 },
         { y: 540, tex: '\\sigma(G,\\Omega)\\le C\\log n - B', on: 5, big: true },
       ];
       rows.forEach((r, i) => {
@@ -58,7 +58,7 @@
       'Why should such a bound hold? Two facts do most of the work.',
       'First, logs add. If the group has a block system with b blocks of size a, then sigma of G is at most sigma on the blocks, plus sigma inside a block. Two pieces of sizes a and b; log a plus log b equals log of a b. So a tower of blocks costs nothing extra.',
       'So the induction bottoms out at primitive groups. For most of those, the paper uses the order of the group: each marked step of weight k uses up at least k over 6 of the factors of 3 or of 5 in the group order. For affine, almost-simple, and diagonal primitive groups, the number of those factors is order log of the degree. That is the input from the classification. Product and Johnson actions get their own short arguments.',
-      'And giants? A giant has no marked steps at all, because a transitive normal subgroup of a giant is the alternating group itself. Its quotient is at most cyclic of order 2.',
+      'And giants? While the action is still a natural giant, no step can be marked, because a transitive normal subgroup of a giant is the alternating group itself. Its quotient is at most cyclic of order 2. A chain has to leave the giant by an ordinary restriction first, and then the cases above apply.',
       'Is the bound tight? Yes. Take r copies of Alt kappa, acting on the r-fold product by multiplying from both sides. There are r steps of weight kappa, and log n is r log of kappa factorial over 2. So sigma is on the order of log n, for fixed kappa.',
       'So a recursion path can take only order log n over kappa of these same-domain steps. That is the fact the potential is going to charge against.',
     ],
@@ -72,14 +72,14 @@
       c.tex('\\log a + \\log b = \\log(ab)', 620, 225, { size: 27, alpha: a1, fill: C.sig });
       const a2v = b.on(2);
       D.card(90, 310, 530, 165, { alpha: a2v });
-      c.text('primitive, not a giant:', 110, 345, { size: 21, weight: 600, align: 'left', alpha: a2v });
+      c.text('affine, almost simple, diagonal:', 110, 345, { size: 21, weight: 600, align: 'left', alpha: a2v });
       c.tex('\\sigma\\le 6\\,v_\\ell(|G|),\\ \\ \\ell\\in\\{3,5\\}', 110, 395, { size: 26, align: 'left', alpha: a2v });
-      c.text('v_ℓ(|G|) = O(log n), via the classification', 110, 440, { size: 18, align: 'left', fill: C.ink2, alpha: a2v });
+      c.text('v_{ℓ}(|G|) = O(log n), via the classification', 110, 440, { size: 18, align: 'left', fill: C.ink2, alpha: a2v });
       const a3 = b.on(3);
       D.card(660, 310, 530, 165, { alpha: a3 });
       c.text('natural giant Alt(n) or Sym(n):', 680, 345, { size: 21, weight: 600, align: 'left', alpha: a3 });
       c.text('its transitive normal subgroups are', 680, 385, { size: 20, align: 'left', alpha: a3 });
-      c.text('Alt(n) or Sym(n): no marks', 680, 415, { size: 20, align: 'left', weight: 600, alpha: a3 });
+      c.text('Alt(n), Sym(n): no marks while it stays giant', 680, 415, { size: 20, align: 'left', weight: 600, alpha: a3 });
       const a4 = b.on(4);
       c.text('tight:', 110, 530, { size: 22, weight: 600, align: 'left', alpha: a4 });
       c.tex('\\mathrm{Alt}(\\kappa)^r\\text{ acting on itself from both sides}', 190, 530, { size: 24, align: 'left', alpha: a4 });

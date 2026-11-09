@@ -38,9 +38,9 @@
   V.scene({
     beats: [
       'Define the weight of a state: W equals s plus 2, to the power D, times e to the Phi. Phi is the potential. D and all the capital letters are fixed constants.',
-      'Claim: the total cost below a state is at most K sub N times W. K sub N is the cost of the phase\'s leaves, one fresh call on N to the gamma positions, times a small factor. We prove the claim by induction over the recursion tree.',
+      'Claim: the total cost below a state is at most K sub N times W. K sub N is the cost of the phase\'s leaves: one fresh call on N to the gamma positions, times a factor E sub N that chapter 19 opens up. It is not small, but it is paid once per phase. We prove the claim by induction over the recursion tree.',
       'At a node, the cost is its own work, at most N to the a, plus the costs of its children. If a child has potential lower by delta Phi, then its weight is e to the minus delta Phi, times the parent\'s, up to the prefactor.',
-      'Group the children into classes, and suppose a class has M branches. Its total weight is at most M e to the minus delta Phi, times W. For the induction to close, we need that to be at most W over 8J, where J is the number of classes. In the paper J equals 8.',
+      'Group the children into classes, and suppose a class has M branches. Its total weight is at most M e to the minus delta Phi, times W. For the induction to close, we need that to be at most W over 8J, where J is the number of classes. The paper takes J equal to 8.',
       'Here is the whole deal, in one line. Multiplying the work by M must be paid for by a potential drop of log M, plus a small constant. Branching costs log M out of the wallet.',
       'One more detail makes it clean. Children inside a single branch live on disjoint domains, so their prefactors, s j plus 2 to the D, add up to at most the parent\'s. That is what lets many small children share one branch for free.',
       'And the node\'s own work, polynomial in N, is paid for by the prefactor: W is at least 2 N to the a, because s is more than N to the gamma, and D is large. So all the children together take at most half of W, the node\'s work takes at most the other half. That closes the induction.',

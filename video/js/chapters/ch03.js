@@ -108,7 +108,7 @@
       'Even two-dimensional refinement, on all ordered pairs, gives identical answers. And yet the two graphs are genuinely not isomorphic. That has also been checked.',
       { say: 'Here is why. Because you can flip two edges at a gadget, a crossing can slide to a neighbouring edge. Try it: click an edge next to the red one. The crossing moves, but it never disappears.', hold: 2.5 },
       'So the only thing distinguishing the two graphs is the parity of the crossings: one global bit, spread over the whole graph.',
-      'Babai likes to say the job is to close the gap between symmetry and regularity. Refinement finds regularity. These graphs are perfectly regular and have no such symmetry. To tell the difference, we need to reason about symmetry directly. That means group theory.',
+      'Babai likes to say the job is to close the gap between symmetry and regularity. Refinement finds regularity. These two graphs look perfectly regular, yet no symmetry carries one onto the other. To tell the difference, we need to reason about symmetry directly. That means group theory.',
     ],
     draw(c_, b, ix) {
       D.title('Two copies of the same local picture', { alpha: b.on(0) });

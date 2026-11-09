@@ -76,12 +76,13 @@
       'Each level multiplies by the size of the quotient, and divides the positions by d. If P is the primitive quotient, the recurrence says the work on s positions is at most the size of P, times d, times the work on s over d positions.',
       'If P is polynomially small in d, this recursion is polynomial. That is Luks.',
       'But look what happens when P is everything. If the quotient is the full symmetric group on d blocks, there are d factorial branches. And d can be almost as large as s.',
-      'How often can this happen? Thanks to the classification of finite simple groups, we know exactly. Cameron, sharpened by Maróti: a primitive group of degree d is either small, with order below d to the power 1 plus log base 2 of d, or it is built from a big alternating group acting on subsets of some set of m labels.',
+      'How often can this happen? Thanks to the classification of finite simple groups, we know exactly. Cameron, sharpened by Maróti: a primitive group of degree d, once d is at least 25, is either small, with order below d to the power 1 plus log base 2 of d, or it is built from a big alternating group, Alt of m, the even permutations of m labels, acting on subsets of those labels. Call that second kind a giant.',
       'Small groups can simply be enumerated, at a price of d to the log d. Already quasi-polynomial. The second case is the wall. Babai calls it the Luks barrier: either the recursion goes through, or we find ourselves staring at a giant.',
     ],
     draw(c_, b) {
       D.title('The recurrence, and the wall', { alpha: b.on(0) });
       c.tex('T(s)\\,\\le\\, |P|\\cdot d\\cdot T(s/d)', 640, 112, { size: 32, alpha: b.on(0) });
+      D.simplified(1010, 112, b.on(0), 'constants dropped');
       // Fans: |P| small vs giant
       const tree = (cx, branches, alpha, col, y) => {
         for (let i = 0; i < branches; i++) {
@@ -120,7 +121,7 @@
     beats: [
       'Here is the model case of a giant, and it is our 10-vertex graph again. Name each vertex by a pair taken from five labels: 1 and 2, 3 and 4, and so on.',
       'Two vertices are joined exactly when their pairs are disjoint. That rule mentions only labels. So a permutation of the five labels moves the ten vertices, and every symmetry of the graph comes this way.',
-      'Watch the three-cycle on labels 1, 2 and 3. The labels rotate, and each vertex slides to the vertex named by its new pair. Ten positions move, but the group lives on five labels.',
+      'Watch the three-cycle on labels 1, 2 and 3. The labels rotate, and each vertex slides to the vertex named by its new pair. Nine of the ten positions move and one stays put, but the group lives on five labels.',
       'Babai calls this set of labels the ideal domain, and labels the slide in his talks "Plato". In our language: positions in blue, called Omega, where colours are stored, and labels in yellow, called Gamma. Different sets. Keeping them apart is the hard part.',
       'The trouble: enumerating the group means something like m factorial choices. We cannot afford that, and we can\'t cut the group down with blocks, because it is primitive. We need something cleverer, and that was Babai.',
     ],

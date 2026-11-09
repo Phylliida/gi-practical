@@ -61,7 +61,8 @@ def main():
         mn.send('WebDriver:NewSession', {'capabilities': {'alwaysMatch': {'acceptInsecureCerts': True}}})
         try: mn.send('WebDriver:SetWindowRect', {'x': 0, 'y': 0, 'width': a.w, 'height': a.h})
         except Exception as e: print('resize warn', e)
-        url = 'file:///home/bepis/math/gi-practical-wt/w19-video/video/index.html?shot=1&theme=' + a.theme + (('&rm=' + a.rm) if a.rm else '') + (('&' + a.extra) if a.extra else '')
+        index = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'index.html')
+        url = 'file://' + index + '?shot=1&theme=' + a.theme + (('&rm=' + a.rm) if a.rm else '') + (('&' + a.extra) if a.extra else '')
         mn.send('WebDriver:Navigate', {'url': url})
         for i in range(60):
             v = mn.send('WebDriver:ExecuteScript', {'script': 'return window.V && window.V.ready === true', 'sandbox': None})

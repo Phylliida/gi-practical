@@ -8,7 +8,7 @@
     beats: [
       'A last honest summary of the main result, the n to the order log n bound.',
       'It is a preprint, from November 2026, and it has not been refereed. Its main theorem has been formalized in Lean. That formalization writes the whole algorithm as one program for a simple machine and proves correctness and the time bound, and it is accepted by the comparator tool.',
-      'It assumes ten results from the literature as axioms. Six are structural facts about finite simple groups, four are about permutation-group algorithms. All ten depend on the classification of finite simple groups.',
+      'It assumes ten results from the literature as axioms. Six are structural facts about groups, four are about permutation-group algorithms. All ten depend on the classification of finite simple groups.',
       'The constant in the exponent is not explicit. Just from what the paper needs, kappa at least 64 forces a certain cutoff of at least 258, a constant a of at least about 2450, and A of at least about 19 thousand. And that multiplies a constant C of at least 128 from the sigma bound, whose full value isn\'t even written down.',
       'So the bound is enormous. The real content here is structural: a precise account of what forces graph isomorphism to cost what it costs, and a pair of ideas that took one logarithm away.',
     ],
@@ -43,7 +43,7 @@
   V.scene({
     beats: [
       'The final note is about this project itself, kept separate from everything above. The repository has a simplified Python solver that follows the shape of the algorithm, keeps every answer exact, and measures what happens. It is not the paper\'s algorithm: for example, its test sets have size 3, and it lacks the full machinery.',
-      'What it found, in passing: on the kinds of instances the paper is really about, this structure is reachable in pure Python. And on some hard families, like Neuen and Schweitzer\'s multipedes, a canonicalization variant is faster than nauty and Traces. On random regular graphs and on many others, nauty and Traces are far ahead. Benchmarks and their caveats are in the repository, with every answer checked.',
+      'What it found, in passing: a simplified version of this machinery runs, and stays exact, in pure Python. And on some hard families, like Neuen and Schweitzer\'s multipedes, a canonicalization variant is faster than nauty and Traces. On random regular graphs and on many others, nauty and Traces are far ahead. Benchmarks and their caveats are in the repository, with every answer checked.',
       'That is the end. Two logarithms left, and we can say what each of them pays for. And a third one, gone: not because the same step became cheaper, but because the algorithm stopped having to name a logarithmic number of labels at once. Thank you for watching.',
     ],
     draw(c_, b) {

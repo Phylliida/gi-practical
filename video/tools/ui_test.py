@@ -6,7 +6,7 @@ import argparse, base64, hashlib, json, os, socket, subprocess, sys, tempfile, t
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from shoot import MN
 
-URL = 'file:///home/bepis/math/gi-practical-wt/w19-video/video/index.html'
+URL = 'file://' + os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'index.html')
 FIREFOX = '/run/current-system/sw/bin/firefox'
 ok_all = True
 

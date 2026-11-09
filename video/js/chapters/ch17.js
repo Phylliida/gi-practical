@@ -7,7 +7,7 @@
     beats: [
       'Open the wallet. Here is the potential in full. Every term has a colour, and a job. We start with the first: x squared, where x is the log of s plus 2.',
       'What does x squared pay for? Suppose a recursive call shrinks the domain by a constant factor, s to theta s, with theta less than 1. Then x falls by a constant. In the paper, by at least c theta equals one half log of 1 over theta, once s is at least 6.',
-      'Now watch the square. Take a square of side x, and shave a strip of width c off one side and the top. The area removed is about 2 c x, proportional to x. So the potential falls by about c theta x. This is why it is x squared, and not x: the square turns a constant-size change in x into a drop proportional to x.',
+      'Now watch the square. Take a square of side x, and shave a strip of width c off one side and the top. The area removed is about 2 c x, proportional to x. The paper records the safe half of that: x squared falls by at least c theta x. This is why it is x squared, and not x: the square turns a constant-size change in x into a drop proportional to x.',
       'And a drop of about x is exactly what buys polynomial branching. Inside a phase, s is above N to the gamma, so log N is at most x over gamma, so N to the a is at most e to the a star x. Polynomial branching, paid in full by one constant-factor shrink.',
       'Same trick for a bigger shrink. If a primitive quotient of degree d gets enumerated, the domain drops by a factor of d, and x squared falls by at least one third of x log d. That pays for up to e to the a log squared d branches, because log d is at most x.',
       { say: 'So here is the first part of the answer. Why x squared? Before I say it, you might try to say it yourself.', hold: 1 },
@@ -55,9 +55,9 @@
     beats: [
       'Second term: rho x. Here rho is the sum, over levels of the hierarchy, of 2 floor log base 2 of d i, minus 1. It is at most 2 log base 2 of s.',
       'Rho measures how many more times the tower can be refined. Split one ratio into two factors a and b. Floors of logs add at most up to the floor of the log of the product, and the minus 1 gives a strict decrease. So every refinement drops rho by at least 1. Worked out: a product refinement with r factors drops rho by at least r minus 1.',
-      'What does that buy? A product refinement branches over at most 2 to the r, r factorial cosets. And log of 2 to the r, r factorial, is at most 4 times r minus 1, times x, since r is at most log s. Rho drops by r minus 1, so rho x drops by r minus 1, times x, and that pays.',
+      'What does that buy? A product refinement branches over at most 2 to the r, r factorial cosets. And log of 2 to the r, r factorial, is at most 4 times r minus 1, times x, since r is at most log base 2 of s. Rho drops by r minus 1, so rho x drops by r minus 1, times x, and that pays.',
       'Third term, sigma x. Remember the visible unaffected test. Sigma falls by kappa, so sigma x falls by kappa x, and since x is at least gamma log N, that is what pays the polynomially many tests. Sigma is order log s, so this term at the root is order log squared too.',
-      'Fourth term, Q. A cap contraction, from at least q down to beta q, on a level with ratio d: Q falls by at least log d times log of 1 over beta. Since d is at least q, that is at least c beta log q. And here is the key: in this case the branching is only q to the a. Everything multiplies against labels, not positions. That is why Q can be measured in log q, and why it fits in log squared.',
+      'Fourth term, Q. A cap contraction, from at least q down to beta q, on a level with ratio d: Q falls by at least log d times log of 1 over beta. Since d is at least q, that is at least c beta log q, where c beta is log of 1 over beta. And here is the key: in this case the branching is only q to the a. Everything multiplies against labels, not positions. That is why Q can be measured in log q, and why it fits in log squared.',
       'Finally, B h. The counter h is at most 2, so this term is a constant. It pays for the bounded branching in row constructions that have no immediate domain decrease.',
       'At the root of a phase: x squared is about log squared N. Rho x is at most 2 log base 2 N times log N. Sigma x is order log squared. Q is at most log squared N. And h is at most 2. Everything is order log squared N. The whole wallet is e to the C log squared N.',
     ],
@@ -68,7 +68,7 @@
         { y: 120, on: 0, off: 3, col: C.rho, title: 'ρx: tower refinement', tex: '\\rho=\\sum_i\\big(2\\lfloor\\log_2 d_i\\rfloor-1\\big)\\le 2\\log_2 s',
           sub: '', tex2: '\\text{split }d=ab:\\ \\ \\lfloor\\log_2 a\\rfloor+\\lfloor\\log_2 b\\rfloor\\le\\lfloor\\log_2 ab\\rfloor', tex3: '\\log(2^r r!)\\le r\\log 2r\\le 4(r-1)x' },
         { y: 120, on: 3, off: 4, col: C.sig, title: 'σx: visible same-domain steps', tex: '\\sigma\\ \\to\\ \\sigma-\\kappa\\quad\\Rightarrow\\quad \\Delta(\\sigma x)\\ge\\kappa x', sub: 'pays the polynomially many tests, with σ = O(log s)' },
-        { y: 120, on: 4, off: 5, col: C.Q, title: 'Q: a cap falls', tex: 'c\\ge q\\to c\'\\le\\beta q:\\quad \\Delta Q\\ge(\\log d)\\log\\tfrac1\\beta\\ge c_\\beta\\log q', sub: 'pays q^a continuations: same domain, only labels branch' },
+        { y: 120, on: 4, off: 5, col: C.Q, title: 'Q: a cap falls', tex: 'c\\ge q\\to c\'\\le\\beta q:\\quad \\Delta Q\\ge(\\log d)\\log\\tfrac1\\beta\\ge c_\\beta\\log q', sub: 'pays q^{a} continuations: same domain, only labels branch' },
         { y: 120, on: 5, off: 6, col: C.h, title: 'Bh: row-construction events', tex: 'h\\in\\{0,1,2\\},\\quad\\Delta(Bh)=B', sub: 'pays bounded parity choices in row steps' },
       ];
       cards.forEach((cd) => {

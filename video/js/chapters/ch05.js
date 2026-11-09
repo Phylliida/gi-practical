@@ -66,7 +66,7 @@
       'Watch a symmetry act. Rotate by one step, and every pair lands exactly on another pair. The colour classes get permuted, but never torn apart. A partition with that property is called a block system.',
       'Compare the partition into neighbouring pairs. Rotate by one step, and pairs get torn apart: position 1 is paired with 0 before, but with 2 after. Not a block system.',
       'The hexagon has one more block system: two triangles, the even positions and the odd ones.',
-      'A block system is a compression. Collapse each pair of opposite positions to a single point. Our group now acts on three points. Twelve symmetries become six: all of Sym(3). This action on blocks is called the quotient.',
+      'A block system is a compression. Collapse each pair of opposite positions to a single point. Our group now acts on three points. Twelve symmetries become six: all of Sym(3), the group of every permutation of three things. This action on blocks is called the quotient.',
       'Two symmetries vanish: doing nothing, and rotating 180 degrees. They fix every block. They form the kernel.',
       'So the problem stacks: a size 3 problem on the blocks, and for each block, a size 2 problem inside. Six is three times two. Remember those ratios, d one, d two, whose product is the number of positions. That stack is the idea the whole video runs on.',
     ],

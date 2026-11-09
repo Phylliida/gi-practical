@@ -30,7 +30,7 @@
   V.scene({
     beats: [
       'Babai\'s move is to stop trying to enumerate the giant, and ask a different question: is the giant really there, in this instance?',
-      'Two outcomes, and each one is progress. Maybe the symmetry is genuine: the colouring really is preserved by most of the giant. Then we can peel the giant off in polynomial time and be done with it.',
+      'Two outcomes, and each one is progress. Maybe the symmetry is genuine: automorphisms of the colouring really do realize the giant, on all or nearly all of the labels. Then an efficient Luks reduction peels the giant off, and we recurse on smaller pieces.',
       'Or the symmetry is broken, and then the colouring must be hiding some structure on the labels, a colouring or a partition, that an isomorphism has to respect. Then the giant can be cut down.',
       'Confirm the giant, or break it. Everything else in the algorithm is engineering in service of those two outcomes.',
     ],
@@ -42,11 +42,11 @@
       D.card(120, 240, 480, 300, { alpha: a1, stroke: C.green });
       c.text('Confirm', 360, 290, { size: 28, weight: 650, alpha: a1 });
       c.tex('\\mathrm{Aut}_G(x)\\twoheadrightarrow\\mathrm{Alt}(\\Gamma)', 360, 360, { size: 26, alpha: a1 });
-      c.text('nearly all of Alt(Γ) really preserves x', 360, 415, { size: 19, fill: C.ink2, alpha: a1 });
-      c.text('so we peel it off in polynomial time', 360, 460, { size: 19, fill: C.ink2, alpha: a1 });
+      c.text('or at least a giant on 90% of Γ', 360, 415, { size: 19, fill: C.ink2, alpha: a1 });
+      c.text('so an efficient Luks reduction peels it off', 360, 460, { size: 19, fill: C.ink2, alpha: a1 });
       D.card(680, 240, 480, 300, { alpha: a2, stroke: C.red });
       c.text('Break', 920, 290, { size: 28, weight: 650, alpha: a2 });
-      c.text('a coloring or partition on Γ', 920, 360, { size: 21, alpha: a2 });
+      c.text('a colouring or partition on Γ', 920, 360, { size: 21, alpha: a2 });
       c.text('that every isomorphism must respect', 920, 395, { size: 21, alpha: a2 });
       c.text('then the giant cannot act on Γ', 920, 450, { size: 19, fill: C.ink2, alpha: a2 });
       c.text('that is progress on the bill', 920, 485, { size: 19, fill: C.ink2, alpha: a2 });
@@ -62,7 +62,7 @@
       'Here is a real instance. Seven labels, so 21 positions, one for each pair of labels, with a real two-colouring. The test set has three labels.',
       'Start from all relabelings that preserve T, with nothing checked yet. Now grow a window of checked positions.',
       'First, find the positions the test can see: those where fixing the position changes which even permutations of T remain possible. Call them affected.',
-      'Check the colours on those positions, and keep only the relabelings that respect them. Those positions join the window. That one step is a recursive call on the group that fixes T pointwise, and the affected orbits are at most a 1 over k fraction of the positions.',
+      'Check the colours on those positions, and keep only the relabelings that respect them. Those positions join the window. That one step is a recursive call on the group that fixes T pointwise, whose orbits inside an affected orbit are at most a 1 over k fraction of it.',
       'Now look at the two possible endings, using the same colouring and two different test sets.',
       'Test set 1, 2, 4: nothing else is affected, and the relabelings fixing everything outside the window still realize all even permutations of T. This is a full certificate: actual automorphisms of the whole string.',
       'Test set 1, 2, 3: after the window grows, the remaining relabelings can no longer realize all even permutations of T. Non-full. And that failure is itself information: it depends only on the colouring, so it is shared by every isomorphism.',
@@ -122,7 +122,7 @@
       { say: 'So why did Babai make k about log n? Before I answer, let me ask you. A smaller test set means fewer test sets. Why not use k equals 3?', hold: 1.2 },
       'The danger is the ending we called full. When no position is affected, we want to conclude that the relabelings fixing everything outside the window still realize all of Alt(T). Babai\'s Unaffected Stabilizer Theorem says exactly that, but only when k is above a threshold: greater than 8 and greater than 2 plus log base 2 of n.',
       'Below the threshold, it can genuinely fail, and here is the cleanest picture of how. Take the alternating group on k points, and let it act on itself, by multiplying from the left and from the right at the same time. That is a transitive group on k factorial over 2 positions.',
-      'The left half is a copy of Alt(k), our test. But the right half, on its own, already reaches every position. So fixing the test does not fix a single position: every position is unaffected. Yet no relabeling fixes all positions and still moves the labels. So the procedure has nothing to check and no real automorphism to report. It is stuck.',
+      'The left half is a copy of Alt(k), our test. But the right half, on its own, already reaches every position. So whatever even permutation the test makes, the right half can bring a given position back: fixing a position puts no limit on the test. Every position is unaffected. Yet no relabeling fixes all positions and still moves the labels. So the procedure has nothing to check and no real automorphism to report. It is stuck.',
       'Here k is only about log n over log log n. In his talks Babai notes the threshold is tight, with infinitely many examples at the boundary. A constant-size test set is exactly the regime where this happens.',
       'So Babai needs test sets of size about log n. And that is one logarithm on our bill.',
     ],
@@ -137,7 +137,7 @@
       for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
         c.rect(cx - (n / 2) * s + i * s, cy - (n / 2) * s + j * s, s - 5, s - 5, { fill: C.pos, r: 3, alpha: ax * (0.45 + 0.2 * ((i + j) % 2)) });
       }
-      c.text('positions = Alt(k), left ⟷ right', cx, 668, { size: 19, fill: C.ink2, alpha: ax });
+      c.text('cartoon grid: positions = Alt(k), left ⟷ right', cx, 668, { size: 19, fill: C.ink2, alpha: ax });
       const al = b.on(3);
       if (al > 0) {
         c.arrow(cx - 3.5 * s, cy - 3.5 * s - 32, cx + 3.5 * s, cy - 3.5 * s - 32, { stroke: C.lab, lw: 4, alpha: al });
@@ -183,7 +183,7 @@
       c.text('Full certificates', 615, 186, { size: 24, weight: 600, alpha: a1 });
       c.tex('F = \\langle K(T)\\rangle \\le \\mathrm{Aut}_G(x)', 615, 245, { size: 24, alpha: a1 });
       c.text('confirm: giant on most of Γ', 615, 300, { size: 20, fill: C.ink2, alpha: a1 });
-      c.text('peel it off in poly time', 615, 330, { size: 20, fill: C.ink2, alpha: a1 });
+      c.text('peel it off, recurse on the kernel', 615, 330, { size: 20, fill: C.ink2, alpha: a1 });
       c.text('or: a k-ary structure on Γ', 615, 395, { size: 20, fill: C.ink2, alpha: a1 });
       c.text('colours come from comparing tests', 615, 425, { size: 20, fill: C.ink2, alpha: a1 });
       const a2 = b.on(2);
