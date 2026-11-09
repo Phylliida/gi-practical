@@ -729,3 +729,9 @@ are red-teams, a LaTeX paper, and final integration.
 * T1: 4-TI in q^{n²}·poly. T2: h-tuples of 3-tensors reduce to one 3-tensor of length O(hn). T3 (subclass, conditional). H [claimed PROVEN]: rank-based
   2^{(2√2+o(1))d²/√min(s,d/2)}, beats 2^{d²/4} for s > 128.
 * w46-redteam-quartic: adversarial check.
+
+### w46-redteam-quartic (done, commit 91a1fd4; docs/redteam-w45-quartic.md)
+* Theorem H sound except the threshold: ranks are even, and the printed parameters first win at s = 132 (s = 130 needs hand-picked R = 8). The random-quartic sketch closes
+  (s ≥ d − 2√d − O(1)), beating 2^{d²/4} only from d = 282. Blow-up analysis sound as counting; "any kernel reduction" overreaches. T1 sound mod Qiao–Sun. T2 and T3 reverse
+  directions tested exactly, 0 disagreements. No test reaches the regime where H beats 2^{d²/4}.
+* w47-mu: does any graph family force HJ's Lie-rank enumeration channel?
