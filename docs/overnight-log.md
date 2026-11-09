@@ -810,3 +810,8 @@ are red-teams, a LaTeX paper, and final integration.
 * The memo was right. The proof uses property (b) through 3 of 28 pairs, (a) as one explicit path, non-constancy only in the character step; probably χ ≢ 0 suffices (numerical remark only).
 * Not covered: rank bound, running time and the n^{o(log n)} ⇒ 2^{o(d²)} arithmetic, constant χ, the gauge kernel, the rest of w30. The theorem covers the memo's specific F¹ table, not every table with properties (a), (b).
 * w56-lean-cubic: machine-check w35's exact cubic reductions (Theorems A–C).
+
+### PAUSED 2026-11-09 at the user's request (resume next week)
+* w55-lean-h stopped mid-work: partial files committed as WIP on its branch (unverified, may not compile; no sorry in them). w56-lean-cubic stopped before writing anything.
+* To resume: restart w55 (Theorem H: determination, threshold arithmetic, existence, assembly) from its WIP commit and w56 (w35 Theorems C, B, A) from scratch, with the same prompts; then rebuild each independently and read its statement file before calling it verified.
+* Later candidates: more self-contained theorems in Lean (w50 Theorem A/B, w47 Lemmas L and B); moonshot leads in docs/w49-pruned.md and docs/w50-gain.md.
