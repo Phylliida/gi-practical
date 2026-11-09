@@ -602,3 +602,9 @@ are red-teams, a LaTeX paper, and final integration.
 
 ## Night 3 moonshots (2 at a time)
 * w27-tree: complete-tree tanglegram isomorphism R1_c; the smallest open family (height-2 posets, large mu).
+
+### w26-redteam-pg (done, commit b503900; docs/redteam-w18-latin.md)
+* B1 sound as a statement about HJ as written: no step intercepts the path; n^{(1/8) log2 n − O(1)} recursive calls on
+  the PG(m−1,2) incidence graph. Asymptotic only (no nesting below m ≈ 214 at κ = 64; enumeration cutoff is
+  q₁ = 486290 at Lean's parameters, not q₀). It bounds HJ, not GI. Simulations support the window shape only.
+* A1 sound after four repairs; routine application of Rosenbaum. Latin-square-graph exponent should be (1/8) log2 N.
