@@ -32,7 +32,7 @@ of graphs of maximum degree d, and (4) produced two draft papers and an animated
 | Hypergraphs, treewidth | Theorem H (time only sketched), Theorem TW (sketch) | see ledger | [Canonization](Math-Canonization.md) |
 | Exponent c, no HJ | c ≤ 10/3 for all d (Theorem X); c = 3 for all d (Theorem G) | X: AI red-teamed. G: one AI red-team pass, provisional | [Exponent](Math-Exponent.md) |
 | Where hardness lives | reduction to TreeCI and tanglegram isomorphism (R1); R1 remains open | reductions proven; no algorithm, no hardness | [Core problem](Math-Core-Problem.md) |
-| Limits of HJ's method | HJ needs ≥ N^{log₂ D − 0.45} branches on an explicit string-isomorphism family | proven from the pseudocode; AI red-teamed; string level only | [Barriers](Math-Barriers.md) |
+| Limits of HJ's method | HJ needs ≥ N^{log₂ D − 0.45} branches on an explicit string-isomorphism family; separately, n^{(1/8)log₂ n − O(1)} calls on the PG(m−1,2) incidence graphs (w18, **not yet red-teamed**) | proven from HJ as written; the string bound AI red-teamed. A bound on HJ, not on GI | [Barriers](Math-Barriers.md) |
 | Practice | on Neuen–Schweitzer multipedes we beat nauty and Traces (n = 2464: under 1.5 s vs > 600 s) | measured; answers proved by a lemma checked per instance; Traces wins on most other families | [Benchmarks](Benchmarks.md) |
 
 ## Pages
@@ -67,12 +67,11 @@ of graphs of maximum degree d, and (4) produced two draft papers and an animated
 
 ## Work still in progress
 
-These branches were unfinished when this wiki was written (master at `b1a2d03`). Pages that depend on
+This wiki was cut from master at `b1a2d03`. Master has since gained `w18-latin` (`860e782`, log `603bd7b`), whose results are on the relevant pages. The branches below were unfinished at that point. Pages that depend on
 them say so in place. See [Maintaining](Maintaining.md) for how to fold them in.
 
 | Branch | Commit | State | Area |
 |---|---|---|---|
 | `w22-speed` | `624be06` | one commit ahead of master's history (stage-loop speed); not merged | [Software](Software.md), [Benchmarks](Benchmarks.md) |
-| `w23-speed2` | `04de436` | no commits of its own yet (bounded-path compilation) | [Software](Software.md) |
-| `w18-latin` | `4137ae7` | no commits of its own yet (Latin-square / Steiner moonshot) | [Moonshots](Moonshots.md) |
+| `w23-speed2` | `4742c66` | one commit (C versions of the bounded and canonical hot paths, per its message); not merged | [Software](Software.md) |
 | `w24-video-review` | `08fd28a` | no commits of its own yet (fact-check of the video); no `video/REVIEW.md` on master | [Reproduce](Reproduce.md#the-video) |

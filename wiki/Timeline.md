@@ -77,13 +77,13 @@ The usage window ended during wave 11; work resumed on 8 Nov.
 | 15 | w15-redteam-theoremg | `df12b78` | red-team | [report](../docs/redteam-theoremg.md) |
 | 16 | w16-ckernel | `87745ce` | C kernel | [w16-ckernel](../docs/w16-ckernel.md) |
 | 17 | w17-affine | `6f28e9a` | affine moonshot | [w17-affine](../docs/w17-affine.md) |
-| 18 | w18-latin | `4137ae7` | Latin-square moonshot (**in progress**) | [Moonshots](Moonshots.md) |
+| 18 | w18-latin | `8047173` | Latin-square moonshot; Theorem B1 (merged `860e782`; not yet red-teamed) | [Moonshots](Moonshots.md) |
 | 19 | w19-video | `ed3aa0b` | video | [CLAIMS](../video/CLAIMS.md) |
 | 20 | w20-redteam-affine | `361654e` | red-team | [report](../docs/redteam-w17-affine.md) |
 | 21 | w21-eth | `b4d1322` | ETH preprint review | [w21-eth](../docs/w21-eth.md) |
 | 22 | w22-speed | `624be06` | stage-loop speed (**in progress**, unmerged) | [Software](Software.md) |
-| 23 | w23-speed2 | `04de436` | bounded-path compilation (**in progress**) | [Software](Software.md) |
+| 23 | w23-speed2 | `4742c66` | bounded-path compilation (**in progress**, unmerged) | [Software](Software.md) |
 | 24 | w24-video-review | `08fd28a` | video fact-check (**in progress**) | [Reproduce](Reproduce.md#the-video) |
 | 25 | w25-wiki | this branch | this wiki | |
 
-The state of master when this wiki was written was `b1a2d03`.
+This wiki was cut from master at `b1a2d03`; master later reached `603bd7b` with the w18 merge.

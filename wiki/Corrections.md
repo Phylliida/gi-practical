@@ -156,6 +156,10 @@ bijection, not a lower bound on reductions. Natural fixed-width encodings have a
 | "n^{O(log d)}" | should read n^{O(log(d+2))} | same §9(d) |
 | Literature note on c | w1-fpt "c ≥ 4", red-team "c ≥ 3": replaced by the bookkeeping c = 5 of w8 (upper bound from the written proof) | [w8-gnsexp](../docs/w8-gnsexp.md) §1.3 |
 
+### Speculation that HJ's σx channel is never tight
+
+[moonshot-theory](../docs/moonshot-theory.md) §5 listed as speculation that the x² and σx channels are never tight, and §2.3 knew no instance. Theorem B1 of w18 (given HJ as written, not yet red-teamed) attains the σx channel on the PG(m−1,2) incidence graphs: "visible unaffected steps with polynomial-degree giants" occur there. See `docs/w18-latin.md`.
+
 ### Status of the Lean formalization
 
 The memo [moonshot-theory](../docs/moonshot-theory.md) (Nov 4) describes the Lean as a "stage 1" formalization with subroutines as

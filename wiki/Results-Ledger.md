@@ -73,7 +73,7 @@ are correct, unless the row says otherwise.
 ## 3. Lower bounds for specific algorithms, and barriers
 
 These are about what particular algorithms do, or about implications; none is a general lower bound for
-GI, and none has been transferred to graphs.
+GI. The string-isomorphism bounds of w1 have not been transferred to graphs; the graph bound of w18 is a separate one, through a different channel.
 
 | Result | Statement | Status | Assumes | Checked by | Source |
 |---|---|---|---|---|---|
@@ -81,6 +81,7 @@ GI, and none has been transferred to graphs.
 | Prop 3.1, Cor 3.2 (w1-fpt) | for odd D ≥ 3, G = (F₂^{D−1} ⋊ S_D) ≀ C_m (m = 2^j) is primitive, affine, in Γ̂_D; HJ and HJ+(M′) create ≥ \|G\| ≥ N^{log₂D − 0.443} children on every instance; GNS 3.13's exponent is sharp at fixed d | proven | HJ pseudocode only (not (H0)) | AI red-team | [w1-fpt](../docs/w1-fpt.md) §3.1, [redteam](../docs/redteam-w1-fpt.md) §1 |
 | Prop 4.2 (w1-structure) | on G_{r,L} and AGL(r,2)^L, HJ+(M′) makes ≥ N^{r+1−1.8/r−o(1)} branches | proven from pseudocode; independent of (H0) | — | AI red-team | [w1-structure](../docs/w1-structure.md) §4.6, [redteam](../docs/redteam-w1-structure.md) §5 |
 | Group-iso and combinatorial barriers | n^{o(log n)} GI would give n^{o(log n)} for group, quasigroup, Steiner triple, conference-graph isomorphism, and 2^{o(k²)} for AGL(k,2) string isomorphism | proven reductions | — | author only | [moonshot-theory](../docs/moonshot-theory.md) §3 |
+| Theorem B1 (w18) | on the point–line incidence graph of PG(m−1,2), HJ creates ≥ n^{(1/8)log₂ n − O_κ(1)} recursive calls, for every fixed κ; through the σx channel, not enumeration | proven, given HJ as written; **not yet red-teamed** | HJ as written | author only; window structure checked by exact computation at κ = 3, m ≤ 7 (cannot check the asymptotic count) | `docs/w18-latin.md` (on master from `860e782`; this wiki branch was cut at `b1a2d03`, so the file is not linked here) |
 | Prop 3 (moonshot) | AGL(k,2) string isomorphism reduces to GI on Θ(N³) vertices | proven | — | author only | same §3.3 |
 | c < 2 barrier | an unconditional n^{O(log^c d)} with c < 2 for all d would beat exp(O(log³ n)) for general GI | proven (state-of-the-art statement, not a lower bound) | — | AI red-team | [w8-gnsexp](../docs/w8-gnsexp.md) §2.7, [redteam](../docs/redteam-w8-gnsexp.md) §5 |
 | c = 3 floor of GNS's architecture | K·log N accounting cannot go below L³ | sketch; a heuristic about the accounting | — | AI red-team (heuristic) | same |
@@ -174,6 +175,10 @@ See [Math: core problem](Math-Core-Problem.md). None of these gives FPT for degr
 | Prop D (w17) | T(f,g) ≤ 2^{(sep(g)+1)k}poly(N); random g: 2^{k log k+O(k)} | proven | | AI red-team | same §6 |
 | Prop E (w17) | vectorial quadratic colourings in 2^{O((m+k)^{1.5})} (decision) | proven modulo arXiv:2610.00874 (unrefereed) | GIQS Thm 1.3 | AI red-team (citation) | same §6 |
 | Prop G (w17) | Sylow enumeration at classical nodes costs \|P\|_{2′}; "λ coefficient halved" | Sylow count sketch; **"λ coefficient halved" withdrawn as unsupported** | | AI red-team | same §5 |
+| Theorem A1 (w18) | quasigroup, Latin-square isotopy, paratopy and STS isomorphism in n^{(1/2)log₂ n + O(1)} time and space | proven; an immediate extension of Rosenbaum's bidirectional collision, not found stated for quasigroups; **not yet red-teamed** | | author only | `docs/w18-latin.md` |
+| Theorem A2, Lemma A3 (w18) | quasigroup isomorphism in poly(n, M, A) (M subquasigroups, A their automorphism groups); structural lemmas | proven; not found in the literature; **not yet red-teamed** | | author only | same |
+| Latin-square graphs of Z₂^m; STS block graphs (w18) | same 2^{Ω(m²)} chain | sketch | | window pattern simulated | same |
+| Paley graphs polynomial for HJ (w18) | no chain, since Aut is solvable | sketch | | author only | same |
 | ETH preprint review | no flaw found in the core checked; no transfer to GI | review only; not a verification | | one AI review, exact small-case tests | [w21-eth](../docs/w21-eth.md) |
 | Prop (feasibility bound, w21) | Lemma 4.7's hypotheses force M ≥ 32 b²(b+w), excluding AGL and TI as written | proven | | author only; `check_transfer.py` | [w21-eth](../docs/w21-eth.md) §B.2 |
 
@@ -198,4 +203,5 @@ See [Benchmarks](Benchmarks.md) for tables and caveats. All timings are one mach
 * A hardness reduction for TreeCI or R1.
 * A lower bound for a general coset-splitting model.
 * A 2^{o(k²)} algorithm for AGL(k,2) string isomorphism.
-* Any transfer of the HJ string lower bounds to graphs.
+* Transfer of the w1 HJ string lower bounds to graphs (Theorem B1 of w18 is a separate graph-level bound).
+* An n^{o(log n)} algorithm for general Latin squares, Steiner triple systems or conference graphs.

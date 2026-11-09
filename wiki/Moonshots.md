@@ -28,9 +28,17 @@ Long-shot attempts: an honest try at each, done knowing success was unlikely.
 * **No transfer to GI.** A polynomial reduction with N variables helps only if N ≲ log² n·√(log log n)/log log log n. Natural fixed-width encodings have about n² variables, and Sec. 4's M ≥ 32 b²(b+w) rules out affine equivalence and tensor isomorphism as written.
 * **Effect on the campaign:** only the barrier statement, re-based on [CLIQUE-LB](Math-Barriers.md#the-clique-lower-bound-barrier).
 
-## Latin squares and Steiner systems (in progress)
+## Latin squares and Steiner systems (w18)
 
-**As of commit `4137ae7` on branch `w18-latin`, in progress.** The branch has no commits of its own. Its brief: n^{o(log n)} for Latin square or Steiner triple system isomorphism, and whether any graph family forces n^{log n} on HJ's algorithm. Update this section when it lands; see [Maintaining](Maintaining.md).
+Source: `docs/w18-latin.md` (on master from `860e782`; this wiki branch was cut at `b1a2d03`, so the file is not linked here). The memo is at commit `8047173`, **not yet red-teamed**. The brief: n^{o(log n)} for Latin square or Steiner triple system isomorphism, and whether any graph family forces n^{log n} on HJ's algorithm.
+
+* **No n^{o(log n)} algorithm** for general Latin squares, Steiner triple systems or conference graphs.
+* **Theorem A1:** quasigroup, Latin-square isotopy and STS isomorphism in n^{(1/2)log₂ n + O(1)} time and space, an immediate extension of Rosenbaum's bidirectional collision. Proven; not found stated for quasigroups.
+* **Theorem A2, Lemma A3:** a DP over the subquasigroup lattice runs in poly(n, M, A); structural lemmas about generation chains.
+* **Theorem B1:** HJ creates ≥ n^{(1/8)log₂ n − O_κ(1)} recursive calls on the PG(m−1,2) incidence graphs, through the σx channel. Answers the earlier question of whether any graph family forces n^{log n} on HJ. A bound on HJ, not on GI. See [Barriers](Math-Barriers.md#hj-is-tight-on-graphs-too-w18).
+* Latin-square graphs of Z₂^m and STS block graphs: same chain, sketch. Paley graphs: no chain (Aut solvable), sketch. A rigid variant of X_m: sketch.
+
+Simulations ran at κ = 3, m ≤ 7, and check the window structure only.
 
 The empirical background is [hardness.md](../docs/hardness.md): no family at n ≤ 300 made branch counts grow superpolynomially except projective planes through one heuristic ([details](Tried-and-Failed.md#practical-experiments)).
 

@@ -71,6 +71,7 @@ Memo names disambiguate; the [ledger](Results-Ledger.md) gives the memo for each
 | Prop S | sign group definability (w4-t2); straddling (w6) |
 | Theorem P, P-canon | product actions (w2), its canonical version (w3) |
 | Theorem R, R\*, R\*\* | degree-d conditional bounds; not the same as R1 |
+| Theorem A1, A2, B1 | w18: quasigroups (A1, A2); HJ on PG incidence graphs (B1); not Theorems A, B |
 | Theorem X | black box (w10) |
 | "Theorem 1" | exponents (w8-gnsexp); poset DP (w8-poset) |
 | Example X, X′ | Cayley-coupled towers (w1-structure, w2-coset) |

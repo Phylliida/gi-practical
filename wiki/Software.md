@@ -6,7 +6,7 @@ correct or the run fails or times out; heuristics affect only speed.
 [Home](Home.md) · [Benchmarks](Benchmarks.md) · [Reproduce](Reproduce.md) · Interface reference: [README](../README.md)
 
 **In progress as of master `b1a2d03`.** `w22-speed` (`624be06`) adds incremental block verdicts to the stage loop and C paths for `clean`, `action_on_pairs` and
-`refine_labels`, plus `tests/test_stage_memo.py` and `bench/paired.py`; it is not merged, so nothing on this page describes it. `w23-speed2` (`04de436`, bounded-path compilation) has no commits of its own.
+`refine_labels`, plus `tests/test_stage_memo.py` and `bench/paired.py`; it is not merged, so nothing on this page describes it. `w23-speed2` (`4742c66`, bounded-path compilation) has one unmerged commit, C versions of worklist 1-WL, `class_plan`, bit-parallel balls and edge-orbit union-find.
 
 ## Module map
 

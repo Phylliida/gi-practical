@@ -95,7 +95,7 @@ From [moonshot-theory](../docs/moonshot-theory.md) §2. Tag in brackets is the m
 * **Slack:** the ρx term is slack: ρ·O(log log N) suffices **[proven given HJ]**. The bound Q ≤ log² s shrinks to log N·log w **[proven]**.
   The real multiplicity of a local test is C_κ q^{2κ}, not N^a **[sketch, later verified as (H2)]**.
 * **Giant breaking** (x, σ, Q, rectangles) costs log N·log w. It would be tight only if polynomial-degree giants survive Θ(log N) rounds, the
-  shape of the 1978–80 n^{O(log n)} barrier for conference graphs, Latin squares and Steiner triple systems. No proof HJ spends that much on them **[speculation]**.
+  shape of the 1978–80 n^{O(log n)} barrier for conference graphs, Latin squares and Steiner triple systems. The memo's speculation that the σx channel is never tight was later contradicted: w18's Theorem B1 attains it on the PG(m−1,2) incidence graphs (given HJ as written, not yet red-teamed); see [Barriers](Math-Barriers.md#hj-is-tight-on-graphs-too-w18).
 * **Enumeration** of Maróti-small primitive quotients is **tight for HJ**: on AGL(k,2), HJ makes ≥ 0.288·N^{1+log₂N} branches **[proven]**.
   The bound cannot be improved for HJ's *string* algorithm by analysis alone.
 * **The row terminal** E_N is enumeration-type, and arises only for giants of degree above N^α.

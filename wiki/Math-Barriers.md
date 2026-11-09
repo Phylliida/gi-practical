@@ -10,7 +10,13 @@ Why n^{O(log n)} for GI and n^{O(log d)} for degree-d GI are hard to beat. Nothi
 * **(F₂^{D−1} ⋊ S_D) ≀ C_m** (w1-fpt Prop 3.1): primitive and in Γ̂_D for odd D; HJ and HJ+(M′) create ≥ N^{log₂D − 0.443} children, at every fixed D. So R\*'s exponent O(log d) is tight for that algorithm, and GNS Thm 3.13's exponent cannot be o(log d).
 * **G_{r,L}** (w1-structure Prop 4.2): ≥ N^{r+1−1.8/r−o(1)} branches, though FPT by another method given its tower data.
 
-These are proofs about what the algorithm does (read from HJ's pseudocode and Lean dispatcher); they do not assume HJ correct. They **hold for string isomorphism only**. Whether a graph family forces them is open (the w18-latin branch asks this for Latin squares; see [Moonshots](Moonshots.md#latin-squares-and-steiner-systems-in-progress)). w20 adds: Prop 2 is about the dispatcher, not the problem, since Theorems A, B of [w17](../docs/w17-affine.md) beat it by a constant in the exponent.
+These are proofs about what the algorithm does (read from HJ's pseudocode and Lean dispatcher); they do not assume HJ correct. They **hold for string isomorphism only**, and have not been transferred to graphs. w20 adds: Prop 2 is about the dispatcher, not the problem, since Theorems A, B of [w17](../docs/w17-affine.md) beat it by a constant in the exponent.
+
+## HJ is tight on graphs too (w18)
+
+**Theorem B1** (w18, given HJ as written; **not yet red-teamed**): on the point–line incidence graph X_m of PG(m−1,2), with n ≈ 2^{2m}/6, HJ creates at least n^{(1/8)log₂ n − O_κ(1)} recursive calls for every fixed certificate size κ, by a chain of nested certificate calls through the visible unaffected orbit (σx) term, not the Maróti enumeration channel. Source: `docs/w18-latin.md` (on master from `860e782`; this wiki branch was cut at `b1a2d03`, so the file is not linked here).
+
+So the n^{Θ(log n)} behaviour of HJ is not confined to string isomorphism. It is **not a lower bound for GI**: X_m is a fixed geometry, easily solved by other means. It implies that a better potential cannot improve HJ; any improvement must change the certificate recursion (or prune tests). The chain was simulated exactly at κ = 3 and m ≤ 7 for its window structure only.
 
 ## Classical barriers for n^{o(log n)}
 

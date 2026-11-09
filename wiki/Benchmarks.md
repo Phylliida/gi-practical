@@ -4,7 +4,7 @@ Tables, caveats, and where the solver wins or loses. Later numbers supersede ear
 
 [Home](Home.md) · [Software](Software.md)
 
-**In progress as of master `b1a2d03`:** `w22-speed` (`624be06`) changes the hybrid stage loop and has its own paired benchmark; it is not reflected here. `w23-speed2` (`04de436`) has no commits yet.
+**In progress as of master `b1a2d03`:** `w22-speed` (`624be06`) changes the hybrid stage loop and has its own paired benchmark; it is not reflected here. `w23-speed2` (`4742c66`) compiles the bounded and canonical hot paths and is not merged, so the bounded and canonical timings below do not include it.
 
 ## Read these caveats first
 

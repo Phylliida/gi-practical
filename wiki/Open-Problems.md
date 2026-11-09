@@ -30,7 +30,9 @@
 * **Arity reduction**: do O(1) individualizations always suffice for a binary black box? Open after the [refutation](Corrections.md#arity-lower-bound-for-the-gns-black-box).
 * **HJ's σ-machinery on heart-type non-Cameron giants** ([w1-structure](../docs/w1-structure.md) §4.9).
 * **Theorem G** human check: the functorial reading of Split-or-Johnson; Lemma 3.1 of w12.
-* **HJ tightness on graphs**: does any graph family force the N^{log d} of HJ on string isomorphism? (see in-progress [Latin squares](Moonshots.md#latin-squares-and-steiner-systems-in-progress).)
+* **Red-team Theorem B1 of w18** (HJ on PG(m−1,2) incidence graphs) and turn the Latin-square and rigid variants from sketches into proofs.
+* **Transferring HJ's string lower bounds to graphs:** does a graph family force the N^{log d} of w1 at fixed degree? Open (w18's B1 is a different channel at unbounded degree).
+* **Canonically chosen test sets** in HJ's certificate step (O(1) tests per level) would directly target the σ channel (w18 lead).
 * **BC simplification** (Remark 5.2 of w4): check against a full version of BC if one exists.
 
 ## Canonization
@@ -43,7 +45,7 @@
 
 * Cubic Boolean equivalence in 2^{Õ(k^{1.5})}; 4-TI below 2^{o(k²)}; an "affine CFI" ([w17-affine](../docs/w17-affine.md) §8).
 * Ask whether the "ETH is False" preprint survives review; then update [Moonshots](Moonshots.md).
-* Latin squares and Steiner triple systems: `w18-latin` (in progress).
+* Latin squares and Steiner triple systems: rank-Ω(log n) quasigroups ('locally algebraic'?), `docs/w18-latin.md`.
 
 ## Engineering
 

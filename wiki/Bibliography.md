@@ -45,7 +45,7 @@ What the project relied on, and how each source was used. The BibTeX for the pap
 | Luks, STOC 1999 | not obtained; via ADKT, Schweitzer–Wiebking, Neuen 2020 |
 | Luks 1982; Babai–Kantor–Luks 1983; Babai–Luks–Seress 1987; Kantor–Luks 1990 | cited or as quoted by GNS |
 | Sun STOC 2023 (arXiv:2303.15412); IMQSZ FOCS 2024; Grochow–Qiao; Dietrich–Wilson; Le Gall–Rosenbaum (arXiv:1609.08253) | abstracts or statements |
-| Levet 2023; Gill 2025; Miller 1978–79 | as cited, some from memory |
+| Levet 2023; Gill 2025 (arXiv:2402.06205); Miller 1978–79; Colbourn–Colbourn 1980 | as cited or abstracts, some from memory; w18's survey was delegated (see `docs/w18-latin.md` §1) |
 | Liebeck–Shalev, Liebeck 1984, GSS98, Cooperstein, Kleidman–Liebeck, Pálfy, Wolf | through GNS |
 | Matsen et al., Konvalinka–Wagner, Billey et al., Diaconis et al. (tanglegrams) | verified from sources by a search agent |
 | Lokshtanov, Pilipczuk, Pilipczuk, Saurabh STOC 2022 (arXiv:2210.14638); Grohe 2010, 2017 | statements via red-team |

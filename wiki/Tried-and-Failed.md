@@ -40,6 +40,16 @@ So nobody repeats it. Each item says where the attempt stopped. Sources are in t
 | Transferring ETH-refutation techniques to GI, TI, AGL, TreeCI | witness and occurrence counts break the construction | [w21-eth](../docs/w21-eth.md) §B |
 | Making HJ's row machinery canonical | carrier and normal form are arbitrary choices; no invariant replacement found | [w3-canon](../docs/w3-canon.md) §2.4 |
 
+## Latin squares and Steiner systems (w18)
+
+| Idea | Where it stopped | Source |
+|---|---|---|
+| Generator enumeration with a coset representation of Aut(T) | extension test is a string-isomorphism condition under Aut(T), as hard as the original | `docs/w18-latin.md` §3.4 |
+| Top-down chain enumeration | gives exactly Miller's bound; only the bidirectional split (Theorem A1) halves it | same |
+| HJ-style constant-size certificates on natural labels | refuted for HJ's form by Theorem B1 | same |
+| Sun's individualize-then-average | no linear structure exists in a general quasigroup | same |
+| "Hard cases are group-like" | not established; index-2 towers carry non-associative data | same |
+
 ## Practical experiments
 
 | Idea | Result | Source |
