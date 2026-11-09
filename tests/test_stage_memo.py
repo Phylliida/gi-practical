@@ -517,12 +517,18 @@ def test_chain_with_prescribed_base_matches_reference(seed):
 
 
 def test_cont_leaves_the_shared_orbits_alone():
-    """_cont sorts its copy of the orbit list; the cached list keeps its order."""
-    n = 6
-    G = PermGroup(n, [(1, 0, 3, 2, 5, 4)])
+    """_cont sorts its copy of the orbit list; the cached list keeps its order.
+    The group is above enum_limit (order 1440), has no Young step, and its
+    orbits are out of order by size, so the sort does happen and does reorder."""
+    n = 8
+    G = PermGroup(n, [(1, 0, 2, 3, 4, 5, 6, 7), (0, 1, 3, 4, 5, 6, 7, 2), (0, 1, 3, 2, 4, 5, 6, 7)])
+    assert G.order() == 1440
     before = [list(o) for o in G.orbits_shared()]
+    assert [len(o) for o in before] == [2, 6]
     x = tuple(range(n))
-    Solver(certificates=False)._cont(G, x, x, None)
+    S = Solver(certificates=False, young=False)
+    assert S.enum_limit < G.order()
+    S._cont(G, x, x, None)
     assert [list(o) for o in G.orbits_shared()] == before
     assert G.orbits() == sorted(G.orbits())
 
