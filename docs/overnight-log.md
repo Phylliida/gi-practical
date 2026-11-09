@@ -599,3 +599,6 @@ are red-teams, a LaTeX paper, and final integration.
 * Paired canon: CFI n=3200 1.40→0.43s; Miyazaki n=3000 1.84→0.47s; Q12 4.83→0.57s; 3-reg n=4000 0.25→0.11s;
   ns n=5632 3.63→1.43s. Traces still ahead except on multipedes (about 7× CFI, 23× Miyazaki, 14–29× Q12).
 * After the merge: 2679 passed (kernel on), 1910 passed (off); bench 56/56 in 3.3s; irhard audit ran.
+
+## Night 3 moonshots (2 at a time)
+* w27-tree: complete-tree tanglegram isomorphism R1_c; the smallest open family (height-2 posets, large mu).
