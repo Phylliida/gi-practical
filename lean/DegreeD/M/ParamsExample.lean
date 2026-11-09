@@ -16,15 +16,18 @@ namespace GI.DegreeD.M
 
 open GI.Algorithm GI.Paper
 
-/-- **The parameter hypotheses are satisfiable, for any size of `a`.** -/
-theorem params_exist (A₀ : ℝ) :
+/-- **The parameter hypotheses are satisfiable, for any size of `a` and with `N₀` above any given
+value.** The other parameters are those of the docstring: `P.α = 2/5`, `κ = 64`, `θ = 3/4`,
+`β = 9/10`, `q₀ = 2064` (as part of the conclusion, for use with `Params.Aggregates`). -/
+theorem params_exist_ge (A₀ : ℝ) (N₁₀ : ℕ) :
     ∃ (P : Params) (cc : ChargingConstants),
       P.Terminating ∧ 64 ≤ P.κ ∧ Compat P cc ∧ 2 * P.α ≤ P.γ ∧ AboveBase P cc ∧
       (∀ n : ℕ, P.N₀ < n → (4 : ℝ) ≤ (n : ℝ) ^ ((1 - P.γ) / 2)) ∧
       (((2 * P.κ : ℕ) : ℝ) + Real.log (9 : ℕ) / Real.log 48 ≤ cc.aStar) ∧
       (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
         cc.a + cc.aStar / Real.log 2 ∧
-      A₀ ≤ cc.a := by
+      A₀ ≤ cc.a ∧ N₁₀ ≤ P.N₀ ∧ P.α = 2 / 5 ∧ P.γ = 9 / 10 ∧ P.κ = 64 ∧ P.θ = 3 / 4 ∧
+      P.β = 9 / 10 ∧ P.q₀ = 2064 ∧ cc.a - 1 ≤ P.a := by
   set a : ℝ := max A₀ 36001 with ha
   have ha1 : (36001 : ℝ) ≤ a := le_max_right _ _
   have haA : A₀ ≤ a := le_max_left _ _
@@ -43,12 +46,13 @@ theorem params_exist (A₀ : ℝ) :
     ((tendsto_rpow_atTop (by norm_num)).comp tendsto_natCast_atTop_atTop).eventually_ge_atTop 4
   obtain ⟨N₂, hN₂⟩ := Filter.eventually_atTop.mp hev
   let P : Params :=
-    { α := 2 / 5, γ := 9 / 10, N₀ := max N₁ (max N₂ 1), κ := 64, a := a - 1, θ := 3 / 4
+    { α := 2 / 5, γ := 9 / 10, N₀ := max N₁ (max N₂ (max N₁₀ 1)), κ := 64, a := a - 1, θ := 3 / 4
       β := 9 / 10, q₀ := 2064, b₀ := 2 }
   have hγP : P.γ = 9 / 10 := rfl
   have hPa : P.a = a - 1 := rfl
-  refine ⟨P, cc, ?_, by norm_num [P], ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · exact ⟨le_trans (le_max_right _ _) (le_max_right _ _), by norm_num [P], by norm_num [P],
+  refine ⟨P, cc, ?_, by norm_num [P], ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact ⟨le_trans (le_trans (le_max_right _ _) (le_max_right _ _)) (le_max_right _ _),
+      by norm_num [P], by norm_num [P],
       by norm_num [P], by norm_num [P], by norm_num [P], by norm_num [P], by norm_num [P],
       by norm_num [P]⟩
   · exact
@@ -125,6 +129,27 @@ theorem params_exist (A₀ : ℝ) :
     have ha0 : (18001 : ℝ) ≤ cc.a := by rw [h1]; linarith
     linarith
   · rw [h1]; exact haA
+  · exact le_trans (le_max_left _ _) (le_trans (le_max_right _ _) (le_max_right _ _))
+  · rfl
+  · rfl
+  · rfl
+  · rfl
+  · rfl
+  · rfl
+  · show cc.a - 1 ≤ a - 1
+    rw [h1]
+
+/-- **The parameter hypotheses are satisfiable, for any size of `a`.** -/
+theorem params_exist (A₀ : ℝ) :
+    ∃ (P : Params) (cc : ChargingConstants),
+      P.Terminating ∧ 64 ≤ P.κ ∧ Compat P cc ∧ 2 * P.α ≤ P.γ ∧ AboveBase P cc ∧
+      (∀ n : ℕ, P.N₀ < n → (4 : ℝ) ≤ (n : ℝ) ^ ((1 - P.γ) / 2)) ∧
+      (((2 * P.κ : ℕ) : ℝ) + Real.log (9 : ℕ) / Real.log 48 ≤ cc.aStar) ∧
+      (Real.log P.q₀.factorial / Real.log 48 + 1) / Real.log 17 ≤
+        cc.a + cc.aStar / Real.log 2 ∧
+      A₀ ≤ cc.a := by
+  obtain ⟨P, cc, h1, h2, h3, h4, h5, h6, h7, h8, h9, _⟩ := params_exist_ge A₀ 0
+  exact ⟨P, cc, h1, h2, h3, h4, h5, h6, h7, h8, h9⟩
 
 /-- The parameters that fit given GNS constants `c₁, c₂` (non-vacuity of `degreeD_stage1`). -/
 theorem params_fit_gns (c₁ c₂ : ℝ) :
