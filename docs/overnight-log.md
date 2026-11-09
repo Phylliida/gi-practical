@@ -617,3 +617,12 @@ are red-teams, a LaTeX paper, and final integration.
 * Correction to w18 §2.9: one switched block leaves |Aut| = 2^{m²−O(m)}. A rigid variant X_{m,R} deletes O(m) lines.
   It is not a barrier: rigid instances tested became discrete under 1-WL (m ≤ 9).
 * Theorem U (Ray-Chaudhuri–Wilson with variable blocks) and Theorem L (limitation for prefix-determined rules).
+
+### w27-tree (done, commit b11f2d3; docs/w27-tree.md), NOT yet red-teamed
+* Neither the height-2 question nor R1_c settled. Prop N [PROVEN]: no parameterized Aut-reflecting reduction takes
+  R1_c to a bounded-height family (A_5 tower depth), so unbounded μ alone gives no R1_c-hardness of the Prop H kind.
+* FPT subclasses: Theorems G, G+ (mod ADKT) and C (mod Luks). Prop 3.2 limits one-call combines. Open residue:
+  non-abelian gain graphs with curvature over a large non-soluble top.
+
+## Next
+* w30-sts: Steiner triple systems in n^{o(log n)} via a structure dichotomy (attacks the Q / Miller channel).
