@@ -1,0 +1,87 @@
+/* Chapter 20: where the third log went; what is tight. */
+(function () {
+  const { C, c, lerp } = V; const D = window.Dr; const DATA = window.DATA;
+  V.chapter('tight', 'The third log, and what is tight');
+  const Ag = DATA.agl;
+
+  V.scene({
+    beats: [
+      'Time to look back. Our original question: where did the third logarithm go?',
+      'Babai\'s bill had three factors: about log n rounds, about log n labels named at once, about log n bits per label. Exp of log cubed.',
+      'Two independent ideas removed the middle tile. Constant-size test sets, with the visible-orbit endpoint paid for by the hereditary budget sigma. And stopping Split-or-Johnson at the first bipartite graph, solved exactly on existing positions, with the partial progress kept as a lower cap.',
+      'Those changes do not make any single step cheaper in isolation. What they do is shrink the middle tile from log n to a constant. What is left is exp of log squared: rounds, times bits of branching per round.',
+      'And every one of those two remaining logs has a place in the wallet. Not one of those terms pays for more than log squared. That is the sense in which the whole wallet is one thing.',
+      'So is two the end? For this algorithm, in string isomorphism: yes.',
+    ],
+    draw(c_, b) {
+      D.title('The third logarithm', { alpha: b.on(0) });
+      const a = b.on(1);
+      const X = [320, 640, 960];
+      const y0 = 210;
+      c.text('Babai', 60, y0, { size: 21, fill: C.ink2, alpha: a, align: 'left' });
+      const old = [
+        { label: 'rounds', col: C.blue }, { label: 'labels at once', col: C.lab }, { label: 'bits per label', col: C.aqua },
+      ];
+      old.forEach((t, i) => {
+        c.rect(X[i] - 130, y0 - 45, 260, 90, { fill: C.bg2, stroke: t.col, lw: 2.5, r: 10, alpha: a });
+        c.tex('\\log n', X[i], y0 - 8, { size: 30, alpha: a, key: 'oldl' + i });
+        c.text(t.label, X[i], y0 + 26, { size: 19, fill: C.ink2, alpha: a });
+      });
+      c.text('×', 480, y0, { size: 30, fill: C.ink3, alpha: a }); c.text('×', 800, y0, { size: 30, fill: C.ink3, alpha: a });
+      const a2 = b.on(2);
+      c.text('HJ', 60, 365, { size: 21, fill: C.ink2, alpha: a2, align: 'left' });
+      const nw = [
+        { label: 'rounds', col: C.blue, tex: '\\log n' }, { label: 'labels at once', col: C.red, tex: 'O(1)' }, { label: 'bits per label', col: C.aqua, tex: '\\log n' },
+      ];
+      nw.forEach((t, i) => {
+        c.rect(X[i] - 130, 320, 260, 90, { fill: C.bg2, stroke: t.col, lw: 2.5, r: 10, alpha: a2 });
+        c.tex(t.tex, X[i], 355, { size: i === 1 ? 32 : 30, alpha: a2, key: 'newl' + i, fill: i === 1 ? C.red : C.ink });
+        c.text(t.label, X[i], 391, { size: 19, fill: C.ink2, alpha: a2 });
+      });
+      c.text('×', 480, 365, { size: 30, fill: C.ink3, alpha: a2 }); c.text('×', 800, 365, { size: 30, fill: C.ink3, alpha: a2 });
+      const a3 = b.on(3);
+      c.text('how:', 120, 480, { size: 22, weight: 600, align: 'left', alpha: a2 });
+      c.text('test sets κ = 64, paid by σ', 180, 480, { size: 22, align: 'left', alpha: a2 });
+      c.text('Split-or-Johnson stops at the first rectangle, paid by a lower cap Q', 180, 512, { size: 22, align: 'left', alpha: a2 });
+      c.tex('e^{\\log n\\,\\cdot\\,O(1)\\,\\cdot\\,\\log n}=e^{O(\\log^2 n)}', 640, 590, { size: 38, alpha: a3 });
+      c.text('Is two the end?', 640, 660, { size: 30, weight: 650, alpha: b.on(5) });
+    },
+  });
+
+  V.scene({
+    beats: [
+      'Here is the most interesting one-line proof in this whole story. Take the set of binary strings of length k, so there are N equals 2 to the k positions. Take the group of all affine maps: linear maps, plus translations. That is AGL of k over two.',
+      'It is primitive, but its socle is just the translations: an elementary abelian group. So it is not one of those structured giants, and the giant step never applies. Its order is about N to the 1 plus log base 2 of N, which passes the size test. So the dispatcher enumerates it.',
+      'Enumeration means one branch per element, and nothing is pruned. Here is the exact order: 2 to the k, times the product over i from 0 to k minus 1 of 2 to the k minus 2 to the i. For k equals 3 it is 1344.',
+      'As a fraction of N to the 1 plus log N, the constant tends to about 0.29 as k grows. So on this group, the algorithm genuinely performs on the order of N to the log N coset branches, whatever the two strings are.',
+      'So in the string-isomorphism setting, the log squared bound on the running time of this algorithm cannot be improved. Better analysis will not do it. The enumeration step has to change.',
+      'That is a statement about this algorithm, in the string setting. It is not a lower bound for graph isomorphism itself, where nobody knows what the right answer is. And it says nothing about the other half, the giants, where it is an open question how much of the potential the algorithm really spends.',
+    ],
+    draw(c_, b) {
+      D.title('What is tight', { alpha: b.on(0) });
+      c.tex('\\mathrm{AGL}(k,2)\\ \\text{ on }\\ N=2^k\\ \\text{ points}', 640, 110, { size: 32, alpha: b.on(0) });
+      c.tex('|\\mathrm{AGL}(k,2)|=2^k\\prod_{i=0}^{k-1}(2^k-2^i)', 640, 166, { size: 28, alpha: b.on(2) });
+      // table of real numbers
+      const a = b.on(2);
+      const x0 = 150, y0 = 228;
+      const headers = ['k', 'N', '|AGL(k,2)|', 'ratio to N^(1+log₂ N)'];
+      const cols = [x0, x0 + 120, x0 + 300, x0 + 560];
+      headers.forEach((h, i) => c.text(h, cols[i], y0, { size: 19, weight: 600, fill: C.ink2, align: i === 0 ? 'left' : 'left', alpha: a }));
+      Ag.slice(0, 7).forEach((row, j) => {
+        const y = y0 + 40 + j * 34;
+        const ordS = row.order > 1e8 ? row.order.toExponential(2) : String(row.order);
+        c.text(String(row.k), cols[0], y, { size: 19, align: 'left', alpha: a, weight: row.k === 3 ? 700 : 400 });
+        c.text(String(row.N), cols[1], y, { size: 19, align: 'left', alpha: a, weight: row.k === 3 ? 700 : 400 });
+        c.text(ordS, cols[2], y, { size: 19, align: 'left', alpha: a, weight: row.k === 3 ? 700 : 400 });
+        c.text(row.ratio.toFixed(4), cols[3], y, { size: 19, align: 'left', alpha: a, weight: row.k === 3 ? 700 : 400 });
+      });
+      const a3 = b.on(3);
+      c.tex('\\to 0.2888\\dots', cols[3] + 40, y0 + 40 + 7 * 34 + 8, { size: 22, alpha: a3 });
+      const a4 = b.on(4);
+      c.rect(780, 520, 400, 100, { fill: C.bg2, stroke: C.red, lw: 2, r: 10, alpha: a4 });
+      c.tex('\\approx N^{\\log_2 N}\\ \\text{cosets, forced}', 980, 555, { size: 25, alpha: a4 });
+      c.text('for every pair of strings', 980, 590, { size: 19, fill: C.ink2, alpha: a4 });
+      c.text('Scope: this algorithm, string isomorphism. Not a lower bound for graphs.', 640, 660, { size: 21, weight: 500, alpha: b.on(5) });
+    },
+  });
+})();

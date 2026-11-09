@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Third Logarithm</title>
+<meta name="description" content="An animated, narrated explanation of the Hajiaghayi-JafariRaviz n^O(log n) graph isomorphism algorithm and where its running time comes from.">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<noscript><p style="padding:2em">This video is drawn with JavaScript; please enable it.</p></noscript>
+<div id="app">
+  <div id="stage-wrap">
+    <div id="stage">
+      <canvas id="cv"></canvas>
+      <div id="tx"></div>
+      <div id="ix"></div>
+      <button id="big-play" aria-label="Play"><svg viewBox="0 0 24 24" width="44" height="44"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
+    </div>
+  </div>
+  <div id="rotate-hint">Rotate your phone for a larger picture.</div>
+  <div id="caption" aria-live="polite"><div id="caption-text"></div></div>
+  <div id="controls">
+    <button id="pp" class="btn" aria-label="Play or pause" title="Play or pause (space or K)">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path id="pp-icon" d="M8 5v14l11-7z" fill="currentColor"/></svg>
+    </button>
+    <span id="tm" class="tm">0:00 / 0:00</span>
+    <div id="track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="track-bar"><div id="track-fill"></div></div>
+      <div id="track-ticks"></div>
+      <div id="track-handle"></div>
+      <div id="track-tip"></div>
+    </div>
+    <button id="menu" class="btn wide" aria-haspopup="true" aria-expanded="false" title="Chapters (C)">Chapters</button>
+    <label class="sel" title="Playback speed (+ / -)"><select id="speed" aria-label="Playback speed">
+      <option value="0.75">0.75x</option><option value="1" selected>1x</option><option value="1.25">1.25x</option>
+      <option value="1.5">1.5x</option><option value="2">2x</option></select></label>
+    <button id="voice" class="btn wide" aria-pressed="false" title="Spoken narration (M)">Voice off</button>
+    <button id="theme" class="btn" aria-label="Toggle dark/light" title="Toggle theme (T)">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+    </button>
+    <button id="fs" class="btn" aria-label="Full screen" title="Full screen (F)">
+      <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 9V4h5v2H6v3zm11-5h5v5h-2V6h-3zM6 15v3h3v2H4v-5zm14 0v5h-5v-2h3v-3z" fill="currentColor"/></svg>
+    </button>
+    <button id="help" class="btn" aria-label="Keyboard help" title="Keyboard help (?)">?</button>
+  </div>
+  <div id="chapter-panel" hidden><div id="chapter-list"></div></div>
+  <div id="help-panel" hidden>
+    <h3>Keyboard</h3>
+    <dl>
+      <dt>Space or K</dt><dd>play / pause</dd>
+      <dt>Left / Right</dt><dd>back / forward 5 s</dd>
+      <dt>J / L</dt><dd>back / forward 10 s</dd>
+      <dt>, / .</dt><dd>frame step (while paused)</dd>
+      <dt>P / N</dt><dd>previous / next chapter</dd>
+      <dt>0 ... 9</dt><dd>jump to that tenth of the video</dd>
+      <dt>+ / -</dt><dd>playback speed</dd>
+      <dt>M</dt><dd>spoken narration</dd>
+      <dt>C</dt><dd>chapter menu</dd>
+      <dt>T</dt><dd>dark / light</dd>
+      <dt>F</dt><dd>full screen</dd>
+      <dt>Home / End</dt><dd>start / end</dd>
+    </dl>
+    <p>Deep links: <code>#ch=&lt;chapter id&gt;</code> or <code>#t=&lt;seconds&gt;</code>. Where the frame says <em>Try it</em>, the picture responds to the pointer; touching it pauses playback.</p>
+  </div>
+</div>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/chapters/ch01.js"></script>
+<script src="js/chapters/ch02.js"></script>
+<script src="js/chapters/ch03.js"></script>
+<script src="js/chapters/ch04.js"></script>
+<script src="js/chapters/ch05.js"></script>
+<script src="js/chapters/ch06.js"></script>
+<script src="js/chapters/ch07.js"></script>
+<script src="js/chapters/ch08.js"></script>
+<script src="js/chapters/ch09.js"></script>
+<script src="js/chapters/ch10.js"></script>
+<script src="js/chapters/ch11.js"></script>
+<script src="js/chapters/ch12.js"></script>
+<script src="js/chapters/ch13.js"></script>
+<script src="js/chapters/ch14.js"></script>
+<script src="js/chapters/ch15.js"></script>
+<script src="js/chapters/ch16.js"></script>
+<script src="js/chapters/ch17.js"></script>
+<script src="js/chapters/ch18.js"></script>
+<script src="js/chapters/ch19.js"></script>
+<script src="js/chapters/ch20.js"></script>
+<script src="js/chapters/ch21.js"></script>
+<script src="js/chapters/ch22.js"></script>
+<script src="js/chapters/ch23.js"></script>
+<script src="js/chapters/ch24.js"></script>
+<script>V.start();</script>
+</body>
+</html>
